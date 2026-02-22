@@ -158,6 +158,13 @@ const stmts = {
     FROM identification_matches
     WHERE batch_id = ?
     ORDER BY rank ASC
+  `),
+  listBatchImagesPreview: db.prepare(`
+    SELECT id, role, filename, mime_type, image_blob
+    FROM upload_images
+    WHERE batch_id = ?
+    ORDER BY id ASC
+    LIMIT ?
   `)
 };
 
@@ -304,21 +311,36 @@ function listUserUploads(userId, limit = 20) {
   const safeLimit = Math.max(1, Math.min(100, Number(limit) || 20));
   const batches = stmts.listUserBatches.all(userId, safeLimit);
 
-  return batches.map((batch) => ({
-    id: batch.id,
-    createdAt: batch.created_at,
-    imageCount: batch.image_count,
-    primaryMatch: batch.primary_match,
-    primaryConfidence: batch.primary_confidence,
-    mixedSpecies: Boolean(batch.mixed_species),
-    consistencyMessage: batch.consistency_message,
-    topMatches: stmts.listBatchMatches.all(batch.id).map((m) => ({
-      rank: m.rank,
-      scientificName: m.scientific_name,
-      commonName: m.common_name,
-      confidence: m.confidence
-    }))
-  }));
+  return batches.map((batch) => {
+    const previews = stmts.listBatchImagesPreview.all(batch.id, 4);
+    const previewImages = previews.map((row) => ({
+      id: row.id,
+      role: row.role || 'extra',
+      filename: row.filename || '',
+      mimeType: row.mime_type || 'image/jpeg',
+      previewUrl: `data:${row.mime_type || 'image/jpeg'};base64,${Buffer.from(row.image_blob).toString('base64')}`
+    }));
+    const cover = previewImages[0] || null;
+
+    return {
+      id: batch.id,
+      createdAt: batch.created_at,
+      imageCount: batch.image_count,
+      primaryMatch: batch.primary_match,
+      primaryConfidence: batch.primary_confidence,
+      mixedSpecies: Boolean(batch.mixed_species),
+      consistencyMessage: batch.consistency_message,
+      coverImageUrl: cover?.previewUrl || '',
+      coverFileName: cover?.filename || '',
+      previewImages,
+      topMatches: stmts.listBatchMatches.all(batch.id).map((m) => ({
+        rank: m.rank,
+        scientificName: m.scientific_name,
+        commonName: m.common_name,
+        confidence: m.confidence
+      }))
+    };
+  });
 }
 
 module.exports = {
