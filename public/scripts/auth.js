@@ -165,16 +165,27 @@
     registerForm.addEventListener('submit', async (event) => {
       event.preventDefault();
       const form = new FormData(registerForm);
+      const password = String(form.get('password') || '');
+      const passwordConfirmation = String(form.get('passwordConfirmation') || '');
 
       await withButtonLoading(registerSubmitButton, 'Creating account', async () => {
         setStatus('Creating account...', 'info');
+        if (!passwordConfirmation) {
+          setStatus('Please confirm your password.', 'error');
+          return;
+        }
+        if (password !== passwordConfirmation) {
+          setStatus('Passwords do not match.', 'error');
+          return;
+        }
         try {
           await request('/api/auth/register', {
             method: 'POST',
             body: {
               name: String(form.get('name') || ''),
               email: String(form.get('email') || ''),
-              password: String(form.get('password') || '')
+              password,
+              passwordConfirmation
             }
           });
           setStatus('Account created successfully.', 'success');
