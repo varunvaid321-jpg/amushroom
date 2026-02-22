@@ -17,3 +17,7 @@ test('server sanitizes Google OAuth return path', () => {
   assert.match(source, /sanitizeReturnPath\(url\.searchParams\.get\('returnTo'\)/);
   assert.match(source, /sanitizeReturnPath\(stateValue\.returnTo/);
 });
+
+test('server only persists upload records for authenticated users', () => {
+  assert.match(source, /if \(auth\?\.user\?\.id\) \{[\s\S]*createUploadRecord\(/);
+});

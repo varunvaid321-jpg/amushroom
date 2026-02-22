@@ -75,6 +75,6 @@ Last updated: 2026-02-22
 ### BG-010 Uploaded image retention and anonymous storage policy
 - Status: Todo
 - Acceptance Criteria:
-- [ ] Decide whether anonymous identify requests persist images at all
+- [x] Anonymous identify requests do not persist raw image blobs by default
 - [ ] Add retention/cleanup policy for stored image blobs and match records
 - [ ] Add controls to limit storage abuse/cost (TTL, quotas, or auth-only persistence)

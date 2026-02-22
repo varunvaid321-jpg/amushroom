@@ -1051,19 +1051,21 @@ async function handleIdentify(req, res) {
   }
 
   let uploadId = null;
-  try {
-    uploadId = createUploadRecord({
-      userId: auth?.user?.id || null,
-      sessionId: auth?.sessionId || null,
-      images,
-      imageMeta,
-      photoRoles,
-      matches,
-      consistencyCheck
-    });
-  } catch {
-    sendJson(req, res, 500, { error: 'Failed to persist upload record.' });
-    return;
+  if (auth?.user?.id) {
+    try {
+      uploadId = createUploadRecord({
+        userId: auth.user.id,
+        sessionId: auth.sessionId || null,
+        images,
+        imageMeta,
+        photoRoles,
+        matches,
+        consistencyCheck
+      });
+    } catch {
+      sendJson(req, res, 500, { error: 'Failed to persist upload record.' });
+      return;
+    }
   }
 
   sendJson(req, res, 200, { matches, uploadGuidance, consistencyCheck, uploadId });
