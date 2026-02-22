@@ -159,12 +159,30 @@ const stmts = {
     WHERE batch_id = ?
     ORDER BY rank ASC
   `),
+  getUserBatchById: db.prepare(`
+    SELECT id, created_at, image_count, primary_match, primary_confidence, mixed_species, consistency_message
+    FROM upload_batches
+    WHERE id = ? AND user_id = ?
+    LIMIT 1
+  `),
   listBatchImagesPreview: db.prepare(`
     SELECT id, role, filename, mime_type, image_blob
     FROM upload_images
     WHERE batch_id = ?
     ORDER BY id ASC
     LIMIT ?
+  `),
+  listBatchImagesDetailed: db.prepare(`
+    SELECT id, role, filename, mime_type, bytes, image_blob, created_at
+    FROM upload_images
+    WHERE batch_id = ?
+    ORDER BY id ASC
+  `),
+  listBatchMatchesDetailed: db.prepare(`
+    SELECT rank, scientific_name, common_name, confidence, edibility, psychedelic, raw_json
+    FROM identification_matches
+    WHERE batch_id = ?
+    ORDER BY rank ASC
   `)
 };
 
@@ -343,6 +361,55 @@ function listUserUploads(userId, limit = 20) {
   });
 }
 
+function getUserUploadDetail(userId, uploadId) {
+  const batch = stmts.getUserBatchById.get(uploadId, userId);
+  if (!batch) return null;
+
+  const images = stmts.listBatchImagesDetailed.all(uploadId).map((row) => ({
+    id: row.id,
+    role: row.role || 'extra',
+    filename: row.filename || '',
+    mimeType: row.mime_type || 'image/jpeg',
+    bytes: row.bytes,
+    createdAt: row.created_at,
+    previewUrl: `data:${row.mime_type || 'image/jpeg'};base64,${Buffer.from(row.image_blob).toString('base64')}`
+  }));
+
+  const matches = stmts.listBatchMatchesDetailed.all(uploadId).map((row) => {
+    let parsed = null;
+    try {
+      parsed = row.raw_json ? JSON.parse(row.raw_json) : null;
+    } catch {
+      parsed = null;
+    }
+
+    if (parsed && typeof parsed === 'object') return parsed;
+
+    return {
+      scientificName: row.scientific_name || 'Unknown species',
+      commonName: row.common_name || row.scientific_name || 'Unknown species',
+      score: row.confidence ?? 0,
+      edible: row.edibility || 'Unknown',
+      psychedelic: row.psychedelic || 'Unknown',
+      traits: [],
+      whyMatch: [],
+      caution: 'Do not consume without local expert verification.'
+    };
+  });
+
+  return {
+    id: batch.id,
+    createdAt: batch.created_at,
+    imageCount: batch.image_count,
+    primaryMatch: batch.primary_match,
+    primaryConfidence: batch.primary_confidence,
+    mixedSpecies: Boolean(batch.mixed_species),
+    consistencyMessage: batch.consistency_message,
+    images,
+    matches
+  };
+}
+
 module.exports = {
   db,
   createUser,
@@ -357,5 +424,6 @@ module.exports = {
   deleteSession,
   deleteExpiredSessions,
   createUploadRecord,
-  listUserUploads
+  listUserUploads,
+  getUserUploadDetail
 };
