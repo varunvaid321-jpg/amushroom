@@ -7,61 +7,197 @@
   <title>aMushroom | Mushroom Identifier</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles/tokens.css" />
-  <link rel="stylesheet" href="/styles/app.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/tokens.css?v=20260222c" />
+  <link rel="stylesheet" href="/styles/app.css?v=20260222ak" />
 </head>
 <body>
   <main class="page">
-    <section class="hero">
-      <span class="hero__badge">aMushroom Professional Edition</span>
-      <h1 class="hero__title">aMushroom</h1>
-      <p class="hero__subtitle">Upload up to 5 mushroom photos. We recommend top, gills, stalk, and environment shots for best quality. Guidance only, not mandatory.</p>
+    <header class="topbar">
+      <a class="topbar__brand" href="/" aria-label="aMushroom home">
+        <span class="brand-lockup">
+          <span class="brand-wordmark"><span class="brand-wordmark__lead">A</span><span class="brand-wordmark__main">Mushroom!</span></span>
+        </span>
+      </a>
+      <div class="topbar__auth">
+        <span id="topbarWelcome" class="topbar__welcome" hidden></span>
+        <a id="topbarRegisterLink" class="topbar__auth-link" href="/auth.html?mode=register">Register</a>
+        <button id="topbarLoginButton" class="topbar__logout" type="button">Log in</button>
+        <a id="topbarAccountLink" class="topbar__auth-link" href="/auth.html" hidden>Account</a>
+        <button id="topbarLogoutButton" class="topbar__logout" type="button" hidden>Log out</button>
+      </div>
+    </header>
+
+
+    <section id="topbarLoginDrawer" class="topbar-login-drawer" hidden aria-label="Inline login">
+      <form id="topbarLoginForm" class="topbar-login-form">
+        <label class="topbar-login-form__field">
+          <span>Email</span>
+          <input type="email" name="email" autocomplete="email" required />
+        </label>
+        <label class="topbar-login-form__field">
+          <span>Password</span>
+          <input type="password" name="password" autocomplete="current-password" required />
+        </label>
+        <button id="topbarLoginSubmit" class="button button--primary topbar-login-form__submit" type="submit">Log in</button>
+      </form>
+      <div class="topbar-login-drawer__alt" role="group" aria-label="Alternative sign-in">
+        <span class="topbar-login-drawer__alt-label">or</span>
+        <button id="topbarGoogleButton" class="topbar-login-google" type="button">Continue with Google</button>
+      </div>
+      <p id="topbarLoginStatus" class="topbar-login-drawer__status" aria-live="polite">Sign in to view Saved Identifications.</p>
     </section>
 
-    <section class="panel">
-      <p class="lead">Capture clear images in natural light whenever possible. This tool provides best-effort visual identification and safety guidance.</p>
+    <section class="hero">
+      <div class="hero__mesh" aria-hidden="true"></div>
+      <div class="hero__layout">
+        <div class="hero__copy">
+          <p class="hero__ai-banner">World-Class AI Engine</p>
+          <h1 class="hero__title">Identify wild mushrooms <span class="hero__title-accent">from photos</span>.</h1>
+          <p class="hero__subtitle">Upload 1-5 photos. Cap, gills, stalk, and habitat shots help.</p>
+          <div class="hero__actions">
+            <a class="hero__link hero__link--primary" href="#upload">Start</a>
+          </div>
+        </div>
 
-      <div class="guidance">
-        <p class="guidance__title">Recommended photo sequence (optional)</p>
-        <ol class="guidance__list">
-          <li>Top of cap</li>
-          <li>Bottom / gills</li>
-          <li>Stalk (stem)</li>
-          <li>Environment found in</li>
-          <li>Extra detail (close-up, spore print, bruising)</li>
-        </ol>
+        <section id="libraryCallout" class="library-callout library-callout--hero" aria-label="Account signup prompt">
+          <div>
+            <p class="library-callout__eyebrow">Saved Identifications</p>
+            <p class="library-callout__title">Sign up to save results.</p>
+            <p class="library-callout__text">Save scans and reopen results anytime.</p>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="upload" class="panel">
+      <div class="panel__head">
+        <div>
+          <p class="panel__eyebrow">Identify Now!</p>
+          <h2 class="panel__title">Upload mushroom photos</h2>
+          <p class="lead">Use clear photos in natural light. Results are guidance only.</p>
+
+          <div class="controls">
+            <input class="file-input" id="photoInput" type="file" accept="image/*" multiple aria-describedby="photoInputHint" hidden />
+            <input class="file-input" id="cameraInput" type="file" accept="image/*" capture="environment" aria-describedby="photoInputHint" hidden />
+            <div class="controls__actions" role="group" aria-label="Photo upload options">
+              <button class="button button--secondary" id="selectPhotosBtn" type="button">Photos</button>
+              <span class="controls__separator" aria-hidden="true">or</span>
+              <button class="button button--secondary" id="takePhotoBtn" type="button">Camera</button>
+              <span class="controls__flow-arrow" aria-hidden="true">→</span>
+              <button class="button button--primary" id="analyzeQuickBtn" type="button" disabled>Analyze</button>
+            </div>
+          </div>
+          <p id="photoInputHint" class="controls__hint">Upload up to 5 photos, or use camera for a live shot.</p>
+        </div>
       </div>
 
-      <div class="controls">
-        <input class="file-input" id="photoInput" type="file" accept="image/*" multiple />
-        <button class="button button--primary" id="analyzeBtn" type="button" disabled>Analyze Photos</button>
+      <div class="identify-stage">
+        <div class="identify-stage__left">
+          <p id="statusText" class="status" aria-live="polite"></p>
+          <div id="previewGrid" class="preview-grid" aria-live="polite"></div>
+          <div class="scan-actions" role="group" aria-label="Scan actions">
+            <button class="button button--primary" id="analyzeBtn" type="button" disabled>Analyze</button>
+            <button class="button button--secondary" id="clearScanBtn" type="button" disabled>New Identification</button>
+          </div>
+        </div>
+
+        <aside class="identify-stage__right" aria-label="Identification result panel">
+          <section id="results" class="results results--dock">
+            <div id="resultIdle" class="result-state result-state--idle">
+              <p class="result-state__eyebrow">Mushroom Profile</p>
+              <h2 class="result-state__title">Results awaiting photos</h2>
+              <p class="result-state__text">Upload 1-5 photos, then analyze. Results appear here.</p>
+            </div>
+
+            <div id="resultLoading" class="result-state result-state--loading" hidden>
+              <div class="result-spinner" aria-hidden="true"></div>
+              <div>
+                <p class="result-state__eyebrow">Analyzing</p>
+                <h2 class="result-state__title">Scanning features</h2>
+                <p class="result-state__text">Checking your photos and building the profile.</p>
+              </div>
+            </div>
+
+            <div id="resultReady" class="result-ready" hidden>
+              <section id="profilePanel" class="profile-panel" aria-live="polite">
+                <div class="profile-panel__head">
+                  <p class="result-state__eyebrow">Mushroom Profile</p>
+                  <h2 id="profileTitle" class="results__title">Top Match</h2>
+                  <p id="profileSubtitle" class="profile-panel__subtitle"></p>
+                </div>
+                <div id="profileSections" class="profile-sections"></div>
+              </section>
+
+              <div class="results__stack">
+                <h3 id="resultsSubheading" class="results__subheading">Similar Matches</h3>
+                <div id="analysisSummary" class="summary"></div>
+                <div id="resultCards"></div>
+                <p class="footnote">Safety notice: visual IDs can be wrong. Never consume without local expert confirmation.</p>
+              </div>
+            </div>
+          </section>
+        </aside>
       </div>
+    </section>
 
-      <p id="statusText" class="status" aria-live="polite"></p>
-      <div id="previewGrid" class="preview-grid" aria-live="polite"></div>
 
-      <section id="results" class="results" hidden>
-        <h2 class="results__title">Top 3 Matches</h2>
-        <div id="analysisSummary" class="summary"></div>
-        <div id="resultCards"></div>
-        <p class="footnote">Safety notice: visual identification can be wrong. Never consume wild mushrooms without confirmation from a trained local expert.</p>
-      </section>
+
+    <section id="portfolioSection" class="portfolio" hidden>
+      <div class="portfolio__head">
+        <div>
+          <p class="portfolio__eyebrow">Saved Identifications</p>
+          <h2 class="portfolio__title">Your saved identifications</h2>
+          <p class="portfolio__subtitle">Click any card to reopen the saved photos and 3-match result.</p>
+        </div>
+        <div class="portfolio__head-actions">
+          <a class="portfolio__manage" href="#upload">Upload More</a>
+          <a class="portfolio__manage" href="/auth.html">Manage Account</a>
+        </div>
+      </div>
+      <div id="portfolioStats" class="portfolio__stats" aria-live="polite"></div>
+      <div id="portfolioGrid" class="portfolio__grid"></div>
     </section>
 
     <footer class="site-footer">
-      <p class="site-footer__brand">aMushroom</p>
+      <a class="site-footer__brand-link" href="/" aria-label="aMushroom home">
+        <span class="brand-lockup">
+          <span class="brand-mark brand-mark--footer" aria-hidden="true">
+            <svg class="brand-mark__svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M5.5 15.2c1.8-5.9 7-9.4 13-9.4 4.7 0 7.8 1.8 9.8 5.1.8 1.4-.2 3.1-1.8 3.1H5.5z" fill="url(#capGradFooter)" />
+              <path d="M7.2 16.2h17.2c-.7 3.7-4.2 6.2-8.6 6.2-4.1 0-7.6-2.2-8.6-6.2z" fill="rgba(244,244,241,0.08)" />
+              <path d="M15.9 17.4c1.7 0 3 1.4 3 3v4.2c0 1-.8 1.8-1.8 1.8h-2.4c-1 0-1.8-.8-1.8-1.8v-4.2c0-1.6 1.3-3 3-3z" fill="url(#stemGradFooter)" />
+              <path d="M12.2 19.6h7.4" stroke="rgba(244,244,241,0.55)" stroke-width="1.1" stroke-linecap="round" />
+              <circle cx="10.8" cy="12.1" r="1.1" fill="rgba(244,244,241,0.55)" />
+              <circle cx="16.1" cy="10.8" r="1" fill="rgba(244,244,241,0.42)" />
+              <circle cx="21.2" cy="12.4" r="1.15" fill="rgba(244,244,241,0.5)" />
+              <defs>
+                <linearGradient id="capGradFooter" x1="6" y1="7" x2="24" y2="18" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#f0d7aa" />
+                  <stop offset="1" stop-color="#bb8c56" />
+                </linearGradient>
+                <linearGradient id="stemGradFooter" x1="12" y1="17" x2="20" y2="27" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#d4b078" />
+                  <stop offset="1" stop-color="#8b6945" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </span>
+          <span class="brand-wordmark">
+            <span class="brand-wordmark__lead">A</span><span class="brand-wordmark__main">Mushroom!</span>
+          </span>
+        </span>
+      </a>
       <div class="site-footer__links">
-        <a id="accountLink" class="site-footer__link" href="/auth.html">Sign in / Account</a>
         <a class="site-footer__link" href="/terms.html">Terms</a>
         <a class="site-footer__link" href="/privacy.html">Privacy</a>
         <a class="site-footer__link" href="/refund.html">Refunds</a>
       </div>
-      <p class="site-footer__meta">For support: legal@amushroom.com</p>
+      <p class="site-footer__meta">Support: legal@amushroom.com</p>
     </footer>
   </main>
 
-  <script src="/scripts/common-auth.js" defer></script>
-  <script src="/scripts/app.js" defer></script>
+  <script src="/scripts/common-auth.js?v=20260222g" defer></script>
+  <script src="/scripts/app.js?v=20260222j" defer></script>
 </body>
 </html>
