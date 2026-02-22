@@ -33,7 +33,8 @@ const {
   deleteSession,
   deleteExpiredSessions,
   createUploadRecord,
-  listUserUploads
+  listUserUploads,
+  getUserUploadDetail
 } = require('./src/db');
 
 const ROOT = __dirname;
@@ -993,6 +994,42 @@ function handleAuthConfig(req, res) {
   });
 }
 
+function handleUserUploadDetail(req, res, url) {
+  const auth = getAuthContext(req);
+  if (!auth?.user?.id) {
+    jsonError(req, res, 401, 'Authentication required.');
+    return;
+  }
+
+  const uploadId = decodeURIComponent(url.pathname.slice('/api/user/uploads/'.length)).trim();
+  if (!uploadId) {
+    jsonError(req, res, 400, 'Upload ID is required.');
+    return;
+  }
+
+  const upload = getUserUploadDetail(auth.user.id, uploadId);
+  if (!upload) {
+    jsonError(req, res, 404, 'Saved upload not found.');
+    return;
+  }
+
+  const photoRoles = Array.isArray(upload.images) ? upload.images.map((image) => image.role || 'extra') : [];
+  const uploadGuidance = buildUploadGuidance(photoRoles, photoRoles.length);
+  const consistencyCheck = {
+    likelyMixed: Boolean(upload.mixedSpecies),
+    message: upload.consistencyMessage || 'Saved consistency summary not available.',
+    perPhoto: []
+  };
+
+  sendJson(req, res, 200, {
+    upload: {
+      ...upload,
+      uploadGuidance,
+      consistencyCheck
+    }
+  });
+}
+
 async function handleIdentify(req, res) {
   if (!process.env.MUSHROOM_API_KEY) {
     sendJson(req, res, 500, { error: 'Server missing MUSHROOM_API_KEY.' });
@@ -1203,6 +1240,11 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'GET' && url.pathname === '/api/user/uploads') {
     handleUserUploads(req, res, url);
+    return;
+  }
+
+  if (req.method === 'GET' && url.pathname.startsWith('/api/user/uploads/')) {
+    handleUserUploadDetail(req, res, url);
     return;
   }
 
