@@ -52,6 +52,9 @@
     if (!button.dataset.originalLabel) {
       button.dataset.originalLabel = button.textContent || '';
     }
+    if (!button.dataset.originalHtml) {
+      button.dataset.originalHtml = button.innerHTML;
+    }
 
     if (loading) {
       button.disabled = true;
@@ -64,7 +67,9 @@
     button.disabled = false;
     button.removeAttribute('data-loading');
     button.removeAttribute('aria-busy');
-    if (button.dataset.originalLabel) {
+    if (button.dataset.originalHtml) {
+      button.innerHTML = button.dataset.originalHtml;
+    } else if (button.dataset.originalLabel) {
       button.textContent = button.dataset.originalLabel;
     }
   }
