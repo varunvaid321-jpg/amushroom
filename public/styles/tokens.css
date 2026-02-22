@@ -1,0 +1,57 @@
+:root {
+  --color-brand-primary: #1f7a4f;
+  --color-brand-primary-strong: #145436;
+  --color-brand-accent: #d87a2f;
+
+  --color-surface-app: #f3efe7;
+  --color-surface-card: #fffdf8;
+  --color-surface-card-elevated: #ffffff;
+  --color-surface-subtle: #f7f3ea;
+
+  --color-text-primary: #1f1c17;
+  --color-text-secondary: #5d564b;
+  --color-text-inverse: #f9fff7;
+
+  --color-state-success-bg: #e0f6df;
+  --color-state-success-text: #1f6134;
+  --color-state-danger-bg: #ffe3df;
+  --color-state-danger-text: #7c2424;
+  --color-state-warning-bg: #fff4dd;
+  --color-state-warning-text: #7a5314;
+  --color-state-info-bg: #e9f1ff;
+  --color-state-info-text: #1a4d90;
+  --color-state-neutral-bg: #ece8df;
+  --color-state-neutral-text: #5a544a;
+
+  --color-border-soft: #e3dac9;
+  --color-border-strong: #cdc3b3;
+
+  --font-heading: "Sora", "Avenir Next", "Segoe UI", sans-serif;
+  --font-body: "Avenir Next", "Segoe UI", sans-serif;
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.9rem;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  --shadow-card: 0 16px 30px rgba(31, 28, 23, 0.1);
+  --shadow-hero: 0 20px 40px rgba(31, 28, 23, 0.18);
+}

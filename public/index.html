@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="aMushroom identifies mushrooms from 1-5 photos and shows top 3 matches with clear safety context." />
+  <title>aMushroom | Mushroom Identifier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/app.css" />
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <span class="hero__badge">aMushroom Professional Edition</span>
+      <h1 class="hero__title">aMushroom</h1>
+      <p class="hero__subtitle">Upload up to 5 mushroom photos. We recommend top, gills, stalk, and environment shots for best quality. Guidance only, not mandatory.</p>
+    </section>
+
+    <section class="panel">
+      <p class="lead">Capture clear images in natural light whenever possible. This tool provides best-effort visual identification and safety guidance.</p>
+
+      <div class="guidance">
+        <p class="guidance__title">Recommended photo sequence (optional)</p>
+        <ol class="guidance__list">
+          <li>Top of cap</li>
+          <li>Bottom / gills</li>
+          <li>Stalk (stem)</li>
+          <li>Environment found in</li>
+          <li>Extra detail (close-up, spore print, bruising)</li>
+        </ol>
+      </div>
+
+      <div class="controls">
+        <input class="file-input" id="photoInput" type="file" accept="image/*" multiple />
+        <button class="button button--primary" id="analyzeBtn" type="button" disabled>Analyze Photos</button>
+      </div>
+
+      <p id="statusText" class="status" aria-live="polite"></p>
+      <div id="previewGrid" class="preview-grid" aria-live="polite"></div>
+
+      <section id="results" class="results" hidden>
+        <h2 class="results__title">Top 3 Matches</h2>
+        <div id="analysisSummary" class="summary"></div>
+        <div id="resultCards"></div>
+        <p class="footnote">Safety notice: visual identification can be wrong. Never consume wild mushrooms without confirmation from a trained local expert.</p>
+      </section>
+    </section>
+  </main>
+
+  <script src="/scripts/app.js" defer></script>
+</body>
+</html>
