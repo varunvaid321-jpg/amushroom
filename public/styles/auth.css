@@ -1,3 +1,5 @@
+@import url("/styles/components.css");
+
 * {
   box-sizing: border-box;
 }
@@ -36,21 +38,11 @@ body {
 }
 
 .auth-link {
-  color: var(--color-state-info-text);
-  text-decoration: none;
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-}
-
-.auth-link:hover {
-  text-decoration: underline;
 }
 
 .auth-status {
-  min-height: 1.2em;
   margin: 0 0 var(--space-4);
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
 }
 
 .auth-grid {
@@ -60,62 +52,7 @@ body {
 }
 
 .card {
-  border: 1px solid var(--color-border-soft);
-  border-radius: var(--radius-md);
-  background: var(--color-surface-card);
-  box-shadow: var(--shadow-card);
-  padding: var(--space-5);
-}
-
-.card-title {
-  margin: 0 0 var(--space-4);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-lg);
-}
-
-.form {
-  display: grid;
-  gap: var(--space-3);
-}
-
-.field {
-  display: grid;
-  gap: 6px;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-}
-
-.field input {
-  width: 100%;
-  border: 1px solid var(--color-border-soft);
-  border-radius: var(--radius-sm);
-  padding: 0.65rem 0.7rem;
-  font-size: var(--font-size-sm);
-  background: var(--color-surface-card-elevated);
-}
-
-.btn {
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 0.7rem 0.9rem;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  cursor: pointer;
-}
-
-.btn-primary {
-  color: #fff;
-  background: linear-gradient(140deg, var(--color-brand-primary), var(--color-brand-primary-strong));
-}
-
-.btn-secondary {
-  color: var(--color-text-primary);
-  background: #ece7dc;
-}
-
-.btn-google {
-  color: #123f73;
-  background: #e8f1ff;
+  --ui-card-padding: var(--space-5);
 }
 
 .divider {
