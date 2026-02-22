@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aMushroom Account</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/tokens.css" />
+  <link rel="stylesheet" href="/styles/auth.css" />
+</head>
+<body>
+  <main class="auth-page">
+    <header class="auth-header">
+      <div>
+        <h1 class="auth-title">aMushroom Account</h1>
+        <p class="auth-subtitle">Create an account, sign in, and manage your upload history.</p>
+      </div>
+      <a class="auth-link" href="/">Back to Identifier</a>
+    </header>
+
+    <p id="authStatus" class="auth-status" aria-live="polite"></p>
+
+    <section id="signedOut" class="auth-grid">
+      <article class="card">
+        <h2 class="card-title">Create account</h2>
+        <form id="registerForm" class="form">
+          <label class="field">
+            <span>Name</span>
+            <input type="text" name="name" autocomplete="name" />
+          </label>
+          <label class="field">
+            <span>Email</span>
+            <input type="email" name="email" autocomplete="email" required />
+          </label>
+          <label class="field">
+            <span>Password</span>
+            <input type="password" name="password" autocomplete="new-password" required />
+          </label>
+          <button class="btn btn-primary" type="submit">Create account</button>
+        </form>
+      </article>
+
+      <article class="card">
+        <h2 class="card-title">Sign in</h2>
+        <form id="loginForm" class="form">
+          <label class="field">
+            <span>Email</span>
+            <input type="email" name="email" autocomplete="email" required />
+          </label>
+          <label class="field">
+            <span>Password</span>
+            <input type="password" name="password" autocomplete="current-password" required />
+          </label>
+          <button class="btn btn-primary" type="submit">Sign in</button>
+        </form>
+
+        <div class="divider">or</div>
+        <button id="googleButton" class="btn btn-google" type="button">Continue with Google</button>
+      </article>
+    </section>
+
+    <section id="signedIn" class="card" hidden>
+      <div class="signed-in-head">
+        <div>
+          <h2 class="card-title">Account</h2>
+          <p id="userLine" class="meta"></p>
+        </div>
+        <button id="logoutButton" class="btn btn-secondary" type="button">Log out</button>
+      </div>
+
+      <h3 class="subheading">Recent uploads</h3>
+      <div id="uploadsList" class="uploads"></div>
+    </section>
+  </main>
+
+  <script src="/scripts/auth.js" defer></script>
+</body>
+</html>

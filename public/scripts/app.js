@@ -179,11 +179,16 @@
   async function identifyWithApi(files) {
     const images = await Promise.all(files.map(fileToBase64));
     const photoRoles = files.map((_, index) => roleForIndex(index));
+    const imageMeta = files.map((file) => ({
+      filename: file.name,
+      mimeType: file.type || 'application/octet-stream',
+      size: file.size
+    }));
 
     const response = await fetch('/api/identify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ images, photoRoles })
+      body: JSON.stringify({ images, photoRoles, imageMeta })
     });
 
     const payload = await response.json().catch(() => ({}));
