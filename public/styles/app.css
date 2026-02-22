@@ -1,3 +1,5 @@
+@import url("/styles/components.css");
+
 * {
   box-sizing: border-box;
 }
@@ -66,11 +68,9 @@ body {
 
 .panel {
   margin-top: var(--space-6);
-  background: var(--color-surface-card);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  padding: var(--space-6);
+  --ui-card-padding: var(--space-6);
+  --ui-card-radius: var(--radius-lg);
+  --ui-card-border: rgba(0, 0, 0, 0.04);
 }
 
 .lead {
@@ -112,41 +112,10 @@ body {
 .file-input {
   flex: 1;
   min-width: 250px;
-  border: 1px solid var(--color-border-soft);
-  background: var(--color-surface-card-elevated);
-  border-radius: var(--radius-sm);
-  padding: 0.55rem 0.7rem;
-}
-
-.button {
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 0.75rem 1rem;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.2s ease;
-}
-
-.button--primary {
-  color: #fff;
-  background: linear-gradient(140deg, var(--color-brand-primary), var(--color-brand-primary-strong));
-}
-
-.button:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-.button:not(:disabled):hover {
-  transform: translateY(-1px);
 }
 
 .status {
   margin: 0 0 var(--space-4);
-  min-height: 1.2em;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
 }
 
 .preview-grid {
@@ -326,16 +295,6 @@ body {
   font-size: var(--font-size-sm);
 }
 
-.link {
-  color: var(--color-state-info-text);
-  text-decoration: none;
-  font-weight: var(--font-weight-semibold);
-}
-
-.link:hover {
-  text-decoration: underline;
-}
-
 .ref-image {
   width: min(290px, 100%);
   border-radius: var(--radius-sm);
@@ -380,14 +339,7 @@ body {
 }
 
 .site-footer__link {
-  color: var(--color-state-info-text);
-  text-decoration: none;
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-}
-
-.site-footer__link:hover {
-  text-decoration: underline;
 }
 
 .site-footer__meta {

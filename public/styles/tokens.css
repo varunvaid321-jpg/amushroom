@@ -7,6 +7,7 @@
   --color-surface-card: #fffdf8;
   --color-surface-card-elevated: #ffffff;
   --color-surface-subtle: #f7f3ea;
+  --color-surface-overlay: rgba(31, 28, 23, 0.58);
 
   --color-text-primary: #1f1c17;
   --color-text-secondary: #5d564b;
@@ -22,9 +23,11 @@
   --color-state-info-text: #1a4d90;
   --color-state-neutral-bg: #ece8df;
   --color-state-neutral-text: #5a544a;
+  --color-state-focus-ring: rgba(31, 122, 79, 0.16);
 
   --color-border-soft: #e3dac9;
   --color-border-strong: #cdc3b3;
+  --color-border-focus: #2f8d5d;
 
   --font-heading: "Sora", "Avenir Next", "Segoe UI", sans-serif;
   --font-body: "Avenir Next", "Segoe UI", sans-serif;
@@ -45,13 +48,17 @@
   --radius-lg: 20px;
   --radius-pill: 999px;
 
+  --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
   --space-4: 1rem;
   --space-5: 1.25rem;
   --space-6: 1.5rem;
+  --space-7: 1.75rem;
   --space-8: 2rem;
+  --space-10: 2.5rem;
 
   --shadow-card: 0 16px 30px rgba(31, 28, 23, 0.1);
   --shadow-hero: 0 20px 40px rgba(31, 28, 23, 0.18);
+  --shadow-overlay: 0 24px 60px rgba(31, 28, 23, 0.18);
 }

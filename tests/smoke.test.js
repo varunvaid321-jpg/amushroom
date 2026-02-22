@@ -13,6 +13,7 @@ test('core production files exist', () => {
   const required = [
     'server.js',
     'public/index.html',
+    'public/auth.html',
     'public/terms.html',
     'public/privacy.html',
     'public/refund.html',
@@ -20,8 +21,10 @@ test('core production files exist', () => {
     'public/sitemap.xml',
     'public/styles/tokens.css',
     'public/styles/app.css',
+    'public/styles/auth.css',
     'public/styles/legal.css',
     'public/scripts/app.js',
+    'public/scripts/auth.js',
     'design/tokens/tokens.json',
     'backlog/BACKLOG.md',
     'render.yaml',

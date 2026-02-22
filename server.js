@@ -1,6 +1,40 @@
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
+const {
+  SESSION_COOKIE_NAME,
+  normalizeEmail,
+  validateEmail,
+  validatePassword,
+  hashPassword,
+  verifyPassword,
+  createId,
+  parseCookies,
+  buildSessionCookie,
+  buildClearSessionCookie
+} = require('./src/auth');
+const {
+  createOAuthState,
+  consumeOAuthState,
+  buildGoogleAuthUrl,
+  exchangeCodeForTokens,
+  fetchGoogleProfile
+} = require('./src/google-oauth');
+const {
+  createUser,
+  getPublicUser,
+  findUserAuthByEmail,
+  findUserAuthByGoogleSub,
+  attachGoogleIdentity,
+  updateUserName,
+  createSession,
+  getSessionWithUser,
+  touchSession,
+  deleteSession,
+  deleteExpiredSessions,
+  createUploadRecord,
+  listUserUploads
+} = require('./src/db');
 
 const ROOT = __dirname;
 const PUBLIC_DIR = path.join(ROOT, 'public');
@@ -35,7 +69,32 @@ const MIX_CONFIDENCE_THRESHOLD = Number(process.env.MIX_CONFIDENCE_THRESHOLD || 
 const IDENTIFY_RATE_LIMIT_ENABLED = process.env.IDENTIFY_RATE_LIMIT_ENABLED !== 'false';
 const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS || 60_000);
 const RATE_LIMIT_MAX = Number(process.env.RATE_LIMIT_MAX || 20);
+const AUTH_RATE_LIMIT_ENABLED = process.env.AUTH_RATE_LIMIT_ENABLED !== 'false';
+const AUTH_RATE_LIMIT_WINDOW_MS = Number(process.env.AUTH_RATE_LIMIT_WINDOW_MS || 15 * 60_000);
+const AUTH_RATE_LIMIT_MAX = Number(process.env.AUTH_RATE_LIMIT_MAX || 40);
 const APP_BASE_URL = process.env.APP_BASE_URL || 'https://amushroom.com';
+const TRUST_PROXY = process.env.TRUST_PROXY === 'true';
+const SESSION_TTL_DAYS = Number(process.env.SESSION_TTL_DAYS || 30);
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
+const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || `${APP_BASE_URL}/api/auth/google/callback`;
+const MAX_IMAGE_BYTES = Number(process.env.MAX_IMAGE_BYTES || 8 * 1024 * 1024);
+const MAX_IMAGE_BASE64_CHARS = Math.ceil((MAX_IMAGE_BYTES * 4) / 3) + 8;
+const MAX_UPLOAD_IMAGES = 5;
+// Covers 5 images at MAX_IMAGE_BYTES each plus base64 and JSON overhead before payload validation runs.
+const IDENTIFY_BODY_MAX_BYTES = Math.ceil((MAX_IMAGE_BYTES * MAX_UPLOAD_IMAGES * 4) / 3) + 1024 * 1024;
+const MIX_CHECK_TRIGGER_TOP_CONFIDENCE = 90;
+const MIX_CHECK_TRIGGER_MARGIN = 15;
+
+const ALLOWED_IMAGE_MIME_TYPES = new Set([
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+  'image/heic',
+  'image/heif',
+  'image/gif'
+]);
 
 const REQUESTED_DETAILS = [
   'common_names',
@@ -54,6 +113,7 @@ const REQUESTED_DETAILS = [
 ];
 
 const TRAIT_FALLBACK = 'Key visible markers were limited in this photo set. Add clear close-ups of cap, gills, and stalk.';
+const SESSION_CLEANUP_INTERVAL_MS = 15 * 60 * 1000;
 
 const CONTENT_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -69,7 +129,13 @@ const CONTENT_TYPES = {
   '.ico': 'image/x-icon'
 };
 
-const rateLimitStore = new Map();
+const identifyRateLimitStore = new Map();
+const authRateLimitStore = new Map();
+
+deleteExpiredSessions();
+setInterval(() => {
+  deleteExpiredSessions();
+}, SESSION_CLEANUP_INTERVAL_MS).unref();
 
 function securityHeaders(req) {
   const headers = {
@@ -102,6 +168,7 @@ function sendJson(req, res, status, payload, extraHeaders = {}) {
   res.writeHead(status, {
     ...securityHeaders(req),
     ...extraHeaders,
+    'Cache-Control': 'no-store',
     'Content-Type': 'application/json; charset=utf-8'
   });
   res.end(JSON.stringify(payload));
@@ -122,35 +189,89 @@ function serveFile(req, res, filePath) {
 }
 
 function getClientIp(req) {
-  const forwardedFor = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
-  if (forwardedFor) return forwardedFor;
+  if (TRUST_PROXY) {
+    const forwardedFor = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+    if (forwardedFor) return forwardedFor;
+  }
   if (req.socket?.remoteAddress) return req.socket.remoteAddress;
   return 'unknown';
 }
 
-function checkRateLimit(ip) {
+function checkRateLimit(store, key, windowMs, maxRequests) {
   const now = Date.now();
-  const current = rateLimitStore.get(ip);
+  const current = store.get(key);
   let entry = current;
 
   if (!entry || now >= entry.resetAt) {
-    entry = { count: 0, resetAt: now + RATE_LIMIT_WINDOW_MS };
+    entry = { count: 0, resetAt: now + windowMs };
   }
 
   entry.count += 1;
-  rateLimitStore.set(ip, entry);
+  store.set(key, entry);
 
-  if (rateLimitStore.size > 5000) {
-    for (const [key, value] of rateLimitStore.entries()) {
-      if (now >= value.resetAt) rateLimitStore.delete(key);
+  if (store.size > 5000) {
+    for (const [mapKey, value] of store.entries()) {
+      if (now >= value.resetAt) store.delete(mapKey);
     }
   }
 
-  if (entry.count > RATE_LIMIT_MAX) {
+  if (entry.count > maxRequests) {
     return { limited: true, retryAfterSec: Math.max(1, Math.ceil((entry.resetAt - now) / 1000)) };
   }
 
   return { limited: false, retryAfterSec: 0 };
+}
+
+function getRequestOrigin(req) {
+  const forwardedProto = TRUST_PROXY ? String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim() : '';
+  const proto = forwardedProto || (req.socket?.encrypted ? 'https' : 'http');
+  const forwardedHost = TRUST_PROXY ? String(req.headers['x-forwarded-host'] || '').split(',')[0].trim() : '';
+  const host = forwardedHost || String(req.headers.host || '').trim();
+  if (!host) return null;
+  return `${proto}://${host}`;
+}
+
+function getAllowedOrigins(req) {
+  const allowed = new Set();
+  const requestOrigin = getRequestOrigin(req);
+  if (requestOrigin) allowed.add(requestOrigin);
+
+  try {
+    allowed.add(new URL(APP_BASE_URL).origin);
+  } catch {
+    // Ignore malformed APP_BASE_URL.
+  }
+
+  return allowed;
+}
+
+function isSameOriginOrNoOrigin(req) {
+  const originHeader = String(req.headers.origin || '').trim();
+  if (!originHeader) return true;
+
+  let origin;
+  try {
+    origin = new URL(originHeader).origin;
+  } catch {
+    return false;
+  }
+
+  return getAllowedOrigins(req).has(origin);
+}
+
+function requireSameOrigin(req, res) {
+  if (isSameOriginOrNoOrigin(req)) return true;
+  jsonError(req, res, 403, 'Blocked by origin policy.');
+  return false;
+}
+
+function enforceRouteRateLimit(req, res, store, windowMs, maxRequests, message) {
+  const ip = getClientIp(req);
+  const outcome = checkRateLimit(store, ip, windowMs, maxRequests);
+  if (!outcome.limited) return true;
+
+  sendJson(req, res, 429, { error: message }, { 'Retry-After': String(outcome.retryAfterSec) });
+  return false;
 }
 
 function parseBody(req, maxBytes = 25 * 1024 * 1024) {
@@ -179,6 +300,69 @@ function parseBody(req, maxBytes = 25 * 1024 * 1024) {
 
     req.on('error', () => reject(new Error('Failed to read request body.')));
   });
+}
+
+function jsonError(req, res, status, message) {
+  sendJson(req, res, status, { error: message });
+}
+
+function getSessionTtlSeconds() {
+  const days = Number.isFinite(SESSION_TTL_DAYS) ? SESSION_TTL_DAYS : 30;
+  return Math.max(1, Math.floor(days * 24 * 60 * 60));
+}
+
+function computeSessionExpiryIso() {
+  const ms = getSessionTtlSeconds() * 1000;
+  return new Date(Date.now() + ms).toISOString();
+}
+
+function toPublicUser(userRow) {
+  if (!userRow) return null;
+  return {
+    id: userRow.id,
+    email: userRow.email,
+    name: userRow.name || '',
+    emailVerified: Boolean(userRow.email_verified ?? userRow.emailVerified),
+    createdAt: userRow.created_at || userRow.createdAt,
+    updatedAt: userRow.updated_at || userRow.updatedAt
+  };
+}
+
+function getAuthContext(req) {
+  const cookies = parseCookies(req);
+  const sessionId = cookies[SESSION_COOKIE_NAME];
+  if (!sessionId) return null;
+
+  const session = getSessionWithUser(sessionId);
+  if (!session) return null;
+
+  const expiresAt = new Date(session.expires_at).getTime();
+  if (!Number.isFinite(expiresAt) || expiresAt < Date.now()) {
+    deleteSession(sessionId);
+    return null;
+  }
+
+  touchSession(sessionId);
+  return {
+    sessionId,
+    user: toPublicUser(session)
+  };
+}
+
+function setSession(res, req, sessionId) {
+  res.setHeader('Set-Cookie', buildSessionCookie(req, sessionId, getSessionTtlSeconds()));
+}
+
+function clearSession(res, req) {
+  res.setHeader('Set-Cookie', buildClearSessionCookie(req));
+}
+
+function redirect(req, res, location) {
+  res.writeHead(302, {
+    ...securityHeaders(req),
+    Location: location
+  });
+  res.end();
 }
 
 function firstText(value) {
@@ -518,6 +702,297 @@ async function runConsistencyCheck(images) {
   };
 }
 
+function shouldRunConsistencyCheck(images, matches) {
+  if (!ENABLE_MIX_CHECK || images.length < 2) return false;
+  if (!Array.isArray(matches) || matches.length < 2) return true;
+
+  const topScore = Number(matches[0]?.score || 0);
+  const secondScore = Number(matches[1]?.score || 0);
+  if (!Number.isFinite(topScore) || !Number.isFinite(secondScore)) return true;
+
+  const margin = topScore - secondScore;
+  return topScore < MIX_CHECK_TRIGGER_TOP_CONFIDENCE || margin < MIX_CHECK_TRIGGER_MARGIN;
+}
+
+function sanitizeReturnPath(value, fallback = '/') {
+  const text = String(value || '').trim();
+  if (!text) return fallback;
+  if (text.length > 200) return fallback;
+  if (/[\r\n]/.test(text)) return fallback;
+  if (!text.startsWith('/')) return fallback;
+  if (text.startsWith('//')) return fallback;
+  return text;
+}
+
+function decodedBase64Size(base64) {
+  const normalized = String(base64 || '').replace(/\s+/g, '');
+  const length = normalized.length;
+  const padding = normalized.endsWith('==') ? 2 : normalized.endsWith('=') ? 1 : 0;
+  return Math.floor((length * 3) / 4) - padding;
+}
+
+function validateImagePayload(images, imageMeta) {
+  for (let i = 0; i < images.length; i += 1) {
+    const base64 = String(images[i] || '').replace(/\s+/g, '');
+    if (!base64) {
+      return `Image ${i + 1} is empty.`;
+    }
+    if (base64.length > MAX_IMAGE_BASE64_CHARS) {
+      return `Image ${i + 1} exceeds ${Math.floor(MAX_IMAGE_BYTES / (1024 * 1024))}MB.`;
+    }
+    if (!/^[A-Za-z0-9+/=]+$/.test(base64)) {
+      return `Image ${i + 1} uses an unsupported encoding format.`;
+    }
+
+    const sizeBytes = decodedBase64Size(base64);
+    if (!Number.isFinite(sizeBytes) || sizeBytes <= 0 || sizeBytes > MAX_IMAGE_BYTES) {
+      return `Image ${i + 1} exceeds ${Math.floor(MAX_IMAGE_BYTES / (1024 * 1024))}MB.`;
+    }
+
+    const meta = Array.isArray(imageMeta) ? imageMeta[i] || {} : {};
+    const mimeType = String(meta.mimeType || '').trim().toLowerCase();
+    if (mimeType && !ALLOWED_IMAGE_MIME_TYPES.has(mimeType)) {
+      return `Image ${i + 1} has unsupported file type (${mimeType}).`;
+    }
+  }
+
+  return '';
+}
+
+function isGoogleAuthConfigured() {
+  return Boolean(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET && GOOGLE_REDIRECT_URI);
+}
+
+async function handleAuthRegister(req, res) {
+  let body;
+  try {
+    body = await parseBody(req, 2 * 1024 * 1024);
+  } catch (error) {
+    jsonError(req, res, 400, error.message);
+    return;
+  }
+
+  const email = normalizeEmail(body.email);
+  const password = String(body.password || '');
+  const name = String(body.name || '').trim();
+
+  const emailCheck = validateEmail(email);
+  if (!emailCheck.valid) {
+    jsonError(req, res, 400, emailCheck.message);
+    return;
+  }
+
+  const passwordCheck = validatePassword(password);
+  if (!passwordCheck.valid) {
+    jsonError(req, res, 400, passwordCheck.message);
+    return;
+  }
+
+  if (findUserAuthByEmail(email)) {
+    jsonError(req, res, 409, 'An account with this email already exists.');
+    return;
+  }
+
+  const hashed = hashPassword(password);
+  const user = createUser({
+    email,
+    name,
+    passwordHash: hashed.hash,
+    passwordSalt: hashed.salt,
+    googleSub: null,
+    emailVerified: false
+  });
+
+  const sessionId = createId();
+  createSession({
+    sessionId,
+    userId: user.id,
+    expiresAt: computeSessionExpiryIso(),
+    ip: getClientIp(req),
+    userAgent: String(req.headers['user-agent'] || '')
+  });
+  setSession(res, req, sessionId);
+
+  sendJson(req, res, 201, { user });
+}
+
+async function handleAuthLogin(req, res) {
+  let body;
+  try {
+    body = await parseBody(req, 2 * 1024 * 1024);
+  } catch (error) {
+    jsonError(req, res, 400, error.message);
+    return;
+  }
+
+  const email = normalizeEmail(body.email);
+  const password = String(body.password || '');
+
+  const userRow = findUserAuthByEmail(email);
+  if (!userRow || !userRow.password_hash || !userRow.password_salt) {
+    jsonError(req, res, 401, 'Invalid email or password.');
+    return;
+  }
+
+  const ok = verifyPassword(password, userRow.password_salt, userRow.password_hash);
+  if (!ok) {
+    jsonError(req, res, 401, 'Invalid email or password.');
+    return;
+  }
+
+  const sessionId = createId();
+  createSession({
+    sessionId,
+    userId: userRow.id,
+    expiresAt: computeSessionExpiryIso(),
+    ip: getClientIp(req),
+    userAgent: String(req.headers['user-agent'] || '')
+  });
+  setSession(res, req, sessionId);
+
+  sendJson(req, res, 200, { user: getPublicUser(userRow.id) });
+}
+
+function handleAuthLogout(req, res) {
+  const cookies = parseCookies(req);
+  const sessionId = cookies[SESSION_COOKIE_NAME];
+  if (sessionId) {
+    deleteSession(sessionId);
+  }
+  clearSession(res, req);
+  sendJson(req, res, 200, { ok: true });
+}
+
+function handleAuthMe(req, res) {
+  const auth = getAuthContext(req);
+  sendJson(req, res, 200, { user: auth?.user || null });
+}
+
+function handleGoogleStart(req, res, url) {
+  if (!isGoogleAuthConfigured()) {
+    jsonError(req, res, 503, 'Google OAuth is not configured.');
+    return;
+  }
+
+  const state = createId();
+  const returnTo = sanitizeReturnPath(url.searchParams.get('returnTo') || '/auth.html', '/auth.html');
+  createOAuthState(state, returnTo);
+
+  const authUrl = buildGoogleAuthUrl({
+    clientId: GOOGLE_CLIENT_ID,
+    redirectUri: GOOGLE_REDIRECT_URI,
+    state
+  });
+
+  redirect(req, res, authUrl);
+}
+
+async function handleGoogleCallback(req, res, url) {
+  const state = url.searchParams.get('state');
+  const code = url.searchParams.get('code');
+  const authError = url.searchParams.get('error');
+
+  if (authError) {
+    redirect(req, res, '/auth.html?error=google_auth_denied');
+    return;
+  }
+
+  if (!state || !code) {
+    redirect(req, res, '/auth.html?error=google_auth_invalid');
+    return;
+  }
+
+  const stateValue = consumeOAuthState(state);
+  if (!stateValue) {
+    redirect(req, res, '/auth.html?error=google_auth_state');
+    return;
+  }
+
+  if (!isGoogleAuthConfigured()) {
+    redirect(req, res, '/auth.html?error=google_auth_unavailable');
+    return;
+  }
+
+  let profile;
+  try {
+    const tokens = await exchangeCodeForTokens({
+      code,
+      clientId: GOOGLE_CLIENT_ID,
+      clientSecret: GOOGLE_CLIENT_SECRET,
+      redirectUri: GOOGLE_REDIRECT_URI
+    });
+    profile = await fetchGoogleProfile(tokens.access_token);
+  } catch {
+    redirect(req, res, '/auth.html?error=google_auth_failed');
+    return;
+  }
+
+  if (!profile.email || !profile.sub) {
+    redirect(req, res, '/auth.html?error=google_profile_invalid');
+    return;
+  }
+
+  let user = findUserAuthByGoogleSub(profile.sub);
+  if (!user) {
+    const existingByEmail = findUserAuthByEmail(normalizeEmail(profile.email));
+    if (existingByEmail) {
+      attachGoogleIdentity({
+        userId: existingByEmail.id,
+        googleSub: profile.sub,
+        emailVerified: profile.emailVerified
+      });
+      if (profile.name && !existingByEmail.name) {
+        updateUserName({ userId: existingByEmail.id, name: profile.name });
+      }
+      user = findUserAuthByGoogleSub(profile.sub);
+    } else {
+      createUser({
+        email: normalizeEmail(profile.email),
+        name: profile.name,
+        passwordHash: null,
+        passwordSalt: null,
+        googleSub: profile.sub,
+        emailVerified: profile.emailVerified
+      });
+      user = findUserAuthByGoogleSub(profile.sub);
+    }
+  }
+
+  if (!user) {
+    redirect(req, res, '/auth.html?error=google_auth_failed');
+    return;
+  }
+
+  const sessionId = createId();
+  createSession({
+    sessionId,
+    userId: user.id,
+    expiresAt: computeSessionExpiryIso(),
+    ip: getClientIp(req),
+    userAgent: String(req.headers['user-agent'] || '')
+  });
+  setSession(res, req, sessionId);
+  redirect(req, res, sanitizeReturnPath(stateValue.returnTo || '/auth.html', '/auth.html'));
+}
+
+function handleUserUploads(req, res, url) {
+  const auth = getAuthContext(req);
+  if (!auth?.user?.id) {
+    jsonError(req, res, 401, 'Authentication required.');
+    return;
+  }
+
+  const limit = Number(url.searchParams.get('limit') || 20);
+  const uploads = listUserUploads(auth.user.id, limit);
+  sendJson(req, res, 200, { uploads });
+}
+
+function handleAuthConfig(req, res) {
+  sendJson(req, res, 200, {
+    googleAuthEnabled: isGoogleAuthConfigured()
+  });
+}
+
 async function handleIdentify(req, res) {
   if (!process.env.MUSHROOM_API_KEY) {
     sendJson(req, res, 500, { error: 'Server missing MUSHROOM_API_KEY.' });
@@ -526,7 +1001,7 @@ async function handleIdentify(req, res) {
 
   let body;
   try {
-    body = await parseBody(req);
+    body = await parseBody(req, IDENTIFY_BODY_MAX_BYTES);
   } catch (error) {
     sendJson(req, res, 400, { error: error.message });
     return;
@@ -534,14 +1009,21 @@ async function handleIdentify(req, res) {
 
   const images = Array.isArray(body.images) ? body.images.filter((item) => typeof item === 'string' && item.trim()) : [];
   const photoRoles = Array.isArray(body.photoRoles) ? body.photoRoles.slice(0, images.length) : [];
+  const imageMeta = Array.isArray(body.imageMeta) ? body.imageMeta.slice(0, images.length) : [];
   const uploadGuidance = buildUploadGuidance(photoRoles, images.length);
+  const auth = getAuthContext(req);
 
-  if (images.length < 1 || images.length > 5) {
-    sendJson(req, res, 400, { error: 'Provide between 1 and 5 images.' });
+  if (images.length < 1 || images.length > MAX_UPLOAD_IMAGES) {
+    sendJson(req, res, 400, { error: `Provide between 1 and ${MAX_UPLOAD_IMAGES} images.` });
     return;
   }
 
-  const consistencyPromise = runConsistencyCheck(images).catch(() => null);
+  const imageValidationError = validateImagePayload(images, imageMeta);
+  if (imageValidationError) {
+    sendJson(req, res, 400, { error: imageValidationError });
+    return;
+  }
+
   let parsed;
   try {
     parsed = await requestIdentification(images, true);
@@ -557,8 +1039,36 @@ async function handleIdentify(req, res) {
     return;
   }
 
-  const consistencyCheck = await consistencyPromise;
-  sendJson(req, res, 200, { matches, uploadGuidance, consistencyCheck });
+  let consistencyCheck = null;
+  if (shouldRunConsistencyCheck(images, matches)) {
+    consistencyCheck = await runConsistencyCheck(images).catch(() => null);
+  } else {
+    consistencyCheck = {
+      likelyMixed: false,
+      message: 'Photo consistency check skipped because the top match was already high-confidence and clearly ahead.',
+      perPhoto: []
+    };
+  }
+
+  let uploadId = null;
+  if (auth?.user?.id) {
+    try {
+      uploadId = createUploadRecord({
+        userId: auth.user.id,
+        sessionId: auth.sessionId || null,
+        images,
+        imageMeta,
+        photoRoles,
+        matches,
+        consistencyCheck
+      });
+    } catch {
+      sendJson(req, res, 500, { error: 'Failed to persist upload record.' });
+      return;
+    }
+  }
+
+  sendJson(req, res, 200, { matches, uploadGuidance, consistencyCheck, uploadId });
 }
 
 function handleDesignTokens(req, res) {
@@ -607,26 +1117,109 @@ const server = http.createServer(async (req, res) => {
     sendJson(req, res, ready ? 200 : 503, {
       status: ready ? 'ready' : 'not_ready',
       checks: {
-        apiKeyConfigured: ready
+        apiKeyConfigured: ready,
+        databaseReady: true
       }
     });
     return;
   }
 
+  if (req.method === 'GET' && url.pathname === '/api/auth/config') {
+    handleAuthConfig(req, res);
+    return;
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/auth/me') {
+    handleAuthMe(req, res);
+    return;
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/auth/register') {
+    if (!requireSameOrigin(req, res)) return;
+    if (
+      AUTH_RATE_LIMIT_ENABLED &&
+      !enforceRouteRateLimit(
+        req,
+        res,
+        authRateLimitStore,
+        AUTH_RATE_LIMIT_WINDOW_MS,
+        AUTH_RATE_LIMIT_MAX,
+        'Too many authentication attempts. Please try again later.'
+      )
+    ) {
+      return;
+    }
+    await handleAuthRegister(req, res);
+    return;
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/auth/login') {
+    if (!requireSameOrigin(req, res)) return;
+    if (
+      AUTH_RATE_LIMIT_ENABLED &&
+      !enforceRouteRateLimit(
+        req,
+        res,
+        authRateLimitStore,
+        AUTH_RATE_LIMIT_WINDOW_MS,
+        AUTH_RATE_LIMIT_MAX,
+        'Too many authentication attempts. Please try again later.'
+      )
+    ) {
+      return;
+    }
+    await handleAuthLogin(req, res);
+    return;
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/auth/logout') {
+    if (!requireSameOrigin(req, res)) return;
+    handleAuthLogout(req, res);
+    return;
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/auth/google') {
+    if (
+      AUTH_RATE_LIMIT_ENABLED &&
+      !enforceRouteRateLimit(
+        req,
+        res,
+        authRateLimitStore,
+        AUTH_RATE_LIMIT_WINDOW_MS,
+        AUTH_RATE_LIMIT_MAX,
+        'Too many authentication attempts. Please try again later.'
+      )
+    ) {
+      return;
+    }
+    handleGoogleStart(req, res, url);
+    return;
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/auth/google/callback') {
+    await handleGoogleCallback(req, res, url);
+    return;
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/user/uploads') {
+    handleUserUploads(req, res, url);
+    return;
+  }
+
   if (req.method === 'POST' && url.pathname === '/api/identify') {
-    if (IDENTIFY_RATE_LIMIT_ENABLED) {
-      const clientIp = getClientIp(req);
-      const rateLimit = checkRateLimit(clientIp);
-      if (rateLimit.limited) {
-        sendJson(
-          req,
-          res,
-          429,
-          { error: 'Too many requests. Please wait and try again.' },
-          { 'Retry-After': String(rateLimit.retryAfterSec) }
-        );
-        return;
-      }
+    if (!requireSameOrigin(req, res)) return;
+    if (
+      IDENTIFY_RATE_LIMIT_ENABLED &&
+      !enforceRouteRateLimit(
+        req,
+        res,
+        identifyRateLimitStore,
+        RATE_LIMIT_WINDOW_MS,
+        RATE_LIMIT_MAX,
+        'Too many requests. Please wait and try again.'
+      )
+    ) {
+      return;
     }
 
     await handleIdentify(req, res);

@@ -1,0 +1,106 @@
+@import url("/styles/components.css");
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  background: linear-gradient(140deg, #f4f0e8 0%, #eee8dc 100%);
+}
+
+.auth-page {
+  width: min(1040px, 92vw);
+  margin: 2rem auto 3rem;
+}
+
+.auth-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-3);
+  align-items: baseline;
+  margin-bottom: var(--space-4);
+}
+
+.auth-title {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.8vw, 2.1rem);
+  font-family: var(--font-heading);
+}
+
+.auth-subtitle {
+  margin: var(--space-2) 0 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.auth-link {
+  font-size: var(--font-size-sm);
+}
+
+.auth-status {
+  margin: 0 0 var(--space-4);
+}
+
+.auth-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.card {
+  --ui-card-padding: var(--space-5);
+}
+
+.divider {
+  margin: var(--space-4) 0 var(--space-3);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.signed-in-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-3);
+  align-items: baseline;
+}
+
+.meta {
+  margin: var(--space-2) 0 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.subheading {
+  margin: var(--space-5) 0 var(--space-3);
+  font-size: var(--font-size-md);
+  font-family: var(--font-heading);
+}
+
+.uploads {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.upload-item {
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  background: var(--color-surface-subtle);
+}
+
+.upload-item p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+}
+
+.upload-item p + p {
+  margin-top: 4px;
+}
