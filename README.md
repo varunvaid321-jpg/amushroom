@@ -30,6 +30,10 @@ Optional tuning:
 ```env
 ENABLE_MIX_CHECK=true
 MIX_CONFIDENCE_THRESHOLD=75
+IDENTIFY_RATE_LIMIT_ENABLED=true
+RATE_LIMIT_WINDOW_MS=60000
+RATE_LIMIT_MAX=20
+APP_BASE_URL=https://amushroom.com
 ```
 
 3. Start server:
@@ -69,9 +73,15 @@ This keeps web and app visually consistent while allowing platform-specific comp
 ## Deployment
 
 1. Deploy to Render/Railway/Fly.io.
-2. Set env vars: `MUSHROOM_API_KEY`, `MUSHROOM_API_URL`, `MUSHROOM_API_LANGUAGE`, `HOST`, `PORT`.
+   - Render blueprint included: `render.yaml`
+2. Set env vars: `MUSHROOM_API_KEY`, `MUSHROOM_API_URL`, `MUSHROOM_API_LANGUAGE`, `ENABLE_MIX_CHECK`, `MIX_CONFIDENCE_THRESHOLD`, `IDENTIFY_RATE_LIMIT_ENABLED`, `RATE_LIMIT_WINDOW_MS`, `RATE_LIMIT_MAX`, `APP_BASE_URL`, `HOST`, `PORT`.
 3. Point `amushroom.com` DNS to deployed service.
 4. Enable HTTPS and uptime monitoring.
+
+Health endpoints:
+
+- `GET /healthz` (liveness)
+- `GET /readyz` (readiness, includes API key check)
 
 ## Engineering Workflow
 
@@ -87,9 +97,9 @@ npm run check
 npm test
 ```
 
-Backlog files live in:
+Canonical backlog file:
 
-- `backlog/`
+- `/Users/varunvaid/Documents/projects/mushroom-identifier/backlog/BACKLOG.md`
 
 ## Safety
 
@@ -100,3 +110,18 @@ Results are best-effort visual predictions. Never consume wild mushrooms without
 - The backend runs a per-photo consistency check to detect likely mixed-species uploads.
 - If two photos strongly match different species, UI shows a warning in the summary.
 - This uses per-image classification checks, not OCR.
+
+## Legal and Commercial Baseline
+
+Included public policy pages:
+
+- `/terms.html`
+- `/privacy.html`
+- `/refund.html`
+
+SEO and crawler baseline:
+
+- `/robots.txt`
+- `/sitemap.xml`
+
+Important: legal pages are starter drafts and must be reviewed by qualified counsel before launch.

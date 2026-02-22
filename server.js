@@ -32,6 +32,10 @@ const API_URL = process.env.MUSHROOM_API_URL || 'https://mushroom.kindwise.com/a
 const API_LANGUAGE = process.env.MUSHROOM_API_LANGUAGE || 'en';
 const ENABLE_MIX_CHECK = process.env.ENABLE_MIX_CHECK !== 'false';
 const MIX_CONFIDENCE_THRESHOLD = Number(process.env.MIX_CONFIDENCE_THRESHOLD || 75);
+const IDENTIFY_RATE_LIMIT_ENABLED = process.env.IDENTIFY_RATE_LIMIT_ENABLED !== 'false';
+const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS || 60_000);
+const RATE_LIMIT_MAX = Number(process.env.RATE_LIMIT_MAX || 20);
+const APP_BASE_URL = process.env.APP_BASE_URL || 'https://amushroom.com';
 
 const REQUESTED_DETAILS = [
   'common_names',
@@ -56,6 +60,8 @@ const CONTENT_TYPES = {
   '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
+  '.txt': 'text/plain; charset=utf-8',
+  '.xml': 'application/xml; charset=utf-8',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
@@ -63,31 +69,88 @@ const CONTENT_TYPES = {
   '.ico': 'image/x-icon'
 };
 
-function securityHeaders() {
-  return {
+const rateLimitStore = new Map();
+
+function securityHeaders(req) {
+  const headers = {
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
-    'Referrer-Policy': 'strict-origin-when-cross-origin'
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+    'Content-Security-Policy': [
+      "default-src 'self'",
+      "script-src 'self'",
+      "style-src 'self' https://fonts.googleapis.com",
+      "font-src 'self' https://fonts.gstatic.com data:",
+      "img-src 'self' data: https:",
+      "connect-src 'self'",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self'"
+    ].join('; ')
   };
+
+  const forwardedProto = String(req?.headers?.['x-forwarded-proto'] || '').split(',')[0].trim();
+  if (forwardedProto === 'https') {
+    headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains; preload';
+  }
+
+  return headers;
 }
 
-function sendJson(res, status, payload) {
-  res.writeHead(status, { ...securityHeaders(), 'Content-Type': 'application/json; charset=utf-8' });
+function sendJson(req, res, status, payload, extraHeaders = {}) {
+  res.writeHead(status, {
+    ...securityHeaders(req),
+    ...extraHeaders,
+    'Content-Type': 'application/json; charset=utf-8'
+  });
   res.end(JSON.stringify(payload));
 }
 
-function serveFile(res, filePath) {
+function serveFile(req, res, filePath) {
   fs.readFile(filePath, (err, data) => {
     if (err) {
-      sendJson(res, 404, { error: 'Not found' });
+      sendJson(req, res, 404, { error: 'Not found' });
       return;
     }
 
     const ext = path.extname(filePath).toLowerCase();
     const contentType = CONTENT_TYPES[ext] || 'application/octet-stream';
-    res.writeHead(200, { ...securityHeaders(), 'Content-Type': contentType });
+    res.writeHead(200, { ...securityHeaders(req), 'Content-Type': contentType });
     res.end(data);
   });
+}
+
+function getClientIp(req) {
+  const forwardedFor = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  if (forwardedFor) return forwardedFor;
+  if (req.socket?.remoteAddress) return req.socket.remoteAddress;
+  return 'unknown';
+}
+
+function checkRateLimit(ip) {
+  const now = Date.now();
+  const current = rateLimitStore.get(ip);
+  let entry = current;
+
+  if (!entry || now >= entry.resetAt) {
+    entry = { count: 0, resetAt: now + RATE_LIMIT_WINDOW_MS };
+  }
+
+  entry.count += 1;
+  rateLimitStore.set(ip, entry);
+
+  if (rateLimitStore.size > 5000) {
+    for (const [key, value] of rateLimitStore.entries()) {
+      if (now >= value.resetAt) rateLimitStore.delete(key);
+    }
+  }
+
+  if (entry.count > RATE_LIMIT_MAX) {
+    return { limited: true, retryAfterSec: Math.max(1, Math.ceil((entry.resetAt - now) / 1000)) };
+  }
+
+  return { limited: false, retryAfterSec: 0 };
 }
 
 function parseBody(req, maxBytes = 25 * 1024 * 1024) {
@@ -457,7 +520,7 @@ async function runConsistencyCheck(images) {
 
 async function handleIdentify(req, res) {
   if (!process.env.MUSHROOM_API_KEY) {
-    sendJson(res, 500, { error: 'Server missing MUSHROOM_API_KEY.' });
+    sendJson(req, res, 500, { error: 'Server missing MUSHROOM_API_KEY.' });
     return;
   }
 
@@ -465,7 +528,7 @@ async function handleIdentify(req, res) {
   try {
     body = await parseBody(req);
   } catch (error) {
-    sendJson(res, 400, { error: error.message });
+    sendJson(req, res, 400, { error: error.message });
     return;
   }
 
@@ -474,7 +537,7 @@ async function handleIdentify(req, res) {
   const uploadGuidance = buildUploadGuidance(photoRoles, images.length);
 
   if (images.length < 1 || images.length > 5) {
-    sendJson(res, 400, { error: 'Provide between 1 and 5 images.' });
+    sendJson(req, res, 400, { error: 'Provide between 1 and 5 images.' });
     return;
   }
 
@@ -484,32 +547,32 @@ async function handleIdentify(req, res) {
     parsed = await requestIdentification(images, true);
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Identification failed.';
-    sendJson(res, 502, { error: message });
+    sendJson(req, res, 502, { error: message });
     return;
   }
 
   const matches = normalizeMatches(parsed, uploadGuidance);
   if (!matches.length) {
-    sendJson(res, 502, { error: 'API returned no suggestions. Try different photos.' });
+    sendJson(req, res, 502, { error: 'API returned no suggestions. Try different photos.' });
     return;
   }
 
   const consistencyCheck = await consistencyPromise;
-  sendJson(res, 200, { matches, uploadGuidance, consistencyCheck });
+  sendJson(req, res, 200, { matches, uploadGuidance, consistencyCheck });
 }
 
-function handleDesignTokens(res) {
+function handleDesignTokens(req, res) {
   fs.readFile(TOKEN_FILE, 'utf8', (err, data) => {
     if (err) {
-      sendJson(res, 500, { error: 'Unable to load design tokens.' });
+      sendJson(req, res, 500, { error: 'Unable to load design tokens.' });
       return;
     }
 
     try {
       const tokens = JSON.parse(data);
-      sendJson(res, 200, tokens);
+      sendJson(req, res, 200, tokens);
     } catch {
-      sendJson(res, 500, { error: 'Invalid token format.' });
+      sendJson(req, res, 500, { error: 'Invalid token format.' });
     }
   });
 }
@@ -523,14 +586,55 @@ function resolvePublicPath(urlPathname) {
 
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+  const requestId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  res.setHeader('X-Request-Id', requestId);
+  // eslint-disable-next-line no-console
+  console.log(`[${new Date().toISOString()}] ${requestId} ${req.method} ${url.pathname}`);
+
+  if (req.method === 'GET' && url.pathname === '/healthz') {
+    sendJson(req, res, 200, {
+      status: 'ok',
+      service: 'amushroom',
+      baseUrl: APP_BASE_URL,
+      timestamp: new Date().toISOString(),
+      uptimeSec: Math.round(process.uptime())
+    });
+    return;
+  }
+
+  if (req.method === 'GET' && url.pathname === '/readyz') {
+    const ready = Boolean(process.env.MUSHROOM_API_KEY);
+    sendJson(req, res, ready ? 200 : 503, {
+      status: ready ? 'ready' : 'not_ready',
+      checks: {
+        apiKeyConfigured: ready
+      }
+    });
+    return;
+  }
 
   if (req.method === 'POST' && url.pathname === '/api/identify') {
+    if (IDENTIFY_RATE_LIMIT_ENABLED) {
+      const clientIp = getClientIp(req);
+      const rateLimit = checkRateLimit(clientIp);
+      if (rateLimit.limited) {
+        sendJson(
+          req,
+          res,
+          429,
+          { error: 'Too many requests. Please wait and try again.' },
+          { 'Retry-After': String(rateLimit.retryAfterSec) }
+        );
+        return;
+      }
+    }
+
     await handleIdentify(req, res);
     return;
   }
 
   if (req.method === 'GET' && url.pathname === '/api/design-tokens') {
-    handleDesignTokens(res);
+    handleDesignTokens(req, res);
     return;
   }
 
@@ -538,15 +642,15 @@ const server = http.createServer(async (req, res) => {
     const pathname = url.pathname === '/' ? '/index.html' : url.pathname;
     const filePath = resolvePublicPath(pathname);
     if (!filePath) {
-      sendJson(res, 403, { error: 'Forbidden' });
+      sendJson(req, res, 403, { error: 'Forbidden' });
       return;
     }
 
-    serveFile(res, filePath);
+    serveFile(req, res, filePath);
     return;
   }
 
-  sendJson(res, 404, { error: 'Not found' });
+  sendJson(req, res, 404, { error: 'Not found' });
 });
 
 server.listen(PORT, HOST, () => {

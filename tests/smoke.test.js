@@ -13,11 +13,19 @@ test('core production files exist', () => {
   const required = [
     'server.js',
     'public/index.html',
+    'public/terms.html',
+    'public/privacy.html',
+    'public/refund.html',
+    'public/robots.txt',
+    'public/sitemap.xml',
     'public/styles/tokens.css',
     'public/styles/app.css',
+    'public/styles/legal.css',
     'public/scripts/app.js',
     'design/tokens/tokens.json',
-    'backlog/README.md'
+    'backlog/BACKLOG.md',
+    'render.yaml',
+    '.nvmrc'
   ];
 
   for (const file of required) {
@@ -30,6 +38,9 @@ test('index references modular css/js assets', () => {
   assert.match(html, /\/styles\/tokens\.css/);
   assert.match(html, /\/styles\/app\.css/);
   assert.match(html, /\/scripts\/app\.js/);
+  assert.match(html, /\/terms\.html/);
+  assert.match(html, /\/privacy\.html/);
+  assert.match(html, /\/refund\.html/);
 });
 
 test('tokens are valid JSON with expected groups', () => {

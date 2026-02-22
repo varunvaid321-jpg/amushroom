@@ -359,6 +359,43 @@ body {
   font-size: var(--font-size-xs);
 }
 
+.site-footer {
+  margin-top: var(--space-6);
+  border-top: 1px solid var(--color-border-soft);
+  padding-top: var(--space-4);
+  display: grid;
+  gap: var(--space-2);
+}
+
+.site-footer__brand {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+}
+
+.site-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.site-footer__link {
+  color: var(--color-state-info-text);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.site-footer__link:hover {
+  text-decoration: underline;
+}
+
+.site-footer__meta {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
 @media (max-width: 680px) {
   .page {
     width: min(1080px, 94vw);
