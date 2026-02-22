@@ -3,7 +3,6 @@
   const signedOut = document.getElementById('signedOut');
   const signedIn = document.getElementById('signedIn');
   const userLine = document.getElementById('userLine');
-  const uploadsList = document.getElementById('uploadsList');
   const registerForm = document.getElementById('registerForm');
   const loginForm = document.getElementById('loginForm');
   const logoutButton = document.getElementById('logoutButton');
@@ -141,34 +140,6 @@
     return payload;
   }
 
-  async function loadUploads() {
-    if (!uploadsList) return;
-    uploadsList.innerHTML = '';
-    try {
-      const data = await request('/api/user/uploads?limit=20');
-      const uploads = Array.isArray(data.uploads) ? data.uploads : [];
-      if (!uploads.length) {
-        uploadsList.innerHTML = '<div class="upload-item"><p>No uploads yet.</p></div>';
-        return;
-      }
-
-      uploadsList.innerHTML = uploads
-        .map((item) => {
-          const top = Array.isArray(item.topMatches) ? item.topMatches[0] : null;
-          return `
-            <article class="upload-item">
-              <p><strong>${escapeHtml(item.primaryMatch || top?.scientificName || 'Unknown')}</strong></p>
-              <p>Confidence: ${escapeHtml(item.primaryConfidence ?? top?.confidence ?? 'N/A')}%</p>
-              <p>Images: ${escapeHtml(item.imageCount ?? 0)} | Uploaded: ${escapeHtml(item.createdAt || '')}</p>
-            </article>
-          `;
-        })
-        .join('');
-    } catch (error) {
-      uploadsList.innerHTML = `<div class="upload-item"><p>${escapeHtml(error.message || 'Failed to load uploads.')}</p></div>`;
-    }
-  }
-
   async function refreshAuthState() {
     try {
       const data = await request('/api/auth/me');
@@ -185,7 +156,6 @@
         userLine.textContent = `${data.user.email}${data.user.name ? ` (${data.user.name})` : ''}`;
       }
       setStatus('Signed in.', 'success');
-      await loadUploads();
     } catch (error) {
       setStatus(error.message || 'Failed to load account state.', 'error');
     }
