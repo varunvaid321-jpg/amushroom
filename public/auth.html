@@ -12,66 +12,132 @@
 </head>
 <body>
   <main class="auth-page">
-    <header class="auth-header">
-      <div>
-        <h1 class="auth-title">aMushroom Account</h1>
-        <p class="auth-subtitle">Create an account, sign in, and manage your upload history.</p>
-      </div>
-      <a class="auth-link" href="/">Back to Identifier</a>
-    </header>
-
-    <p id="authStatus" class="auth-status" aria-live="polite"></p>
-
-    <section id="signedOut" class="auth-grid">
-      <article class="card">
-        <h2 class="card-title">Create account</h2>
-        <form id="registerForm" class="form">
-          <label class="field">
-            <span>Name</span>
-            <input type="text" name="name" autocomplete="name" />
-          </label>
-          <label class="field">
-            <span>Email</span>
-            <input type="email" name="email" autocomplete="email" required />
-          </label>
-          <label class="field">
-            <span>Password</span>
-            <input type="password" name="password" autocomplete="new-password" required />
-          </label>
-          <button class="btn btn-primary" type="submit">Create account</button>
-        </form>
-      </article>
-
-      <article class="card">
-        <h2 class="card-title">Sign in</h2>
-        <form id="loginForm" class="form">
-          <label class="field">
-            <span>Email</span>
-            <input type="email" name="email" autocomplete="email" required />
-          </label>
-          <label class="field">
-            <span>Password</span>
-            <input type="password" name="password" autocomplete="current-password" required />
-          </label>
-          <button class="btn btn-primary" type="submit">Sign in</button>
-        </form>
-
-        <div class="divider">or</div>
-        <button id="googleButton" class="btn btn-google" type="button">Continue with Google</button>
-      </article>
-    </section>
-
-    <section id="signedIn" class="card" hidden>
-      <div class="signed-in-head">
-        <div>
-          <h2 class="card-title">Account</h2>
-          <p id="userLine" class="meta"></p>
+    <section class="auth-shell" aria-labelledby="authPageTitle">
+      <header class="auth-header">
+        <div class="auth-header__copy">
+          <p class="auth-kicker">aMushroom Account</p>
+          <h1 id="authPageTitle" class="auth-title">Sign in and manage saved identifications.</h1>
+          <p class="auth-subtitle">Create an account, access recent uploads, and come back to your results later.</p>
         </div>
-        <button id="logoutButton" class="btn btn-secondary" type="button">Log out</button>
-      </div>
+        <div class="auth-header__actions">
+          <a class="auth-link auth-link--button" href="/">Back to Identifier</a>
+        </div>
+      </header>
 
-      <h3 class="subheading">Recent uploads</h3>
-      <div id="uploadsList" class="uploads"></div>
+      <p id="authStatus" class="auth-status" aria-live="polite" aria-atomic="true" role="status"></p>
+
+      <section id="signedOut" class="auth-grid" aria-label="Sign in or create account">
+        <article id="loginCard" class="card auth-card auth-card--primary">
+          <div class="auth-card__head">
+            <p class="auth-card__eyebrow">Welcome back</p>
+            <h2 class="card-title auth-card__title">Sign in</h2>
+            <p class="auth-card__subtitle">Use email or Google to access your account and saved identifications.</p>
+          </div>
+
+          <form id="loginForm" class="form" novalidate>
+            <label class="field">
+              <span>Email</span>
+              <input type="email" name="email" autocomplete="email" required />
+            </label>
+
+            <label class="field">
+              <span>Password</span>
+              <div class="auth-password-row">
+                <input id="loginPassword" type="password" name="password" autocomplete="current-password" required />
+                <button
+                  class="btn button--ghost auth-password-toggle"
+                  type="button"
+                  data-password-toggle
+                  aria-controls="loginPassword"
+                  aria-label="Show password"
+                  aria-pressed="false"
+                >
+                  Show
+                </button>
+              </div>
+            </label>
+
+            <button class="btn btn-primary auth-submit" type="submit">Sign in</button>
+          </form>
+
+          <div class="auth-card__alt">
+            <div class="divider" aria-hidden="true">or</div>
+            <button id="googleButton" class="btn btn-google auth-google-button" type="button">
+              <span class="auth-google-button__icon" aria-hidden="true">
+                <svg viewBox="0 0 18 18" width="18" height="18" focusable="false" aria-hidden="true">
+                  <path fill="#EA4335" d="M9 3.48c1.69 0 2.83.73 3.48 1.34l2.54-2.48C13.46.89 11.42 0 9 0 5.48 0 2.44 2.02.96 4.96l2.95 2.29C4.62 5.16 6.61 3.48 9 3.48z"/>
+                  <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84c-.21 1.12-.84 2.07-1.79 2.71v2.25h2.9c1.7-1.57 2.69-3.88 2.69-6.6z"/>
+                  <path fill="#FBBC05" d="M3.91 10.75A5.41 5.41 0 0 1 3.62 9c0-.61.1-1.21.29-1.75V4.96H.96A8.95 8.95 0 0 0 0 9c0 1.45.35 2.83.96 4.04l2.95-2.29z"/>
+                  <path fill="#34A853" d="M9 18c2.42 0 4.46-.8 5.95-2.17l-2.9-2.25c-.8.54-1.83.86-3.05.86-2.39 0-4.38-1.61-5.09-3.77L.96 13.04C2.44 15.98 5.48 18 9 18z"/>
+                </svg>
+              </span>
+              <span class="auth-google-button__label">Continue with Google</span>
+            </button>
+            <p class="auth-card__help">Prefer email? Use the sign-in form above. New here? <a class="auth-inline-link" href="#registerCard">Create an account</a>.</p>
+          </div>
+        </article>
+
+        <article id="registerCard" class="card auth-card auth-card--secondary">
+          <div class="auth-card__head">
+            <p class="auth-card__eyebrow">First time here?</p>
+            <h2 class="card-title auth-card__title">Create account</h2>
+            <p class="auth-card__subtitle">Save identifications and return to previous scans from any device.</p>
+          </div>
+
+          <form id="registerForm" class="form" novalidate>
+            <label class="field">
+              <span>Name</span>
+              <input type="text" name="name" autocomplete="name" />
+            </label>
+
+            <label class="field">
+              <span>Email</span>
+              <input type="email" name="email" autocomplete="email" required />
+            </label>
+
+            <label class="field">
+              <span>Password</span>
+              <div class="auth-password-row">
+                <input id="registerPassword" type="password" name="password" autocomplete="new-password" required />
+                <button
+                  class="btn button--ghost auth-password-toggle"
+                  type="button"
+                  data-password-toggle
+                  aria-controls="registerPassword"
+                  aria-label="Show password"
+                  aria-pressed="false"
+                >
+                  Show
+                </button>
+              </div>
+            </label>
+
+            <p class="field-hint">Use a strong password you can remember. You can sign in with Google later too.</p>
+            <button class="btn btn-primary auth-submit" type="submit">Create account</button>
+          </form>
+
+          <p class="auth-card__help">Already registered? <a class="auth-inline-link" href="#loginCard">Go to sign in</a>.</p>
+        </article>
+      </section>
+
+      <section id="signedIn" class="card auth-account" hidden aria-label="Your account">
+        <div class="signed-in-head">
+          <div>
+            <p class="auth-card__eyebrow">Signed in</p>
+            <h2 class="card-title auth-account__title">Account</h2>
+            <p id="userLine" class="meta"></p>
+          </div>
+          <button id="logoutButton" class="btn btn-secondary" type="button">Log out</button>
+        </div>
+
+        <div class="auth-account__section">
+          <div class="auth-account__section-head">
+            <h3 class="subheading">Recent uploads</h3>
+            <a class="auth-inline-link" href="/">Start a new identification</a>
+          </div>
+          <div id="uploadsList" class="uploads" aria-live="polite"></div>
+        </div>
+      </section>
     </section>
   </main>
 
