@@ -384,6 +384,19 @@ body {
   color: rgba(244, 244, 241, 0.42);
 }
 
+/* Keep Chrome/Safari autofilled inputs on the dark theme instead of bright system yellow/white. */
+.auth-shell .field input:-webkit-autofill,
+.auth-shell .field input:-webkit-autofill:hover,
+.auth-shell .field input:-webkit-autofill:focus,
+.auth-shell .field input:-webkit-autofill:active {
+  -webkit-text-fill-color: #f4f4f1;
+  caret-color: #f4f4f1;
+  border-color: rgba(255, 255, 255, 0.12);
+  -webkit-box-shadow: 0 0 0 1000px #141414 inset;
+  box-shadow: 0 0 0 1000px #141414 inset;
+  transition: background-color 9999s ease-out 0s;
+}
+
 .auth-shell .btn-secondary {
   --ui-button-bg: rgba(255, 255, 255, 0.03);
   --ui-button-color: #ecebe4;

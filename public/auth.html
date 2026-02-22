@@ -112,7 +112,30 @@
               </div>
             </label>
 
-            <p class="field-hint">Use a strong password you can remember. You can sign in with Google later too.</p>
+            <label class="field">
+              <span>Confirm password</span>
+              <div class="auth-password-row">
+                <input
+                  id="registerPasswordConfirmation"
+                  type="password"
+                  name="passwordConfirmation"
+                  autocomplete="new-password"
+                  required
+                />
+                <button
+                  class="btn button--ghost auth-password-toggle"
+                  type="button"
+                  data-password-toggle
+                  aria-controls="registerPasswordConfirmation"
+                  aria-label="Show password"
+                  aria-pressed="false"
+                >
+                  Show
+                </button>
+              </div>
+            </label>
+
+            <p class="field-hint">6+ chars, 1 uppercase, 1 special character. You can also sign in with Google later.</p>
             <button class="btn btn-primary auth-submit" type="submit">Create account</button>
           </form>
 
