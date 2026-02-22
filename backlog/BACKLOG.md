@@ -34,16 +34,16 @@ Last updated: 2026-02-22
 - [ ] Environment secrets configured securely
 
 ### BG-004 User registrations
-- Status: Todo
+- Status: Done
 - Acceptance Criteria:
-- [ ] Email/password registration and login
-- [ ] Account session management
+- [x] Email/password registration and login
+- [x] Account session management
 
 ### BG-005 Google account login
-- Status: Todo
+- Status: Done
 - Acceptance Criteria:
-- [ ] Google OAuth sign-in
-- [ ] Google login linked to user account model
+- [x] Google OAuth sign-in
+- [x] Google login linked to user account model
 
 ### BG-006 Monetization via membership
 - Status: Todo
@@ -64,3 +64,17 @@ Last updated: 2026-02-22
 - [ ] Single source-of-truth token file approved
 - [ ] Web and app token mappings documented
 - [ ] Theming consistency validated across both platforms
+
+### BG-009 Multi-instance-safe OAuth state handling
+- Status: Todo
+- Acceptance Criteria:
+- [ ] Google OAuth state survives multi-instance deployments and restarts
+- [ ] OAuth callback validation works behind load balancers without sticky sessions
+- [ ] State storage uses shared persistence (DB/Redis) or signed stateless state
+
+### BG-010 Uploaded image retention and anonymous storage policy
+- Status: Todo
+- Acceptance Criteria:
+- [ ] Decide whether anonymous identify requests persist images at all
+- [ ] Add retention/cleanup policy for stored image blobs and match records
+- [ ] Add controls to limit storage abuse/cost (TTL, quotas, or auth-only persistence)

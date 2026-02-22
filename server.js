@@ -80,6 +80,11 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
 const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || `${APP_BASE_URL}/api/auth/google/callback`;
 const MAX_IMAGE_BYTES = Number(process.env.MAX_IMAGE_BYTES || 8 * 1024 * 1024);
 const MAX_IMAGE_BASE64_CHARS = Math.ceil((MAX_IMAGE_BYTES * 4) / 3) + 8;
+const MAX_UPLOAD_IMAGES = 5;
+// Covers 5 images at MAX_IMAGE_BYTES each plus base64 and JSON overhead before payload validation runs.
+const IDENTIFY_BODY_MAX_BYTES = Math.ceil((MAX_IMAGE_BYTES * MAX_UPLOAD_IMAGES * 4) / 3) + 1024 * 1024;
+const MIX_CHECK_TRIGGER_TOP_CONFIDENCE = 90;
+const MIX_CHECK_TRIGGER_MARGIN = 15;
 
 const ALLOWED_IMAGE_MIME_TYPES = new Set([
   'image/jpeg',
@@ -697,6 +702,18 @@ async function runConsistencyCheck(images) {
   };
 }
 
+function shouldRunConsistencyCheck(images, matches) {
+  if (!ENABLE_MIX_CHECK || images.length < 2) return false;
+  if (!Array.isArray(matches) || matches.length < 2) return true;
+
+  const topScore = Number(matches[0]?.score || 0);
+  const secondScore = Number(matches[1]?.score || 0);
+  if (!Number.isFinite(topScore) || !Number.isFinite(secondScore)) return true;
+
+  const margin = topScore - secondScore;
+  return topScore < MIX_CHECK_TRIGGER_TOP_CONFIDENCE || margin < MIX_CHECK_TRIGGER_MARGIN;
+}
+
 function sanitizeReturnPath(value, fallback = '/') {
   const text = String(value || '').trim();
   if (!text) return fallback;
@@ -984,7 +1001,7 @@ async function handleIdentify(req, res) {
 
   let body;
   try {
-    body = await parseBody(req);
+    body = await parseBody(req, IDENTIFY_BODY_MAX_BYTES);
   } catch (error) {
     sendJson(req, res, 400, { error: error.message });
     return;
@@ -996,8 +1013,8 @@ async function handleIdentify(req, res) {
   const uploadGuidance = buildUploadGuidance(photoRoles, images.length);
   const auth = getAuthContext(req);
 
-  if (images.length < 1 || images.length > 5) {
-    sendJson(req, res, 400, { error: 'Provide between 1 and 5 images.' });
+  if (images.length < 1 || images.length > MAX_UPLOAD_IMAGES) {
+    sendJson(req, res, 400, { error: `Provide between 1 and ${MAX_UPLOAD_IMAGES} images.` });
     return;
   }
 
@@ -1007,7 +1024,6 @@ async function handleIdentify(req, res) {
     return;
   }
 
-  const consistencyPromise = runConsistencyCheck(images).catch(() => null);
   let parsed;
   try {
     parsed = await requestIdentification(images, true);
@@ -1023,7 +1039,17 @@ async function handleIdentify(req, res) {
     return;
   }
 
-  const consistencyCheck = await consistencyPromise;
+  let consistencyCheck = null;
+  if (shouldRunConsistencyCheck(images, matches)) {
+    consistencyCheck = await runConsistencyCheck(images).catch(() => null);
+  } else {
+    consistencyCheck = {
+      likelyMixed: false,
+      message: 'Photo consistency check skipped because the top match was already high-confidence and clearly ahead.',
+      perPhoto: []
+    };
+  }
+
   let uploadId = null;
   try {
     uploadId = createUploadRecord({
