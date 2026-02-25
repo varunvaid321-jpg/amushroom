@@ -2,11 +2,16 @@
   box-sizing: border-box;
 }
 
+html {
+  background: #050505;
+  color-scheme: dark;
+}
+
 body {
   margin: 0;
   color: var(--color-text-primary);
   font-family: var(--font-body);
-  background: linear-gradient(140deg, #f4f0e8 0%, #eee8dc 100%);
+  background: linear-gradient(140deg, #050505 0%, #0b0b0d 100%);
 }
 
 .auth-page {
@@ -71,6 +76,7 @@ body {
   margin: 0 0 var(--space-4);
   font-family: var(--font-heading);
   font-size: var(--font-size-lg);
+  color: var(--color-text-primary);
 }
 
 .form {
@@ -92,6 +98,28 @@ body {
   padding: 0.65rem 0.7rem;
   font-size: var(--font-size-sm);
   background: var(--color-surface-card-elevated);
+  color: var(--color-text-primary);
+  caret-color: var(--color-text-primary);
+  -webkit-text-fill-color: var(--color-text-primary);
+}
+
+.field input::placeholder {
+  color: color-mix(in srgb, var(--color-text-secondary) 80%, transparent);
+}
+
+.field input:focus {
+  outline: 2px solid rgba(149, 195, 255, 0.28);
+  outline-offset: 1px;
+  border-color: rgba(149, 195, 255, 0.35);
+}
+
+.field input:-webkit-autofill,
+.field input:-webkit-autofill:hover,
+.field input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--color-text-primary);
+  box-shadow: 0 0 0 1000px var(--color-surface-card-elevated) inset;
+  transition: background-color 9999s ease-out 0s;
+  border: 1px solid var(--color-border-soft);
 }
 
 .btn {
@@ -110,12 +138,24 @@ body {
 
 .btn-secondary {
   color: var(--color-text-primary);
-  background: #ece7dc;
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-soft);
 }
 
 .btn-google {
-  color: #123f73;
-  background: #e8f1ff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  color: #e8eaed;
+  background: #131314;
+  border: 1px solid #5f6368;
+}
+
+.btn-google__icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
 }
 
 .divider {

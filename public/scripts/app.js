@@ -1,11 +1,17 @@
 (function () {
   const photoInput = document.getElementById('photoInput');
+  const chooseFilesBtn = document.getElementById('chooseFilesBtn');
+  const cameraInput = document.getElementById('cameraInput');
+  const cameraBtn = document.getElementById('cameraBtn');
   const analyzeBtn = document.getElementById('analyzeBtn');
   const statusText = document.getElementById('statusText');
   const previewGrid = document.getElementById('previewGrid');
   const resultsSection = document.getElementById('results');
   const analysisSummary = document.getElementById('analysisSummary');
   const resultCards = document.getElementById('resultCards');
+  const selectedFilesText = document.getElementById('selectedFilesText');
+  let selectedFiles = [];
+  let previewUrls = [];
 
   const slotNames = [
     'Photo 1 - Top of cap',
@@ -39,6 +45,29 @@
     return 'chip chip--neutral';
   }
 
+  function clearPreviewUrls() {
+    previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    previewUrls = [];
+  }
+
+  function isAcceptedImageFile(file) {
+    if (!file) return false;
+    const mimeType = String(file.type || '').toLowerCase();
+    if (mimeType.startsWith('image/')) return true;
+    const name = String(file.name || '').toLowerCase();
+    return ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.bmp', '.heic', '.heif'].some((ext) => name.endsWith(ext));
+  }
+
+  function previewFallbackMessage(file) {
+    const mimeType = String(file?.type || '').toLowerCase();
+    const name = String(file?.name || '').toLowerCase();
+    const isHeicLike = mimeType.includes('heic') || mimeType.includes('heif') || name.endsWith('.heic') || name.endsWith('.heif');
+    if (isHeicLike) {
+      return 'Preview unavailable in this browser (HEIC/HEIF), but upload can still work.';
+    }
+    return 'Preview unavailable';
+  }
+
   function fileToBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -53,6 +82,7 @@
   }
 
   function renderSlots(files) {
+    clearPreviewUrls();
     previewGrid.innerHTML = '';
 
     for (let index = 0; index < 5; index += 1) {
@@ -68,8 +98,22 @@
       if (file) {
         const image = document.createElement('img');
         image.className = 'preview-card__image';
-        image.src = URL.createObjectURL(file);
+        const objectUrl = URL.createObjectURL(file);
+        previewUrls.push(objectUrl);
+        image.src = objectUrl;
         image.alt = slotNames[index];
+        image.loading = 'lazy';
+        image.addEventListener('load', () => {
+          image.dataset.loaded = 'true';
+        }, { once: true });
+        image.addEventListener('error', () => {
+          if (!card.contains(image)) return;
+          image.remove();
+          const fallback = document.createElement('div');
+          fallback.className = 'preview-card__empty';
+          fallback.textContent = previewFallbackMessage(file);
+          card.appendChild(fallback);
+        }, { once: true });
         card.appendChild(image);
 
         const fileName = document.createElement('p');
@@ -84,6 +128,33 @@
       }
 
       previewGrid.appendChild(card);
+    }
+  }
+
+  function resetAnalysisUi() {
+    analyzeBtn.disabled = selectedFiles.length === 0;
+    statusText.textContent = '';
+    resultsSection.hidden = true;
+    analysisSummary.textContent = '';
+    if (selectedFilesText) {
+      selectedFilesText.textContent = selectedFiles.length
+        ? (selectedFiles.length === 1
+          ? `Selected: ${selectedFiles[0].name}`
+          : `Selected (${selectedFiles.length}): ${selectedFiles.map((file) => file.name).join(', ')}`)
+        : '';
+    }
+  }
+
+  function setSelectedFiles(nextFiles, { append = false } = {}) {
+    const filtered = nextFiles.filter(isAcceptedImageFile);
+    const combined = append ? selectedFiles.concat(filtered) : filtered;
+    selectedFiles = combined.slice(0, 5);
+
+    renderSlots(selectedFiles);
+    resetAnalysisUi();
+
+    if (combined.length > 5) {
+      alert('You selected more than 5 images. Only the first 5 will be used.');
     }
   }
 
@@ -109,7 +180,7 @@
 
     matches.forEach((mushroom, index) => {
       const card = document.createElement('article');
-      card.className = 'match-card';
+      card.className = index === 0 ? 'match-card match-card--top' : 'match-card';
 
       const commonName = escapeHtml(mushroom.commonName || 'Unknown species');
       const scientificName = escapeHtml(mushroom.scientificName || commonName);
@@ -140,14 +211,25 @@
       const whyMatchMarkup = whyMatch.length
         ? `<ul class="why-list">${whyMatch.map((item) => `<li>${item}</li>`).join('')}</ul>`
         : '<p class="meta">No specific reason text was available for this match.</p>';
+      const matchLabel = index === 0
+        ? `#1 Match (Most Confident) - Confidence ${score}%`
+        : `#${index + 1} Match - Confidence ${score}%`;
+      const refImageMarkup = representativeImage
+        ? `
+          <figure class="ref-figure">
+            <img class="ref-image" src="${representativeImage}" alt="${commonName} reference image" loading="lazy" referrerpolicy="no-referrer" />
+            <figcaption class="ref-image__caption">Matched mushroom reference photo</figcaption>
+          </figure>
+        `
+        : '<p class="meta">Reference photo unavailable for this match.</p>';
 
       card.innerHTML = `
         <div class="match-card__head">
           <div>
-            <p class="match-card__name">#${index + 1} ${commonName}</p>
+            <p class="match-card__eyebrow">${matchLabel}</p>
+            <p class="match-card__name">${commonName}</p>
             <p class="match-card__latin">${scientificName}</p>
           </div>
-          <span class="match-card__score">Confidence ${score}%</span>
         </div>
 
         <div class="chips">
@@ -164,13 +246,22 @@
         ${lookAlikes.length ? `<p class="meta"><strong>Look-alikes:</strong> ${lookAlikes.join(', ')}</p>` : ''}
         ${ids.length ? `<p class="meta"><strong>IDs:</strong> ${ids.join(' | ')}</p>` : ''}
         ${wikiUrl ? `<p class="meta"><a class="link" href="${wikiUrl}" target="_blank" rel="noopener noreferrer">Open species reference</a></p>` : ''}
-        ${representativeImage ? `<img class="ref-image" src="${representativeImage}" alt="${commonName} reference image" loading="lazy" />` : ''}
+        ${refImageMarkup}
 
         <p class="meta"><strong>Why this is a good match:</strong></p>
         ${whyMatchMarkup}
 
         <p class="warning">Caution: ${caution}</p>
       `;
+
+      const refImageEl = card.querySelector('.ref-image');
+      if (refImageEl) {
+        refImageEl.addEventListener('error', () => {
+          const figure = refImageEl.closest('.ref-figure');
+          if (!figure) return;
+          figure.outerHTML = '<p class="meta">Reference photo could not be loaded for this match.</p>';
+        }, { once: true });
+      }
 
       resultCards.appendChild(card);
     });
@@ -204,24 +295,32 @@
   }
 
   photoInput.addEventListener('change', () => {
-    const allFiles = Array.from(photoInput.files || []).filter((file) => file.type.startsWith('image/'));
-    const selected = allFiles.slice(0, 5);
-
-    renderSlots(selected);
-    analyzeBtn.disabled = selected.length === 0;
-    statusText.textContent = '';
-    resultsSection.hidden = true;
-    analysisSummary.textContent = '';
-
-    if (allFiles.length > 5) {
-      alert('You selected more than 5 images. Only the first 5 will be used.');
-    }
+    setSelectedFiles(Array.from(photoInput.files || []), { append: false });
   });
 
+  photoInput.addEventListener('click', () => {
+    photoInput.value = '';
+  });
+
+  if (chooseFilesBtn) {
+    chooseFilesBtn.addEventListener('click', () => {
+      photoInput.click();
+    });
+  }
+
+  if (cameraBtn && cameraInput) {
+    cameraBtn.addEventListener('click', () => {
+      cameraInput.click();
+    });
+
+    cameraInput.addEventListener('change', () => {
+      setSelectedFiles(Array.from(cameraInput.files || []), { append: true });
+      cameraInput.value = '';
+    });
+  }
+
   analyzeBtn.addEventListener('click', async () => {
-    const selected = Array.from(photoInput.files || [])
-      .filter((file) => file.type.startsWith('image/'))
-      .slice(0, 5);
+    const selected = selectedFiles.slice(0, 5);
 
     if (!selected.length) return;
 
@@ -248,4 +347,5 @@
   });
 
   renderSlots([]);
+  resetAnalysisUi();
 })();

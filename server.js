@@ -561,7 +561,14 @@ function normalizeMatches(payload, uploadGuidance) {
       : [];
     const wikiUrl = firstText(details.url);
     const description = firstText(details.description) || firstText(details.wiki_description);
-    const representativeImage = firstText(details.image);
+    const representativeImage =
+      firstText(details.image) ||
+      firstText(details.images?.[0]?.url) ||
+      firstText(details.images?.[0]?.medium_url) ||
+      firstText(details.images?.[0]?.small_url) ||
+      firstText(suggestion.similar_images?.[0]?.url) ||
+      firstText(suggestion.similar_images?.[0]?.medium_url) ||
+      firstText(suggestion.similar_images?.[0]?.small_url);
     const edibility = inferEdible(details);
     const psychoactive = inferPsychedelic(details);
     const score = toPercent(suggestion.probability ?? suggestion.confidence ?? suggestion.score ?? 0);

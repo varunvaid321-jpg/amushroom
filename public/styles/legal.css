@@ -6,7 +6,7 @@ body {
   margin: 0;
   color: var(--color-text-primary);
   font-family: var(--font-body);
-  background: linear-gradient(140deg, #f4f0e8 0%, #eee8dc 100%);
+  background: linear-gradient(140deg, #050505 0%, #0b0b0d 100%);
 }
 
 .legal-page {
@@ -78,8 +78,8 @@ body {
   margin-top: var(--space-5);
   padding: 0.75rem;
   border-radius: var(--radius-sm);
-  background: #fff7e8;
-  border: 1px solid #f1deb6;
-  color: #61491a;
+  background: var(--color-state-warning-bg);
+  border: 1px solid rgba(255, 212, 138, 0.35);
+  color: var(--color-state-warning-text);
   font-size: var(--font-size-sm);
 }
