@@ -1,0 +1,90 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-manrope);
+  --font-heading: var(--font-sora);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-copper: #c8956c;
+  --color-cream: #f0e4cc;
+  --color-forest: #3a5a3a;
+  --color-deep-green: #0e1a0e;
+  --color-card-surface: rgba(18, 32, 18, 0.95);
+  --color-gold: #ecd4a7;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+}
+
+:root {
+  --radius: 0.75rem;
+  --background: #0e1a0e;
+  --foreground: #f0e4cc;
+  --card: rgba(18, 32, 18, 0.95);
+  --card-foreground: #f0e4cc;
+  --popover: #122012;
+  --popover-foreground: #f0e4cc;
+  --primary: #c8956c;
+  --primary-foreground: #0e1a0e;
+  --secondary: #3a5a3a;
+  --secondary-foreground: #f0e4cc;
+  --muted: #1a2a1a;
+  --muted-foreground: #8a9a7a;
+  --accent: #ecd4a7;
+  --accent-foreground: #0e1a0e;
+  --destructive: #dc2626;
+  --border: rgba(100, 140, 100, 0.15);
+  --input: rgba(100, 140, 100, 0.2);
+  --ring: #c8956c;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 140, 100, 0.3);
+  border-radius: 3px;
+}
+
+/* Mesh gradient for hero */
+.hero-gradient {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(58, 90, 58, 0.4), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(200, 149, 108, 0.08), transparent),
+    linear-gradient(180deg, #0e1a0e 0%, #122012 100%);
+}

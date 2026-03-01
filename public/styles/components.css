@@ -110,8 +110,8 @@
 
 :where(.ui-button--google, .btn-google) {
   --ui-button-bg: var(--color-state-info-bg);
-  --ui-button-color: #123f73;
-  --ui-button-border: rgba(26, 77, 144, 0.14);
+  --ui-button-color: #1a4a2a;
+  --ui-button-border: rgba(40, 100, 60, 0.14);
   --ui-button-shadow: none;
 }
 

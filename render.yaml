@@ -1,11 +1,11 @@
 services:
   - type: web
-    name: amushroom
+    name: orangutany
     env: node
     plan: starter
     rootDir: .
-    buildCommand: npm ci
-    startCommand: npm start
+    buildCommand: npm ci && cd frontend && npm ci && npm run build
+    startCommand: cd frontend && npm start
     healthCheckPath: /healthz
     envVars:
       - key: NODE_VERSION
@@ -31,4 +31,4 @@ services:
       - key: RATE_LIMIT_MAX
         value: 20
       - key: APP_BASE_URL
-        value: https://amushroom.com
+        value: https://orangutany.com

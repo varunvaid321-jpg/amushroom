@@ -1,0 +1,158 @@
+export interface User {
+  id: number;
+  email: string;
+  name: string | null;
+  emailVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Match {
+  commonName: string;
+  scientificName: string;
+  score: number;
+  edible: string;
+  psychedelic: string;
+  traits: string[];
+  taxonomy: { genus: string; family: string; order: string };
+  lookAlikes: string[];
+  description: string;
+  wikiUrl: string;
+  representativeImage: string;
+  whyMatch: string[];
+  caution: string;
+}
+
+export interface UploadGuidance {
+  uploadedRoles: string[];
+  missingRecommendedRoles: string[];
+}
+
+export interface ConsistencyCheck {
+  likelyMixed: boolean;
+  message: string;
+  perPhoto: { photoNumber: number; topMatch: string; commonName: string; confidence: number }[];
+}
+
+export interface IdentifyResult {
+  matches: Match[];
+  uploadGuidance: UploadGuidance;
+  consistencyCheck: ConsistencyCheck | null;
+  uploadId: string | null;
+}
+
+export interface ImageMeta {
+  filename: string;
+  mimeType: string;
+  size: number;
+}
+
+export interface UploadSummary {
+  uploadId: string;
+  createdAt: string;
+  imageCount: number;
+  primaryMatch: string;
+  primaryConfidence: number;
+  mixedSpecies: boolean;
+  coverPreview: string;
+  matches: { commonName: string; scientificName: string; confidence: number }[];
+}
+
+export interface UploadDetail {
+  uploadId: string;
+  createdAt: string;
+  imageCount: number;
+  images: { role: string; preview: string }[];
+  matches: Match[];
+  consistencyCheck: ConsistencyCheck | null;
+}
+
+async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
+  const res = await fetch(url, {
+    credentials: "include",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new ApiError(res.status, body.error || res.statusText, body);
+  }
+  return res.json();
+}
+
+export class ApiError extends Error {
+  constructor(
+    public status: number,
+    message: string,
+    public body?: Record<string, unknown>,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
+// Auth
+export async function getMe(): Promise<User | null> {
+  const data = await apiFetch<{ user: User | null }>("/api/auth/me");
+  return data.user;
+}
+
+export async function login(email: string, password: string): Promise<User> {
+  const data = await apiFetch<{ user: User }>("/api/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+  return data.user;
+}
+
+export async function register(
+  name: string,
+  email: string,
+  password: string,
+): Promise<User> {
+  const data = await apiFetch<{ user: User }>("/api/auth/register", {
+    method: "POST",
+    body: JSON.stringify({ name, email, password }),
+  });
+  return data.user;
+}
+
+export async function logout(): Promise<void> {
+  await apiFetch("/api/auth/logout", { method: "POST" });
+}
+
+export async function getAuthConfig(): Promise<{ googleAuthEnabled: boolean }> {
+  return apiFetch("/api/auth/config");
+}
+
+// Identify
+export async function identify(
+  images: string[],
+  photoRoles: string[],
+  imageMeta: ImageMeta[],
+): Promise<IdentifyResult> {
+  return apiFetch("/api/identify", {
+    method: "POST",
+    body: JSON.stringify({ images, photoRoles, imageMeta }),
+  });
+}
+
+// Uploads
+export async function listUploads(limit = 20): Promise<UploadSummary[]> {
+  const data = await apiFetch<{ uploads: UploadSummary[] }>(
+    `/api/user/uploads?limit=${limit}`,
+  );
+  return data.uploads;
+}
+
+export async function getUploadDetail(
+  uploadId: string,
+): Promise<UploadDetail> {
+  const data = await apiFetch<{ upload: UploadDetail }>(
+    `/api/user/uploads/${uploadId}`,
+  );
+  return data.upload;
+}

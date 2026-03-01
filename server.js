@@ -1290,5 +1290,5 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, HOST, () => {
   // eslint-disable-next-line no-console
-  console.log(`aMushroom running at http://${HOST}:${PORT}`);
+  console.log(`Orangutany running at http://${HOST}:${PORT}`);
 });
