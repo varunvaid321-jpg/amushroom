@@ -202,20 +202,27 @@ function HistoryRow({
   });
 
   const topMatch = upload.topMatches[0];
-  const displayName = topMatch?.commonName || upload.primaryMatch;
-  const sciName = topMatch?.scientificName || upload.primaryMatch;
+  const isLowConfidence = upload.primaryConfidence < 50;
+  const displayName = isLowConfidence
+    ? "No confident match"
+    : topMatch?.commonName || upload.primaryMatch;
+  const sciName = isLowConfidence
+    ? "Confidence too low"
+    : topMatch?.scientificName || upload.primaryMatch;
 
   // Build summary from available matches
-  const matchSummary =
-    upload.topMatches.length > 1
+  const matchSummary = isLowConfidence
+    ? "Try clearer photos from multiple angles"
+    : upload.topMatches.length > 1
       ? `Also: ${upload.topMatches
           .slice(1)
+          .filter((m) => m.confidence >= 50)
           .map((m) => m.commonName)
-          .join(", ")}`
+          .join(", ") || "No other confident matches"}`
       : "Single match";
 
   return (
-    <tr className="border-b border-border/30 transition-colors hover:bg-muted/20">
+    <tr className={`border-b border-border/30 transition-colors hover:bg-muted/20 ${isLowConfidence ? "opacity-60" : ""}`}>
       <td className="px-4 py-3">
         <div className="text-foreground">{date}</div>
         <div className="text-xs text-muted-foreground">{time}</div>
@@ -238,7 +245,7 @@ function HistoryRow({
         </div>
       </td>
       <td className="px-4 py-3">
-        <div className="font-medium text-foreground">{displayName}</div>
+        <div className={`font-medium ${isLowConfidence ? "text-muted-foreground italic" : "text-foreground"}`}>{displayName}</div>
         <div className="text-xs italic text-muted-foreground">{sciName}</div>
       </td>
       <td className="px-4 py-3">
