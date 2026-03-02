@@ -83,7 +83,11 @@ export function useUploads() {
         slotEntries.map((e) => prepareImageForUpload(e.file)),
       );
 
-      const images = prepared.map((p) => p.base64);
+      const images = prepared.map((p) => {
+        const raw = p.base64;
+        const commaIdx = raw.indexOf(",");
+        return commaIdx >= 0 ? raw.slice(commaIdx + 1) : raw;
+      });
       const photoRoles = slotEntries.map((e) => SLOT_ROLES[e.index]);
       const imageMeta: ImageMeta[] = slotEntries.map((e, i) => ({
         filename: e.file.name,
@@ -162,9 +166,13 @@ export function useUploads() {
 
   // Load from URL on mount
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("uploadId");
-    if (id) loadSavedUpload(id);
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("uploadId");
+      if (id) loadSavedUpload(id);
+    } catch {
+      // ignore — URL parse can fail in some environments
+    }
   }, [loadSavedUpload]);
 
   // Handle popstate
