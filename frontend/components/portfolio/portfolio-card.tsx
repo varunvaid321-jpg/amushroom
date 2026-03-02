@@ -24,10 +24,10 @@ export function PortfolioCard({ upload, onClick }: PortfolioCardProps) {
     >
       <CardContent className="p-3">
         <div className="mb-3 aspect-square overflow-hidden rounded-lg bg-muted/20">
-          {upload.coverPreview ? (
+          {upload.coverImageUrl ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
-              src={upload.coverPreview}
+              src={upload.coverImageUrl}
               alt={upload.primaryMatch}
               className="h-full w-full object-cover"
             />
@@ -38,7 +38,7 @@ export function PortfolioCard({ upload, onClick }: PortfolioCardProps) {
           )}
         </div>
         <h4 className="truncate text-sm font-semibold text-foreground">
-          {upload.matches[0]?.commonName || upload.primaryMatch}
+          {upload.topMatches[0]?.commonName || upload.primaryMatch}
         </h4>
         <p className="truncate text-xs italic text-muted-foreground">
           {upload.primaryMatch}

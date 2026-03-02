@@ -143,14 +143,14 @@ export function useUploads() {
       const newPreviews: (string | null)[] = Array(5).fill(null);
       detail.images.forEach((img) => {
         const idx = SLOT_ROLES.indexOf(img.role);
-        if (idx >= 0) newPreviews[idx] = img.preview;
+        if (idx >= 0) newPreviews[idx] = img.previewUrl;
       });
       setPreviews(newPreviews);
       setFiles(Array(5).fill(null)); // No File objects for saved uploads
 
       setMatches(detail.matches);
-      setConsistencyCheck(detail.consistencyCheck);
-      setUploadGuidance(null);
+      setConsistencyCheck(detail.consistencyCheck || null);
+      setUploadGuidance(detail.uploadGuidance || null);
       setCurrentUploadId(uploadId);
       setResultsState("ready");
       setStatusText("");

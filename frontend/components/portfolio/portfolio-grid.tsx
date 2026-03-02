@@ -57,9 +57,9 @@ export function PortfolioGrid({ onLoadUpload }: PortfolioGridProps) {
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {uploads.map((u) => (
                 <PortfolioCard
-                  key={u.uploadId}
+                  key={u.id}
                   upload={u}
-                  onClick={() => onLoadUpload(u.uploadId)}
+                  onClick={() => onLoadUpload(u.id)}
                 />
               ))}
             </div>

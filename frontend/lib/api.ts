@@ -47,24 +47,34 @@ export interface ImageMeta {
   size: number;
 }
 
+// Matches actual server response from listUserUploads in db.js
 export interface UploadSummary {
-  uploadId: string;
+  id: string;
   createdAt: string;
   imageCount: number;
   primaryMatch: string;
   primaryConfidence: number;
   mixedSpecies: boolean;
-  coverPreview: string;
-  matches: { commonName: string; scientificName: string; confidence: number }[];
+  consistencyMessage: string;
+  coverImageUrl: string;
+  coverFileName: string;
+  previewImages: { id: number; role: string; filename: string; mimeType: string; previewUrl: string }[];
+  topMatches: { rank: number; scientificName: string; commonName: string; confidence: number }[];
 }
 
+// Matches actual server response from getUserUploadDetail in db.js + server.js wrapper
 export interface UploadDetail {
-  uploadId: string;
+  id: string;
   createdAt: string;
   imageCount: number;
-  images: { role: string; preview: string }[];
+  primaryMatch: string;
+  primaryConfidence: number;
+  mixedSpecies: boolean;
+  consistencyMessage: string;
+  images: { id: number; role: string; filename: string; mimeType: string; bytes: number; createdAt: string; previewUrl: string }[];
   matches: Match[];
-  consistencyCheck: ConsistencyCheck | null;
+  uploadGuidance: UploadGuidance;
+  consistencyCheck: ConsistencyCheck;
 }
 
 async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
