@@ -42,15 +42,21 @@ export function ResultsDock({
     );
   }
 
-  if (matches.length === 0) {
+  // Filter: only show matches with >= 50% confidence
+  const viableMatches = matches.filter((m) => m.score >= 50);
+
+  if (viableMatches.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-border py-16 text-center">
+        <Microscope className="mb-3 h-10 w-10 text-muted-foreground/40" />
         <p className="text-sm text-muted-foreground">
-          No matches found. Try uploading clearer photos.
+          No confident matches found. Try uploading clearer photos from multiple angles.
         </p>
       </div>
     );
   }
+
+  const secondaryMatches = viableMatches.slice(1);
 
   return (
     <div className="space-y-4">
@@ -60,17 +66,17 @@ export function ResultsDock({
         </div>
       )}
       <ProfilePanel
-        match={matches[0]}
+        match={viableMatches[0]}
         uploadGuidance={uploadGuidance}
         consistencyCheck={consistencyCheck}
       />
-      {matches.length > 1 && (
+      {secondaryMatches.length > 0 && (
         <div>
           <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
             Similar Matches
           </h3>
           <div className="space-y-3">
-            {matches.slice(1).map((m, i) => (
+            {secondaryMatches.map((m, i) => (
               <MatchCard key={i} match={m} rank={i + 2} />
             ))}
           </div>
