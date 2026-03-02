@@ -1,14 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { Hero } from "@/components/hero/hero";
 import { PhotoSlots } from "@/components/upload/photo-slots";
 import { UploadPanel } from "@/components/upload/upload-panel";
 import { ResultsDock } from "@/components/results/results-dock";
-import { PortfolioGrid } from "@/components/portfolio/portfolio-grid";
+import { HistoryTable } from "@/components/portfolio/history-table";
 import { Container } from "@/components/layout/container";
 import { useUploads } from "@/hooks/use-uploads";
 
 export default function Home() {
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const uploads = useUploads();
   const {
     files,
     previews,
@@ -22,9 +26,13 @@ export default function Home() {
     addFile,
     removeSlot,
     clearAll,
-    analyze,
     loadSavedUpload,
-  } = useUploads();
+  } = uploads;
+
+  const handleAnalyze = async () => {
+    await uploads.analyze();
+    setRefreshKey((k) => k + 1);
+  };
 
   return (
     <>
@@ -43,7 +51,7 @@ export default function Home() {
               <UploadPanel
                 photoCount={photoCount}
                 analyzing={resultsState === "loading"}
-                onAnalyze={analyze}
+                onAnalyze={handleAnalyze}
                 onClear={clearAll}
                 statusText={statusText}
               />
@@ -60,7 +68,7 @@ export default function Home() {
           </div>
         </Container>
       </section>
-      <PortfolioGrid onLoadUpload={loadSavedUpload} />
+      <HistoryTable onLoadUpload={loadSavedUpload} refreshKey={refreshKey} />
     </>
   );
 }

@@ -24,37 +24,49 @@ export function MatchCard({ match, rank }: MatchCardProps) {
   return (
     <Card className="border-border/50 bg-card">
       <CardContent className="space-y-3 p-4">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground">
-              #{rank}
-            </span>
-            <div>
-              <h4 className="font-semibold text-foreground">{match.commonName}</h4>
-              <p className="text-xs italic text-muted-foreground">
-                {match.scientificName}
-              </p>
+        <div className="flex gap-3">
+          {match.representativeImage && (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={match.representativeImage}
+              alt={match.commonName}
+              className="h-20 w-20 flex-shrink-0 rounded-lg object-cover"
+            />
+          )}
+          <div className="flex-1">
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground">
+                  #{rank}
+                </span>
+                <div>
+                  <h4 className="font-semibold text-foreground">{match.commonName}</h4>
+                  <p className="text-xs italic text-muted-foreground">
+                    {match.scientificName}
+                  </p>
+                </div>
+              </div>
+              <span className={`text-lg font-bold tabular-nums ${confidenceColor(match.score)}`}>
+                {match.score}%
+              </span>
+            </div>
+
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              <Badge variant={chipVariant(match.edible)} className="text-xs">
+                {match.edible === "Edible" ? (
+                  <Leaf className="mr-1 h-3 w-3" />
+                ) : match.edible === "Poisonous" ? (
+                  <ShieldAlert className="mr-1 h-3 w-3" />
+                ) : null}
+                {match.edible}
+              </Badge>
+              {match.psychedelic !== "Unknown" && (
+                <Badge variant={chipVariant(match.psychedelic)} className="text-xs">
+                  Psychoactive: {match.psychedelic}
+                </Badge>
+              )}
             </div>
           </div>
-          <span className={`text-lg font-bold tabular-nums ${confidenceColor(match.score)}`}>
-            {match.score}%
-          </span>
-        </div>
-
-        <div className="flex flex-wrap gap-1.5">
-          <Badge variant={chipVariant(match.edible)} className="text-xs">
-            {match.edible === "Edible" ? (
-              <Leaf className="mr-1 h-3 w-3" />
-            ) : match.edible === "Poisonous" ? (
-              <ShieldAlert className="mr-1 h-3 w-3" />
-            ) : null}
-            {match.edible}
-          </Badge>
-          {match.psychedelic !== "Unknown" && (
-            <Badge variant={chipVariant(match.psychedelic)} className="text-xs">
-              Psychoactive: {match.psychedelic}
-            </Badge>
-          )}
         </div>
 
         {match.traits.length > 0 && (
