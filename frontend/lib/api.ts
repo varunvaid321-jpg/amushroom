@@ -105,9 +105,8 @@ export class ApiError extends Error {
 }
 
 // Auth
-export async function getMe(): Promise<User | null> {
-  const data = await apiFetch<{ user: User | null }>("/api/auth/me");
-  return data.user;
+export async function getMe(): Promise<{ user: User | null; isAdmin: boolean }> {
+  return apiFetch<{ user: User | null; isAdmin: boolean }>("/api/auth/me");
 }
 
 export async function login(email: string, password: string): Promise<User> {

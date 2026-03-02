@@ -34,7 +34,16 @@ const {
   deleteExpiredSessions,
   createUploadRecord,
   listUserUploads,
-  getUserUploadDetail
+  getUserUploadDetail,
+  trackEvent,
+  updateEventGeo,
+  getAnalyticsSummary,
+  getRecentEvents,
+  getScansByDay,
+  getSignupsByDay,
+  getTopSpecies,
+  getGeoBreakdown,
+  listAllUsers
 } = require('./src/db');
 
 const ROOT = __dirname;
@@ -86,6 +95,30 @@ const MAX_UPLOAD_IMAGES = 5;
 const IDENTIFY_BODY_MAX_BYTES = Math.ceil((MAX_IMAGE_BYTES * MAX_UPLOAD_IMAGES * 4) / 3) + 1024 * 1024;
 const MIX_CHECK_TRIGGER_TOP_CONFIDENCE = 90;
 const MIX_CHECK_TRIGGER_MARGIN = 15;
+
+const ADMIN_EMAILS = new Set((process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean));
+
+async function lookupGeo(ip) {
+  if (!ip || ip === 'unknown' || ip === '127.0.0.1' || ip === '::1') return null;
+  try {
+    const resp = await fetch(`http://ip-api.com/json/${encodeURIComponent(ip)}?fields=status,country,city`);
+    const data = await resp.json();
+    if (data.status === 'success') return { country: data.country, city: data.city };
+  } catch { /* ignore */ }
+  return null;
+}
+
+function trackAndGeo(event, userId, metadata, ip) {
+  const eventId = trackEvent({ event, userId, metadata, ip });
+  lookupGeo(ip).then(geo => {
+    if (geo) updateEventGeo(eventId, geo.country, geo.city);
+  }).catch(() => {});
+}
+
+function isAdmin(user) {
+  if (!user?.email) return false;
+  return ADMIN_EMAILS.has(user.email.toLowerCase());
+}
 
 const ALLOWED_IMAGE_MIME_TYPES = new Set([
   'image/jpeg',
@@ -146,8 +179,8 @@ function securityHeaders(req) {
     'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
     'Content-Security-Policy': [
       "default-src 'self'",
-      "script-src 'self'",
-      "style-src 'self' https://fonts.googleapis.com",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com data:",
       "img-src 'self' data: blob: https:",
       "connect-src 'self'",
@@ -814,6 +847,7 @@ async function handleAuthRegister(req, res) {
   });
   setSession(res, req, sessionId);
 
+  trackAndGeo('signup', user.id, { email }, getClientIp(req));
   sendJson(req, res, 201, { user });
 }
 
@@ -851,6 +885,7 @@ async function handleAuthLogin(req, res) {
   });
   setSession(res, req, sessionId);
 
+  trackAndGeo('login', userRow.id, { email }, getClientIp(req));
   sendJson(req, res, 200, { user: getPublicUser(userRow.id) });
 }
 
@@ -866,7 +901,8 @@ function handleAuthLogout(req, res) {
 
 function handleAuthMe(req, res) {
   const auth = getAuthContext(req);
-  sendJson(req, res, 200, { user: auth?.user || null });
+  const user = auth?.user || null;
+  sendJson(req, res, 200, { user, isAdmin: user ? isAdmin(user) : false });
 }
 
 function handleGoogleStart(req, res, url) {
@@ -1105,6 +1141,13 @@ async function handleIdentify(req, res) {
     }
   }
 
+  const topMatch = matches[0];
+  trackAndGeo('scan', auth?.user?.id || null, {
+    imageCount: images.length,
+    species: topMatch?.scientificName,
+    confidence: topMatch?.score
+  }, getClientIp(req));
+
   sendJson(req, res, 200, { matches, uploadGuidance, consistencyCheck, uploadId });
 }
 
@@ -1273,6 +1316,58 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (req.method === 'POST' && url.pathname === '/api/track') {
+    let body;
+    try {
+      body = await parseBody(req, 64 * 1024);
+    } catch {
+      sendJson(req, res, 400, { error: 'Bad request' });
+      return;
+    }
+    const auth = getAuthContext(req);
+    const event = String(body.event || '').slice(0, 50);
+    if (event) {
+      trackAndGeo(event, auth?.user?.id || null, body.metadata || null, getClientIp(req));
+    }
+    sendJson(req, res, 200, { ok: true });
+    return;
+  }
+
+  if (req.method === 'GET' && url.pathname.startsWith('/api/admin/')) {
+    const auth = getAuthContext(req);
+    if (!auth?.user || !isAdmin(auth.user)) {
+      jsonError(req, res, 403, 'Admin access required.');
+      return;
+    }
+    const route = url.pathname.slice('/api/admin/'.length);
+    const days = Number(url.searchParams.get('days') || 30);
+    if (route === 'summary') {
+      sendJson(req, res, 200, getAnalyticsSummary());
+    } else if (route === 'events') {
+      sendJson(req, res, 200, { events: getRecentEvents(Number(url.searchParams.get('limit') || 50)) });
+    } else if (route === 'scans-by-day') {
+      sendJson(req, res, 200, { data: getScansByDay(days) });
+    } else if (route === 'signups-by-day') {
+      sendJson(req, res, 200, { data: getSignupsByDay(days) });
+    } else if (route === 'species') {
+      sendJson(req, res, 200, { data: getTopSpecies(days) });
+    } else if (route === 'geo') {
+      sendJson(req, res, 200, { data: getGeoBreakdown(days) });
+    } else if (route === 'users') {
+      sendJson(req, res, 200, { users: listAllUsers(Number(url.searchParams.get('limit') || 100)) });
+    } else {
+      jsonError(req, res, 404, 'Unknown admin endpoint.');
+    }
+    return;
+  }
+
+  // In production, delegate non-API routes to Next.js
+  if (nextHandler) {
+    nextHandler(req, res);
+    return;
+  }
+
+  // Dev fallback: serve old public/ files
   if (req.method === 'GET') {
     const pathname = url.pathname === '/' ? '/index.html' : url.pathname;
     const filePath = resolvePublicPath(pathname);
@@ -1288,7 +1383,37 @@ const server = http.createServer(async (req, res) => {
   sendJson(req, res, 404, { error: 'Not found' });
 });
 
-server.listen(PORT, HOST, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Orangutany running at http://${HOST}:${PORT}`);
-});
+// Next.js standalone integration for production
+let nextHandler = null;
+
+async function startServer() {
+  if (process.env.NODE_ENV === 'production') {
+    try {
+      const nextStandalonePath = path.join(ROOT, 'frontend', '.next', 'standalone', 'frontend');
+      const NextServer = require(path.join(nextStandalonePath, 'node_modules', 'next', 'dist', 'server', 'next-server.js')).default;
+      const nextServer = new NextServer({
+        dir: nextStandalonePath,
+        dev: false,
+        conf: require(path.join(nextStandalonePath, '.next', 'required-server-files.json')).config,
+        hostname: HOST,
+        port: PORT
+      });
+      nextHandler = nextServer.getRequestHandler();
+      await nextServer.prepare();
+      // eslint-disable-next-line no-console
+      console.log('Next.js standalone handler loaded.');
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to load Next.js standalone:', err.message);
+      // eslint-disable-next-line no-console
+      console.log('Falling back to static file serving.');
+    }
+  }
+
+  server.listen(PORT, HOST, () => {
+    // eslint-disable-next-line no-console
+    console.log(`Orangutany running at http://${HOST}:${PORT}`);
+  });
+}
+
+startServer();

@@ -83,6 +83,20 @@ CREATE TABLE IF NOT EXISTS identification_matches (
   FOREIGN KEY(batch_id) REFERENCES upload_batches(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS analytics_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  event TEXT NOT NULL,
+  user_id INTEGER,
+  metadata TEXT,
+  ip TEXT,
+  country TEXT,
+  city TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_analytics_created ON analytics_events(created_at);
+CREATE INDEX IF NOT EXISTS idx_analytics_event ON analytics_events(event);
+
 CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at);
 CREATE INDEX IF NOT EXISTS idx_upload_batches_user_id ON upload_batches(user_id);
@@ -183,6 +197,53 @@ const stmts = {
     FROM identification_matches
     WHERE batch_id = ?
     ORDER BY rank ASC
+  `),
+
+  insertAnalyticsEvent: db.prepare(`
+    INSERT INTO analytics_events (event, user_id, metadata, ip, country, city, created_at)
+    VALUES (@event, @user_id, @metadata, @ip, @country, @city, @created_at)
+  `),
+  updateEventGeo: db.prepare(`
+    UPDATE analytics_events SET country = @country, city = @city WHERE id = @id
+  `),
+  analyticsSummary: db.prepare(`
+    SELECT
+      (SELECT COUNT(*) FROM users) AS totalUsers,
+      (SELECT COUNT(*) FROM upload_batches) AS totalScans,
+      (SELECT COUNT(*) FROM upload_batches WHERE created_at >= date('now', '-1 day')) AS scansToday,
+      (SELECT COUNT(DISTINCT ip) FROM analytics_events WHERE created_at >= date('now', '-7 days')) AS uniqueVisitors7d
+  `),
+  recentEvents: db.prepare(`
+    SELECT id, event, user_id, metadata, ip, country, city, created_at
+    FROM analytics_events ORDER BY created_at DESC LIMIT ?
+  `),
+  scansByDay: db.prepare(`
+    SELECT date(created_at) AS day, COUNT(*) AS count
+    FROM upload_batches
+    WHERE created_at >= date('now', ? || ' days')
+    GROUP BY day ORDER BY day
+  `),
+  signupsByDay: db.prepare(`
+    SELECT date(created_at) AS day, COUNT(*) AS count
+    FROM users
+    WHERE created_at >= date('now', ? || ' days')
+    GROUP BY day ORDER BY day
+  `),
+  topSpecies: db.prepare(`
+    SELECT primary_match AS species, COUNT(*) AS count
+    FROM upload_batches
+    WHERE primary_match IS NOT NULL AND created_at >= date('now', ? || ' days')
+    GROUP BY primary_match ORDER BY count DESC LIMIT 10
+  `),
+  geoBreakdown: db.prepare(`
+    SELECT country, city, COUNT(*) AS count
+    FROM analytics_events
+    WHERE country IS NOT NULL AND created_at >= date('now', ? || ' days')
+    GROUP BY country, city ORDER BY count DESC LIMIT 50
+  `),
+  countUsers: db.prepare('SELECT COUNT(*) AS count FROM users'),
+  listAllUsers: db.prepare(`
+    SELECT id, email, name, email_verified, created_at, updated_at FROM users ORDER BY created_at DESC LIMIT ?
   `)
 };
 
@@ -410,6 +471,52 @@ function getUserUploadDetail(userId, uploadId) {
   };
 }
 
+function trackEvent({ event, userId, metadata, ip }) {
+  const now = nowIso();
+  const result = stmts.insertAnalyticsEvent.run({
+    event,
+    user_id: userId || null,
+    metadata: metadata ? JSON.stringify(metadata) : null,
+    ip: ip || null,
+    country: null,
+    city: null,
+    created_at: now
+  });
+  return result.lastInsertRowid;
+}
+
+function updateEventGeo(id, country, city) {
+  stmts.updateEventGeo.run({ id, country: country || null, city: city || null });
+}
+
+function getAnalyticsSummary() {
+  return stmts.analyticsSummary.get();
+}
+
+function getRecentEvents(limit = 50) {
+  return stmts.recentEvents.all(Math.min(limit, 200));
+}
+
+function getScansByDay(days = 30) {
+  return stmts.scansByDay.all(String(-Math.abs(days)));
+}
+
+function getSignupsByDay(days = 30) {
+  return stmts.signupsByDay.all(String(-Math.abs(days)));
+}
+
+function getTopSpecies(days = 30) {
+  return stmts.topSpecies.all(String(-Math.abs(days)));
+}
+
+function getGeoBreakdown(days = 30) {
+  return stmts.geoBreakdown.all(String(-Math.abs(days)));
+}
+
+function listAllUsers(limit = 100) {
+  return stmts.listAllUsers.all(Math.min(limit, 500));
+}
+
 module.exports = {
   db,
   createUser,
@@ -425,5 +532,14 @@ module.exports = {
   deleteExpiredSessions,
   createUploadRecord,
   listUserUploads,
-  getUserUploadDetail
+  getUserUploadDetail,
+  trackEvent,
+  updateEventGeo,
+  getAnalyticsSummary,
+  getRecentEvents,
+  getScansByDay,
+  getSignupsByDay,
+  getTopSpecies,
+  getGeoBreakdown,
+  listAllUsers
 };

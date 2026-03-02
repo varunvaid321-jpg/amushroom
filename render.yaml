@@ -4,12 +4,14 @@ services:
     env: node
     plan: starter
     rootDir: .
-    buildCommand: npm ci && cd frontend && npm ci && npm run build
-    startCommand: cd frontend && npm start
+    buildCommand: npm ci && cd frontend && npm ci && npm run build && cp -r public .next/standalone/frontend/public && cp -r .next/static .next/standalone/frontend/.next/static
+    startCommand: NODE_ENV=production node server.js
     healthCheckPath: /healthz
     envVars:
       - key: NODE_VERSION
         value: 20
+      - key: NODE_ENV
+        value: production
       - key: HOST
         value: 0.0.0.0
       - key: PORT
@@ -32,3 +34,7 @@ services:
         value: 20
       - key: APP_BASE_URL
         value: https://orangutany.com
+      - key: TRUST_PROXY
+        value: true
+      - key: ADMIN_EMAILS
+        sync: false

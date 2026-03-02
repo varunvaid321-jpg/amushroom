@@ -8,7 +8,7 @@ import { Container } from "./container";
 import { LogOut, User } from "lucide-react";
 
 export function Header() {
-  const { user, loading, logout } = useAuth();
+  const { user, isAdmin, loading, logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background">
@@ -30,6 +30,13 @@ export function Header() {
                 <User className="mr-1 inline h-4 w-4" />
                 {user.name || user.email}
               </span>
+              {isAdmin && (
+                <Link href="/admin">
+                  <Button variant="ghost" size="sm" className="text-primary">
+                    Admin
+                  </Button>
+                </Link>
+              )}
               <Button
                 variant="ghost"
                 size="sm"

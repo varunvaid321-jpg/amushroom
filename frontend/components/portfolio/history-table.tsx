@@ -16,6 +16,7 @@ import {
   ImageIcon,
   AlertTriangle,
 } from "lucide-react";
+import { track } from "@/lib/track";
 
 const PAGE_SIZE = 10;
 
@@ -136,7 +137,7 @@ export function HistoryTable({ onLoadUpload, refreshKey }: HistoryTableProps) {
               </thead>
               <tbody>
                 {pageUploads.map((u) => (
-                  <HistoryRow key={u.id} upload={u} onView={() => onLoadUpload(u.id)} />
+                  <HistoryRow key={u.id} upload={u} onView={() => { track("button_click", { button: "view_scan", uploadId: u.id }); onLoadUpload(u.id); }} />
                 ))}
               </tbody>
             </table>

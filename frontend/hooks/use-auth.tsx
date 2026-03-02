@@ -19,6 +19,7 @@ import {
 
 interface AuthContextValue {
   user: User | null;
+  isAdmin: boolean;
   loading: boolean;
   googleAuthEnabled: boolean;
   login: (email: string, password: string) => Promise<User>;
@@ -31,22 +32,25 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [adminFlag, setAdminFlag] = useState(false);
   const [loading, setLoading] = useState(true);
   const [googleAuthEnabled, setGoogleAuthEnabled] = useState(false);
 
   const refresh = useCallback(async () => {
     try {
-      const u = await getMe();
-      setUser(u);
+      const data = await getMe();
+      setUser(data.user);
+      setAdminFlag(data.isAdmin);
     } catch {
       setUser(null);
+      setAdminFlag(false);
     }
   }, []);
 
   useEffect(() => {
     Promise.all([
       getMe()
-        .then(setUser)
+        .then((data) => { setUser(data.user); setAdminFlag(data.isAdmin); })
         .catch(() => setUser(null)),
       getAuthConfig()
         .then((c) => setGoogleAuthEnabled(c.googleAuthEnabled))
@@ -76,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, googleAuthEnabled, login, register, logout, refresh }}
+      value={{ user, isAdmin: adminFlag, loading, googleAuthEnabled, login, register, logout, refresh }}
     >
       {children}
     </AuthContext.Provider>

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Hero } from "@/components/hero/hero";
+import { track } from "@/lib/track";
 import { PhotoSlots } from "@/components/upload/photo-slots";
 import { UploadPanel } from "@/components/upload/upload-panel";
 import { ResultsDock } from "@/components/results/results-dock";
@@ -11,6 +12,8 @@ import { useUploads } from "@/hooks/use-uploads";
 
 export default function Home() {
   const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => { track("page_view", { page: "/" }); }, []);
 
   const uploads = useUploads();
   const {
@@ -30,6 +33,7 @@ export default function Home() {
   } = uploads;
 
   const handleAnalyze = async () => {
+    track("button_click", { button: "analyze", photoCount: uploads.photoCount });
     await uploads.analyze();
     setRefreshKey((k) => k + 1);
   };
