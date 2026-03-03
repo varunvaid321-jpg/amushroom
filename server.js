@@ -43,8 +43,15 @@ const {
   getSignupsByDay,
   getTopSpecies,
   getGeoBreakdown,
-  listAllUsers
+  listAllUsers,
+  createPasswordResetToken,
+  findValidResetToken,
+  markResetTokenUsed,
+  updateUserPassword,
+  deleteUserSessions,
+  deleteExpiredResetTokens
 } = require('./src/db');
+const { sendWelcomeEmail, sendPasswordResetEmail } = require('./src/email');
 
 const ROOT = __dirname;
 const PUBLIC_DIR = path.join(ROOT, 'public');
@@ -167,8 +174,10 @@ const identifyRateLimitStore = new Map();
 const authRateLimitStore = new Map();
 
 deleteExpiredSessions();
+deleteExpiredResetTokens();
 setInterval(() => {
   deleteExpiredSessions();
+  deleteExpiredResetTokens();
 }, SESSION_CLEANUP_INTERVAL_MS).unref();
 
 function securityHeaders(req) {
@@ -848,6 +857,7 @@ async function handleAuthRegister(req, res) {
   setSession(res, req, sessionId);
 
   trackAndGeo('signup', user.id, { email }, getClientIp(req));
+  sendWelcomeEmail(email, name).catch(() => {});
   sendJson(req, res, 201, { user });
 }
 
@@ -897,6 +907,80 @@ function handleAuthLogout(req, res) {
   }
   clearSession(res, req);
   sendJson(req, res, 200, { ok: true });
+}
+
+async function handleForgotPassword(req, res) {
+  let body;
+  try {
+    body = await parseBody(req, 2 * 1024 * 1024);
+  } catch (error) {
+    jsonError(req, res, 400, error.message);
+    return;
+  }
+
+  // Always return 200 to prevent email enumeration
+  const genericResponse = { message: 'If an account exists with that email, a reset link has been sent.' };
+
+  const email = normalizeEmail(body.email);
+  const emailCheck = validateEmail(email);
+  if (!emailCheck.valid) {
+    sendJson(req, res, 200, genericResponse);
+    return;
+  }
+
+  const userRow = findUserAuthByEmail(email);
+  if (!userRow || !userRow.password_hash) {
+    sendJson(req, res, 200, genericResponse);
+    return;
+  }
+
+  const crypto = require('node:crypto');
+  const token = crypto.randomBytes(32).toString('hex');
+  const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+
+  createPasswordResetToken({ userId: userRow.id, token, expiresAt });
+
+  const resetUrl = `${APP_BASE_URL}/reset-password?token=${token}`;
+  sendPasswordResetEmail(email, userRow.name, resetUrl).catch(() => {});
+
+  sendJson(req, res, 200, genericResponse);
+}
+
+async function handleResetPassword(req, res) {
+  let body;
+  try {
+    body = await parseBody(req, 2 * 1024 * 1024);
+  } catch (error) {
+    jsonError(req, res, 400, error.message);
+    return;
+  }
+
+  const token = String(body.token || '');
+  const password = String(body.password || '');
+
+  if (!token) {
+    jsonError(req, res, 400, 'Reset token is required.');
+    return;
+  }
+
+  const passwordCheck = validatePassword(password);
+  if (!passwordCheck.valid) {
+    jsonError(req, res, 400, passwordCheck.message);
+    return;
+  }
+
+  const resetToken = findValidResetToken(token);
+  if (!resetToken) {
+    jsonError(req, res, 400, 'Invalid or expired reset link. Please request a new one.');
+    return;
+  }
+
+  const hashed = hashPassword(password);
+  updateUserPassword({ userId: resetToken.user_id, passwordHash: hashed.hash, passwordSalt: hashed.salt });
+  markResetTokenUsed(resetToken.id);
+  deleteUserSessions(resetToken.user_id);
+
+  sendJson(req, res, 200, { message: 'Password reset successfully. Please sign in with your new password.' });
 }
 
 function handleAuthMe(req, res) {
@@ -1255,6 +1339,44 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && url.pathname === '/api/auth/logout') {
     if (!requireSameOrigin(req, res)) return;
     handleAuthLogout(req, res);
+    return;
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/auth/forgot-password') {
+    if (!requireSameOrigin(req, res)) return;
+    if (
+      AUTH_RATE_LIMIT_ENABLED &&
+      !enforceRouteRateLimit(
+        req,
+        res,
+        authRateLimitStore,
+        AUTH_RATE_LIMIT_WINDOW_MS,
+        AUTH_RATE_LIMIT_MAX,
+        'Too many requests. Please try again later.'
+      )
+    ) {
+      return;
+    }
+    await handleForgotPassword(req, res);
+    return;
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/auth/reset-password') {
+    if (!requireSameOrigin(req, res)) return;
+    if (
+      AUTH_RATE_LIMIT_ENABLED &&
+      !enforceRouteRateLimit(
+        req,
+        res,
+        authRateLimitStore,
+        AUTH_RATE_LIMIT_WINDOW_MS,
+        AUTH_RATE_LIMIT_MAX,
+        'Too many requests. Please try again later.'
+      )
+    ) {
+      return;
+    }
+    await handleResetPassword(req, res);
     return;
   }
 

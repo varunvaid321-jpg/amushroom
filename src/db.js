@@ -97,8 +97,19 @@ CREATE TABLE IF NOT EXISTS analytics_events (
 CREATE INDEX IF NOT EXISTS idx_analytics_created ON analytics_events(created_at);
 CREATE INDEX IF NOT EXISTS idx_analytics_event ON analytics_events(event);
 
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  token TEXT NOT NULL UNIQUE,
+  expires_at TEXT NOT NULL,
+  used INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at);
+CREATE INDEX IF NOT EXISTS idx_reset_tokens_token ON password_reset_tokens(token);
 CREATE INDEX IF NOT EXISTS idx_upload_batches_user_id ON upload_batches(user_id);
 CREATE INDEX IF NOT EXISTS idx_upload_images_batch_id ON upload_images(batch_id);
 CREATE INDEX IF NOT EXISTS idx_identification_matches_batch_id ON identification_matches(batch_id);
@@ -243,6 +254,22 @@ const stmts = {
     WHERE country IS NOT NULL AND created_at >= date('now', ? || ' days')
     GROUP BY country, city ORDER BY count DESC LIMIT 50
   `),
+  createResetToken: db.prepare(`
+    INSERT INTO password_reset_tokens (user_id, token, expires_at, created_at)
+    VALUES (@user_id, @token, @expires_at, @created_at)
+  `),
+  findValidResetToken: db.prepare(`
+    SELECT rt.*, u.email, u.name FROM password_reset_tokens rt
+    JOIN users u ON u.id = rt.user_id
+    WHERE rt.token = ? AND rt.used = 0 AND rt.expires_at > ?
+  `),
+  markResetTokenUsed: db.prepare('UPDATE password_reset_tokens SET used = 1 WHERE id = ?'),
+  updateUserPassword: db.prepare(`
+    UPDATE users SET password_hash = @password_hash, password_salt = @password_salt, updated_at = @updated_at WHERE id = @id
+  `),
+  deleteUserSessions: db.prepare('DELETE FROM sessions WHERE user_id = ?'),
+  deleteExpiredResetTokens: db.prepare('DELETE FROM password_reset_tokens WHERE expires_at < ? OR used = 1'),
+
   countUsers: db.prepare('SELECT COUNT(*) AS count FROM users'),
   listAllUsers: db.prepare(`
     SELECT id, email, name, email_verified, created_at, updated_at FROM users ORDER BY created_at DESC LIMIT ?
@@ -519,6 +546,40 @@ function listAllUsers(limit = 100) {
   return stmts.listAllUsers.all(Math.min(limit, 500));
 }
 
+function createPasswordResetToken({ userId, token, expiresAt }) {
+  stmts.createResetToken.run({
+    user_id: userId,
+    token,
+    expires_at: expiresAt,
+    created_at: nowIso()
+  });
+}
+
+function findValidResetToken(token) {
+  return stmts.findValidResetToken.get(token, nowIso()) || null;
+}
+
+function markResetTokenUsed(id) {
+  stmts.markResetTokenUsed.run(id);
+}
+
+function updateUserPassword({ userId, passwordHash, passwordSalt }) {
+  stmts.updateUserPassword.run({
+    id: userId,
+    password_hash: passwordHash,
+    password_salt: passwordSalt,
+    updated_at: nowIso()
+  });
+}
+
+function deleteUserSessions(userId) {
+  stmts.deleteUserSessions.run(userId);
+}
+
+function deleteExpiredResetTokens() {
+  stmts.deleteExpiredResetTokens.run(nowIso());
+}
+
 module.exports = {
   db,
   createUser,
@@ -543,5 +604,11 @@ module.exports = {
   getSignupsByDay,
   getTopSpecies,
   getGeoBreakdown,
-  listAllUsers
+  listAllUsers,
+  createPasswordResetToken,
+  findValidResetToken,
+  markResetTokenUsed,
+  updateUserPassword,
+  deleteUserSessions,
+  deleteExpiredResetTokens
 };
