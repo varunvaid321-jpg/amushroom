@@ -555,7 +555,7 @@ function buildWhyMatch({ score, traits, description, edibility, psychoactive, up
   if (uploadGuidance.missingRecommendedRoles.length === 0) {
     reasons.push('You provided all core angles (top, gills, stalk, environment), which improves quality.');
   } else {
-    reasons.push(`For better quality, add: ${uploadGuidance.missingRecommendedRoles.join(', ')}.`);
+    reasons.push(`Adding photos of the ${uploadGuidance.missingRecommendedRoles.join(', ').replace(/, ([^,]*)$/, ' and $1')} could improve this identification.`);
   }
 
   if (String(edibility).toLowerCase().includes('poison') || String(edibility).toLowerCase().includes('deadly')) {

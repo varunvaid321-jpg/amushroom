@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +18,10 @@ interface AuthModalProps {
 
 export function AuthModal({ open, onOpenChange, defaultTab = "login" }: AuthModalProps) {
   const [tab, setTab] = useState<"login" | "register">(defaultTab);
+
+  useEffect(() => {
+    if (open) setTab(defaultTab);
+  }, [open, defaultTab]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

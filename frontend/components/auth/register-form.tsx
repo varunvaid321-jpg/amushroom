@@ -54,25 +54,22 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void } = {}) {
         <Input
           id="reg-name"
           type="text"
-          name="reg-name-nofill"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Your name"
-          autoComplete="nope"
+          autoComplete="name"
         />
       </div>
       <div className="space-y-2">
         <Label htmlFor="reg-email">Email</Label>
         <Input
           id="reg-email"
-          type="text"
-          inputMode="email"
-          name="reg-email-nofill"
+          type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
           required
-          autoComplete="nope"
+          autoComplete="email"
         />
       </div>
       <div className="space-y-2">
@@ -81,12 +78,11 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void } = {}) {
           <Input
             id="reg-password"
             type={showPassword ? "text" : "password"}
-            name="reg-pass-nofill"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Min 10 chars, letters + numbers"
             required
-            autoComplete="new-password-nofill"
+            autoComplete="new-password"
           />
           <button
             type="button"
@@ -102,12 +98,11 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void } = {}) {
         <Input
           id="reg-confirm"
           type="password"
-          name="reg-confirm-nofill"
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
           placeholder="Confirm password"
           required
-          autoComplete="new-password-nofill"
+          autoComplete="new-password"
         />
       </div>
       {error && (
