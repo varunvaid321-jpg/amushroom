@@ -9,7 +9,7 @@ import { ApiError } from "@/lib/api";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { GoogleButton } from "./google-button";
 
-export function LoginForm() {
+export function LoginForm({ onSuccess }: { onSuccess?: () => void } = {}) {
   const { login, googleAuthEnabled } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,7 +23,8 @@ export function LoginForm() {
     setLoading(true);
     try {
       await login(email, password);
-      window.location.href = "/";
+      if (onSuccess) onSuccess();
+      else window.location.href = "/";
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Login failed");
     } finally {
@@ -32,7 +33,7 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
       <div className="space-y-2">
         <Label htmlFor="login-email">Email</Label>
         <Input

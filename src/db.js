@@ -214,8 +214,10 @@ const stmts = {
       (SELECT COUNT(DISTINCT ip) FROM analytics_events WHERE created_at >= date('now', '-7 days')) AS uniqueVisitors7d
   `),
   recentEvents: db.prepare(`
-    SELECT id, event, user_id, metadata, ip, country, city, created_at
-    FROM analytics_events ORDER BY created_at DESC LIMIT ?
+    SELECT e.id, e.event, e.user_id, u.name AS user_name, u.email AS user_email, e.metadata, e.ip, e.country, e.city, e.created_at
+    FROM analytics_events e
+    LEFT JOIN users u ON u.id = e.user_id
+    ORDER BY e.created_at DESC LIMIT ?
   `),
   scansByDay: db.prepare(`
     SELECT date(created_at) AS day, COUNT(*) AS count

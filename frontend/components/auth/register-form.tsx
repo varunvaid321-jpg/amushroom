@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { ApiError } from "@/lib/api";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
-export function RegisterForm() {
+export function RegisterForm({ onSuccess }: { onSuccess?: () => void } = {}) {
   const { register } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -38,7 +38,8 @@ export function RegisterForm() {
     setLoading(true);
     try {
       await register(name, email, password);
-      window.location.href = "/";
+      if (onSuccess) onSuccess();
+      else window.location.href = "/";
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Registration failed");
     } finally {
@@ -47,7 +48,7 @@ export function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
       <div className="space-y-2">
         <Label htmlFor="reg-name">Name</Label>
         <Input

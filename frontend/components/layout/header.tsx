@@ -8,7 +8,7 @@ import { Container } from "./container";
 import { LogOut, User } from "lucide-react";
 
 export function Header() {
-  const { user, isAdmin, loading, logout } = useAuth();
+  const { user, isAdmin, loading, logout, openAuthModal } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background">
@@ -49,16 +49,12 @@ export function Header() {
             </>
           ) : (
             <>
-              <Link href="/auth">
-                <Button variant="ghost" size="sm">
-                  Login
-                </Button>
-              </Link>
-              <Link href="/auth">
-                <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
-                  Register
-                </Button>
-              </Link>
+              <Button variant="ghost" size="sm" onClick={() => openAuthModal("login")}>
+                Login
+              </Button>
+              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => openAuthModal("register")}>
+                Register
+              </Button>
             </>
           )}
         </nav>

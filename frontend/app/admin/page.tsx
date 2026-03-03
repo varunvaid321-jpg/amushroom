@@ -44,6 +44,8 @@ interface EventRow {
   id: number;
   event: string;
   user_id: number | null;
+  user_name: string | null;
+  user_email: string | null;
   metadata: string | null;
   ip: string | null;
   country: string | null;
@@ -210,7 +212,7 @@ export default function AdminPage() {
                   {events.map((e) => (
                     <tr key={e.id} className="border-b border-border/30">
                       <td className="px-3 py-2 text-foreground">{e.event}</td>
-                      <td className="px-3 py-2 text-foreground/80">{e.user_id ?? "anon"}</td>
+                      <td className="px-3 py-2 text-foreground/80">{e.user_name || e.user_email || (e.user_id ? `#${e.user_id}` : "anon")}</td>
                       <td className="px-3 py-2 text-foreground/80">
                         {e.country ? `${e.city || ""}, ${e.country}` : e.ip?.slice(0, 15) || "—"}
                       </td>

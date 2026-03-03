@@ -181,6 +181,14 @@ Last updated: 2026-02-22
 - [ ] Success: invalidate other sessions, keep current session active
 - [ ] UI accessible from header user menu
 
+### BG-021 Image paste support in upload slots
+- Status: Todo
+- Priority: P3
+- Acceptance Criteria:
+- [ ] Support Ctrl+V / Cmd+V paste of images into upload slots on the web app
+- [ ] Paste fills the first empty slot
+- [ ] Works with clipboard images from screenshots and copied files
+
 ### BG-019 Security posture documentation + publishable safety claims
 - Status: Todo
 - Priority: P1

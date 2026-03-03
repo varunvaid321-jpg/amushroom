@@ -16,6 +16,7 @@ import {
   getAuthConfig,
   type User,
 } from "@/lib/api";
+import { AuthModal } from "@/components/auth/auth-modal";
 
 interface AuthContextValue {
   user: User | null;
@@ -26,6 +27,7 @@ interface AuthContextValue {
   register: (name: string, email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
+  openAuthModal: (tab?: "login" | "register") => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -35,6 +37,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [adminFlag, setAdminFlag] = useState(false);
   const [loading, setLoading] = useState(true);
   const [googleAuthEnabled, setGoogleAuthEnabled] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalTab, setAuthModalTab] = useState<"login" | "register">("login");
 
   const refresh = useCallback(async () => {
     try {
@@ -78,11 +82,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  const openAuthModal = useCallback((tab: "login" | "register" = "login") => {
+    setAuthModalTab(tab);
+    setAuthModalOpen(true);
+  }, []);
+
   return (
     <AuthContext.Provider
-      value={{ user, isAdmin: adminFlag, loading, googleAuthEnabled, login, register, logout, refresh }}
+      value={{ user, isAdmin: adminFlag, loading, googleAuthEnabled, login, register, logout, refresh, openAuthModal }}
     >
       {children}
+      <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} defaultTab={authModalTab} />
     </AuthContext.Provider>
   );
 }
