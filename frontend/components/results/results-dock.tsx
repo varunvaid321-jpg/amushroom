@@ -42,8 +42,8 @@ export function ResultsDock({
     );
   }
 
-  // Filter: only show matches with >= 50% confidence
-  const viableMatches = matches.filter((m) => m.score >= 50);
+  // Filter: only show matches with >= 30% confidence
+  const viableMatches = matches.filter((m) => m.score >= 30);
 
   if (viableMatches.length === 0) {
     return (

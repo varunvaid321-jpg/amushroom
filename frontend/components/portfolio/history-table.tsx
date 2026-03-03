@@ -217,7 +217,7 @@ function HistoryRow({
     : upload.topMatches.length > 1
       ? `Also: ${upload.topMatches
           .slice(1)
-          .filter((m) => m.confidence >= 50)
+          .filter((m) => m.confidence >= 30)
           .map((m) => m.commonName)
           .join(", ") || "No other confident matches"}`
       : "Single match";
