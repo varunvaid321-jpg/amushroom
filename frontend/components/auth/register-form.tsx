@@ -57,7 +57,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void } = {}) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Your name"
-          autoComplete="name"
+          autoComplete="off"
         />
       </div>
       <div className="space-y-2">
@@ -69,7 +69,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void } = {}) {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
           required
-          autoComplete="email"
+          autoComplete="off"
         />
       </div>
       <div className="space-y-2">
@@ -82,7 +82,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void } = {}) {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Min 10 chars, letters + numbers"
             required
-            autoComplete="new-password"
+            autoComplete="off"
           />
           <button
             type="button"
@@ -102,7 +102,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void } = {}) {
           onChange={(e) => setConfirm(e.target.value)}
           placeholder="Confirm password"
           required
-          autoComplete="new-password"
+          autoComplete="off"
         />
       </div>
       {error && (

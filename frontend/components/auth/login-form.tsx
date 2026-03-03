@@ -43,7 +43,7 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void } = {}) {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
           required
-          autoComplete="email"
+          autoComplete="off"
         />
       </div>
       <div className="space-y-2">
@@ -56,7 +56,7 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void } = {}) {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
             required
-            autoComplete="current-password"
+            autoComplete="off"
           />
           <button
             type="button"
