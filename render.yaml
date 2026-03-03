@@ -4,7 +4,7 @@ services:
     env: node
     plan: free
     rootDir: .
-    buildCommand: npm ci && cd frontend && npm ci && npm run build
+    buildCommand: npm ci && cd frontend && npm ci --include=dev && npm run build
     startCommand: PORT=3001 node server.js & cd frontend && API_URL=http://localhost:3001 PORT=10000 HOST=0.0.0.0 npm start
     healthCheckPath: /
     envVars:
