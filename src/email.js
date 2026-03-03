@@ -16,20 +16,32 @@ function baseTemplate(content) {
   return `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background-color:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0a0a0a;padding:40px 20px;">
+<body style="margin:0;padding:0;background-color:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#0a0a0a;padding:48px 24px;">
 <tr><td align="center">
-<table width="100%" style="max-width:560px;background-color:#171717;border-radius:12px;overflow:hidden;">
-<tr><td style="padding:32px 40px 24px;text-align:center;border-bottom:1px solid #262626;">
-  <span style="font-size:28px;font-weight:700;color:#f97316;letter-spacing:-0.5px;">🍄 Orangutany</span>
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="max-width:520px;background-color:#161616;border-radius:16px;border:1px solid #262626;overflow:hidden;">
+
+<tr><td style="padding:36px 0 28px;text-align:center;">
+  <span style="font-size:32px;font-weight:700;color:#f97316;letter-spacing:-0.5px;">🍄 Orangutany</span>
 </td></tr>
-<tr><td style="padding:32px 40px;">
+
+<tr><td style="padding:0 44px;">
+  <div style="height:1px;background:#2a2a2a;"></div>
+</td></tr>
+
+<tr><td style="padding:36px 44px 40px;">
   ${content}
 </td></tr>
-<tr><td style="padding:24px 40px;border-top:1px solid #262626;text-align:center;">
-  <p style="margin:0;font-size:12px;color:#737373;">Orangutany — AI Mushroom Identification</p>
-  <p style="margin:4px 0 0;font-size:12px;color:#525252;">You received this email because you have an account at orangutany.com</p>
+
+<tr><td style="padding:0 44px;">
+  <div style="height:1px;background:#2a2a2a;"></div>
 </td></tr>
+
+<tr><td style="padding:28px 44px 32px;text-align:center;">
+  <p style="margin:0;font-size:13px;line-height:1.5;color:#666;">Orangutany &mdash; AI Mushroom Identification</p>
+  <p style="margin:6px 0 0;font-size:12px;line-height:1.5;color:#4a4a4a;">You received this because you have an account at orangutany.com</p>
+</td></tr>
+
 </table>
 </td></tr>
 </table>
@@ -42,13 +54,13 @@ async function sendWelcomeEmail(to, name) {
 
   const greeting = name ? `Hi ${name},` : 'Hi there,';
   const html = baseTemplate(`
-    <h1 style="margin:0 0 16px;font-size:22px;font-weight:600;color:#f5f5f5;">Welcome to Orangutany!</h1>
-    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#d4d4d4;">${greeting}</p>
-    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#d4d4d4;">Thanks for creating an account. You can now upload mushroom photos and get AI-powered identifications, build your portfolio, and track your foraging history.</p>
-    <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#d4d4d4;">Ready to identify your first mushroom?</p>
-    <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
-    <tr><td style="background-color:#f97316;border-radius:8px;">
-      <a href="https://orangutany.com" style="display:inline-block;padding:12px 28px;font-size:15px;font-weight:600;color:#0a0a0a;text-decoration:none;">Start Identifying</a>
+    <h1 style="margin:0 0 24px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Welcome to Orangutany!</h1>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">${greeting}</p>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">Thanks for creating an account. You can now upload mushroom photos and get AI-powered identifications, build your portfolio, and track your foraging history.</p>
+    <p style="margin:0 0 32px;font-size:16px;line-height:1.7;color:#e0e0e0;">Ready to identify your first mushroom?</p>
+    <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
+    <tr><td style="background-color:#f97316;border-radius:10px;">
+      <a href="https://orangutany.com" style="display:inline-block;padding:14px 32px;font-size:16px;font-weight:600;color:#0a0a0a;text-decoration:none;letter-spacing:0.2px;">Start Identifying</a>
     </td></tr>
     </table>
   `);
@@ -65,17 +77,17 @@ async function sendPasswordResetEmail(to, name, resetUrl) {
 
   const greeting = name ? `Hi ${name},` : 'Hi there,';
   const html = baseTemplate(`
-    <h1 style="margin:0 0 16px;font-size:22px;font-weight:600;color:#f5f5f5;">Reset Your Password</h1>
-    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#d4d4d4;">${greeting}</p>
-    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#d4d4d4;">We received a request to reset your password. Click the button below to choose a new one:</p>
-    <table cellpadding="0" cellspacing="0" style="margin:0 auto 24px;">
-    <tr><td style="background-color:#f97316;border-radius:8px;">
-      <a href="${resetUrl}" style="display:inline-block;padding:12px 28px;font-size:15px;font-weight:600;color:#0a0a0a;text-decoration:none;">Reset Password</a>
+    <h1 style="margin:0 0 24px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Reset Your Password</h1>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">${greeting}</p>
+    <p style="margin:0 0 28px;font-size:16px;line-height:1.7;color:#e0e0e0;">We received a request to reset your password. Click the button below to choose a new one:</p>
+    <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto 32px;">
+    <tr><td style="background-color:#f97316;border-radius:10px;">
+      <a href="${resetUrl}" style="display:inline-block;padding:14px 32px;font-size:16px;font-weight:600;color:#0a0a0a;text-decoration:none;letter-spacing:0.2px;">Reset Password</a>
     </td></tr>
     </table>
-    <p style="margin:0 0 8px;font-size:13px;line-height:1.6;color:#737373;">This link expires in 1 hour. If you didn't request a password reset, you can safely ignore this email.</p>
-    <p style="margin:0;font-size:13px;line-height:1.6;color:#737373;">If the button doesn't work, copy and paste this URL into your browser:</p>
-    <p style="margin:8px 0 0;font-size:12px;line-height:1.4;color:#525252;word-break:break-all;">${resetUrl}</p>
+    <p style="margin:0 0 12px;font-size:14px;line-height:1.7;color:#888;">This link expires in 1 hour. If you didn't request this, you can safely ignore this email.</p>
+    <p style="margin:0 0 8px;font-size:14px;line-height:1.7;color:#888;">If the button doesn't work, copy this URL:</p>
+    <p style="margin:0;padding:12px 16px;font-size:13px;line-height:1.5;color:#f97316;background:#1a1a1a;border-radius:8px;word-break:break-all;">${resetUrl}</p>
   `);
 
   try {
