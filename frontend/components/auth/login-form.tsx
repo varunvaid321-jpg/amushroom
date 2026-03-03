@@ -67,6 +67,12 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void } = {}) {
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
         </div>
+        <a
+          href="/forgot-password"
+          className="text-xs text-muted-foreground hover:text-primary transition-colors"
+        >
+          Forgot password?
+        </a>
       </div>
       {error && (
         <p className="text-sm text-destructive">{error}</p>
