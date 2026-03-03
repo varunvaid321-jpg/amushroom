@@ -23,7 +23,7 @@ export function AuthModal({ open, onOpenChange, defaultTab = "login" }: AuthModa
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="border-border/50 bg-card sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-xl text-foreground">
+          <DialogTitle className="text-sm font-medium text-muted-foreground">
             {tab === "login" ? "Sign In" : "Create Account"}
           </DialogTitle>
         </DialogHeader>

@@ -38,12 +38,14 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void } = {}) {
         <Label htmlFor="login-email">Email</Label>
         <Input
           id="login-email"
-          type="email"
+          type="text"
+          inputMode="email"
+          name="login-email-nofill"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
           required
-          autoComplete="off"
+          autoComplete="nope"
         />
       </div>
       <div className="space-y-2">
@@ -52,11 +54,12 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void } = {}) {
           <Input
             id="login-password"
             type={showPassword ? "text" : "password"}
+            name="login-pass-nofill"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
             required
-            autoComplete="off"
+            autoComplete="new-password-nofill"
           />
           <button
             type="button"

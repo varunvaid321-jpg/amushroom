@@ -49,11 +49,11 @@ export function Header() {
             </>
           ) : (
             <>
-              <Button variant="ghost" size="sm" onClick={() => openAuthModal("login")}>
-                Login
-              </Button>
+              <button onClick={() => openAuthModal("login")} className="text-sm text-muted-foreground hover:text-foreground">
+                Log in
+              </button>
               <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => openAuthModal("register")}>
-                Register
+                Sign Up Free
               </Button>
             </>
           )}

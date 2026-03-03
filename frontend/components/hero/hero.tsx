@@ -38,8 +38,8 @@ export function Hero() {
         {!user && (
           <div className="rounded-xl border border-border/50 bg-card-surface p-4 text-sm text-muted-foreground">
             <BookOpen className="mb-1 inline h-4 w-4 text-gold" />{" "}
-            <button onClick={() => openAuthModal("register")} className="text-primary hover:underline">
-              Create an account
+            <button onClick={() => openAuthModal("register")} className="font-semibold text-primary hover:underline">
+              Create a free account
             </button>{" "}
             to save identifications to your personal library.
           </div>
