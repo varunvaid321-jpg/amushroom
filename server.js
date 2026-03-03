@@ -1361,13 +1361,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // In production, delegate non-API routes to Next.js
-  if (nextHandler) {
-    nextHandler(req, res);
-    return;
-  }
-
-  // Dev fallback: serve old public/ files
+    // Dev fallback: serve old public/ files
   if (req.method === 'GET') {
     const pathname = url.pathname === '/' ? '/index.html' : url.pathname;
     const filePath = resolvePublicPath(pathname);
@@ -1383,37 +1377,7 @@ const server = http.createServer(async (req, res) => {
   sendJson(req, res, 404, { error: 'Not found' });
 });
 
-// Next.js standalone integration for production
-let nextHandler = null;
-
-async function startServer() {
-  if (process.env.NODE_ENV === 'production') {
-    try {
-      const nextStandalonePath = path.join(ROOT, 'frontend', '.next', 'standalone', 'frontend');
-      const NextServer = require(path.join(nextStandalonePath, 'node_modules', 'next', 'dist', 'server', 'next-server.js')).default;
-      const nextServer = new NextServer({
-        dir: nextStandalonePath,
-        dev: false,
-        conf: require(path.join(nextStandalonePath, '.next', 'required-server-files.json')).config,
-        hostname: HOST,
-        port: PORT
-      });
-      nextHandler = nextServer.getRequestHandler();
-      await nextServer.prepare();
-      // eslint-disable-next-line no-console
-      console.log('Next.js standalone handler loaded.');
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to load Next.js standalone:', err.message);
-      // eslint-disable-next-line no-console
-      console.log('Falling back to static file serving.');
-    }
-  }
-
-  server.listen(PORT, HOST, () => {
-    // eslint-disable-next-line no-console
-    console.log(`Orangutany running at http://${HOST}:${PORT}`);
-  });
-}
-
-startServer();
+server.listen(PORT, HOST, () => {
+  // eslint-disable-next-line no-console
+  console.log(`Orangutany running at http://${HOST}:${PORT}`);
+});

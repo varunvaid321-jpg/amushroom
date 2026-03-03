@@ -171,6 +171,16 @@ Last updated: 2026-02-22
 - [ ] Add frontend safety tests/checks for unsafe URL rendering and DOM injection regressions in result rendering and saved identifications
 - [ ] Add a simple threat-model checklist covering auth, upload abuse, saved image privacy, third-party API trust, and admin/ops misconfiguration risks
 
+### BG-020 Password change / account settings
+- Status: Todo
+- Priority: P1
+- Acceptance Criteria:
+- [ ] Add account settings page with password change form (current password + new password + confirm)
+- [ ] Server endpoint `POST /api/auth/change-password` with current password verification
+- [ ] Validation: enforce same password rules as registration
+- [ ] Success: invalidate other sessions, keep current session active
+- [ ] UI accessible from header user menu
+
 ### BG-019 Security posture documentation + publishable safety claims
 - Status: Todo
 - Priority: P1
