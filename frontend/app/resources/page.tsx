@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "External Resources",
   description:
     "Trusted external references for mushroom identification, ecology, and foraging. Curated by the Orangutany team.",
+  alternates: { canonical: "/resources" },
 };
 
 const resources = [

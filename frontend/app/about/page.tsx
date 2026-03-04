@@ -1,4 +1,12 @@
 import { Container } from "@/components/layout/container";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About Orangutany",
+  description:
+    "Orangutany is an AI-powered mushroom identification platform with a glocal mindset — global AI, local foraging knowledge. Learn about our mission to make mushroom education safe, free, and accessible.",
+  alternates: { canonical: "/about" },
+};
 
 export default function AboutPage() {
   return (

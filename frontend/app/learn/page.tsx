@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "Learn About Mushrooms",
   description:
     "Educational guides on mushroom identification, anatomy, ecology, foraging safety, and the fascinating world of fungi. Free resources for beginners and experienced foragers.",
+  alternates: { canonical: "/learn" },
 };
 
 const articles = [

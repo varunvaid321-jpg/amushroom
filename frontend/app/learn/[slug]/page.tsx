@@ -165,6 +165,56 @@ function GillAttachmentDiagram() {
   );
 }
 
+/* ─── FAQ Data (for Google rich results) ─────────────────────── */
+
+const articleFAQs: Record<string, { question: string; answer: string }[]> = {
+  "what-is-a-mushroom": [
+    { question: "Is a mushroom a plant?", answer: "No. Mushrooms belong to the kingdom Fungi, which is entirely separate from plants. Fungi cannot photosynthesize and are actually more closely related to animals than to plants." },
+    { question: "What is the largest organism on Earth?", answer: "A honey fungus (Armillaria ostoyae) in Oregon, USA. Its underground mycelium covers over 2,400 acres and is estimated to be thousands of years old." },
+    { question: "How do mushrooms reproduce?", answer: "Mushrooms reproduce by releasing microscopic spores from structures like gills, pores, or teeth beneath the cap. A single mushroom can release billions of spores, which drift on air currents to colonize new substrates." },
+  ],
+  "types-of-mushrooms": [
+    { question: "What are the main types of mushrooms?", answer: "The major groups include gilled mushrooms, boletes (sponge-like pores), polypores (bracket fungi on wood), puffballs, morels and false morels, chanterelles, coral fungi, and jelly fungi." },
+    { question: "Are boletes safe to eat?", answer: "Many boletes are excellent edibles, including the prized porcini. However, boletes with red or orange pore surfaces should be avoided as some are toxic. Always identify each species individually." },
+    { question: "What is a polypore?", answer: "Polypores are tough, shelf-like fungi that grow on wood. They have pores instead of gills and are typically woody or leathery. Turkey Tail is one of the most common examples." },
+  ],
+  "mushroom-anatomy": [
+    { question: "What are the parts of a mushroom?", answer: "The main parts are the cap (pileus), gills or pores underneath, stalk (stipe), annulus (ring on the stalk), and volva (cup at the base). Not all mushrooms have every feature." },
+    { question: "How do you make a spore print?", answer: "Cut off the cap, place it gill-side down on half-white, half-black paper, cover with a bowl, and wait several hours. The spores will drop and reveal their colour, which is a key identification feature." },
+    { question: "What is a volva on a mushroom?", answer: "A volva is a cup-like structure at the very base of the stalk, often buried in soil. It is a remnant of the universal veil and is a key feature of the Amanita genus, which includes both deadly and edible species." },
+  ],
+  "ecology-of-fungi": [
+    { question: "What role do fungi play in ecosystems?", answer: "Fungi serve as decomposers (breaking down dead matter), form symbiotic partnerships with plant roots (mycorrhizae), act as pathogens that regulate populations, and serve as food for countless animals. They are essential to nutrient cycling." },
+    { question: "Can any organism break down lignin?", answer: "Only white-rot fungi can fully break down lignin, the tough structural molecule in wood. Without them, fallen trees would persist essentially forever and nutrients would remain locked up." },
+    { question: "Do fungi affect climate change?", answer: "Yes. Mycorrhizal fungi transfer an estimated 5 billion tonnes of carbon from plant photosynthesis into the soil annually, where it can be stored long-term. Protecting fungal networks may help address climate change." },
+  ],
+  "mycorrhizal-networks": [
+    { question: "What is the Wood Wide Web?", answer: "The Wood Wide Web refers to underground mycorrhizal networks that connect trees and plants through fungal hyphae. These networks allow trees to share nutrients, water, and even chemical warning signals." },
+    { question: "What percentage of plants depend on mycorrhizal fungi?", answer: "Over 80% of all plant species form mycorrhizal partnerships. Most temperate forest trees — oaks, birches, pines — cannot thrive without their fungal partners." },
+    { question: "Can trees communicate through fungi?", answer: "Research suggests yes. Trees under insect attack can send chemical signals through mycorrhizal networks to neighbouring trees, which then increase their own defenses. Dying trees may also transfer resources to neighbours through the network." },
+  ],
+  "foraging-safety": [
+    { question: "What is the most important rule of mushroom foraging?", answer: "Never eat a wild mushroom unless you are 100% certain of its identity. Not 95%, not 99% — absolute certainty. If there is any doubt, do not eat it." },
+    { question: "Can you tell if a mushroom is poisonous by looking at it?", answer: "There are no reliable visual shortcuts. Folk tests (silver spoon, garlic, peeling) are myths and have contributed to poisonings. Identification requires checking multiple features: cap, gills, stalk, spore colour, smell, and habitat." },
+    { question: "What should you do if someone eats a poisonous mushroom?", answer: "Call emergency services or a poison control centre immediately. Save any remaining mushroom material (including scraps and cooking water) for identification. Do not wait for symptoms — some deadly mushrooms cause delayed symptoms 6-12 hours after ingestion." },
+  ],
+  "deadly-mushrooms": [
+    { question: "What is the most dangerous mushroom in the world?", answer: "The Death Cap (Amanita phalloides) is responsible for the majority of fatal mushroom poisonings worldwide. It contains amatoxins that destroy liver cells, and symptoms may not appear until 6-12 hours after ingestion, by which time serious damage has occurred." },
+    { question: "What does a Destroying Angel look like?", answer: "Destroying Angels (Amanita virosa/bisporigera) are entirely white — white cap, white gills, white stalk with a ring, and a white volva at the base. They can be mistaken for common edible species like field mushrooms or puffballs." },
+    { question: "Are there antidotes for mushroom poisoning?", answer: "There is no reliable home antidote. Hospital treatment may include silibinin (milk thistle extract) and aggressive supportive care. In severe cases, liver transplant may be the only option. Prevention through correct identification is the only safe approach." },
+  ],
+  "edible-mushrooms-beginners": [
+    { question: "What are the safest mushrooms for beginners to forage?", answer: "Giant Puffballs, Chicken of the Woods, Oyster Mushrooms, Chanterelles, and Morels are considered good beginner species because they are relatively distinctive and have few dangerous look-alikes when properly identified." },
+    { question: "Are chanterelles easy to identify?", answer: "Chanterelles have a distinctive funnel shape, egg-yolk colour, and forked ridges (not true gills) underneath. They smell faintly of apricots. The main look-alike is the Jack O'Lantern, which grows in clusters on wood and has true gills." },
+    { question: "Can you eat wild mushrooms raw?", answer: "Most wild mushrooms should be cooked before eating. Cooking breaks down tough cell walls (made of chitin), improves digestibility, and neutralizes mild toxins present in some species. Some edible species can cause stomach upset if eaten raw." },
+  ],
+  "seasonal-foraging-guide": [
+    { question: "When is the best time to forage for mushrooms?", answer: "Autumn (September-November) is peak season with the greatest diversity. However, every season offers something — spring has morels, summer brings chanterelles and boletes, and even winter has oyster mushrooms and velvet shank." },
+    { question: "What mushrooms grow in spring?", answer: "Spring is famous for morels (Morchella species), which appear when soil temperatures reach about 10°C. St George's Mushroom, Dryad's Saddle, and oyster mushrooms also fruit in spring." },
+    { question: "Can you find mushrooms in winter?", answer: "Yes. Oyster mushrooms can fruit after frost, Velvet Shank (Flammulina velutipes) fruits in cold weather even through snow, and Turkey Tail and other polypores are visible year-round on logs." },
+  ],
+};
+
 /* Mapping of slug → section heading → diagram to render after that section */
 const sectionDiagrams: Record<string, Record<string, ReactNode>> = {
   "mushroom-anatomy": {
@@ -509,6 +559,7 @@ export function generateMetadata({
     return {
       title: article.title,
       description: article.description,
+      alternates: { canonical: `/learn/${slug}` },
     };
   });
 }
@@ -522,35 +573,79 @@ export default async function ArticlePage({
   const article = articles[slug];
   if (!article) notFound();
 
+  const faqs = articleFAQs[slug] || [];
+
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Article",
-    headline: article.title,
-    description: article.description,
-    author: {
-      "@type": "Organization",
-      name: "Orangutany",
-      url: "https://orangutany.com",
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "Orangutany",
-      logo: {
-        "@type": "ImageObject",
-        url: "https://orangutany.com/images/appicon.png",
+    "@graph": [
+      {
+        "@type": "Article",
+        headline: article.title,
+        description: article.description,
+        author: {
+          "@type": "Organization",
+          name: "Orangutany",
+          url: "https://orangutany.com",
+        },
+        publisher: {
+          "@type": "Organization",
+          name: "Orangutany",
+          logo: {
+            "@type": "ImageObject",
+            url: "https://orangutany.com/images/appicon.png",
+          },
+        },
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": `https://orangutany.com/learn/${slug}`,
+        },
+        about: {
+          "@type": "Thing",
+          name: "Fungi",
+          sameAs: "https://en.wikipedia.org/wiki/Fungus",
+        },
+        articleSection: article.category,
+        inLanguage: "en",
       },
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `https://orangutany.com/learn/${slug}`,
-    },
-    about: {
-      "@type": "Thing",
-      name: "Fungi",
-      sameAs: "https://en.wikipedia.org/wiki/Fungus",
-    },
-    articleSection: article.category,
-    inLanguage: "en",
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://orangutany.com",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Learn",
+            item: "https://orangutany.com/learn",
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: article.title,
+            item: `https://orangutany.com/learn/${slug}`,
+          },
+        ],
+      },
+      ...(faqs.length > 0
+        ? [
+            {
+              "@type": "FAQPage",
+              mainEntity: faqs.map((faq) => ({
+                "@type": "Question",
+                name: faq.question,
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: faq.answer,
+                },
+              })),
+            },
+          ]
+        : []),
+    ],
   };
 
   return (
