@@ -14,6 +14,9 @@ export function Footer() {
           className="h-6 w-auto opacity-70"
         />
         <div className="flex gap-6">
+          <Link href="/learn" className="hover:text-foreground transition-colors">
+            Learn
+          </Link>
           <Link href="/about" className="hover:text-foreground transition-colors">
             About
           </Link>
