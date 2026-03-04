@@ -102,6 +102,29 @@ export function MatchCard({ match, rank }: MatchCardProps) {
           </div>
         )}
 
+        {match.gbifId && (
+          <div className="space-y-1">
+            <p className="text-xs font-medium text-muted-foreground">Global Distribution</p>
+            <div className="relative overflow-hidden rounded-lg border border-border/50">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`https://api.gbif.org/v2/map/occurrence/density/0/0/0@2x.png?style=classic.point&taxonKey=${match.gbifId}`}
+                alt={`Distribution map of ${match.commonName}`}
+                className="h-28 w-full object-cover bg-[#1a3a4a]"
+                loading="lazy"
+              />
+            </div>
+            <a
+              href={`https://www.gbif.org/species/${match.gbifId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+            >
+              View on GBIF <ExternalLink className="h-3 w-3" />
+            </a>
+          </div>
+        )}
+
         {match.wikiUrl && (
           <a
             href={match.wikiUrl}

@@ -22,6 +22,7 @@ export interface Match {
   representativeImage: string;
   whyMatch: string[];
   caution: string;
+  gbifId: number | null;
 }
 
 export interface UploadGuidance {
