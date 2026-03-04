@@ -19,9 +19,6 @@ export const metadata: Metadata = {
   title: "Orangutany | Mushroom Identifier",
   description:
     "Orangutany identifies mushrooms from 1-5 photos using world-class AI. Get instant identification with confidence scores, edibility, and look-alike warnings.",
-  icons: {
-    icon: "/images/appicon.png",
-  },
 };
 
 export default function RootLayout({
