@@ -2,12 +2,176 @@ import { Container } from "@/components/layout/container";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 
 type ArticleContent = {
   title: string;
   description: string;
   category: string;
   sections: { heading: string; body: string[] }[];
+};
+
+/* ─── SVG Diagrams ────────────────────────────────────────────── */
+
+function MushroomAnatomyDiagram() {
+  return (
+    <figure className="my-6 flex flex-col items-center">
+      <svg viewBox="0 0 340 420" className="w-full max-w-sm" aria-label="Labeled diagram of a gilled mushroom showing cap, gills, annulus, stalk, and volva">
+        {/* Cap */}
+        <ellipse cx="170" cy="120" rx="120" ry="55" fill="#8B6914" opacity="0.85" />
+        <ellipse cx="170" cy="120" rx="120" ry="55" fill="none" stroke="#5C4A0E" strokeWidth="2" />
+        {/* Cap highlight */}
+        <ellipse cx="170" cy="108" rx="80" ry="30" fill="#A07D1C" opacity="0.4" />
+
+        {/* Gills */}
+        {Array.from({ length: 17 }).map((_, i) => {
+          const x = 80 + i * 10;
+          return (
+            <line key={i} x1={x} y1="140" x2={x + (i < 8 ? -3 : i > 8 ? 3 : 0)} y2="170" stroke="#D4A574" strokeWidth="1.5" opacity="0.7" />
+          );
+        })}
+        {/* Gill underside arc */}
+        <path d="M 65 140 Q 170 185 275 140" fill="none" stroke="#5C4A0E" strokeWidth="1.5" />
+
+        {/* Stalk */}
+        <rect x="148" y="165" width="44" height="170" rx="8" fill="#E8D5B7" />
+        <rect x="148" y="165" width="44" height="170" rx="8" fill="none" stroke="#B8A080" strokeWidth="1.5" />
+
+        {/* Annulus (ring) */}
+        <ellipse cx="170" cy="220" rx="32" ry="8" fill="none" stroke="#B8A080" strokeWidth="2" />
+        <path d="M 138 220 Q 170 240 202 220" fill="#E8D5B7" stroke="#B8A080" strokeWidth="1.5" />
+
+        {/* Volva (cup at base) */}
+        <path d="M 135 330 Q 130 370 155 380 Q 170 385 185 380 Q 210 370 205 330" fill="#E8D5B7" stroke="#B8A080" strokeWidth="2" />
+
+        {/* Labels with lines */}
+        {/* Cap label */}
+        <line x1="280" y1="100" x2="250" y2="110" stroke="#9CA3AF" strokeWidth="1" />
+        <text x="284" y="104" fill="#9CA3AF" fontSize="13" fontFamily="sans-serif">Cap</text>
+
+        {/* Gills label */}
+        <line x1="280" y1="155" x2="250" y2="155" stroke="#9CA3AF" strokeWidth="1" />
+        <text x="284" y="159" fill="#9CA3AF" fontSize="13" fontFamily="sans-serif">Gills</text>
+
+        {/* Ring label */}
+        <line x1="55" y1="225" x2="138" y2="222" stroke="#9CA3AF" strokeWidth="1" />
+        <text x="10" y="229" fill="#9CA3AF" fontSize="13" fontFamily="sans-serif">Ring</text>
+
+        {/* Stalk label */}
+        <line x1="280" y1="270" x2="195" y2="270" stroke="#9CA3AF" strokeWidth="1" />
+        <text x="284" y="274" fill="#9CA3AF" fontSize="13" fontFamily="sans-serif">Stalk</text>
+
+        {/* Volva label */}
+        <line x1="55" y1="365" x2="140" y2="360" stroke="#9CA3AF" strokeWidth="1" />
+        <text x="10" y="369" fill="#9CA3AF" fontSize="13" fontFamily="sans-serif">Volva</text>
+      </svg>
+      <figcaption className="mt-3 text-xs text-muted-foreground text-center">
+        Anatomy of a gilled mushroom (Amanita-type) — cap, gills, ring, stalk, and volva
+      </figcaption>
+    </figure>
+  );
+}
+
+function SporePrintDiagram() {
+  return (
+    <figure className="my-6 flex flex-col items-center">
+      <svg viewBox="0 0 300 200" className="w-full max-w-xs" aria-label="Diagram showing how to make a spore print">
+        {/* Paper - half white, half dark */}
+        <rect x="30" y="130" width="240" height="60" rx="4" fill="#F5F5F0" stroke="#D1D1C7" strokeWidth="1.5" />
+        <rect x="150" y="130" width="120" height="60" rx="0" fill="#2A2A2A" />
+        <path d="M 266 130 L 270 130 Q 270 130 270 134 L 270 186 Q 270 190 266 190" fill="#2A2A2A" />
+
+        {/* Spore print pattern */}
+        {Array.from({ length: 12 }).map((_, i) => {
+          const angle = (i * 30 * Math.PI) / 180;
+          const cx = 150;
+          const cy = 155;
+          const r1 = 15;
+          const r2 = 35;
+          return (
+            <line
+              key={i}
+              x1={cx + r1 * Math.cos(angle)}
+              y1={cy + r1 * Math.sin(angle) * 0.5}
+              x2={cx + r2 * Math.cos(angle)}
+              y2={cy + r2 * Math.sin(angle) * 0.5}
+              stroke="#8B6914"
+              strokeWidth="3"
+              opacity="0.5"
+              strokeLinecap="round"
+            />
+          );
+        })}
+
+        {/* Cap on paper */}
+        <ellipse cx="150" cy="125" rx="55" ry="25" fill="#8B6914" opacity="0.9" />
+        <ellipse cx="150" cy="125" rx="55" ry="25" fill="none" stroke="#5C4A0E" strokeWidth="1.5" />
+        <ellipse cx="150" cy="120" rx="35" ry="14" fill="#A07D1C" opacity="0.3" />
+
+        {/* Arrow pointing to spore pattern */}
+        <line x1="230" y1="110" x2="195" y2="145" stroke="#9CA3AF" strokeWidth="1" />
+        <text x="232" y="108" fill="#9CA3AF" fontSize="11" fontFamily="sans-serif">Spores</text>
+
+        {/* Label for paper */}
+        <text x="65" y="180" fill="#9CA3AF" fontSize="10" fontFamily="sans-serif">White half</text>
+        <text x="185" y="180" fill="#606060" fontSize="10" fontFamily="sans-serif">Dark half</text>
+      </svg>
+      <figcaption className="mt-3 text-xs text-muted-foreground text-center">
+        Place the cap gill-side down on half-white, half-dark paper to reveal spore colour
+      </figcaption>
+    </figure>
+  );
+}
+
+function GillAttachmentDiagram() {
+  return (
+    <figure className="my-6 flex flex-col items-center">
+      <svg viewBox="0 0 400 140" className="w-full max-w-md" aria-label="Three types of gill attachment: free, attached, and decurrent">
+        {/* Free gills */}
+        <g>
+          <rect x="55" y="20" width="16" height="80" rx="4" fill="#E8D5B7" stroke="#B8A080" strokeWidth="1.5" />
+          <line x1="40" y1="25" x2="50" y2="55" stroke="#D4A574" strokeWidth="1.5" />
+          <line x1="35" y1="20" x2="48" y2="50" stroke="#D4A574" strokeWidth="1.5" />
+          <line x1="85" y1="25" x2="75" y2="55" stroke="#D4A574" strokeWidth="1.5" />
+          <line x1="90" y1="20" x2="78" y2="50" stroke="#D4A574" strokeWidth="1.5" />
+          {/* Gap between gills and stalk */}
+          <text x="38" y="125" fill="#9CA3AF" fontSize="12" fontFamily="sans-serif" textAnchor="middle">Free</text>
+        </g>
+
+        {/* Attached gills */}
+        <g>
+          <rect x="185" y="20" width="16" height="80" rx="4" fill="#E8D5B7" stroke="#B8A080" strokeWidth="1.5" />
+          <line x1="170" y1="20" x2="185" y2="45" stroke="#D4A574" strokeWidth="1.5" />
+          <line x1="165" y1="15" x2="185" y2="40" stroke="#D4A574" strokeWidth="1.5" />
+          <line x1="216" y1="20" x2="201" y2="45" stroke="#D4A574" strokeWidth="1.5" />
+          <line x1="221" y1="15" x2="201" y2="40" stroke="#D4A574" strokeWidth="1.5" />
+          <text x="173" y="125" fill="#9CA3AF" fontSize="12" fontFamily="sans-serif" textAnchor="middle">Attached</text>
+        </g>
+
+        {/* Decurrent gills */}
+        <g>
+          <rect x="315" y="20" width="16" height="80" rx="4" fill="#E8D5B7" stroke="#B8A080" strokeWidth="1.5" />
+          <line x1="300" y1="15" x2="315" y2="60" stroke="#D4A574" strokeWidth="1.5" />
+          <line x1="295" y1="10" x2="315" y2="55" stroke="#D4A574" strokeWidth="1.5" />
+          <line x1="346" y1="15" x2="331" y2="60" stroke="#D4A574" strokeWidth="1.5" />
+          <line x1="351" y1="10" x2="331" y2="55" stroke="#D4A574" strokeWidth="1.5" />
+          <text x="303" y="125" fill="#9CA3AF" fontSize="12" fontFamily="sans-serif" textAnchor="middle">Decurrent</text>
+        </g>
+      </svg>
+      <figcaption className="mt-3 text-xs text-muted-foreground text-center">
+        Gill attachment types — free (not touching stalk), attached (meeting stalk), decurrent (running down stalk)
+      </figcaption>
+    </figure>
+  );
+}
+
+/* Mapping of slug → section heading → diagram to render after that section */
+const sectionDiagrams: Record<string, Record<string, ReactNode>> = {
+  "mushroom-anatomy": {
+    "Parts of a Gilled Mushroom": <MushroomAnatomyDiagram />,
+    "Making a Spore Print": <SporePrintDiagram />,
+    "Field Identification Tips": <GillAttachmentDiagram />,
+  },
 };
 
 const articles: Record<string, ArticleContent> = {
@@ -392,6 +556,7 @@ export default async function ArticlePage({
                   {paragraph}
                 </p>
               ))}
+              {sectionDiagrams[slug]?.[section.heading]}
             </div>
           ))}
           <div className="border-t border-border/50 pt-8">
