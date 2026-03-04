@@ -1,28 +1,51 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Container } from "./container";
-import { LogOut } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 export function Header() {
   const { user, isAdmin, loading, logout, openAuthModal } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
+  function navTo(hash: string) {
+    setMenuOpen(false);
+    if (isHome) {
+      document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.location.href = `/#${hash}`;
+    }
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background">
       <Container className="flex h-16 items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <Image
-            src="/images/logo.png"
-            alt="Orangutany"
-            width={160}
-            height={40}
-            className="h-10 w-auto"
-            priority
-          />
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Menu"
+          >
+            {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+          <Link href="/" className="flex items-center gap-2">
+            <Image
+              src="/images/logo.png"
+              alt="Orangutany"
+              width={160}
+              height={40}
+              className="h-10 w-auto"
+              priority
+            />
+          </Link>
+        </div>
         <nav className="flex items-center gap-3">
           {loading ? null : user ? (
             <>
@@ -57,6 +80,51 @@ export function Header() {
           )}
         </nav>
       </Container>
+
+      {/* Slide-down menu */}
+      {menuOpen && (
+        <div className="border-t border-border/50 bg-background">
+          <Container>
+            <nav className="flex flex-col py-3 gap-1">
+              <button
+                onClick={() => navTo("upload")}
+                className="w-full text-left px-3 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted/30 rounded-lg transition-colors"
+              >
+                Identify a Mushroom
+              </button>
+              {user && (
+                <button
+                  onClick={() => navTo("library")}
+                  className="w-full text-left px-3 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted/30 rounded-lg transition-colors"
+                >
+                  My Library
+                </button>
+              )}
+              <Link
+                href="/learn"
+                onClick={() => setMenuOpen(false)}
+                className="px-3 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted/30 rounded-lg transition-colors"
+              >
+                Learn About Mushrooms
+              </Link>
+              <Link
+                href="/resources"
+                onClick={() => setMenuOpen(false)}
+                className="px-3 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted/30 rounded-lg transition-colors"
+              >
+                External Resources
+              </Link>
+              <Link
+                href="/about"
+                onClick={() => setMenuOpen(false)}
+                className="px-3 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted/30 rounded-lg transition-colors"
+              >
+                About
+              </Link>
+            </nav>
+          </Container>
+        </div>
+      )}
     </header>
   );
 }

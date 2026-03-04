@@ -142,60 +142,6 @@ export default function LearnPage() {
           ))}
         </div>
 
-        <div className="mt-16 rounded-xl border border-border/50 bg-card p-8">
-          <h2 className="text-xl font-semibold text-foreground">
-            External Resources
-          </h2>
-          <p className="mt-2 text-sm text-foreground/60">
-            Trusted references for deeper learning.
-          </p>
-          <ul className="mt-4 space-y-3 text-sm">
-            <li>
-              <a
-                href="https://www.toronto.ca/wp-content/uploads/2020/05/8ef1-City-Planning-Mushrooms-of-Toronto-Biodiversity-Series.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
-              >
-                Mushrooms of Toronto — City of Toronto Biodiversity Series (PDF)
-              </a>
-              <span className="text-foreground/40"> — 72-page illustrated guide to Toronto&rsquo;s fungi</span>
-            </li>
-            <li>
-              <a
-                href="https://www.mycoguide.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
-              >
-                MycoGuide
-              </a>
-              <span className="text-foreground/40"> — interactive mushroom identification key</span>
-            </li>
-            <li>
-              <a
-                href="https://www.mushroomexpert.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
-              >
-                MushroomExpert.com
-              </a>
-              <span className="text-foreground/40"> — detailed species descriptions by Michael Kuo</span>
-            </li>
-            <li>
-              <a
-                href="https://www.inaturalist.org/taxa/47170-Fungi"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
-              >
-                iNaturalist — Fungi
-              </a>
-              <span className="text-foreground/40"> — community-powered species observations worldwide</span>
-            </li>
-          </ul>
-        </div>
       </Container>
     </section>
   );
