@@ -16,9 +16,55 @@ const sora = Sora({
 });
 
 export const metadata: Metadata = {
-  title: "Orangutany | Mushroom Identifier",
+  title: {
+    default: "Orangutany | AI Mushroom Identifier",
+    template: "%s | Orangutany",
+  },
   description:
-    "Orangutany identifies mushrooms from 1-5 photos using world-class AI. Get instant identification with confidence scores, edibility, and look-alike warnings.",
+    "Identify mushrooms instantly from photos. Orangutany uses AI to give you species names, confidence scores, edibility info, and look-alike warnings. Free to use.",
+  keywords: [
+    "mushroom identifier",
+    "mushroom identification app",
+    "identify mushrooms from photo",
+    "AI mushroom ID",
+    "foraging app",
+    "wild mushroom identifier",
+    "Orangutany",
+    "mushroom scanner",
+    "is this mushroom edible",
+  ],
+  metadataBase: new URL("https://orangutany.com"),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Orangutany | AI Mushroom Identifier",
+    description:
+      "Snap a photo, get an instant mushroom ID. Free AI-powered identification with edibility info and look-alike warnings.",
+    url: "https://orangutany.com",
+    siteName: "Orangutany",
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "/images/appicon.png",
+        width: 512,
+        height: 512,
+        alt: "Orangutany — AI Mushroom Identifier",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    title: "Orangutany | AI Mushroom Identifier",
+    description:
+      "Snap a photo, get an instant mushroom ID. Free AI-powered identification.",
+    images: ["/images/appicon.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
