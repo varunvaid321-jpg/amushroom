@@ -27,7 +27,7 @@ export function Header() {
           {loading ? null : user ? (
             <>
               <span className="text-sm text-muted-foreground">
-                Welcome, {user.name || user.email}
+                Hi, {user.name || user.email}
               </span>
               {isAdmin && (
                 <Link href="/admin">
