@@ -27,15 +27,15 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background">
       <Container className="flex h-16 items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 -ml-1.5 text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Menu"
           >
-            {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center">
             <Image
               src="/images/logo.png"
               alt="Orangutany"
