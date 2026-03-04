@@ -4,8 +4,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Container } from "@/components/layout/container";
 import { LoginForm } from "@/components/auth/login-form";
 import { RegisterForm } from "@/components/auth/register-form";
+import { useAuth } from "@/hooks/use-auth";
+import { useEffect } from "react";
 
 export default function AuthPage() {
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) window.location.href = "/";
+  }, [user]);
+
+  if (user) return null;
+
   return (
     <section className="py-16">
       <Container className="max-w-3xl">
