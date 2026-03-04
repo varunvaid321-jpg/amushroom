@@ -41,7 +41,11 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void } = {}) {
       if (onSuccess) onSuccess();
       else window.location.href = "/";
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Registration failed");
+      if (err instanceof ApiError && err.status === 409) {
+        setError("__email_exists__");
+      } else {
+        setError(err instanceof ApiError ? err.message : "Registration failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -105,9 +109,18 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void } = {}) {
           autoComplete="new-password"
         />
       </div>
-      {error && (
+      {error === "__email_exists__" ? (
+        <div className="rounded-lg border border-border bg-muted/30 p-3 text-sm text-foreground">
+          <p>An account with this email already exists.</p>
+          <p className="mt-1 text-muted-foreground">
+            <a href="/auth" className="text-primary hover:underline">Sign in</a>
+            {" or "}
+            <a href="/forgot-password" className="text-primary hover:underline">reset your password</a>
+          </p>
+        </div>
+      ) : error ? (
         <p className="text-sm text-destructive">{error}</p>
-      )}
+      ) : null}
       <Button
         type="submit"
         className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
