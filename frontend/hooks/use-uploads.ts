@@ -20,7 +20,7 @@ export function useUploads() {
   const [quotaExceeded, setQuotaExceeded] = useState(false);
   const [quotaInfo, setQuotaInfo] = useState<QuotaInfo | null>(null);
 
-  const photoCount = files.filter(Boolean).length;
+  const photoCount = files.reduce((count, file, i) => count + (file || previews[i] ? 1 : 0), 0);
 
   const addFile = useCallback((file: File, slotIndex: number) => {
     setFiles((prev) => {
