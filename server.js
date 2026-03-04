@@ -49,7 +49,14 @@ const {
   markResetTokenUsed,
   updateUserPassword,
   deleteUserSessions,
-  deleteExpiredResetTokens
+  deleteExpiredResetTokens,
+  checkAnonQuota,
+  recordAnonScan,
+  checkUserQuota,
+  recordUserScan,
+  cleanExpiredAnonQuotas,
+  ANON_SCAN_LIMIT,
+  FREE_SCAN_LIMIT
 } = require('./src/db');
 const { sendWelcomeEmail, sendPasswordResetEmail } = require('./src/email');
 
@@ -178,6 +185,7 @@ deleteExpiredResetTokens();
 setInterval(() => {
   deleteExpiredSessions();
   deleteExpiredResetTokens();
+  cleanExpiredAnonQuotas();
 }, SESSION_CLEANUP_INTERVAL_MS).unref();
 
 function securityHeaders(req) {
@@ -366,6 +374,7 @@ function toPublicUser(userRow) {
     email: userRow.email,
     name: userRow.name || '',
     emailVerified: Boolean(userRow.email_verified ?? userRow.emailVerified),
+    tier: userRow.tier || 'free',
     createdAt: userRow.created_at || userRow.createdAt,
     updatedAt: userRow.updated_at || userRow.updatedAt
   };
@@ -1150,6 +1159,24 @@ function handleUserUploadDetail(req, res, url) {
   });
 }
 
+function stripMatchToTeaser(match) {
+  return {
+    commonName: match.commonName,
+    scientificName: match.scientificName,
+    score: match.score,
+    edible: 'Unknown',
+    psychedelic: 'Unknown',
+    traits: [],
+    taxonomy: {},
+    lookAlikes: [],
+    description: '',
+    wikiUrl: '',
+    representativeImage: '',
+    whyMatch: [],
+    caution: ''
+  };
+}
+
 async function handleIdentify(req, res) {
   if (!process.env.MUSHROOM_API_KEY) {
     sendJson(req, res, 500, { error: 'Server missing MUSHROOM_API_KEY.' });
@@ -1169,6 +1196,7 @@ async function handleIdentify(req, res) {
   const imageMeta = Array.isArray(body.imageMeta) ? body.imageMeta.slice(0, images.length) : [];
   const uploadGuidance = buildUploadGuidance(photoRoles, images.length);
   const auth = getAuthContext(req);
+  const clientIp = getClientIp(req);
 
   if (images.length < 1 || images.length > MAX_UPLOAD_IMAGES) {
     sendJson(req, res, 400, { error: `Provide between 1 and ${MAX_UPLOAD_IMAGES} images.` });
@@ -1179,6 +1207,33 @@ async function handleIdentify(req, res) {
   if (imageValidationError) {
     sendJson(req, res, 400, { error: imageValidationError });
     return;
+  }
+
+  // Quota check — before calling Kindwise API
+  let quotaExceeded = false;
+  let quotaInfo = null;
+
+  if (auth?.user) {
+    const tier = auth.user.tier || 'free';
+    if (tier !== 'pro') {
+      const quota = checkUserQuota(auth.user.id);
+      quotaInfo = { tier, used: quota.used, limit: quota.limit, resetsAt: quota.resetsAt };
+      if (quota.exceeded) {
+        sendJson(req, res, 403, {
+          error: `You've reached your daily limit of ${quota.limit} scans. Come back tomorrow or upgrade to Pro.`,
+          quota_exceeded: true,
+          quota: quotaInfo
+        });
+        return;
+      }
+    }
+  } else {
+    const quota = checkAnonQuota(clientIp);
+    quotaInfo = { tier: 'anonymous', used: quota.used, limit: quota.limit };
+    if (quota.exceeded) {
+      quotaExceeded = true;
+      // Don't return yet — we'll still call Kindwise but strip the response
+    }
   }
 
   let parsed;
@@ -1193,6 +1248,35 @@ async function handleIdentify(req, res) {
   const matches = normalizeMatches(parsed, uploadGuidance);
   if (!matches.length) {
     sendJson(req, res, 502, { error: 'API returned no suggestions. Try different photos.' });
+    return;
+  }
+
+  // Record the scan against quota
+  if (auth?.user) {
+    const tier = auth.user.tier || 'free';
+    if (tier !== 'pro') {
+      recordUserScan(auth.user.id);
+      const updated = checkUserQuota(auth.user.id);
+      quotaInfo = { tier, used: updated.used, limit: updated.limit, resetsAt: updated.resetsAt };
+    }
+  } else {
+    recordAnonScan(clientIp);
+    const updated = checkAnonQuota(clientIp);
+    quotaInfo = { tier: 'anonymous', used: updated.used, limit: updated.limit };
+  }
+
+  // Anonymous soft wall — strip results to teaser
+  if (quotaExceeded) {
+    const teaser = [stripMatchToTeaser(matches[0])];
+    trackAndGeo('scan_quota_exceeded', null, { ip: clientIp, tier: 'anonymous' }, clientIp);
+    sendJson(req, res, 200, {
+      matches: teaser,
+      uploadGuidance,
+      consistencyCheck: null,
+      uploadId: null,
+      quota_exceeded: true,
+      quota: quotaInfo
+    });
     return;
   }
 
@@ -1230,9 +1314,9 @@ async function handleIdentify(req, res) {
     imageCount: images.length,
     species: topMatch?.scientificName,
     confidence: topMatch?.score
-  }, getClientIp(req));
+  }, clientIp);
 
-  sendJson(req, res, 200, { matches, uploadGuidance, consistencyCheck, uploadId });
+  sendJson(req, res, 200, { matches, uploadGuidance, consistencyCheck, uploadId, quota: quotaInfo });
 }
 
 function handleDesignTokens(req, res) {
@@ -1290,6 +1374,23 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'GET' && url.pathname === '/api/auth/config') {
     handleAuthConfig(req, res);
+    return;
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/quota') {
+    const auth = getAuthContext(req);
+    if (auth?.user) {
+      const tier = auth.user.tier || 'free';
+      if (tier === 'pro') {
+        sendJson(req, res, 200, { tier: 'pro', used: 0, limit: null, resetsAt: null });
+      } else {
+        const q = checkUserQuota(auth.user.id);
+        sendJson(req, res, 200, { tier, used: q.used, limit: q.limit, resetsAt: q.resetsAt });
+      }
+    } else {
+      const q = checkAnonQuota(getClientIp(req));
+      sendJson(req, res, 200, { tier: 'anonymous', used: q.used, limit: q.limit, resetsAt: null });
+    }
     return;
   }
 
