@@ -50,7 +50,6 @@ Mushroom identification web app (orangutany.com). Users upload photos, get AI-po
 
 ### Frontend
 - `frontend/app/page.tsx` — Homepage (upload + identify flow)
-- `frontend/app/auth/page.tsx` — Login/register page
 - `frontend/app/about/page.tsx` — About page
 - `frontend/app/forgot-password/page.tsx` — Password reset request
 - `frontend/app/reset-password/page.tsx` — Password reset form
