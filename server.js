@@ -1023,23 +1023,23 @@ async function handleGoogleCallback(req, res, url) {
   const authError = url.searchParams.get('error');
 
   if (authError) {
-    redirect(req, res, '/auth?error=google_auth_denied');
+    redirect(req, res, '/?error=google_auth_denied');
     return;
   }
 
   if (!state || !code) {
-    redirect(req, res, '/auth?error=google_auth_invalid');
+    redirect(req, res, '/?error=google_auth_invalid');
     return;
   }
 
   const stateValue = consumeOAuthState(state);
   if (!stateValue) {
-    redirect(req, res, '/auth?error=google_auth_state');
+    redirect(req, res, '/?error=google_auth_state');
     return;
   }
 
   if (!isGoogleAuthConfigured()) {
-    redirect(req, res, '/auth?error=google_auth_unavailable');
+    redirect(req, res, '/?error=google_auth_unavailable');
     return;
   }
 
@@ -1053,12 +1053,12 @@ async function handleGoogleCallback(req, res, url) {
     });
     profile = await fetchGoogleProfile(tokens.access_token);
   } catch {
-    redirect(req, res, '/auth?error=google_auth_failed');
+    redirect(req, res, '/?error=google_auth_failed');
     return;
   }
 
   if (!profile.email || !profile.sub) {
-    redirect(req, res, '/auth?error=google_profile_invalid');
+    redirect(req, res, '/?error=google_profile_invalid');
     return;
   }
 
@@ -1089,7 +1089,7 @@ async function handleGoogleCallback(req, res, url) {
   }
 
   if (!user) {
-    redirect(req, res, '/auth?error=google_auth_failed');
+    redirect(req, res, '/?error=google_auth_failed');
     return;
   }
 

@@ -114,7 +114,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void } = {}) {
         <div className="rounded-lg border border-border bg-muted/30 p-3 text-sm text-foreground">
           <p>An account with this email already exists.</p>
           <p className="mt-1 text-muted-foreground">
-            <a href="/auth" className="text-primary hover:underline">Sign in</a>
+            <a href="/" className="text-primary hover:underline">Sign in</a>
             {" or "}
             <a href="/forgot-password" className="text-primary hover:underline">reset your password</a>
           </p>

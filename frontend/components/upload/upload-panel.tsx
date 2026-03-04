@@ -73,7 +73,7 @@ export function UploadPanel({
       {quotaBlocked && tier === "anonymous" && (
         <p className="text-center text-sm text-muted-foreground">
           You&apos;ve used all free scans.{" "}
-          <a href="/auth" className="text-primary hover:underline">Create a free account</a> for 5 scans per day.
+          <a href="/" className="text-primary hover:underline">Create a free account</a> for 5 scans per day.
         </p>
       )}
       {quotaBlocked && tier === "free" && (

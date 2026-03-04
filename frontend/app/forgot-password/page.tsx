@@ -53,7 +53,7 @@ export default function ForgotPasswordPage() {
                   If an account exists with that email, we&apos;ve sent a password reset link. Check your inbox and spam folder.
                 </p>
                 <a
-                  href="/auth"
+                  href="/"
                   className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
                 >
                   <ArrowLeft className="h-3 w-3" />
@@ -90,7 +90,7 @@ export default function ForgotPasswordPage() {
                 </Button>
                 <div className="text-center">
                   <a
-                    href="/auth"
+                    href="/"
                     className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
                     <ArrowLeft className="h-3 w-3" />

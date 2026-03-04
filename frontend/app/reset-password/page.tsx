@@ -76,7 +76,7 @@ function ResetPasswordForm() {
               Your password has been reset successfully.
             </p>
             <a
-              href="/auth"
+              href="/"
               className="inline-block rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
             >
               Sign In
@@ -131,7 +131,7 @@ function ResetPasswordForm() {
             </Button>
             <div className="text-center">
               <a
-                href="/auth"
+                href="/"
                 className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
               >
                 <ArrowLeft className="h-3 w-3" />
