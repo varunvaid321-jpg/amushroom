@@ -395,7 +395,10 @@ export default async function ArticlePage({
             </div>
           ))}
           <div className="border-t border-border/50 pt-8">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground/60">
+              Written by Varun Vaid
+            </p>
+            <p className="mt-3 text-sm text-muted-foreground">
               Always verify identifications with local experts before consuming
               wild mushrooms. No app or article is a substitute for hands-on
               experience and expert guidance.
