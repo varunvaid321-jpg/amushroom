@@ -100,22 +100,22 @@ function Slot({
           </div>
         </>
       ) : (
-        <div className="flex flex-col items-center gap-2 p-3 text-center">
-          <span className="text-xs font-medium text-muted-foreground">{label}</span>
-          <div className="flex gap-2">
+        <div className="flex flex-col items-center gap-3 p-3 text-center">
+          <span className="text-sm font-medium text-muted-foreground">{label}</span>
+          <div className="flex gap-3">
             <button
               onClick={() => inputRef.current?.click()}
-              className="rounded-lg bg-muted/50 p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="rounded-xl bg-muted/50 p-3 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               aria-label={`Select photo for ${label}`}
             >
-              <ImagePlus className="h-5 w-5" />
+              <ImagePlus className="h-7 w-7" />
             </button>
             <button
               onClick={() => cameraRef.current?.click()}
-              className="rounded-lg bg-muted/50 p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="rounded-xl bg-muted/50 p-3 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               aria-label={`Take photo for ${label}`}
             >
-              <Camera className="h-5 w-5" />
+              <Camera className="h-7 w-7" />
             </button>
           </div>
         </div>
