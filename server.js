@@ -1005,7 +1005,7 @@ function handleGoogleStart(req, res, url) {
   }
 
   const state = createId();
-  const returnTo = sanitizeReturnPath(url.searchParams.get('returnTo') || '/auth.html', '/auth.html');
+  const returnTo = sanitizeReturnPath(url.searchParams.get('returnTo') || '/auth', '/auth');
   createOAuthState(state, returnTo);
 
   const authUrl = buildGoogleAuthUrl({
@@ -1023,23 +1023,23 @@ async function handleGoogleCallback(req, res, url) {
   const authError = url.searchParams.get('error');
 
   if (authError) {
-    redirect(req, res, '/auth.html?error=google_auth_denied');
+    redirect(req, res, '/auth?error=google_auth_denied');
     return;
   }
 
   if (!state || !code) {
-    redirect(req, res, '/auth.html?error=google_auth_invalid');
+    redirect(req, res, '/auth?error=google_auth_invalid');
     return;
   }
 
   const stateValue = consumeOAuthState(state);
   if (!stateValue) {
-    redirect(req, res, '/auth.html?error=google_auth_state');
+    redirect(req, res, '/auth?error=google_auth_state');
     return;
   }
 
   if (!isGoogleAuthConfigured()) {
-    redirect(req, res, '/auth.html?error=google_auth_unavailable');
+    redirect(req, res, '/auth?error=google_auth_unavailable');
     return;
   }
 
@@ -1053,12 +1053,12 @@ async function handleGoogleCallback(req, res, url) {
     });
     profile = await fetchGoogleProfile(tokens.access_token);
   } catch {
-    redirect(req, res, '/auth.html?error=google_auth_failed');
+    redirect(req, res, '/auth?error=google_auth_failed');
     return;
   }
 
   if (!profile.email || !profile.sub) {
-    redirect(req, res, '/auth.html?error=google_profile_invalid');
+    redirect(req, res, '/auth?error=google_profile_invalid');
     return;
   }
 
@@ -1089,7 +1089,7 @@ async function handleGoogleCallback(req, res, url) {
   }
 
   if (!user) {
-    redirect(req, res, '/auth.html?error=google_auth_failed');
+    redirect(req, res, '/auth?error=google_auth_failed');
     return;
   }
 
@@ -1102,7 +1102,7 @@ async function handleGoogleCallback(req, res, url) {
     userAgent: String(req.headers['user-agent'] || '')
   });
   setSession(res, req, sessionId);
-  redirect(req, res, sanitizeReturnPath(stateValue.returnTo || '/auth.html', '/auth.html'));
+  redirect(req, res, sanitizeReturnPath(stateValue.returnTo || '/auth', '/auth'));
 }
 
 function handleUserUploads(req, res, url) {

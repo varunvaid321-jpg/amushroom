@@ -1,22 +1,36 @@
-# aMushroom — Claude Code Guidelines
+# Orangutany — Claude Code Guidelines
 
 ## Project Overview
-Mushroom identification web app (amushroom.com). Users upload photos, get AI-powered identification via Kindwise API. Supports email/password and Google OAuth login.
+Mushroom identification web app (orangutany.com). Users upload photos, get AI-powered identification via Kindwise API. Supports email/password and Google OAuth login. 3-tier quota system: anonymous (5 total by IP), free (5/day), pro (unlimited, future).
 
 ## Tech Stack
-- **Backend**: Node.js (vanilla HTTP server, no framework), SQLite (better-sqlite3)
-- **Frontend**: Vanilla JS, token-driven CSS
-- **Deploy**: Render (auto-deploys from main)
-- **Auth**: Session-based (scrypt passwords) + Google OAuth
+
+### Backend
+- **Runtime**: Node.js (vanilla HTTP server, no framework)
+- **Database**: SQLite via better-sqlite3
+- **Email**: Resend API (transactional emails — welcome, password reset)
+- **Auth**: Session-based (scrypt passwords) + Google OAuth 2.0
+- **AI**: Kindwise API for mushroom identification
+
+### Frontend
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **UI**: React 19, Tailwind CSS v4, shadcn/ui (Radix UI primitives)
+- **Icons**: Lucide React
+- **Charts**: Recharts
+- **Utilities**: clsx, tailwind-merge, class-variance-authority
+
+### Infrastructure
+- **Hosting**: Render (auto-deploys from main)
+- **Domain**: orangutany.com (Cloudflare DNS)
+- **Email domain**: noreply@orangutany.com (verified via Resend + Cloudflare DKIM/SPF/DMARC)
 
 ## Code Quality Rules
 - Run `npm run check` before every commit — must pass
 - Run `npm test` before every commit — must pass
 - No dead code, no unused files, no orphan branches
 - No console.log unless intentional server logging
-- Keep server.js, app.js, auth.js focused — don't let files bloat
 - Security-first: validate inputs server-side, never trust client MIME types
-- All Telegram-visible messages: disable_web_page_preview where applicable
 
 ## Git Workflow
 - All work on feature branches, merge via PR to main
@@ -26,15 +40,28 @@ Mushroom identification web app (amushroom.com). Users upload photos, get AI-pow
 - Delete branches after merge
 
 ## Key Files
-- `server.js` — HTTP server, routes, middleware, API proxy
+
+### Backend
+- `server.js` — HTTP server, routes, middleware, API proxy, quota enforcement
 - `src/auth.js` — password hashing, session management
-- `src/db.js` — SQLite schema and queries
+- `src/db.js` — SQLite schema, queries, quota tracking (scan_quotas, users)
 - `src/google-oauth.js` — OAuth state and flow
-- `public/scripts/app.js` — main frontend logic
-- `public/scripts/auth.js` — auth page frontend
-- `public/scripts/common-auth.js` — shared auth/portfolio UI
-- `design/tokens/tokens.json` — design token source of truth
-- `backlog/BACKLOG.md` — canonical backlog
+- `src/email.js` — Resend integration (welcome + password reset emails)
+
+### Frontend
+- `frontend/app/page.tsx` — Homepage (upload + identify flow)
+- `frontend/app/auth/page.tsx` — Login/register page
+- `frontend/app/about/page.tsx` — About page
+- `frontend/app/forgot-password/page.tsx` — Password reset request
+- `frontend/app/reset-password/page.tsx` — Password reset form
+- `frontend/app/admin/page.tsx` — Admin dashboard
+- `frontend/lib/api.ts` — API client, types (Match, QuotaInfo, etc.)
+- `frontend/hooks/use-auth.ts` — Auth state hook
+- `frontend/hooks/use-uploads.ts` — Upload/identify state hook
+- `frontend/hooks/use-quota.ts` — Quota state hook
+- `frontend/components/upload/upload-panel.tsx` — Photo upload + analyze UI
+- `frontend/components/results/results-dock.tsx` — Results display + soft wall
+- `frontend/components/auth/` — Login, register, Google button components
 
 ## Testing
 - `npm run check` — syntax validation for all JS files
