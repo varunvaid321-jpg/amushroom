@@ -7,9 +7,10 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
 import { ApiError } from "@/lib/api";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { GoogleButton } from "./google-button";
 
 export function RegisterForm({ onSuccess }: { onSuccess?: () => void } = {}) {
-  const { register } = useAuth();
+  const { register, googleAuthEnabled } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -129,6 +130,19 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void } = {}) {
         {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
         Create Account
       </Button>
+      {googleAuthEnabled && (
+        <>
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">or</span>
+            </div>
+          </div>
+          <GoogleButton />
+        </>
+      )}
     </form>
   );
 }
