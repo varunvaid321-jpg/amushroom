@@ -21,9 +21,17 @@ Mushroom identification web app (orangutany.com). Users upload photos, get AI-po
 - **Utilities**: clsx, tailwind-merge, class-variance-authority
 
 ### Infrastructure
-- **Hosting**: Render (auto-deploys from main)
+- **Hosting**: Render Starter plan ($7/mo USD) — auto-deploys from main
 - **Domain**: orangutany.com (Cloudflare DNS)
 - **Email domain**: noreply@orangutany.com (verified via Resend + Cloudflare DKIM/SPF/DMARC)
+
+## Cost Rules (MANDATORY)
+- **Render plan is Starter ($7/mo USD). NEVER upgrade the plan, add instances, enable autoscaling, or make any change that increases cost beyond $7/mo.**
+- Do not add paid databases, paid add-ons, or additional Render services
+- Do not add any third-party service that incurs cost without explicit user approval
+- 1 instance only — no horizontal scaling
+- If a feature would require a plan upgrade to work, flag it to the user instead of implementing
+- Only Varun can authorize cost increases — never assume or auto-upgrade
 
 ## Code Quality Rules
 - Run `npm run check` before every commit — must pass
