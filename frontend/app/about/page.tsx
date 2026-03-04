@@ -13,6 +13,32 @@ export default function AboutPage() {
             the quiet magic of walking through the woods with your eyes on the
             forest floor.
           </p>
+
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-foreground">
+              Why I Built Orangutany
+            </h2>
+            <p>
+              After years of squinting at field guides and cross-referencing blurry
+              photos on forums, I wanted something better. Something that could
+              look at a photo and give you a confident, well-reasoned
+              identification&mdash;with edibility info, look-alike warnings, and
+              the humility to say &ldquo;I&rsquo;m not sure&rdquo; when
+              confidence is low.
+            </p>
+            <p>
+              Orangutany is that tool. It&rsquo;s built for people like me:
+              curious, self-taught, cautious, and deeply in love with the world
+              beneath the canopy. Whether you&rsquo;re a beginner picking your
+              first field mushroom or a seasoned forager chasing morels in
+              spring, this is for you.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Always verify identifications with local experts before consuming
+              wild mushrooms. No app is a substitute for hands-on experience and
+              expert guidance.
+            </p>
+          </div>
         </article>
       </Container>
     </section>
