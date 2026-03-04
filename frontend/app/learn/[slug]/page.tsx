@@ -561,7 +561,7 @@ export default async function ArticlePage({
           ))}
           <div className="border-t border-border/50 pt-8">
             <p className="text-xs text-muted-foreground/60">
-              Written by Varun Vaid
+              By the Orangutany Team
             </p>
             <p className="mt-3 text-sm text-muted-foreground">
               Always verify identifications with local experts before consuming
