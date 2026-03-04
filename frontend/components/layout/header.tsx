@@ -42,7 +42,6 @@ export function Header() {
                 onClick={logout}
                 className="text-muted-foreground hover:text-foreground"
               >
-                <LogOut className="mr-1 h-4 w-4" />
                 Logout
               </Button>
             </>
