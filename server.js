@@ -1005,7 +1005,7 @@ function handleGoogleStart(req, res, url) {
   }
 
   const state = createId();
-  const returnTo = sanitizeReturnPath(url.searchParams.get('returnTo') || '/auth', '/auth');
+  const returnTo = sanitizeReturnPath(url.searchParams.get('returnTo') || '/', '/');
   createOAuthState(state, returnTo);
 
   const authUrl = buildGoogleAuthUrl({
@@ -1102,7 +1102,7 @@ async function handleGoogleCallback(req, res, url) {
     userAgent: String(req.headers['user-agent'] || '')
   });
   setSession(res, req, sessionId);
-  redirect(req, res, sanitizeReturnPath(stateValue.returnTo || '/auth', '/auth'));
+  redirect(req, res, sanitizeReturnPath(stateValue.returnTo || '/', '/'));
 }
 
 function handleUserUploads(req, res, url) {
