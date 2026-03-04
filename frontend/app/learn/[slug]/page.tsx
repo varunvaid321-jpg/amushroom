@@ -522,8 +522,43 @@ export default async function ArticlePage({
   const article = articles[slug];
   if (!article) notFound();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.description,
+    author: {
+      "@type": "Organization",
+      name: "Orangutany",
+      url: "https://orangutany.com",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Orangutany",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://orangutany.com/images/appicon.png",
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://orangutany.com/learn/${slug}`,
+    },
+    about: {
+      "@type": "Thing",
+      name: "Fungi",
+      sameAs: "https://en.wikipedia.org/wiki/Fungus",
+    },
+    articleSection: article.category,
+    inLanguage: "en",
+  };
+
   return (
     <section className="py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Container className="max-w-3xl">
         <Link
           href="/learn"

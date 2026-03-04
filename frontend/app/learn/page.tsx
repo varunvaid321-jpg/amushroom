@@ -82,9 +82,33 @@ const categoryColors: Record<string, string> = {
   Foraging: "bg-orange-900/50 text-orange-300",
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "Learn About Mushrooms",
+  description:
+    "Educational guides on mushroom identification, anatomy, ecology, foraging safety, and the fascinating world of fungi.",
+  url: "https://orangutany.com/learn",
+  isPartOf: { "@id": "https://orangutany.com/#website" },
+  publisher: { "@id": "https://orangutany.com/#organization" },
+  mainEntity: {
+    "@type": "ItemList",
+    itemListElement: articles.map((a, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `https://orangutany.com/learn/${a.slug}`,
+      name: a.title,
+    })),
+  },
+};
+
 export default function LearnPage() {
   return (
     <section className="py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Container className="max-w-4xl">
         <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-foreground">
           Learn About Mushrooms
