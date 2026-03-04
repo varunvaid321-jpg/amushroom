@@ -30,14 +30,7 @@ export function ResultsDock({
   const [authOpen, setAuthOpen] = useState(false);
 
   if (state === "idle") {
-    return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-16 text-center">
-        <Microscope className="mb-3 h-10 w-10 text-muted-foreground/40" />
-        <p className="text-sm text-muted-foreground">
-          Upload photos and tap Analyze to identify mushrooms.
-        </p>
-      </div>
-    );
+    return null;
   }
 
   if (state === "loading") {

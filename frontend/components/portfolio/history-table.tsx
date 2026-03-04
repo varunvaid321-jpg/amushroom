@@ -263,15 +263,19 @@ function HistoryRow({
         <p className="truncate text-xs text-muted-foreground">{matchSummary}</p>
       </td>
       <td className="px-4 py-3 text-right">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onView}
-          className="text-primary hover:text-primary/80"
-        >
-          View
-          <ExternalLink className="ml-1 h-3 w-3" />
-        </Button>
+        {isLowConfidence ? (
+          <span className="text-xs text-muted-foreground/50">No results</span>
+        ) : (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onView}
+            className="text-primary hover:text-primary/80"
+          >
+            View
+            <ExternalLink className="ml-1 h-3 w-3" />
+          </Button>
+        )}
       </td>
     </tr>
   );
