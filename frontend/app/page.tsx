@@ -50,6 +50,15 @@ export default function Home() {
     }
     await quota.refresh();
     setRefreshKey((k) => k + 1);
+    // On mobile, scroll to results after analysis
+    if (window.innerWidth < 1024) {
+      document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleLoadUpload = (uploadId: string) => {
+    loadSavedUpload(uploadId);
+    document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -77,7 +86,7 @@ export default function Home() {
                 quotaBlocked={quotaBlocked}
               />
             </div>
-            <div className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
+            <div id="results" className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
               <ResultsDock
                 state={resultsState}
                 matches={matches}
@@ -91,7 +100,9 @@ export default function Home() {
           </div>
         </Container>
       </section>
-      <HistoryTable onLoadUpload={loadSavedUpload} refreshKey={refreshKey} />
+      <div id="library">
+        <HistoryTable onLoadUpload={handleLoadUpload} refreshKey={refreshKey} />
+      </div>
     </>
   );
 }
