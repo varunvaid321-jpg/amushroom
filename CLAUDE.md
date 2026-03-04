@@ -33,11 +33,14 @@ Mushroom identification web app (orangutany.com). Users upload photos, get AI-po
 - Security-first: validate inputs server-side, never trust client MIME types
 
 ## Git Workflow
-- All work on feature branches, merge via PR to main
-- Squash merge preferred
+- Push directly to main (solo dev, Render auto-deploys)
 - Commit messages: imperative mood, explain "why" not "what"
-- Never push directly to main for non-trivial changes
-- Delete branches after merge
+
+## Guardrails (before every push)
+- `npm run check` must pass
+- `npm test` must pass
+- `npx next build` in frontend/ must pass (catches TypeScript and build errors)
+- Never push if any of the above fail — fix first
 
 ## Key Files
 
