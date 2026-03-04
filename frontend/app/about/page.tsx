@@ -32,7 +32,7 @@ export default function AboutPage() {
               </div>
               <div className="overflow-hidden rounded-xl">
                 <Image
-                  src="https://images.unsplash.com/photo-1518110925495-5fe2f8cf4918?w=600&q=80"
+                  src="https://images.unsplash.com/photo-1476231682828-37e571bc172f?w=600&q=80"
                   alt="Rolling green hills of the English countryside"
                   width={600}
                   height={400}
@@ -57,6 +57,47 @@ export default function AboutPage() {
             </p>
           </div>
 
+          {/* Forest & Family */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-foreground">
+              The Best Things in Life
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="overflow-hidden rounded-xl">
+                <Image
+                  src="https://images.unsplash.com/photo-1723474313928-382adfa4e54c?w=600&q=80"
+                  alt="People walking through a forest with a dog"
+                  width={600}
+                  height={400}
+                  className="h-48 w-full object-cover"
+                />
+              </div>
+              <div className="overflow-hidden rounded-xl">
+                <Image
+                  src="https://images.unsplash.com/photo-1727294316305-e536bacb65ff?w=600&q=80"
+                  alt="Dog walking down a forest trail"
+                  width={600}
+                  height={400}
+                  className="h-48 w-full object-cover"
+                />
+              </div>
+            </div>
+            <p>
+              Sometimes the best thing in life is simply being in the
+              forest&mdash;with family, with the kids, with your dog by your
+              side. No screens, no rush, just the crunch of leaves underfoot and
+              the smell of damp earth after rain. My kids learned to spot bracket
+              fungi before they could tie their shoelaces. The dog always finds
+              the puffballs first.
+            </p>
+            <p>
+              Foraging isn&rsquo;t just a hobby&mdash;it&rsquo;s a reason to
+              slow down, look closer, and share something real with the people
+              you love. Every trail walk becomes a treasure hunt. Every season
+              brings something new to discover together.
+            </p>
+          </div>
+
           {/* Escapades */}
           <div className="space-y-4">
             <h2 className="text-xl font-semibold text-foreground">
@@ -65,13 +106,13 @@ export default function AboutPage() {
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="overflow-hidden rounded-xl">
                 <Image
-                  src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80"
-                  alt="Misty mountain landscape in the Indian Himalayas"
+                  src="https://images.unsplash.com/photo-1474557157379-8aa74a6ef541?w=400&q=80"
+                  alt="Lush green forest in the Indian foothills"
                   width={400}
                   height={300}
                   className="h-40 w-full object-cover"
                 />
-                <p className="mt-2 text-center text-xs text-muted-foreground">Indian Himalayas</p>
+                <p className="mt-2 text-center text-xs text-muted-foreground">Indian Foothills</p>
               </div>
               <div className="overflow-hidden rounded-xl">
                 <Image
@@ -125,8 +166,8 @@ export default function AboutPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="overflow-hidden rounded-xl">
                 <Image
-                  src="https://images.unsplash.com/photo-1604275304445-9e21d66a18d5?w=600&q=80"
-                  alt="Hen of the woods mushroom growing at the base of a tree"
+                  src="https://images.unsplash.com/photo-1691478104764-1fb05018514b?w=600&q=80"
+                  alt="Person picking a mushroom from the forest floor"
                   width={600}
                   height={400}
                   className="h-48 w-full object-cover"
@@ -134,8 +175,8 @@ export default function AboutPage() {
               </div>
               <div className="overflow-hidden rounded-xl">
                 <Image
-                  src="https://images.unsplash.com/photo-1570824104453-508955ab713e?w=600&q=80"
-                  alt="Golden chanterelle mushrooms"
+                  src="https://images.unsplash.com/photo-1772490184343-38f6b4b260c6?w=600&q=80"
+                  alt="Basket full of freshly foraged mushrooms"
                   width={600}
                   height={400}
                   className="h-48 w-full object-cover"
@@ -166,10 +207,10 @@ export default function AboutPage() {
             </h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {[
-                { name: "Chanterelle", scientific: "Cantharellus cibarius", img: "https://images.unsplash.com/photo-1571162722311-886bbad4f464?w=300&q=80" },
-                { name: "Porcini", scientific: "Boletus edulis", img: "https://images.unsplash.com/photo-1563074666-77484e0b2d5b?w=300&q=80" },
-                { name: "Oyster Mushroom", scientific: "Pleurotus ostreatus", img: "https://images.unsplash.com/photo-1621506289937-a8e450e7b75c?w=300&q=80" },
-                { name: "Lion's Mane", scientific: "Hericium erinaceus", img: "https://images.unsplash.com/photo-1668548385756-6c7ac3bf1c07?w=300&q=80" },
+                { name: "Chanterelle", scientific: "Cantharellus cibarius", img: "https://images.unsplash.com/photo-1627264593175-96cedf3466c5?w=300&q=80" },
+                { name: "Porcini", scientific: "Boletus edulis", img: "https://images.unsplash.com/photo-1502900104642-4b8e0c6eafe9?w=300&q=80" },
+                { name: "Oyster Mushroom", scientific: "Pleurotus ostreatus", img: "https://images.unsplash.com/photo-1652359804247-18cbe25ebdf1?w=300&q=80" },
+                { name: "Lion\u2019s Mane", scientific: "Hericium erinaceus", img: "https://images.unsplash.com/photo-1634194405074-e1f9f172543a?w=300&q=80" },
               ].map((m) => (
                 <div key={m.name} className="overflow-hidden rounded-xl border border-border/50 bg-card">
                   <Image
