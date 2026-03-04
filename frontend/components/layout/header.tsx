@@ -26,9 +26,8 @@ export function Header() {
         <nav className="flex items-center gap-3">
           {loading ? null : user ? (
             <>
-              <span className="hidden text-sm text-muted-foreground sm:inline">
-                <User className="mr-1 inline h-4 w-4" />
-                {user.name || user.email}
+              <span className="text-sm text-muted-foreground">
+                Welcome, {user.name || user.email}
               </span>
               {isAdmin && (
                 <Link href="/admin">
