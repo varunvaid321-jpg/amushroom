@@ -9,6 +9,8 @@ import { ResultsDock } from "@/components/results/results-dock";
 import { HistoryTable } from "@/components/portfolio/history-table";
 import { Container } from "@/components/layout/container";
 import { useUploads } from "@/hooks/use-uploads";
+import { useQuota } from "@/hooks/use-quota";
+import { ApiError } from "@/lib/api";
 
 export default function Home() {
   const [refreshKey, setRefreshKey] = useState(0);
@@ -16,6 +18,7 @@ export default function Home() {
   useEffect(() => { track("page_view", { page: "/" }); }, []);
 
   const uploads = useUploads();
+  const quota = useQuota();
   const {
     files,
     previews,
@@ -30,11 +33,22 @@ export default function Home() {
     removeSlot,
     clearAll,
     loadSavedUpload,
+    quotaExceeded,
+    quotaInfo,
   } = uploads;
+
+  const quotaBlocked = quota.remaining !== null && quota.remaining <= 0;
 
   const handleAnalyze = async () => {
     track("button_click", { button: "analyze", photoCount: uploads.photoCount });
-    await uploads.analyze();
+    try {
+      await uploads.analyze();
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 403 && err.body?.quota_exceeded) {
+        // Quota exceeded — refresh quota state to update UI
+      }
+    }
+    await quota.refresh();
     setRefreshKey((k) => k + 1);
   };
 
@@ -58,6 +72,9 @@ export default function Home() {
                 onAnalyze={handleAnalyze}
                 onClear={clearAll}
                 statusText={statusText}
+                remaining={quota.remaining}
+                tier={quota.tier}
+                quotaBlocked={quotaBlocked}
               />
             </div>
             <div className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
@@ -67,6 +84,8 @@ export default function Home() {
                 uploadGuidance={uploadGuidance}
                 consistencyCheck={consistencyCheck}
                 qualityNotice={qualityNotice}
+                quotaExceeded={quotaExceeded}
+                quotaTier={quotaInfo?.tier}
               />
             </div>
           </div>

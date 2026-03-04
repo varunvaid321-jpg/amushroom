@@ -3,6 +3,7 @@ export interface User {
   email: string;
   name: string | null;
   emailVerified: boolean;
+  tier: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -34,11 +35,20 @@ export interface ConsistencyCheck {
   perPhoto: { photoNumber: number; topMatch: string; commonName: string; confidence: number }[];
 }
 
+export interface QuotaInfo {
+  tier: string;
+  used: number;
+  limit: number | null;
+  resetsAt?: string | null;
+}
+
 export interface IdentifyResult {
   matches: Match[];
   uploadGuidance: UploadGuidance;
   consistencyCheck: ConsistencyCheck | null;
   uploadId: string | null;
+  quota_exceeded?: boolean;
+  quota?: QuotaInfo;
 }
 
 export interface ImageMeta {
@@ -147,6 +157,11 @@ export async function identify(
     method: "POST",
     body: JSON.stringify({ images, photoRoles, imageMeta }),
   });
+}
+
+// Quota
+export async function getQuota(): Promise<QuotaInfo> {
+  return apiFetch("/api/quota");
 }
 
 // Uploads

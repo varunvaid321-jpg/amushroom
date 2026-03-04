@@ -107,6 +107,12 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
   FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS scan_quotas (
+  ip TEXT PRIMARY KEY,
+  count INTEGER NOT NULL DEFAULT 0,
+  first_scan_at TEXT NOT NULL
+);
+
 CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at);
 CREATE INDEX IF NOT EXISTS idx_reset_tokens_token ON password_reset_tokens(token);
@@ -115,6 +121,14 @@ CREATE INDEX IF NOT EXISTS idx_upload_images_batch_id ON upload_images(batch_id)
 CREATE INDEX IF NOT EXISTS idx_identification_matches_batch_id ON identification_matches(batch_id);
 `);
 
+const ANON_SCAN_LIMIT = Number(process.env.ANON_SCAN_LIMIT || 5);
+const FREE_SCAN_LIMIT = Number(process.env.FREE_SCAN_LIMIT || 5);
+
+// Safe migrations — silently ignore if columns already exist
+try { db.exec('ALTER TABLE users ADD COLUMN tier TEXT NOT NULL DEFAULT \'free\''); } catch { /* column exists */ }
+try { db.exec('ALTER TABLE users ADD COLUMN scans_today INTEGER NOT NULL DEFAULT 0'); } catch { /* column exists */ }
+try { db.exec('ALTER TABLE users ADD COLUMN scans_today_date TEXT NOT NULL DEFAULT \'\''); } catch { /* column exists */ }
+
 const stmts = {
   createUser: db.prepare(`
     INSERT INTO users (email, name, password_hash, password_salt, google_sub, email_verified, created_at, updated_at)
@@ -122,7 +136,7 @@ const stmts = {
   `),
   findUserByEmail: db.prepare('SELECT * FROM users WHERE email = ?'),
   findUserByGoogleSub: db.prepare('SELECT * FROM users WHERE google_sub = ?'),
-  findUserById: db.prepare('SELECT id, email, name, email_verified, created_at, updated_at FROM users WHERE id = ?'),
+  findUserById: db.prepare('SELECT id, email, name, email_verified, tier, scans_today, scans_today_date, created_at, updated_at FROM users WHERE id = ?'),
   attachGoogleToUser: db.prepare(`
     UPDATE users SET google_sub = @google_sub, email_verified = @email_verified, updated_at = @updated_at WHERE id = @id
   `),
@@ -142,6 +156,9 @@ const stmts = {
       u.email,
       u.name,
       u.email_verified,
+      u.tier,
+      u.scans_today,
+      u.scans_today_date,
       u.created_at,
       u.updated_at
     FROM sessions s
@@ -270,9 +287,19 @@ const stmts = {
   deleteUserSessions: db.prepare('DELETE FROM sessions WHERE user_id = ?'),
   deleteExpiredResetTokens: db.prepare('DELETE FROM password_reset_tokens WHERE expires_at < ? OR used = 1'),
 
+  getAnonQuota: db.prepare('SELECT count FROM scan_quotas WHERE ip = ?'),
+  upsertAnonQuota: db.prepare(`
+    INSERT INTO scan_quotas (ip, count, first_scan_at) VALUES (@ip, 1, @now)
+    ON CONFLICT(ip) DO UPDATE SET count = count + 1
+  `),
+  getUserQuota: db.prepare('SELECT scans_today, scans_today_date FROM users WHERE id = ?'),
+  incrementUserScans: db.prepare('UPDATE users SET scans_today = scans_today + 1, scans_today_date = @date WHERE id = @id'),
+  resetUserScans: db.prepare('UPDATE users SET scans_today = 1, scans_today_date = @date WHERE id = @id'),
+  cleanOldAnonQuotas: db.prepare('DELETE FROM scan_quotas WHERE first_scan_at < ?'),
+
   countUsers: db.prepare('SELECT COUNT(*) AS count FROM users'),
   listAllUsers: db.prepare(`
-    SELECT id, email, name, email_verified, created_at, updated_at FROM users ORDER BY created_at DESC LIMIT ?
+    SELECT id, email, name, email_verified, tier, created_at, updated_at FROM users ORDER BY created_at DESC LIMIT ?
   `)
 };
 
@@ -580,6 +607,46 @@ function deleteExpiredResetTokens() {
   stmts.deleteExpiredResetTokens.run(nowIso());
 }
 
+function todayDateStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function checkAnonQuota(ip) {
+  const row = stmts.getAnonQuota.get(ip);
+  const used = row ? row.count : 0;
+  return { used, limit: ANON_SCAN_LIMIT, exceeded: used >= ANON_SCAN_LIMIT };
+}
+
+function recordAnonScan(ip) {
+  stmts.upsertAnonQuota.run({ ip, now: nowIso() });
+}
+
+function checkUserQuota(userId) {
+  const row = stmts.getUserQuota.get(userId);
+  if (!row) return { used: 0, limit: FREE_SCAN_LIMIT, exceeded: false, resetsAt: null };
+  const today = todayDateStr();
+  const used = row.scans_today_date === today ? row.scans_today : 0;
+  const tomorrow = new Date();
+  tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+  tomorrow.setUTCHours(0, 0, 0, 0);
+  return { used, limit: FREE_SCAN_LIMIT, exceeded: used >= FREE_SCAN_LIMIT, resetsAt: tomorrow.toISOString() };
+}
+
+function recordUserScan(userId) {
+  const today = todayDateStr();
+  const row = stmts.getUserQuota.get(userId);
+  if (row && row.scans_today_date === today) {
+    stmts.incrementUserScans.run({ id: userId, date: today });
+  } else {
+    stmts.resetUserScans.run({ id: userId, date: today });
+  }
+}
+
+function cleanExpiredAnonQuotas() {
+  const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  stmts.cleanOldAnonQuotas.run(cutoff);
+}
+
 module.exports = {
   db,
   createUser,
@@ -610,5 +677,12 @@ module.exports = {
   markResetTokenUsed,
   updateUserPassword,
   deleteUserSessions,
-  deleteExpiredResetTokens
+  deleteExpiredResetTokens,
+  checkAnonQuota,
+  recordAnonScan,
+  checkUserQuota,
+  recordUserScan,
+  cleanExpiredAnonQuotas,
+  ANON_SCAN_LIMIT,
+  FREE_SCAN_LIMIT
 };

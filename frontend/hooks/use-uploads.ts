@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { identify, getUploadDetail, type Match, type UploadGuidance, type ConsistencyCheck, type ImageMeta } from "@/lib/api";
+import { identify, getUploadDetail, type Match, type UploadGuidance, type ConsistencyCheck, type ImageMeta, type QuotaInfo } from "@/lib/api";
 import { prepareImageForUpload } from "@/lib/image-utils";
 import { SLOT_ROLES } from "@/components/upload/photo-slots";
 
@@ -17,6 +17,8 @@ export function useUploads() {
   const [qualityNotice, setQualityNotice] = useState<string>("");
   const [statusText, setStatusText] = useState("");
   const [currentUploadId, setCurrentUploadId] = useState<string | null>(null);
+  const [quotaExceeded, setQuotaExceeded] = useState(false);
+  const [quotaInfo, setQuotaInfo] = useState<QuotaInfo | null>(null);
 
   const photoCount = files.filter(Boolean).length;
 
@@ -62,6 +64,8 @@ export function useUploads() {
     setQualityNotice("");
     setStatusText("");
     setCurrentUploadId(null);
+    setQuotaExceeded(false);
+    setQuotaInfo(null);
     // Clear URL param
     const url = new URL(window.location.href);
     url.searchParams.delete("uploadId");
@@ -119,6 +123,8 @@ export function useUploads() {
       setConsistencyCheck(result.consistencyCheck);
       setQualityNotice(notice);
       setCurrentUploadId(result.uploadId);
+      setQuotaExceeded(result.quota_exceeded || false);
+      setQuotaInfo(result.quota || null);
       setResultsState("ready");
       setStatusText("");
 
@@ -197,6 +203,8 @@ export function useUploads() {
     qualityNotice,
     statusText,
     currentUploadId,
+    quotaExceeded,
+    quotaInfo,
     addFile,
     removeSlot,
     clearAll,
