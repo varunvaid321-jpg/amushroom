@@ -130,6 +130,7 @@ try { db.exec('ALTER TABLE users ADD COLUMN tier TEXT NOT NULL DEFAULT \'free\''
 try { db.exec('ALTER TABLE users ADD COLUMN scans_today INTEGER NOT NULL DEFAULT 0'); } catch { /* column exists */ }
 try { db.exec('ALTER TABLE users ADD COLUMN scans_today_date TEXT NOT NULL DEFAULT \'\''); } catch { /* column exists */ }
 try { db.exec('ALTER TABLE analytics_events ADD COLUMN user_agent TEXT'); } catch { /* column exists */ }
+try { db.exec('ALTER TABLE upload_batches ADD COLUMN user_story TEXT'); } catch { /* column exists */ }
 
 const stmts = {
   createUser: db.prepare(`
@@ -191,7 +192,7 @@ const stmts = {
   `),
 
   listUserBatches: db.prepare(`
-    SELECT id, created_at, image_count, primary_match, primary_confidence, mixed_species, consistency_message
+    SELECT id, created_at, image_count, primary_match, primary_confidence, mixed_species, consistency_message, user_story
     FROM upload_batches
     WHERE user_id = ?
     ORDER BY created_at DESC
@@ -204,7 +205,7 @@ const stmts = {
     ORDER BY rank ASC
   `),
   getUserBatchById: db.prepare(`
-    SELECT id, created_at, image_count, primary_match, primary_confidence, mixed_species, consistency_message
+    SELECT id, created_at, image_count, primary_match, primary_confidence, mixed_species, consistency_message, user_story
     FROM upload_batches
     WHERE id = ? AND user_id = ?
     LIMIT 1
@@ -323,6 +324,8 @@ const stmts = {
   incrementUserScans: db.prepare('UPDATE users SET scans_today = scans_today + 1, scans_today_date = @date WHERE id = @id'),
   resetUserScans: db.prepare('UPDATE users SET scans_today = 1, scans_today_date = @date WHERE id = @id'),
   cleanOldAnonQuotas: db.prepare('DELETE FROM scan_quotas WHERE first_scan_at < ?'),
+
+  updateUploadStory: db.prepare('UPDATE upload_batches SET user_story = @story WHERE id = @id AND user_id = @userId'),
 
   countUsers: db.prepare('SELECT COUNT(*) AS count FROM users'),
   listAllUsers: db.prepare(`
@@ -492,6 +495,7 @@ function listUserUploads(userId, limit = 20) {
       primaryConfidence: batch.primary_confidence,
       mixedSpecies: Boolean(batch.mixed_species),
       consistencyMessage: batch.consistency_message,
+      userStory: batch.user_story || null,
       coverImageUrl: cover?.previewUrl || '',
       coverFileName: cover?.filename || '',
       previewImages,
@@ -549,6 +553,7 @@ function getUserUploadDetail(userId, uploadId) {
     primaryConfidence: batch.primary_confidence,
     mixedSpecies: Boolean(batch.mixed_species),
     consistencyMessage: batch.consistency_message,
+    userStory: batch.user_story || null,
     images,
     matches
   };
@@ -720,9 +725,20 @@ function recordUserScan(userId) {
   }
 }
 
+function updateUploadStory({ uploadId, userId, story }) {
+  stmts.updateUploadStory.run({ id: uploadId, userId, story: story || null });
+}
+
 function cleanExpiredAnonQuotas() {
   const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   stmts.cleanOldAnonQuotas.run(cutoff);
+}
+
+function getCoverImageBlob(batchId) {
+  return db.prepare(`
+    SELECT image_blob, mime_type FROM upload_images
+    WHERE batch_id = ? ORDER BY id ASC LIMIT 1
+  `).get(batchId) || null;
 }
 
 module.exports = {
@@ -759,11 +775,13 @@ module.exports = {
   updateUserPassword,
   deleteUserSessions,
   deleteExpiredResetTokens,
+  updateUploadStory,
   checkAnonQuota,
   recordAnonScan,
   checkUserQuota,
   recordUserScan,
   cleanExpiredAnonQuotas,
+  getCoverImageBlob,
   ANON_SCAN_LIMIT,
   FREE_SCAN_LIMIT
 };

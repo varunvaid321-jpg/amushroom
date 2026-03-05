@@ -46,6 +46,8 @@ const {
   getVisitorBreakdown,
   getPageViewsByDay,
   getEventFunnel,
+  updateUploadStory,
+  getCoverImageBlob,
   listAllUsers,
   createPasswordResetToken,
   findValidResetToken,
@@ -62,6 +64,7 @@ const {
   FREE_SCAN_LIMIT
 } = require('./src/db');
 const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail } = require('./src/email');
+const { runOnePost, listPosted } = require('./src/instagram');
 
 const ROOT = __dirname;
 const PUBLIC_DIR = path.join(ROOT, 'public');
@@ -1519,6 +1522,29 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (req.method === 'PATCH' && url.pathname.startsWith('/api/user/uploads/') && url.pathname.endsWith('/story')) {
+    if (!requireSameOrigin(req, res)) return;
+    const auth = getAuthContext(req);
+    if (!auth?.user) { jsonError(req, res, 401, 'Not authenticated.'); return; }
+    const uploadId = decodeURIComponent(url.pathname.slice('/api/user/uploads/'.length, -'/story'.length)).trim();
+    let body;
+    try { body = await parseBody(req, 4 * 1024); } catch { jsonError(req, res, 400, 'Bad request.'); return; }
+    const story = typeof body.story === 'string' ? body.story.slice(0, 500) : null;
+    updateUploadStory({ uploadId, userId: auth.user.id, story });
+    sendJson(req, res, 200, { ok: true });
+    return;
+  }
+
+  // Public cover image endpoint — used by Instagram pipeline for public image URL
+  if (req.method === 'GET' && url.pathname.startsWith('/api/uploads/') && url.pathname.endsWith('/cover-image')) {
+    const batchId = decodeURIComponent(url.pathname.slice('/api/uploads/'.length, -'/cover-image'.length)).trim();
+    const row = getCoverImageBlob(batchId);
+    if (!row) { res.writeHead(404); res.end('Not found'); return; }
+    res.writeHead(200, { 'Content-Type': row.mime_type || 'image/jpeg', 'Cache-Control': 'public, max-age=86400' });
+    res.end(row.image_blob);
+    return;
+  }
+
   if (req.method === 'POST' && url.pathname === '/api/identify') {
     if (!requireSameOrigin(req, res)) return;
     if (
@@ -1585,6 +1611,27 @@ const server = http.createServer(async (req, res) => {
       sendJson(req, res, 200, { data: getPageViewsByDay(days) });
     } else if (route === 'funnel') {
       sendJson(req, res, 200, getEventFunnel(days));
+    } else if (route === 'instagram-post') {
+      // POST /api/admin/instagram-post — trigger one Instagram post
+      const pageToken = process.env.IG_PAGE_TOKEN;
+      const igAccountId = process.env.IG_ACCOUNT_ID;
+      if (!pageToken || !igAccountId) {
+        sendJson(req, res, 503, { ok: false, error: 'IG_PAGE_TOKEN or IG_ACCOUNT_ID not configured on server.' });
+        return;
+      }
+      try {
+        const result = await runOnePost({ pageToken, igAccountId });
+        if (!result) {
+          sendJson(req, res, 200, { ok: true, posted: false, message: 'No eligible candidates to post.' });
+        } else {
+          sendJson(req, res, 200, { ok: true, posted: true, ...result });
+        }
+      } catch (err) {
+        sendJson(req, res, 500, { ok: false, error: err.message });
+      }
+    } else if (route === 'instagram-posts') {
+      // GET /api/admin/instagram-posts — list recent posts
+      sendJson(req, res, 200, { posts: listPosted(50) });
     } else if (route === 'test-email') {
       const to = auth.user.email;
       try {
