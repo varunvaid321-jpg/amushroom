@@ -135,6 +135,29 @@ test('db: FREE_SCAN_LIMIT is 5', () => {
   assert.equal(Number(m[1]), 5);
 });
 
+// ─── Dependency integrity ────────────────────────────────────────────────────
+
+test('dependencies: all require() calls in server.js resolve to installed packages', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+  const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
+
+  // Find all require('...') calls that aren't node: builtins or relative paths
+  const requires = [...src.matchAll(/require\(['"]([^'"]+)['"]\)/g)]
+    .map(m => m[1])
+    .filter(m => !m.startsWith('.') && !m.startsWith('node:'));
+
+  const missing = requires.filter(mod => {
+    const pkgName = mod.startsWith('@') ? mod.split('/').slice(0, 2).join('/') : mod.split('/')[0];
+    return !allDeps[pkgName];
+  });
+
+  assert.equal(
+    missing.length, 0,
+    `server.js requires packages not in package.json: ${missing.join(', ')}\nAdd them with: npm install ${missing.join(' ')}`
+  );
+});
+
 // ─── File structure ───────────────────────────────────────────────────────────
 
 test('structure: required production files exist', () => {
