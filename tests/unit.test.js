@@ -158,6 +158,91 @@ test('dependencies: all require() calls in server.js resolve to installed packag
   );
 });
 
+// ─── Payment / Stripe integration ────────────────────────────────────────────
+
+test('payment: stripe routes defined in server.js', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  const routes = [
+    '/api/stripe/webhook',
+    '/api/stripe/create-checkout-session',
+    '/api/stripe/portal-session',
+  ];
+  for (const route of routes) {
+    assert.ok(src.includes(route), `Stripe route missing: ${route}`);
+  }
+});
+
+test('payment: webhook validates stripe-signature header', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  assert.ok(src.includes('stripe-signature'), 'Webhook must verify stripe-signature header');
+  assert.ok(src.includes('constructEvent'), 'Webhook must use constructEvent for signature verification');
+});
+
+test('payment: webhook handles all required event types', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  const events = [
+    'checkout.session.completed',
+    'customer.subscription.deleted',
+    'customer.subscription.updated',
+    'invoice.payment_succeeded',
+  ];
+  for (const evt of events) {
+    assert.ok(src.includes(evt), `Webhook must handle ${evt}`);
+  }
+});
+
+test('payment: checkout requires authentication', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  const fnStart = src.indexOf('async function handleStripeCheckout(');
+  const fnEnd = src.indexOf('\nasync function ', fnStart + 1);
+  const fnBody = src.slice(fnStart, fnEnd > 0 ? fnEnd : fnStart + 2000);
+  assert.ok(fnBody.includes('getAuthContext'), 'Checkout must check auth');
+  assert.ok(fnBody.includes('401'), 'Checkout must return 401 for unauthenticated');
+});
+
+test('payment: upgrade triggers confirmation email', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  assert.ok(src.includes('sendUpgradeEmail'), 'Checkout completion must send upgrade email');
+});
+
+test('payment: downgrade handled on subscription cancel', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  assert.ok(src.includes('downgradeUser'), 'Must downgrade user when subscription is cancelled');
+});
+
+test('payment: PRO_SCAN_DAILY_LIMIT is 50', () => {
+  const src = fs.readFileSync(path.join(root, 'src/db.js'), 'utf8');
+  const m = src.match(/PRO_SCAN_DAILY_LIMIT\b.*?\|\|\s*(\d+)/);
+  assert.ok(m, 'PRO_SCAN_DAILY_LIMIT default not found in src/db.js');
+  assert.equal(Number(m[1]), 50);
+});
+
+test('payment: email.js exports sendUpgradeEmail and sendAbuseAlertEmail', () => {
+  const src = fs.readFileSync(path.join(root, 'src/email.js'), 'utf8');
+  const exportMatch = src.match(/module\.exports\s*=\s*\{([^}]+)\}/);
+  assert.ok(exportMatch, 'Could not find module.exports in email.js');
+  assert.ok(exportMatch[1].includes('sendUpgradeEmail'), 'sendUpgradeEmail must be exported');
+  assert.ok(exportMatch[1].includes('sendAbuseAlertEmail'), 'sendAbuseAlertEmail must be exported');
+});
+
+test('payment: all email.js exports used in server.js exist', () => {
+  const serverSrc = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  const emailSrc = fs.readFileSync(path.join(root, 'src/email.js'), 'utf8');
+
+  // Extract what server.js imports from email.js
+  const importMatch = serverSrc.match(/\{([^}]+)\}\s*=\s*require\(['"]\.\/(src\/email)['"]\)/);
+  assert.ok(importMatch, 'Could not find email.js import in server.js');
+  const imported = importMatch[1].match(/\b[a-zA-Z_]\w*\b/g) || [];
+
+  // Extract what email.js exports
+  const exportMatch = emailSrc.match(/module\.exports\s*=\s*\{([^}]+)\}/);
+  assert.ok(exportMatch, 'Could not find module.exports in email.js');
+  const exported = exportMatch[1].match(/\b[a-zA-Z_]\w*\b/g) || [];
+
+  const missing = imported.filter(name => !exported.includes(name));
+  assert.equal(missing.length, 0, `server.js imports from email.js that don't exist: ${missing.join(', ')}`);
+});
+
 // ─── File structure ───────────────────────────────────────────────────────────
 
 test('structure: required production files exist', () => {

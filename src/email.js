@@ -141,4 +141,75 @@ async function sendFeedbackNotification(adminEmail, { name, email, message, ip }
   }
 }
 
-module.exports = { emailEnabled, sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification };
+async function sendUpgradeEmail(to, name) {
+  if (!resend) {
+    console.warn('[email] RESEND_API_KEY not set — upgrade email skipped');
+    return;
+  }
+
+  const greeting = name ? `Hi ${name},` : 'Hi there,';
+  const html = baseTemplate(`
+    <h1 style="margin:0 0 20px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">You're now on Orangutany Pro!</h1>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">${greeting}</p>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">Thank you for upgrading. Here's what you now have access to:</p>
+
+    <div style="background:#1a1a1a;border-radius:12px;padding:20px 24px;margin:0 0 24px;">
+      <table cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+        <tr><td style="padding:8px 0;font-size:15px;color:#e0e0e0;">&#10003; &nbsp;<strong>50 scans per day</strong> (up from 5)</td></tr>
+        <tr><td style="padding:8px 0;font-size:15px;color:#e0e0e0;">&#10003; &nbsp;Full species breakdown &amp; confidence scores</td></tr>
+        <tr><td style="padding:8px 0;font-size:15px;color:#e0e0e0;">&#10003; &nbsp;Look-alike warnings &amp; edibility details</td></tr>
+        <tr><td style="padding:8px 0;font-size:15px;color:#e0e0e0;">&#10003; &nbsp;Priority support</td></tr>
+      </table>
+    </div>
+
+    <p style="margin:0 0 24px;font-size:16px;line-height:1.7;color:#e0e0e0;">Stripe will send you a receipt for each payment automatically. You can manage your subscription anytime from your account.</p>
+
+    <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
+    <tr><td style="background-color:#f97316;border-radius:10px;">
+      <a href="https://orangutany.com" style="display:inline-block;padding:14px 32px;font-size:16px;font-weight:600;color:#0a0a0a;text-decoration:none;letter-spacing:0.2px;">Start Scanning</a>
+    </td></tr>
+    </table>
+
+    <p style="margin:24px 0 0;font-size:13px;line-height:1.5;color:#666;text-align:center;">$7.99/mo &bull; Cancel anytime &bull; Questions? Reply to this email.</p>
+  `);
+
+  try {
+    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Welcome to Orangutany Pro!', html });
+    console.log(`[email] Upgrade email sent to ${to} — id: ${result?.data?.id || 'unknown'}`);
+  } catch (err) {
+    console.error(`[email] Failed to send upgrade email to ${to}:`, err.message);
+  }
+}
+
+async function sendAbuseAlertEmail(adminEmail, { userId, userEmail, ip, reason, metadata }) {
+  if (!resend) return;
+  const reasonLabels = {
+    hourly_burst: 'Hourly scan burst limit exceeded',
+    ip_daily_cap: 'IP daily scan cap exceeded',
+    suspicious_velocity: 'Suspicious scan velocity detected'
+  };
+  const label = reasonLabels[reason] || reason;
+  const details = metadata ? JSON.stringify(metadata, null, 2) : 'No details';
+  const html = baseTemplate(`
+    <h1 style="margin:0 0 20px;font-size:22px;font-weight:700;color:#ff4444;">Abuse Alert</h1>
+    <p style="margin:0 0 8px;font-size:14px;color:#888;">Type: <strong style="color:#ff6666;">${label}</strong></p>
+    <p style="margin:0 0 8px;font-size:14px;color:#888;">User: <strong style="color:#e0e0e0;">${userEmail || (userId ? `#${userId}` : 'Anonymous')}</strong></p>
+    <p style="margin:0 0 20px;font-size:14px;color:#888;">IP: ${ip || 'unknown'}</p>
+    <div style="background:#1a1a1a;border-radius:10px;padding:16px 20px;margin:0 0 20px;">
+      <pre style="margin:0;font-size:13px;line-height:1.5;color:#e0e0e0;white-space:pre-wrap;">${details}</pre>
+    </div>
+    <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
+    <tr><td style="background-color:#ff4444;border-radius:10px;">
+      <a href="https://orangutany.com/admin" style="display:inline-block;padding:14px 32px;font-size:16px;font-weight:600;color:#ffffff;text-decoration:none;">View in Admin</a>
+    </td></tr>
+    </table>
+  `);
+  try {
+    await resend.emails.send({ from: FROM_EMAIL, to: adminEmail, subject: `[ABUSE] ${label} — Orangutany`, html });
+    console.log(`[email] Abuse alert sent to ${adminEmail} — ${reason}`);
+  } catch (err) {
+    console.error(`[email] Failed to send abuse alert:`, err.message);
+  }
+}
+
+module.exports = { emailEnabled, sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendAbuseAlertEmail };

@@ -96,7 +96,7 @@ const {
   unsuspendUser,
   isUserSuspended
 } = require('./src/db');
-const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendAbuseAlertEmail } = require('./src/email');
+const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendAbuseAlertEmail } = require('./src/email');
 const { runOnePost, listPosted } = require('./src/instagram');
 
 const ROOT = __dirname;
@@ -1233,7 +1233,11 @@ async function handleStripeCheckout(req, res) {
 
   let customerId = auth.user.stripe_customer_id;
   if (!customerId) {
-    const customer = await stripe.customers.create({ email: auth.user.email, metadata: { userId: String(auth.user.id) } });
+    const customer = await stripe.customers.create({
+      email: auth.user.email,
+      name: auth.user.name || undefined,
+      metadata: { userId: String(auth.user.id) },
+    });
     customerId = customer.id;
     await setUserStripeCustomer(auth.user.id, customerId);
   }
@@ -1245,6 +1249,9 @@ async function handleStripeCheckout(req, res) {
     success_url: `${APP_BASE_URL}/?upgraded=1`,
     cancel_url: `${APP_BASE_URL}/`,
     metadata: { userId: String(auth.user.id) },
+    subscription_data: {
+      metadata: { userId: String(auth.user.id) },
+    },
   });
   sendJson(req, res, 200, { url: session.url });
 }
@@ -1307,6 +1314,11 @@ async function handleStripeWebhook(req, res) {
           status: 'active',
         });
         console.log(`[stripe] User ${userId} upgraded to pro`);
+        // Send upgrade confirmation email
+        const upgradeUser = await getPublicUser(userId);
+        if (upgradeUser?.email) {
+          sendUpgradeEmail(upgradeUser.email, upgradeUser.name).catch(() => {});
+        }
       }
     } else if (event.type === 'customer.subscription.deleted' || event.type === 'customer.subscription.updated') {
       const sub = event.data.object;
