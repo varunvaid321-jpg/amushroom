@@ -50,7 +50,10 @@ function baseTemplate(content) {
 }
 
 async function sendWelcomeEmail(to, name) {
-  if (!resend) return;
+  if (!resend) {
+    console.warn('[email] RESEND_API_KEY not set — welcome email skipped');
+    return;
+  }
 
   const greeting = name ? `Hi ${name},` : 'Hi there,';
   const html = baseTemplate(`
@@ -66,14 +69,18 @@ async function sendWelcomeEmail(to, name) {
   `);
 
   try {
-    await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Welcome to Orangutany 🍄', html });
+    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Welcome to Orangutany 🍄', html });
+    console.log(`[email] Welcome sent to ${to} — id: ${result?.data?.id || 'unknown'}`);
   } catch (err) {
-    console.error('Failed to send welcome email:', err.message);
+    console.error(`[email] Failed to send welcome to ${to}:`, err.message, err.statusCode || '');
   }
 }
 
 async function sendPasswordResetEmail(to, name, resetUrl) {
-  if (!resend) return;
+  if (!resend) {
+    console.warn('[email] RESEND_API_KEY not set — password reset email skipped');
+    return;
+  }
 
   const greeting = name ? `Hi ${name},` : 'Hi there,';
   const html = baseTemplate(`
@@ -91,10 +98,24 @@ async function sendPasswordResetEmail(to, name, resetUrl) {
   `);
 
   try {
-    await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Reset your Orangutany password', html });
+    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Reset your Orangutany password', html });
+    console.log(`[email] Password reset sent to ${to} — id: ${result?.data?.id || 'unknown'}`);
   } catch (err) {
-    console.error('Failed to send password reset email:', err.message);
+    console.error(`[email] Failed to send password reset to ${to}:`, err.message, err.statusCode || '');
+    throw err; // re-throw so callers know it failed
   }
 }
 
-module.exports = { emailEnabled, sendWelcomeEmail, sendPasswordResetEmail };
+async function sendTestEmail(to) {
+  if (!resend) throw new Error('RESEND_API_KEY not configured');
+  const html = baseTemplate(`
+    <h1 style="margin:0 0 24px;font-size:24px;font-weight:700;color:#ffffff;">Test Email</h1>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">Email delivery is working correctly from <strong>noreply@orangutany.com</strong>.</p>
+    <p style="margin:0;font-size:14px;color:#888;">Sent at ${new Date().toISOString()}</p>
+  `);
+  const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Orangutany — Email Test', html });
+  console.log(`[email] Test email sent to ${to} — id: ${result?.data?.id || 'unknown'}`);
+  return result?.data?.id;
+}
+
+module.exports = { emailEnabled, sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail };

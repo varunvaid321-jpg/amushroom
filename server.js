@@ -61,7 +61,7 @@ const {
   ANON_SCAN_LIMIT,
   FREE_SCAN_LIMIT
 } = require('./src/db');
-const { sendWelcomeEmail, sendPasswordResetEmail } = require('./src/email');
+const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail } = require('./src/email');
 
 const ROOT = __dirname;
 const PUBLIC_DIR = path.join(ROOT, 'public');
@@ -953,7 +953,9 @@ async function handleForgotPassword(req, res) {
   createPasswordResetToken({ userId: userRow.id, token, expiresAt });
 
   const resetUrl = `${APP_BASE_URL}/reset-password?token=${token}`;
-  sendPasswordResetEmail(email, userRow.name, resetUrl).catch(() => {});
+  sendPasswordResetEmail(email, userRow.name, resetUrl).catch((err) => {
+    console.error('[forgot-password] Email send failed:', err.message);
+  });
 
   sendJson(req, res, 200, genericResponse);
 }
@@ -1583,6 +1585,14 @@ const server = http.createServer(async (req, res) => {
       sendJson(req, res, 200, { data: getPageViewsByDay(days) });
     } else if (route === 'funnel') {
       sendJson(req, res, 200, getEventFunnel(days));
+    } else if (route === 'test-email') {
+      const to = auth.user.email;
+      try {
+        const id = await sendTestEmail(to);
+        sendJson(req, res, 200, { ok: true, to, id });
+      } catch (err) {
+        sendJson(req, res, 500, { ok: false, error: err.message });
+      }
     } else if (route === 'users') {
       sendJson(req, res, 200, { users: listAllUsers(Number(url.searchParams.get('limit') || 100)) });
     } else if (route === 'visitors') {

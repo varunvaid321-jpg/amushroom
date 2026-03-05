@@ -5,7 +5,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { Container } from "@/components/layout/container";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, ShieldAlert, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Loader2, ShieldAlert, TrendingUp, TrendingDown, Minus, Mail, CheckCircle, XCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   AreaChart,
   Area,
@@ -208,6 +209,8 @@ function ChartTooltip({ active, payload, label }: { active?: boolean; payload?: 
 export default function AdminPage() {
   const { user, isAdmin, loading: authLoading } = useAuth();
   const [days, setDays] = useState(30);
+  const [emailTestState, setEmailTestState] = useState<"idle" | "sending" | "ok" | "fail">("idle");
+  const [emailTestMsg, setEmailTestMsg] = useState("");
 
   const [summary, setSummary] = useState<Summary | null>(null);
   const [scansByDay, setScansByDay] = useState<DayCount[]>([]);
@@ -289,11 +292,38 @@ export default function AdminPage() {
     <div className="min-h-screen py-8">
       <Container>
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
           <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-foreground">
             Analytics
           </h1>
-          <div className="flex gap-1 rounded-lg border border-border/50 bg-muted/20 p-1">
+          <div className="flex items-center gap-3">
+            {/* Email test */}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={emailTestState === "sending"}
+                onClick={async () => {
+                  setEmailTestState("sending");
+                  setEmailTestMsg("");
+                  try {
+                    const r = await adminFetch<{ ok: boolean; to: string; error?: string }>("test-email");
+                    if (r.ok) { setEmailTestState("ok"); setEmailTestMsg(`Sent to ${r.to}`); }
+                    else { setEmailTestState("fail"); setEmailTestMsg(r.error ?? "Failed"); }
+                  } catch {
+                    setEmailTestState("fail");
+                    setEmailTestMsg("Request failed");
+                  }
+                }}
+                className="gap-1.5 text-xs"
+              >
+                {emailTestState === "sending" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Mail className="h-3.5 w-3.5" />}
+                Test Email
+              </Button>
+              {emailTestState === "ok" && <span className="flex items-center gap-1 text-xs text-green-400"><CheckCircle className="h-3.5 w-3.5" />{emailTestMsg}</span>}
+              {emailTestState === "fail" && <span className="flex items-center gap-1 text-xs text-red-400"><XCircle className="h-3.5 w-3.5" />{emailTestMsg}</span>}
+            </div>
+            <div className="flex gap-1 rounded-lg border border-border/50 bg-muted/20 p-1">
             {([7, 30, 90] as const).map((d) => (
               <button
                 key={d}
@@ -307,6 +337,7 @@ export default function AdminPage() {
                 {d}d
               </button>
             ))}
+            </div>
           </div>
         </div>
 
