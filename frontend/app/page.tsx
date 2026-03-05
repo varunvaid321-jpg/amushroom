@@ -94,7 +94,7 @@ export default function Home() {
             <div className="flex items-center justify-between gap-3 py-3">
               <div className="flex items-center gap-2 text-sm font-medium text-primary">
                 <Sparkles className="h-4 w-4" />
-                Welcome to Pro! You now have 50 scans per day. A confirmation email is on its way.
+                Welcome to Pro! You now have unlimited scans. A confirmation email is on its way.
               </div>
               <button onClick={() => setShowUpgradeBanner(false)} className="text-primary/60 hover:text-primary">
                 <X className="h-4 w-4" />
