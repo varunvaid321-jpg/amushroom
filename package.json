@@ -20,6 +20,7 @@
     "test:e2e": "node --test tests/e2e.test.js",
     "test:ui": "node --test tests/ui.test.js",
     "test:all": "node --test tests/unit.test.js && node --test tests/sanity.test.js && node --test tests/e2e.test.js && node --test tests/ui.test.js",
+
     "ci": "npm run check && npm test"
   },
   "engines": {

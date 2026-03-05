@@ -9,6 +9,7 @@
 | **Functional** | `tests/e2e.test.js` | Before releases, after infra changes | `TEST_ADMIN_EMAIL`, `TEST_ADMIN_PASSWORD`, `TEST_USER_EMAIL`, `TEST_USER_PASSWORD` |
 | **UI** | `tests/ui.test.js` | After UI changes, before releases | None (admin/user creds for full coverage) |
 
+
 ---
 
 ## Running
@@ -33,6 +34,7 @@ npm run test:sanity           # sanity check against production
 npm run test:e2e              # full functional (set env vars first)
 npm run test:ui               # UI browser tests (Playwright, headless Chromium)
 npm run test:all              # unit + sanity + functional + UI
+
 ```
 
 Against a local or staging server:
@@ -69,6 +71,7 @@ TEST_BASE_URL=http://localhost:3001 node --test tests/sanity.test.js
 - Admin dashboard: stat cards visible, totalUsers ≥ 1 (requires credentials)
 - 404: not blank, stays on-site
 - Link integrity: all internal links return < 400
+
 
 ### Functional (`tests/e2e.test.js`) — run when needed
 Everything in Sanity plus:
@@ -128,6 +131,7 @@ Run this before any major migration or schema change.
 - [ ] `node --test tests/unit.test.js` passes
 - [ ] `node --test tests/sanity.test.js` passes (after deploy)
 - [ ] `node --test tests/ui.test.js` passes (after UI changes)
+
 - [ ] No `better-sqlite3` imports introduced
 - [ ] All `getAuthContext()` calls have `await`
 - [ ] `render.yaml` plan still `free`
