@@ -1173,7 +1173,7 @@ async function handleUserUploadDetail(req, res, url) {
     return;
   }
 
-  const upload = getUserUploadDetail(auth.user.id, uploadId);
+  const upload = await getUserUploadDetail(auth.user.id, uploadId);
   if (!upload) {
     jsonError(req, res, 404, 'Saved upload not found.');
     return;
@@ -1444,7 +1444,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'GET' && url.pathname === '/api/auth/me') {
-    handleAuthMe(req, res);
+    await handleAuthMe(req, res);
     return;
   }
 
@@ -1488,7 +1488,7 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'POST' && url.pathname === '/api/auth/logout') {
     if (!requireSameOrigin(req, res)) return;
-    handleAuthLogout(req, res);
+    await handleAuthLogout(req, res);
     return;
   }
 
@@ -1554,12 +1554,12 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'GET' && url.pathname === '/api/user/uploads') {
-    handleUserUploads(req, res, url);
+    await handleUserUploads(req, res, url);
     return;
   }
 
   if (req.method === 'GET' && url.pathname.startsWith('/api/user/uploads/')) {
-    handleUserUploadDetail(req, res, url);
+    await handleUserUploadDetail(req, res, url);
     return;
   }
 
