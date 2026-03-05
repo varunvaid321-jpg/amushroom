@@ -1,168 +1,241 @@
-const fs = require('node:fs');
-const path = require('node:path');
 const crypto = require('node:crypto');
-const Database = require('better-sqlite3');
+const { createClient } = require('@libsql/client');
 
-const ROOT = path.join(__dirname, '..');
-const DB_PATH = process.env.DATABASE_PATH || path.join(ROOT, 'data', 'amushroom.db');
+const TURSO_URL = process.env.TURSO_DATABASE_URL || 'file:data/amushroom.db';
+const TURSO_TOKEN = process.env.TURSO_AUTH_TOKEN;
 
-function ensureDirectory(filePath) {
-  const dir = path.dirname(filePath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-}
-
-ensureDirectory(DB_PATH);
-
-const db = new Database(DB_PATH);
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
-
-db.exec(`
-CREATE TABLE IF NOT EXISTS users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT NOT NULL UNIQUE,
-  name TEXT,
-  password_hash TEXT,
-  password_salt TEXT,
-  google_sub TEXT UNIQUE,
-  email_verified INTEGER NOT NULL DEFAULT 0,
-  created_at TEXT NOT NULL,
-  updated_at TEXT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS sessions (
-  id TEXT PRIMARY KEY,
-  user_id INTEGER NOT NULL,
-  created_at TEXT NOT NULL,
-  expires_at TEXT NOT NULL,
-  last_seen_at TEXT NOT NULL,
-  ip TEXT,
-  user_agent TEXT,
-  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS upload_batches (
-  id TEXT PRIMARY KEY,
-  user_id INTEGER,
-  session_id TEXT,
-  created_at TEXT NOT NULL,
-  image_count INTEGER NOT NULL,
-  primary_match TEXT,
-  primary_confidence INTEGER,
-  mixed_species INTEGER NOT NULL DEFAULT 0,
-  consistency_message TEXT,
-  FOREIGN KEY(user_id) REFERENCES users(id)
-);
-
-CREATE TABLE IF NOT EXISTS upload_images (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  batch_id TEXT NOT NULL,
-  role TEXT,
-  filename TEXT,
-  mime_type TEXT,
-  bytes INTEGER NOT NULL,
-  sha256 TEXT NOT NULL,
-  image_blob BLOB NOT NULL,
-  created_at TEXT NOT NULL,
-  FOREIGN KEY(batch_id) REFERENCES upload_batches(id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS identification_matches (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  batch_id TEXT NOT NULL,
-  rank INTEGER NOT NULL,
-  scientific_name TEXT,
-  common_name TEXT,
-  confidence INTEGER,
-  edibility TEXT,
-  psychedelic TEXT,
-  raw_json TEXT,
-  created_at TEXT NOT NULL,
-  FOREIGN KEY(batch_id) REFERENCES upload_batches(id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS analytics_events (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  event TEXT NOT NULL,
-  user_id INTEGER,
-  metadata TEXT,
-  ip TEXT,
-  country TEXT,
-  city TEXT,
-  user_agent TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
-CREATE INDEX IF NOT EXISTS idx_analytics_created ON analytics_events(created_at);
-CREATE INDEX IF NOT EXISTS idx_analytics_event ON analytics_events(event);
-
-CREATE TABLE IF NOT EXISTS password_reset_tokens (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id INTEGER NOT NULL,
-  token TEXT NOT NULL UNIQUE,
-  expires_at TEXT NOT NULL,
-  used INTEGER NOT NULL DEFAULT 0,
-  created_at TEXT NOT NULL,
-  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS scan_quotas (
-  ip TEXT PRIMARY KEY,
-  count INTEGER NOT NULL DEFAULT 0,
-  first_scan_at TEXT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS feedback (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id INTEGER,
-  email TEXT,
-  name TEXT,
-  message TEXT NOT NULL,
-  also_email INTEGER NOT NULL DEFAULT 0,
-  ip TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  FOREIGN KEY(user_id) REFERENCES users(id)
-);
-
-CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
-CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at);
-CREATE INDEX IF NOT EXISTS idx_reset_tokens_token ON password_reset_tokens(token);
-CREATE INDEX IF NOT EXISTS idx_upload_batches_user_id ON upload_batches(user_id);
-CREATE INDEX IF NOT EXISTS idx_upload_images_batch_id ON upload_images(batch_id);
-CREATE INDEX IF NOT EXISTS idx_identification_matches_batch_id ON identification_matches(batch_id);
-`);
+const client = createClient({
+  url: TURSO_URL,
+  authToken: TURSO_TOKEN
+});
 
 const ANON_SCAN_LIMIT = Number(process.env.ANON_SCAN_LIMIT || 5);
 const FREE_SCAN_LIMIT = Number(process.env.FREE_SCAN_LIMIT || 5);
 
-// Safe migrations — silently ignore if columns already exist
-try { db.exec('ALTER TABLE users ADD COLUMN tier TEXT NOT NULL DEFAULT \'free\''); } catch { /* column exists */ }
-try { db.exec('ALTER TABLE users ADD COLUMN scans_today INTEGER NOT NULL DEFAULT 0'); } catch { /* column exists */ }
-try { db.exec('ALTER TABLE users ADD COLUMN scans_today_date TEXT NOT NULL DEFAULT \'\''); } catch { /* column exists */ }
-try { db.exec('ALTER TABLE analytics_events ADD COLUMN user_agent TEXT'); } catch { /* column exists */ }
-try { db.exec('ALTER TABLE upload_batches ADD COLUMN user_story TEXT'); } catch { /* column exists */ }
+// Schema + migration — run once at startup
+const dbReady = (async () => {
+  const isFile = TURSO_URL.startsWith('file:');
+  if (isFile) {
+    await client.execute('PRAGMA journal_mode=WAL');
+    await client.execute('PRAGMA foreign_keys=ON');
+  }
 
-const stmts = {
-  createUser: db.prepare(`
-    INSERT INTO users (email, name, password_hash, password_salt, google_sub, email_verified, created_at, updated_at)
-    VALUES (@email, @name, @password_hash, @password_salt, @google_sub, @email_verified, @created_at, @updated_at)
-  `),
-  findUserByEmail: db.prepare('SELECT * FROM users WHERE email = ?'),
-  findUserByGoogleSub: db.prepare('SELECT * FROM users WHERE google_sub = ?'),
-  findUserById: db.prepare('SELECT id, email, name, email_verified, tier, scans_today, scans_today_date, created_at, updated_at FROM users WHERE id = ?'),
-  attachGoogleToUser: db.prepare(`
-    UPDATE users SET google_sub = @google_sub, email_verified = @email_verified, updated_at = @updated_at WHERE id = @id
-  `),
-  updateUserName: db.prepare('UPDATE users SET name = @name, updated_at = @updated_at WHERE id = @id'),
+  // Create tables
+  await client.execute(`CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    name TEXT,
+    password_hash TEXT,
+    password_salt TEXT,
+    google_sub TEXT UNIQUE,
+    email_verified INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  )`);
 
-  createSession: db.prepare(`
-    INSERT INTO sessions (id, user_id, created_at, expires_at, last_seen_at, ip, user_agent)
-    VALUES (@id, @user_id, @created_at, @expires_at, @last_seen_at, @ip, @user_agent)
-  `),
-  findSessionWithUser: db.prepare(`
-    SELECT
+  await client.execute(`CREATE TABLE IF NOT EXISTS sessions (
+    id TEXT PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    created_at TEXT NOT NULL,
+    expires_at TEXT NOT NULL,
+    last_seen_at TEXT NOT NULL,
+    ip TEXT,
+    user_agent TEXT,
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+  )`);
+
+  await client.execute(`CREATE TABLE IF NOT EXISTS upload_batches (
+    id TEXT PRIMARY KEY,
+    user_id INTEGER,
+    session_id TEXT,
+    created_at TEXT NOT NULL,
+    image_count INTEGER NOT NULL,
+    primary_match TEXT,
+    primary_confidence INTEGER,
+    mixed_species INTEGER NOT NULL DEFAULT 0,
+    consistency_message TEXT,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+  )`);
+
+  await client.execute(`CREATE TABLE IF NOT EXISTS upload_images (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    batch_id TEXT NOT NULL,
+    role TEXT,
+    filename TEXT,
+    mime_type TEXT,
+    bytes INTEGER NOT NULL,
+    sha256 TEXT NOT NULL,
+    image_blob BLOB NOT NULL,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY(batch_id) REFERENCES upload_batches(id) ON DELETE CASCADE
+  )`);
+
+  await client.execute(`CREATE TABLE IF NOT EXISTS identification_matches (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    batch_id TEXT NOT NULL,
+    rank INTEGER NOT NULL,
+    scientific_name TEXT,
+    common_name TEXT,
+    confidence INTEGER,
+    edibility TEXT,
+    psychedelic TEXT,
+    raw_json TEXT,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY(batch_id) REFERENCES upload_batches(id) ON DELETE CASCADE
+  )`);
+
+  await client.execute(`CREATE TABLE IF NOT EXISTS analytics_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    event TEXT NOT NULL,
+    user_id INTEGER,
+    metadata TEXT,
+    ip TEXT,
+    country TEXT,
+    city TEXT,
+    user_agent TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )`);
+
+  await client.execute(`CREATE INDEX IF NOT EXISTS idx_analytics_created ON analytics_events(created_at)`);
+  await client.execute(`CREATE INDEX IF NOT EXISTS idx_analytics_event ON analytics_events(event)`);
+
+  await client.execute(`CREATE TABLE IF NOT EXISTS password_reset_tokens (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    token TEXT NOT NULL UNIQUE,
+    expires_at TEXT NOT NULL,
+    used INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+  )`);
+
+  await client.execute(`CREATE TABLE IF NOT EXISTS scan_quotas (
+    ip TEXT PRIMARY KEY,
+    count INTEGER NOT NULL DEFAULT 0,
+    first_scan_at TEXT NOT NULL
+  )`);
+
+  await client.execute(`CREATE TABLE IF NOT EXISTS feedback (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    email TEXT,
+    name TEXT,
+    message TEXT NOT NULL,
+    also_email INTEGER NOT NULL DEFAULT 0,
+    ip TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY(user_id) REFERENCES users(id)
+  )`);
+
+  await client.execute(`CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id)`);
+  await client.execute(`CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at)`);
+  await client.execute(`CREATE INDEX IF NOT EXISTS idx_reset_tokens_token ON password_reset_tokens(token)`);
+  await client.execute(`CREATE INDEX IF NOT EXISTS idx_upload_batches_user_id ON upload_batches(user_id)`);
+  await client.execute(`CREATE INDEX IF NOT EXISTS idx_upload_images_batch_id ON upload_images(batch_id)`);
+  await client.execute(`CREATE INDEX IF NOT EXISTS idx_identification_matches_batch_id ON identification_matches(batch_id)`);
+
+  // Safe migrations
+  const migrations = [
+    "ALTER TABLE users ADD COLUMN tier TEXT NOT NULL DEFAULT 'free'",
+    "ALTER TABLE users ADD COLUMN scans_today INTEGER NOT NULL DEFAULT 0",
+    "ALTER TABLE users ADD COLUMN scans_today_date TEXT NOT NULL DEFAULT ''",
+    "ALTER TABLE analytics_events ADD COLUMN user_agent TEXT",
+    "ALTER TABLE upload_batches ADD COLUMN user_story TEXT"
+  ];
+  for (const sql of migrations) {
+    try { await client.execute(sql); } catch { /* column already exists */ }
+  }
+})();
+
+function nowIso() {
+  return new Date().toISOString();
+}
+
+function rowToUser(row) {
+  if (!row) return null;
+  return {
+    id: Number(row.id),
+    email: row.email,
+    name: row.name || '',
+    emailVerified: Boolean(row.email_verified),
+    tier: row.tier || 'free',
+    scans_today: Number(row.scans_today || 0),
+    scans_today_date: row.scans_today_date || '',
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  };
+}
+
+async function getPublicUser(id) {
+  const result = await client.execute({
+    sql: 'SELECT id, email, name, email_verified, tier, scans_today, scans_today_date, created_at, updated_at FROM users WHERE id = ?',
+    args: [Number(id)]
+  });
+  const row = result.rows[0];
+  if (!row) return null;
+  return {
+    id: Number(row.id),
+    email: row.email,
+    name: row.name || '',
+    emailVerified: Boolean(row.email_verified),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  };
+}
+
+async function createUser({ email, name, passwordHash, passwordSalt, googleSub, emailVerified }) {
+  const now = nowIso();
+  const result = await client.execute({
+    sql: `INSERT INTO users (email, name, password_hash, password_salt, google_sub, email_verified, created_at, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    args: [email, name || null, passwordHash || null, passwordSalt || null, googleSub || null, emailVerified ? 1 : 0, now, now]
+  });
+  return getPublicUser(Number(result.lastInsertRowid));
+}
+
+async function findUserAuthByEmail(email) {
+  const result = await client.execute({
+    sql: 'SELECT * FROM users WHERE email = ?',
+    args: [email]
+  });
+  return result.rows[0] ? { ...result.rows[0], id: Number(result.rows[0].id) } : null;
+}
+
+async function findUserAuthByGoogleSub(sub) {
+  const result = await client.execute({
+    sql: 'SELECT * FROM users WHERE google_sub = ?',
+    args: [sub]
+  });
+  return result.rows[0] ? { ...result.rows[0], id: Number(result.rows[0].id) } : null;
+}
+
+async function attachGoogleIdentity({ userId, googleSub, emailVerified }) {
+  await client.execute({
+    sql: 'UPDATE users SET google_sub = ?, email_verified = ?, updated_at = ? WHERE id = ?',
+    args: [googleSub, emailVerified ? 1 : 0, nowIso(), Number(userId)]
+  });
+  return getPublicUser(userId);
+}
+
+async function updateUserName({ userId, name }) {
+  await client.execute({
+    sql: 'UPDATE users SET name = ?, updated_at = ? WHERE id = ?',
+    args: [name || '', nowIso(), Number(userId)]
+  });
+}
+
+async function createSession({ sessionId, userId, expiresAt, ip, userAgent }) {
+  const now = nowIso();
+  await client.execute({
+    sql: `INSERT INTO sessions (id, user_id, created_at, expires_at, last_seen_at, ip, user_agent)
+          VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    args: [sessionId, Number(userId), now, expiresAt, now, ip || null, userAgent || null]
+  });
+}
+
+async function getSessionWithUser(sessionId) {
+  const result = await client.execute({
+    sql: `SELECT
       s.id AS session_id,
       s.user_id,
       s.expires_at,
@@ -178,320 +251,125 @@ const stmts = {
       u.updated_at
     FROM sessions s
     JOIN users u ON u.id = s.user_id
-    WHERE s.id = ?
-  `),
-  deleteSession: db.prepare('DELETE FROM sessions WHERE id = ?'),
-  touchSession: db.prepare('UPDATE sessions SET last_seen_at = ? WHERE id = ?'),
-  deleteExpiredSessions: db.prepare('DELETE FROM sessions WHERE expires_at < ?'),
-
-  createUploadBatch: db.prepare(`
-    INSERT INTO upload_batches (
-      id, user_id, session_id, created_at, image_count, primary_match, primary_confidence, mixed_species, consistency_message
-    ) VALUES (
-      @id, @user_id, @session_id, @created_at, @image_count, @primary_match, @primary_confidence, @mixed_species, @consistency_message
-    )
-  `),
-  createUploadImage: db.prepare(`
-    INSERT INTO upload_images (batch_id, role, filename, mime_type, bytes, sha256, image_blob, created_at)
-    VALUES (@batch_id, @role, @filename, @mime_type, @bytes, @sha256, @image_blob, @created_at)
-  `),
-  createMatch: db.prepare(`
-    INSERT INTO identification_matches (
-      batch_id, rank, scientific_name, common_name, confidence, edibility, psychedelic, raw_json, created_at
-    ) VALUES (
-      @batch_id, @rank, @scientific_name, @common_name, @confidence, @edibility, @psychedelic, @raw_json, @created_at
-    )
-  `),
-
-  listUserBatches: db.prepare(`
-    SELECT id, created_at, image_count, primary_match, primary_confidence, mixed_species, consistency_message, user_story
-    FROM upload_batches
-    WHERE user_id = ?
-    ORDER BY created_at DESC
-    LIMIT ?
-  `),
-  listBatchMatches: db.prepare(`
-    SELECT rank, scientific_name, common_name, confidence
-    FROM identification_matches
-    WHERE batch_id = ?
-    ORDER BY rank ASC
-  `),
-  getUserBatchById: db.prepare(`
-    SELECT id, created_at, image_count, primary_match, primary_confidence, mixed_species, consistency_message, user_story
-    FROM upload_batches
-    WHERE id = ? AND user_id = ?
-    LIMIT 1
-  `),
-  listBatchImagesPreview: db.prepare(`
-    SELECT id, role, filename, mime_type, image_blob
-    FROM upload_images
-    WHERE batch_id = ?
-    ORDER BY id ASC
-    LIMIT ?
-  `),
-  listBatchImagesDetailed: db.prepare(`
-    SELECT id, role, filename, mime_type, bytes, image_blob, created_at
-    FROM upload_images
-    WHERE batch_id = ?
-    ORDER BY id ASC
-  `),
-  listBatchMatchesDetailed: db.prepare(`
-    SELECT rank, scientific_name, common_name, confidence, edibility, psychedelic, raw_json
-    FROM identification_matches
-    WHERE batch_id = ?
-    ORDER BY rank ASC
-  `),
-
-  insertAnalyticsEvent: db.prepare(`
-    INSERT INTO analytics_events (event, user_id, metadata, ip, country, city, user_agent, created_at)
-    VALUES (@event, @user_id, @metadata, @ip, @country, @city, @user_agent, @created_at)
-  `),
-  updateEventGeo: db.prepare(`
-    UPDATE analytics_events SET country = @country, city = @city WHERE id = @id
-  `),
-  analyticsSummary: db.prepare(`
-    SELECT
-      (SELECT COUNT(*) FROM users) AS totalUsers,
-      (SELECT COUNT(*) FROM upload_batches) AS totalScans,
-      (SELECT COUNT(*) FROM upload_batches WHERE created_at >= date('now', '-1 day')) AS scansToday,
-      (SELECT COUNT(DISTINCT ip) FROM analytics_events WHERE created_at >= date('now', '-7 days')) AS uniqueVisitors7d
-  `),
-  recentEvents: db.prepare(`
-    SELECT e.id, e.event, e.user_id, u.name AS user_name, u.email AS user_email, e.metadata, e.ip, e.country, e.city, e.user_agent, e.created_at
-    FROM analytics_events e
-    LEFT JOIN users u ON u.id = e.user_id
-    ORDER BY e.created_at DESC LIMIT ?
-  `),
-  visitorBreakdown: db.prepare(`
-    SELECT ip, user_agent, country, city,
-      COUNT(*) AS hits,
-      MIN(created_at) AS first_seen,
-      MAX(created_at) AS last_seen,
-      SUM(CASE WHEN event = 'scan' THEN 1 ELSE 0 END) AS scans
-    FROM analytics_events
-    WHERE created_at >= date('now', @days || ' days')
-    GROUP BY ip, user_agent
-    ORDER BY hits DESC
-    LIMIT 200
-  `),
-  scansByDay: db.prepare(`
-    SELECT date(created_at) AS day, COUNT(*) AS count
-    FROM upload_batches
-    WHERE created_at >= date('now', ? || ' days')
-    GROUP BY day ORDER BY day
-  `),
-  signupsByDay: db.prepare(`
-    SELECT date(created_at) AS day, COUNT(*) AS count
-    FROM users
-    WHERE created_at >= date('now', ? || ' days')
-    GROUP BY day ORDER BY day
-  `),
-  topSpecies: db.prepare(`
-    SELECT primary_match AS species, COUNT(*) AS count
-    FROM upload_batches
-    WHERE primary_match IS NOT NULL AND created_at >= date('now', ? || ' days')
-    GROUP BY primary_match ORDER BY count DESC LIMIT 10
-  `),
-  pageViewsByDay: db.prepare(`
-    SELECT date(created_at) AS day, COUNT(*) AS count
-    FROM analytics_events
-    WHERE event = 'page_view' AND created_at >= date('now', ? || ' days')
-    GROUP BY day ORDER BY day
-  `),
-  eventFunnel: db.prepare(`
-    SELECT event, COUNT(*) AS count
-    FROM analytics_events
-    WHERE event IN ('page_view','signup','login','scan')
-      AND created_at >= date('now', ? || ' days')
-    GROUP BY event
-  `),
-  geoBreakdown: db.prepare(`
-    SELECT country, city, COUNT(*) AS count
-    FROM analytics_events
-    WHERE country IS NOT NULL AND created_at >= date('now', ? || ' days')
-    GROUP BY country, city ORDER BY count DESC LIMIT 50
-  `),
-  createResetToken: db.prepare(`
-    INSERT INTO password_reset_tokens (user_id, token, expires_at, created_at)
-    VALUES (@user_id, @token, @expires_at, @created_at)
-  `),
-  findValidResetToken: db.prepare(`
-    SELECT rt.*, u.email, u.name FROM password_reset_tokens rt
-    JOIN users u ON u.id = rt.user_id
-    WHERE rt.token = ? AND rt.used = 0 AND rt.expires_at > ?
-  `),
-  markResetTokenUsed: db.prepare('UPDATE password_reset_tokens SET used = 1 WHERE id = ?'),
-  updateUserPassword: db.prepare(`
-    UPDATE users SET password_hash = @password_hash, password_salt = @password_salt, updated_at = @updated_at WHERE id = @id
-  `),
-  deleteUserSessions: db.prepare('DELETE FROM sessions WHERE user_id = ?'),
-  deleteExpiredResetTokens: db.prepare('DELETE FROM password_reset_tokens WHERE expires_at < ? OR used = 1'),
-
-  getAnonQuota: db.prepare('SELECT count FROM scan_quotas WHERE ip = ?'),
-  upsertAnonQuota: db.prepare(`
-    INSERT INTO scan_quotas (ip, count, first_scan_at) VALUES (@ip, 1, @now)
-    ON CONFLICT(ip) DO UPDATE SET count = count + 1
-  `),
-  getUserQuota: db.prepare('SELECT scans_today, scans_today_date FROM users WHERE id = ?'),
-  incrementUserScans: db.prepare('UPDATE users SET scans_today = scans_today + 1, scans_today_date = @date WHERE id = @id'),
-  resetUserScans: db.prepare('UPDATE users SET scans_today = 1, scans_today_date = @date WHERE id = @id'),
-  cleanOldAnonQuotas: db.prepare('DELETE FROM scan_quotas WHERE first_scan_at < ?'),
-
-  updateUploadStory: db.prepare('UPDATE upload_batches SET user_story = @story WHERE id = @id AND user_id = @userId'),
-
-  countUsers: db.prepare('SELECT COUNT(*) AS count FROM users'),
-  listAllUsers: db.prepare(`
-    SELECT id, email, name, email_verified, tier, created_at, updated_at FROM users ORDER BY created_at DESC LIMIT ?
-  `)
-};
-
-function nowIso() {
-  return new Date().toISOString();
-}
-
-function createUser({ email, name, passwordHash, passwordSalt, googleSub, emailVerified }) {
-  const now = nowIso();
-  const result = stmts.createUser.run({
-    email,
-    name: name || null,
-    password_hash: passwordHash || null,
-    password_salt: passwordSalt || null,
-    google_sub: googleSub || null,
-    email_verified: emailVerified ? 1 : 0,
-    created_at: now,
-    updated_at: now
+    WHERE s.id = ?`,
+    args: [sessionId]
   });
-
-  return getPublicUser(result.lastInsertRowid);
+  if (!result.rows[0]) return null;
+  const row = result.rows[0];
+  return { ...row, user_id: Number(row.user_id), id: Number(row.id) };
 }
 
-function getPublicUser(id) {
-  const user = stmts.findUserById.get(id);
-  if (!user) return null;
-  return {
-    id: user.id,
-    email: user.email,
-    name: user.name || '',
-    emailVerified: Boolean(user.email_verified),
-    createdAt: user.created_at,
-    updatedAt: user.updated_at
-  };
-}
-
-function findUserAuthByEmail(email) {
-  return stmts.findUserByEmail.get(email) || null;
-}
-
-function findUserAuthByGoogleSub(sub) {
-  return stmts.findUserByGoogleSub.get(sub) || null;
-}
-
-function attachGoogleIdentity({ userId, googleSub, emailVerified }) {
-  stmts.attachGoogleToUser.run({
-    id: userId,
-    google_sub: googleSub,
-    email_verified: emailVerified ? 1 : 0,
-    updated_at: nowIso()
-  });
-  return getPublicUser(userId);
-}
-
-function updateUserName({ userId, name }) {
-  stmts.updateUserName.run({ id: userId, name: name || '', updated_at: nowIso() });
-}
-
-function createSession({ sessionId, userId, expiresAt, ip, userAgent }) {
-  const now = nowIso();
-  stmts.createSession.run({
-    id: sessionId,
-    user_id: userId,
-    created_at: now,
-    expires_at: expiresAt,
-    last_seen_at: now,
-    ip: ip || null,
-    user_agent: userAgent || null
+async function touchSession(sessionId) {
+  await client.execute({
+    sql: 'UPDATE sessions SET last_seen_at = ? WHERE id = ?',
+    args: [nowIso(), sessionId]
   });
 }
 
-function getSessionWithUser(sessionId) {
-  return stmts.findSessionWithUser.get(sessionId) || null;
+async function deleteSession(sessionId) {
+  await client.execute({
+    sql: 'DELETE FROM sessions WHERE id = ?',
+    args: [sessionId]
+  });
 }
 
-function touchSession(sessionId) {
-  stmts.touchSession.run(nowIso(), sessionId);
+async function deleteExpiredSessions() {
+  await client.execute({
+    sql: 'DELETE FROM sessions WHERE expires_at < ?',
+    args: [nowIso()]
+  });
 }
 
-function deleteSession(sessionId) {
-  stmts.deleteSession.run(sessionId);
-}
-
-function deleteExpiredSessions() {
-  stmts.deleteExpiredSessions.run(nowIso());
-}
-
-function createUploadRecord({ userId, sessionId, images, imageMeta, photoRoles, matches, consistencyCheck }) {
+async function createUploadRecord({ userId, sessionId, images, imageMeta, photoRoles, matches, consistencyCheck }) {
   const batchId = crypto.randomUUID();
   const now = nowIso();
   const top = matches[0] || null;
 
-  const insert = db.transaction(() => {
-    stmts.createUploadBatch.run({
-      id: batchId,
-      user_id: userId || null,
-      session_id: sessionId || null,
-      created_at: now,
-      image_count: images.length,
-      primary_match: top?.scientificName || null,
-      primary_confidence: Number.isFinite(Number(top?.score)) ? Number(top.score) : null,
-      mixed_species: consistencyCheck?.likelyMixed ? 1 : 0,
-      consistency_message: consistencyCheck?.message || null
+  const tx = await client.transaction('write');
+  try {
+    await tx.execute({
+      sql: `INSERT INTO upload_batches (id, user_id, session_id, created_at, image_count, primary_match, primary_confidence, mixed_species, consistency_message)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [
+        batchId,
+        userId ? Number(userId) : null,
+        sessionId || null,
+        now,
+        images.length,
+        top?.scientificName || null,
+        Number.isFinite(Number(top?.score)) ? Number(top.score) : null,
+        consistencyCheck?.likelyMixed ? 1 : 0,
+        consistencyCheck?.message || null
+      ]
     });
 
-    for (let i = 0; i < images.length; i += 1) {
+    for (let i = 0; i < images.length; i++) {
       const b64 = images[i];
       const buffer = Buffer.from(String(b64 || ''), 'base64');
       const meta = Array.isArray(imageMeta) ? imageMeta[i] || {} : {};
       const sha256 = crypto.createHash('sha256').update(buffer).digest('hex');
 
-      stmts.createUploadImage.run({
-        batch_id: batchId,
-        role: Array.isArray(photoRoles) ? photoRoles[i] || null : null,
-        filename: typeof meta.filename === 'string' ? meta.filename : null,
-        mime_type: typeof meta.mimeType === 'string' ? meta.mimeType : null,
-        bytes: buffer.length,
-        sha256,
-        image_blob: buffer,
-        created_at: now
+      await tx.execute({
+        sql: `INSERT INTO upload_images (batch_id, role, filename, mime_type, bytes, sha256, image_blob, created_at)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: [
+          batchId,
+          Array.isArray(photoRoles) ? photoRoles[i] || null : null,
+          typeof meta.filename === 'string' ? meta.filename : null,
+          typeof meta.mimeType === 'string' ? meta.mimeType : null,
+          buffer.length,
+          sha256,
+          buffer,
+          now
+        ]
       });
     }
 
-    matches.slice(0, 3).forEach((match, index) => {
-      stmts.createMatch.run({
-        batch_id: batchId,
-        rank: index + 1,
-        scientific_name: match.scientificName || null,
-        common_name: match.commonName || null,
-        confidence: Number.isFinite(Number(match.score)) ? Number(match.score) : null,
-        edibility: match.edible || null,
-        psychedelic: match.psychedelic || null,
-        raw_json: JSON.stringify(match || {}),
-        created_at: now
+    for (let index = 0; index < matches.slice(0, 3).length; index++) {
+      const match = matches[index];
+      await tx.execute({
+        sql: `INSERT INTO identification_matches (batch_id, rank, scientific_name, common_name, confidence, edibility, psychedelic, raw_json, created_at)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: [
+          batchId,
+          index + 1,
+          match.scientificName || null,
+          match.commonName || null,
+          Number.isFinite(Number(match.score)) ? Number(match.score) : null,
+          match.edible || null,
+          match.psychedelic || null,
+          JSON.stringify(match || {}),
+          now
+        ]
       });
-    });
-  });
+    }
 
-  insert();
+    await tx.commit();
+  } catch (err) {
+    await tx.rollback();
+    throw err;
+  }
+
   return batchId;
 }
 
-function listUserUploads(userId, limit = 20) {
+async function listUserUploads(userId, limit = 20) {
   const safeLimit = Math.max(1, Math.min(100, Number(limit) || 20));
-  const batches = stmts.listUserBatches.all(userId, safeLimit);
+  const batchResult = await client.execute({
+    sql: `SELECT id, created_at, image_count, primary_match, primary_confidence, mixed_species, consistency_message, user_story
+          FROM upload_batches WHERE user_id = ? ORDER BY created_at DESC LIMIT ?`,
+    args: [Number(userId), safeLimit]
+  });
 
-  return batches.map((batch) => {
-    const previews = stmts.listBatchImagesPreview.all(batch.id, 4);
-    const previewImages = previews.map((row) => ({
-      id: row.id,
+  const uploads = [];
+  for (const batch of batchResult.rows) {
+    const previewResult = await client.execute({
+      sql: 'SELECT id, role, filename, mime_type, image_blob FROM upload_images WHERE batch_id = ? ORDER BY id ASC LIMIT 4',
+      args: [batch.id]
+    });
+
+    const previewImages = previewResult.rows.map((row) => ({
+      id: Number(row.id),
       role: row.role || 'extra',
       filename: row.filename || '',
       mimeType: row.mime_type || 'image/jpeg',
@@ -499,56 +377,72 @@ function listUserUploads(userId, limit = 20) {
     }));
     const cover = previewImages[0] || null;
 
-    return {
+    const matchResult = await client.execute({
+      sql: 'SELECT rank, scientific_name, common_name, confidence FROM identification_matches WHERE batch_id = ? ORDER BY rank ASC',
+      args: [batch.id]
+    });
+
+    uploads.push({
       id: batch.id,
       createdAt: batch.created_at,
-      imageCount: batch.image_count,
+      imageCount: Number(batch.image_count),
       primaryMatch: batch.primary_match,
-      primaryConfidence: batch.primary_confidence,
+      primaryConfidence: batch.primary_confidence !== null ? Number(batch.primary_confidence) : null,
       mixedSpecies: Boolean(batch.mixed_species),
       consistencyMessage: batch.consistency_message,
       userStory: batch.user_story || null,
       coverImageUrl: cover?.previewUrl || '',
       coverFileName: cover?.filename || '',
       previewImages,
-      topMatches: stmts.listBatchMatches.all(batch.id).map((m) => ({
-        rank: m.rank,
+      topMatches: matchResult.rows.map((m) => ({
+        rank: Number(m.rank),
         scientificName: m.scientific_name,
         commonName: m.common_name,
-        confidence: m.confidence
+        confidence: m.confidence !== null ? Number(m.confidence) : null
       }))
-    };
-  });
+    });
+  }
+
+  return uploads;
 }
 
-function getUserUploadDetail(userId, uploadId) {
-  const batch = stmts.getUserBatchById.get(uploadId, userId);
+async function getUserUploadDetail(userId, uploadId) {
+  const batchResult = await client.execute({
+    sql: `SELECT id, created_at, image_count, primary_match, primary_confidence, mixed_species, consistency_message, user_story
+          FROM upload_batches WHERE id = ? AND user_id = ? LIMIT 1`,
+    args: [uploadId, Number(userId)]
+  });
+  const batch = batchResult.rows[0];
   if (!batch) return null;
 
-  const images = stmts.listBatchImagesDetailed.all(uploadId).map((row) => ({
-    id: row.id,
+  const imgResult = await client.execute({
+    sql: 'SELECT id, role, filename, mime_type, bytes, image_blob, created_at FROM upload_images WHERE batch_id = ? ORDER BY id ASC',
+    args: [uploadId]
+  });
+
+  const images = imgResult.rows.map((row) => ({
+    id: Number(row.id),
     role: row.role || 'extra',
     filename: row.filename || '',
     mimeType: row.mime_type || 'image/jpeg',
-    bytes: row.bytes,
+    bytes: Number(row.bytes),
     createdAt: row.created_at,
     previewUrl: `data:${row.mime_type || 'image/jpeg'};base64,${Buffer.from(row.image_blob).toString('base64')}`
   }));
 
-  const matches = stmts.listBatchMatchesDetailed.all(uploadId).map((row) => {
+  const matchResult = await client.execute({
+    sql: 'SELECT rank, scientific_name, common_name, confidence, edibility, psychedelic, raw_json FROM identification_matches WHERE batch_id = ? ORDER BY rank ASC',
+    args: [uploadId]
+  });
+
+  const matches = matchResult.rows.map((row) => {
     let parsed = null;
-    try {
-      parsed = row.raw_json ? JSON.parse(row.raw_json) : null;
-    } catch {
-      parsed = null;
-    }
-
+    try { parsed = row.raw_json ? JSON.parse(row.raw_json) : null; } catch { parsed = null; }
     if (parsed && typeof parsed === 'object') return parsed;
-
     return {
       scientificName: row.scientific_name || 'Unknown species',
       commonName: row.common_name || row.scientific_name || 'Unknown species',
-      score: row.confidence ?? 0,
+      score: row.confidence !== null ? Number(row.confidence) : 0,
       edible: row.edibility || 'Unknown',
       psychedelic: row.psychedelic || 'Unknown',
       traits: [],
@@ -560,9 +454,9 @@ function getUserUploadDetail(userId, uploadId) {
   return {
     id: batch.id,
     createdAt: batch.created_at,
-    imageCount: batch.image_count,
+    imageCount: Number(batch.image_count),
     primaryMatch: batch.primary_match,
-    primaryConfidence: batch.primary_confidence,
+    primaryConfidence: batch.primary_confidence !== null ? Number(batch.primary_confidence) : null,
     mixedSpecies: Boolean(batch.mixed_species),
     consistencyMessage: batch.consistency_message,
     userStory: batch.user_story || null,
@@ -571,62 +465,115 @@ function getUserUploadDetail(userId, uploadId) {
   };
 }
 
-function trackEvent({ event, userId, metadata, ip, userAgent }) {
+async function trackEvent({ event, userId, metadata, ip, userAgent }) {
   const now = nowIso();
-  const result = stmts.insertAnalyticsEvent.run({
-    event,
-    user_id: userId || null,
-    metadata: metadata ? JSON.stringify(metadata) : null,
-    ip: ip || null,
-    country: null,
-    city: null,
-    user_agent: userAgent || null,
-    created_at: now
+  const result = await client.execute({
+    sql: `INSERT INTO analytics_events (event, user_id, metadata, ip, country, city, user_agent, created_at)
+          VALUES (?, ?, ?, ?, null, null, ?, ?)`,
+    args: [event, userId ? Number(userId) : null, metadata ? JSON.stringify(metadata) : null, ip || null, userAgent || null, now]
   });
-  return result.lastInsertRowid;
+  return Number(result.lastInsertRowid);
 }
 
-function updateEventGeo(id, country, city) {
-  stmts.updateEventGeo.run({ id, country: country || null, city: city || null });
+async function updateEventGeo(id, country, city) {
+  await client.execute({
+    sql: 'UPDATE analytics_events SET country = ?, city = ? WHERE id = ?',
+    args: [country || null, city || null, Number(id)]
+  });
 }
 
-function getAnalyticsSummary() {
-  return stmts.analyticsSummary.get();
+async function getAnalyticsSummary() {
+  const result = await client.execute(`
+    SELECT
+      (SELECT COUNT(*) FROM users) AS totalUsers,
+      (SELECT COUNT(*) FROM upload_batches) AS totalScans,
+      (SELECT COUNT(*) FROM upload_batches WHERE created_at >= date('now', '-1 day')) AS scansToday,
+      (SELECT COUNT(DISTINCT ip) FROM analytics_events WHERE created_at >= date('now', '-7 days')) AS uniqueVisitors7d
+  `);
+  const row = result.rows[0];
+  if (!row) return {};
+  return {
+    totalUsers: Number(row.totalUsers),
+    totalScans: Number(row.totalScans),
+    scansToday: Number(row.scansToday),
+    uniqueVisitors7d: Number(row.uniqueVisitors7d)
+  };
 }
 
-function getRecentEvents(limit = 50) {
-  return stmts.recentEvents.all(Math.min(limit, 200));
+async function getRecentEvents(limit = 50) {
+  const result = await client.execute({
+    sql: `SELECT e.id, e.event, e.user_id, u.name AS user_name, u.email AS user_email, e.metadata, e.ip, e.country, e.city, e.user_agent, e.created_at
+          FROM analytics_events e
+          LEFT JOIN users u ON u.id = e.user_id
+          ORDER BY e.created_at DESC LIMIT ?`,
+    args: [Math.min(Number(limit), 200)]
+  });
+  return result.rows.map(r => ({ ...r, id: Number(r.id), user_id: r.user_id !== null ? Number(r.user_id) : null }));
 }
 
-function getScansByDay(days = 30) {
-  return stmts.scansByDay.all(String(-Math.abs(days)));
+async function getScansByDay(days = 30) {
+  const result = await client.execute({
+    sql: `SELECT date(created_at) AS day, COUNT(*) AS count FROM upload_batches
+          WHERE created_at >= date('now', ? || ' days') GROUP BY day ORDER BY day`,
+    args: [String(-Math.abs(days))]
+  });
+  return result.rows.map(r => ({ day: r.day, count: Number(r.count) }));
 }
 
-function getSignupsByDay(days = 30) {
-  return stmts.signupsByDay.all(String(-Math.abs(days)));
+async function getSignupsByDay(days = 30) {
+  const result = await client.execute({
+    sql: `SELECT date(created_at) AS day, COUNT(*) AS count FROM users
+          WHERE created_at >= date('now', ? || ' days') GROUP BY day ORDER BY day`,
+    args: [String(-Math.abs(days))]
+  });
+  return result.rows.map(r => ({ day: r.day, count: Number(r.count) }));
 }
 
-function getTopSpecies(days = 30) {
-  return stmts.topSpecies.all(String(-Math.abs(days)));
+async function getTopSpecies(days = 30) {
+  const result = await client.execute({
+    sql: `SELECT primary_match AS species, COUNT(*) AS count FROM upload_batches
+          WHERE primary_match IS NOT NULL AND created_at >= date('now', ? || ' days')
+          GROUP BY primary_match ORDER BY count DESC LIMIT 10`,
+    args: [String(-Math.abs(days))]
+  });
+  return result.rows.map(r => ({ species: r.species, count: Number(r.count) }));
 }
 
-function getPageViewsByDay(days = 30) {
-  return stmts.pageViewsByDay.all(String(-Math.abs(days)));
+async function getPageViewsByDay(days = 30) {
+  const result = await client.execute({
+    sql: `SELECT date(created_at) AS day, COUNT(*) AS count FROM analytics_events
+          WHERE event = 'page_view' AND created_at >= date('now', ? || ' days')
+          GROUP BY day ORDER BY day`,
+    args: [String(-Math.abs(days))]
+  });
+  return result.rows.map(r => ({ day: r.day, count: Number(r.count) }));
 }
 
-function getEventFunnel(days = 30) {
-  const rows = stmts.eventFunnel.all(String(-Math.abs(days)));
-  const map = Object.fromEntries(rows.map(r => [r.event, r.count]));
+async function getEventFunnel(days = 30) {
+  const result = await client.execute({
+    sql: `SELECT event, COUNT(*) AS count FROM analytics_events
+          WHERE event IN ('page_view','signup','login','scan')
+            AND created_at >= date('now', ? || ' days')
+          GROUP BY event`,
+    args: [String(-Math.abs(days))]
+  });
+  const map = Object.fromEntries(result.rows.map(r => [r.event, Number(r.count)]));
   return {
     pageViews: map.page_view || 0,
     signups: map.signup || 0,
     logins: map.login || 0,
-    scans: map.scan || 0,
+    scans: map.scan || 0
   };
 }
 
-function getGeoBreakdown(days = 30) {
-  return stmts.geoBreakdown.all(String(-Math.abs(days)));
+async function getGeoBreakdown(days = 30) {
+  const result = await client.execute({
+    sql: `SELECT country, city, COUNT(*) AS count FROM analytics_events
+          WHERE country IS NOT NULL AND created_at >= date('now', ? || ' days')
+          GROUP BY country, city ORDER BY count DESC LIMIT 50`,
+    args: [String(-Math.abs(days))]
+  });
+  return result.rows.map(r => ({ country: r.country, city: r.city, count: Number(r.count) }));
 }
 
 const BOT_PATTERNS = [
@@ -649,129 +596,188 @@ function classifyUA(ua) {
   return 'other';
 }
 
-function getVisitorBreakdown(days = 30) {
-  const rows = stmts.visitorBreakdown.all({ days: String(-Math.abs(days)) });
-  return rows.map(r => ({
+async function getVisitorBreakdown(days = 30) {
+  const result = await client.execute({
+    sql: `SELECT ip, user_agent, country, city,
+            COUNT(*) AS hits,
+            MIN(created_at) AS first_seen,
+            MAX(created_at) AS last_seen,
+            SUM(CASE WHEN event = 'scan' THEN 1 ELSE 0 END) AS scans
+          FROM analytics_events
+          WHERE created_at >= date('now', ? || ' days')
+          GROUP BY ip, user_agent
+          ORDER BY hits DESC LIMIT 200`,
+    args: [String(-Math.abs(days))]
+  });
+  return result.rows.map(r => ({
     ip: r.ip,
     userAgent: r.user_agent,
     country: r.country,
     city: r.city,
-    hits: r.hits,
-    scans: r.scans,
+    hits: Number(r.hits),
+    scans: Number(r.scans),
     firstSeen: r.first_seen,
     lastSeen: r.last_seen,
     type: classifyUA(r.user_agent)
   }));
 }
 
-function listAllUsers(limit = 100) {
-  return stmts.listAllUsers.all(Math.min(limit, 500));
+async function listAllUsers(limit = 100) {
+  const result = await client.execute({
+    sql: 'SELECT id, email, name, email_verified, tier, created_at, updated_at FROM users ORDER BY created_at DESC LIMIT ?',
+    args: [Math.min(Number(limit), 500)]
+  });
+  return result.rows.map(r => ({ ...r, id: Number(r.id) }));
 }
 
-function createPasswordResetToken({ userId, token, expiresAt }) {
-  stmts.createResetToken.run({
-    user_id: userId,
-    token,
-    expires_at: expiresAt,
-    created_at: nowIso()
+async function createPasswordResetToken({ userId, token, expiresAt }) {
+  await client.execute({
+    sql: `INSERT INTO password_reset_tokens (user_id, token, expires_at, created_at)
+          VALUES (?, ?, ?, ?)`,
+    args: [Number(userId), token, expiresAt, nowIso()]
   });
 }
 
-function findValidResetToken(token) {
-  return stmts.findValidResetToken.get(token, nowIso()) || null;
+async function findValidResetToken(token) {
+  const result = await client.execute({
+    sql: `SELECT rt.*, u.email, u.name FROM password_reset_tokens rt
+          JOIN users u ON u.id = rt.user_id
+          WHERE rt.token = ? AND rt.used = 0 AND rt.expires_at > ?`,
+    args: [token, nowIso()]
+  });
+  if (!result.rows[0]) return null;
+  const row = result.rows[0];
+  return { ...row, id: Number(row.id), user_id: Number(row.user_id) };
 }
 
-function markResetTokenUsed(id) {
-  stmts.markResetTokenUsed.run(id);
-}
-
-function updateUserPassword({ userId, passwordHash, passwordSalt }) {
-  stmts.updateUserPassword.run({
-    id: userId,
-    password_hash: passwordHash,
-    password_salt: passwordSalt,
-    updated_at: nowIso()
+async function markResetTokenUsed(id) {
+  await client.execute({
+    sql: 'UPDATE password_reset_tokens SET used = 1 WHERE id = ?',
+    args: [Number(id)]
   });
 }
 
-function deleteUserSessions(userId) {
-  stmts.deleteUserSessions.run(userId);
+async function updateUserPassword({ userId, passwordHash, passwordSalt }) {
+  await client.execute({
+    sql: 'UPDATE users SET password_hash = ?, password_salt = ?, updated_at = ? WHERE id = ?',
+    args: [passwordHash, passwordSalt, nowIso(), Number(userId)]
+  });
 }
 
-function deleteExpiredResetTokens() {
-  stmts.deleteExpiredResetTokens.run(nowIso());
+async function deleteUserSessions(userId) {
+  await client.execute({
+    sql: 'DELETE FROM sessions WHERE user_id = ?',
+    args: [Number(userId)]
+  });
+}
+
+async function deleteExpiredResetTokens() {
+  await client.execute({
+    sql: 'DELETE FROM password_reset_tokens WHERE expires_at < ? OR used = 1',
+    args: [nowIso()]
+  });
 }
 
 function todayDateStr() {
   return new Date().toISOString().slice(0, 10);
 }
 
-function checkAnonQuota(ip) {
-  const row = stmts.getAnonQuota.get(ip);
-  const used = row ? row.count : 0;
+async function checkAnonQuota(ip) {
+  const result = await client.execute({
+    sql: 'SELECT count FROM scan_quotas WHERE ip = ?',
+    args: [ip]
+  });
+  const used = result.rows[0] ? Number(result.rows[0].count) : 0;
   return { used, limit: ANON_SCAN_LIMIT, exceeded: used >= ANON_SCAN_LIMIT };
 }
 
-function recordAnonScan(ip) {
-  stmts.upsertAnonQuota.run({ ip, now: nowIso() });
+async function recordAnonScan(ip) {
+  await client.execute({
+    sql: `INSERT INTO scan_quotas (ip, count, first_scan_at) VALUES (?, 1, ?)
+          ON CONFLICT(ip) DO UPDATE SET count = count + 1`,
+    args: [ip, nowIso()]
+  });
 }
 
-function checkUserQuota(userId) {
-  const row = stmts.getUserQuota.get(userId);
+async function checkUserQuota(userId) {
+  const result = await client.execute({
+    sql: 'SELECT scans_today, scans_today_date FROM users WHERE id = ?',
+    args: [Number(userId)]
+  });
+  const row = result.rows[0];
   if (!row) return { used: 0, limit: FREE_SCAN_LIMIT, exceeded: false, resetsAt: null };
   const today = todayDateStr();
-  const used = row.scans_today_date === today ? row.scans_today : 0;
+  const used = row.scans_today_date === today ? Number(row.scans_today) : 0;
   const tomorrow = new Date();
   tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
   tomorrow.setUTCHours(0, 0, 0, 0);
   return { used, limit: FREE_SCAN_LIMIT, exceeded: used >= FREE_SCAN_LIMIT, resetsAt: tomorrow.toISOString() };
 }
 
-function recordUserScan(userId) {
+async function recordUserScan(userId) {
   const today = todayDateStr();
-  const row = stmts.getUserQuota.get(userId);
+  const result = await client.execute({
+    sql: 'SELECT scans_today, scans_today_date FROM users WHERE id = ?',
+    args: [Number(userId)]
+  });
+  const row = result.rows[0];
   if (row && row.scans_today_date === today) {
-    stmts.incrementUserScans.run({ id: userId, date: today });
+    await client.execute({
+      sql: 'UPDATE users SET scans_today = scans_today + 1, scans_today_date = ? WHERE id = ?',
+      args: [today, Number(userId)]
+    });
   } else {
-    stmts.resetUserScans.run({ id: userId, date: today });
+    await client.execute({
+      sql: 'UPDATE users SET scans_today = 1, scans_today_date = ? WHERE id = ?',
+      args: [today, Number(userId)]
+    });
   }
 }
 
-function updateUploadStory({ uploadId, userId, story }) {
-  stmts.updateUploadStory.run({ id: uploadId, userId, story: story || null });
+async function updateUploadStory({ uploadId, userId, story }) {
+  await client.execute({
+    sql: 'UPDATE upload_batches SET user_story = ? WHERE id = ? AND user_id = ?',
+    args: [story || null, uploadId, Number(userId)]
+  });
 }
 
-function cleanExpiredAnonQuotas() {
+async function cleanExpiredAnonQuotas() {
   const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-  stmts.cleanOldAnonQuotas.run(cutoff);
+  await client.execute({
+    sql: 'DELETE FROM scan_quotas WHERE first_scan_at < ?',
+    args: [cutoff]
+  });
 }
 
-function insertFeedback({ userId, email, name, message, alsoEmail, ip }) {
-  return db.prepare(`
-    INSERT INTO feedback (user_id, email, name, message, also_email, ip)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `).run(userId || null, email || null, name || null, message, alsoEmail ? 1 : 0, ip || null);
+async function insertFeedback({ userId, email, name, message, alsoEmail, ip }) {
+  await client.execute({
+    sql: `INSERT INTO feedback (user_id, email, name, message, also_email, ip)
+          VALUES (?, ?, ?, ?, ?, ?)`,
+    args: [userId ? Number(userId) : null, email || null, name || null, message, alsoEmail ? 1 : 0, ip || null]
+  });
 }
 
-function listFeedback(limit = 100) {
-  return db.prepare(`
-    SELECT f.*, u.email as user_email, u.name as user_name
-    FROM feedback f
-    LEFT JOIN users u ON u.id = f.user_id
-    ORDER BY f.created_at DESC
-    LIMIT ?
-  `).all(limit);
+async function listFeedback(limit = 100) {
+  const result = await client.execute({
+    sql: `SELECT f.*, u.email as user_email, u.name as user_name
+          FROM feedback f
+          LEFT JOIN users u ON u.id = f.user_id
+          ORDER BY f.created_at DESC LIMIT ?`,
+    args: [Math.min(Number(limit), 500)]
+  });
+  return result.rows.map(r => ({ ...r, id: Number(r.id), user_id: r.user_id !== null ? Number(r.user_id) : null }));
 }
 
-function getCoverImageBlob(batchId) {
-  return db.prepare(`
-    SELECT image_blob, mime_type FROM upload_images
-    WHERE batch_id = ? ORDER BY id ASC LIMIT 1
-  `).get(batchId) || null;
+async function getCoverImageBlob(batchId) {
+  const result = await client.execute({
+    sql: 'SELECT image_blob, mime_type FROM upload_images WHERE batch_id = ? ORDER BY id ASC LIMIT 1',
+    args: [batchId]
+  });
+  return result.rows[0] || null;
 }
 
 module.exports = {
-  db,
+  dbReady,
   createUser,
   getPublicUser,
   findUserAuthByEmail,

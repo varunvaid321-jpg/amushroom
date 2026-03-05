@@ -21,6 +21,7 @@ const {
   fetchGoogleProfile
 } = require('./src/google-oauth');
 const {
+  dbReady,
   createUser,
   getPublicUser,
   findUserAuthByEmail,
@@ -131,9 +132,10 @@ async function lookupGeo(ip) {
 }
 
 function trackAndGeo(event, userId, metadata, ip, userAgent) {
-  const eventId = trackEvent({ event, userId, metadata, ip, userAgent });
-  lookupGeo(ip).then(geo => {
-    if (geo) updateEventGeo(eventId, geo.country, geo.city);
+  trackEvent({ event, userId, metadata, ip, userAgent }).then(eventId => {
+    lookupGeo(ip).then(geo => {
+      if (geo) updateEventGeo(eventId, geo.country, geo.city).catch(() => {});
+    }).catch(() => {});
   }).catch(() => {});
 }
 
@@ -188,13 +190,20 @@ const CONTENT_TYPES = {
 const identifyRateLimitStore = new Map();
 const authRateLimitStore = new Map();
 
-deleteExpiredSessions();
-deleteExpiredResetTokens();
-setInterval(() => {
-  deleteExpiredSessions();
-  deleteExpiredResetTokens();
-  cleanExpiredAnonQuotas();
-}, SESSION_CLEANUP_INTERVAL_MS).unref();
+// Startup and periodic cleanup run after DB is initialized
+dbReady.then(() => {
+  deleteExpiredSessions().catch(() => {});
+  deleteExpiredResetTokens().catch(() => {});
+  setInterval(() => {
+    deleteExpiredSessions().catch(() => {});
+    deleteExpiredResetTokens().catch(() => {});
+    cleanExpiredAnonQuotas().catch(() => {});
+  }, SESSION_CLEANUP_INTERVAL_MS).unref();
+}).catch((err) => {
+  // eslint-disable-next-line no-console
+  console.error('[startup] DB initialization failed:', err);
+  process.exit(1);
+});
 
 function securityHeaders(req) {
   const headers = {
@@ -388,21 +397,21 @@ function toPublicUser(userRow) {
   };
 }
 
-function getAuthContext(req) {
+async function getAuthContext(req) {
   const cookies = parseCookies(req);
   const sessionId = cookies[SESSION_COOKIE_NAME];
   if (!sessionId) return null;
 
-  const session = getSessionWithUser(sessionId);
+  const session = await getSessionWithUser(sessionId);
   if (!session) return null;
 
   const expiresAt = new Date(session.expires_at).getTime();
   if (!Number.isFinite(expiresAt) || expiresAt < Date.now()) {
-    deleteSession(sessionId);
+    await deleteSession(sessionId);
     return null;
   }
 
-  touchSession(sessionId);
+  await touchSession(sessionId);
   return {
     sessionId,
     user: toPublicUser(session)
@@ -848,13 +857,13 @@ async function handleAuthRegister(req, res) {
     return;
   }
 
-  if (findUserAuthByEmail(email)) {
+  if (await findUserAuthByEmail(email)) {
     jsonError(req, res, 409, 'An account with this email already exists.');
     return;
   }
 
   const hashed = hashPassword(password);
-  const user = createUser({
+  const user = await createUser({
     email,
     name,
     passwordHash: hashed.hash,
@@ -864,7 +873,7 @@ async function handleAuthRegister(req, res) {
   });
 
   const sessionId = createId();
-  createSession({
+  await createSession({
     sessionId,
     userId: user.id,
     expiresAt: computeSessionExpiryIso(),
@@ -890,7 +899,7 @@ async function handleAuthLogin(req, res) {
   const email = normalizeEmail(body.email);
   const password = String(body.password || '');
 
-  const userRow = findUserAuthByEmail(email);
+  const userRow = await findUserAuthByEmail(email);
   if (!userRow || !userRow.password_hash || !userRow.password_salt) {
     jsonError(req, res, 401, 'Invalid email or password.');
     return;
@@ -903,7 +912,7 @@ async function handleAuthLogin(req, res) {
   }
 
   const sessionId = createId();
-  createSession({
+  await createSession({
     sessionId,
     userId: userRow.id,
     expiresAt: computeSessionExpiryIso(),
@@ -913,14 +922,14 @@ async function handleAuthLogin(req, res) {
   setSession(res, req, sessionId);
 
   trackAndGeo('login', userRow.id, { email }, getClientIp(req), req.headers['user-agent'] || null);
-  sendJson(req, res, 200, { user: getPublicUser(userRow.id) });
+  sendJson(req, res, 200, { user: await getPublicUser(userRow.id) });
 }
 
-function handleAuthLogout(req, res) {
+async function handleAuthLogout(req, res) {
   const cookies = parseCookies(req);
   const sessionId = cookies[SESSION_COOKIE_NAME];
   if (sessionId) {
-    deleteSession(sessionId);
+    await deleteSession(sessionId);
   }
   clearSession(res, req);
   sendJson(req, res, 200, { ok: true });
@@ -945,7 +954,7 @@ async function handleForgotPassword(req, res) {
     return;
   }
 
-  const userRow = findUserAuthByEmail(email);
+  const userRow = await findUserAuthByEmail(email);
   if (!userRow || !userRow.password_hash) {
     sendJson(req, res, 200, genericResponse);
     return;
@@ -955,7 +964,7 @@ async function handleForgotPassword(req, res) {
   const token = crypto.randomBytes(32).toString('hex');
   const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
 
-  createPasswordResetToken({ userId: userRow.id, token, expiresAt });
+  await createPasswordResetToken({ userId: userRow.id, token, expiresAt });
 
   const resetUrl = `${APP_BASE_URL}/reset-password?token=${token}`;
   sendPasswordResetEmail(email, userRow.name, resetUrl).catch((err) => {
@@ -988,22 +997,22 @@ async function handleResetPassword(req, res) {
     return;
   }
 
-  const resetToken = findValidResetToken(token);
+  const resetToken = await findValidResetToken(token);
   if (!resetToken) {
     jsonError(req, res, 400, 'Invalid or expired reset link. Please request a new one.');
     return;
   }
 
   const hashed = hashPassword(password);
-  updateUserPassword({ userId: resetToken.user_id, passwordHash: hashed.hash, passwordSalt: hashed.salt });
-  markResetTokenUsed(resetToken.id);
-  deleteUserSessions(resetToken.user_id);
+  await updateUserPassword({ userId: resetToken.user_id, passwordHash: hashed.hash, passwordSalt: hashed.salt });
+  await markResetTokenUsed(resetToken.id);
+  await deleteUserSessions(resetToken.user_id);
 
   sendJson(req, res, 200, { message: 'Password reset successfully. Please sign in with your new password.' });
 }
 
-function handleAuthMe(req, res) {
-  const auth = getAuthContext(req);
+async function handleAuthMe(req, res) {
+  const auth = await getAuthContext(req);
   const user = auth?.user || null;
   sendJson(req, res, 200, { user, isAdmin: user ? isAdmin(user) : false });
 }
@@ -1072,21 +1081,21 @@ async function handleGoogleCallback(req, res, url) {
     return;
   }
 
-  let user = findUserAuthByGoogleSub(profile.sub);
+  let user = await findUserAuthByGoogleSub(profile.sub);
   if (!user) {
-    const existingByEmail = findUserAuthByEmail(normalizeEmail(profile.email));
+    const existingByEmail = await findUserAuthByEmail(normalizeEmail(profile.email));
     if (existingByEmail) {
-      attachGoogleIdentity({
+      await attachGoogleIdentity({
         userId: existingByEmail.id,
         googleSub: profile.sub,
         emailVerified: profile.emailVerified
       });
       if (profile.name && !existingByEmail.name) {
-        updateUserName({ userId: existingByEmail.id, name: profile.name });
+        await updateUserName({ userId: existingByEmail.id, name: profile.name });
       }
-      user = findUserAuthByGoogleSub(profile.sub);
+      user = await findUserAuthByGoogleSub(profile.sub);
     } else {
-      createUser({
+      await createUser({
         email: normalizeEmail(profile.email),
         name: profile.name,
         passwordHash: null,
@@ -1104,7 +1113,7 @@ async function handleGoogleCallback(req, res, url) {
   }
 
   const sessionId = createId();
-  createSession({
+  await createSession({
     sessionId,
     userId: user.id,
     expiresAt: computeSessionExpiryIso(),
@@ -1133,8 +1142,8 @@ function handleAuthConfig(req, res) {
   });
 }
 
-function handleUserUploadDetail(req, res, url) {
-  const auth = getAuthContext(req);
+async function handleUserUploadDetail(req, res, url) {
+  const auth = await getAuthContext(req);
   if (!auth?.user?.id) {
     jsonError(req, res, 401, 'Authentication required.');
     return;
@@ -1205,7 +1214,7 @@ async function handleIdentify(req, res) {
   const photoRoles = Array.isArray(body.photoRoles) ? body.photoRoles.slice(0, images.length) : [];
   const imageMeta = Array.isArray(body.imageMeta) ? body.imageMeta.slice(0, images.length) : [];
   const uploadGuidance = buildUploadGuidance(photoRoles, images.length);
-  const auth = getAuthContext(req);
+  const auth = await getAuthContext(req);
   const clientIp = getClientIp(req);
 
   if (images.length < 1 || images.length > MAX_UPLOAD_IMAGES) {
@@ -1226,7 +1235,7 @@ async function handleIdentify(req, res) {
   if (auth?.user) {
     const tier = auth.user.tier || 'free';
     if (tier !== 'pro') {
-      const quota = checkUserQuota(auth.user.id);
+      const quota = await checkUserQuota(auth.user.id);
       quotaInfo = { tier, used: quota.used, limit: quota.limit, resetsAt: quota.resetsAt };
       if (quota.exceeded) {
         sendJson(req, res, 403, {
@@ -1238,7 +1247,7 @@ async function handleIdentify(req, res) {
       }
     }
   } else {
-    const quota = checkAnonQuota(clientIp);
+    const quota = await checkAnonQuota(clientIp);
     quotaInfo = { tier: 'anonymous', used: quota.used, limit: quota.limit };
     if (quota.exceeded) {
       quotaExceeded = true;
@@ -1265,13 +1274,13 @@ async function handleIdentify(req, res) {
   if (auth?.user) {
     const tier = auth.user.tier || 'free';
     if (tier !== 'pro') {
-      recordUserScan(auth.user.id);
-      const updated = checkUserQuota(auth.user.id);
+      await recordUserScan(auth.user.id);
+      const updated = await checkUserQuota(auth.user.id);
       quotaInfo = { tier, used: updated.used, limit: updated.limit, resetsAt: updated.resetsAt };
     }
   } else {
-    recordAnonScan(clientIp);
-    const updated = checkAnonQuota(clientIp);
+    await recordAnonScan(clientIp);
+    const updated = await checkAnonQuota(clientIp);
     quotaInfo = { tier: 'anonymous', used: updated.used, limit: updated.limit };
   }
 
@@ -1304,7 +1313,7 @@ async function handleIdentify(req, res) {
   let uploadId = null;
   if (auth?.user?.id) {
     try {
-      uploadId = createUploadRecord({
+      uploadId = await createUploadRecord({
         userId: auth.user.id,
         sessionId: auth.sessionId || null,
         images,
@@ -1388,17 +1397,17 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'GET' && url.pathname === '/api/quota') {
-    const auth = getAuthContext(req);
+    const auth = await getAuthContext(req);
     if (auth?.user) {
       const tier = auth.user.tier || 'free';
       if (tier === 'pro') {
         sendJson(req, res, 200, { tier: 'pro', used: 0, limit: null, resetsAt: null });
       } else {
-        const q = checkUserQuota(auth.user.id);
+        const q = await checkUserQuota(auth.user.id);
         sendJson(req, res, 200, { tier, used: q.used, limit: q.limit, resetsAt: q.resetsAt });
       }
     } else {
-      const q = checkAnonQuota(getClientIp(req));
+      const q = await checkAnonQuota(getClientIp(req));
       sendJson(req, res, 200, { tier: 'anonymous', used: q.used, limit: q.limit, resetsAt: null });
     }
     return;
@@ -1543,10 +1552,10 @@ const server = http.createServer(async (req, res) => {
     try { body = await parseBody(req, 8 * 1024); } catch { jsonError(req, res, 400, 'Bad request.'); return; }
     const message = typeof body.message === 'string' ? body.message.trim().slice(0, 2000) : '';
     if (!message) { jsonError(req, res, 400, 'Message is required.'); return; }
-    const auth = getAuthContext(req);
+    const auth = await getAuthContext(req);
     const alsoEmail = body.alsoEmail === true;
     const ip = getClientIp(req);
-    insertFeedback({
+    await insertFeedback({
       userId: auth?.user?.id || null,
       email: auth?.user?.email || (typeof body.email === 'string' ? body.email.slice(0, 200) : null),
       name: auth?.user?.name || null,
@@ -1611,7 +1620,7 @@ const server = http.createServer(async (req, res) => {
       sendJson(req, res, 400, { error: 'Bad request' });
       return;
     }
-    const auth = getAuthContext(req);
+    const auth = await getAuthContext(req);
     const event = String(body.event || '').slice(0, 50);
     if (event) {
       trackAndGeo(event, auth?.user?.id || null, body.metadata || null, getClientIp(req), req.headers['user-agent'] || null);
@@ -1629,23 +1638,23 @@ const server = http.createServer(async (req, res) => {
     const route = url.pathname.slice('/api/admin/'.length);
     const days = Number(url.searchParams.get('days') || 30);
     if (route === 'summary') {
-      sendJson(req, res, 200, getAnalyticsSummary());
+      sendJson(req, res, 200, await getAnalyticsSummary());
     } else if (route === 'events') {
-      sendJson(req, res, 200, { events: getRecentEvents(Number(url.searchParams.get('limit') || 50)) });
+      sendJson(req, res, 200, { events: await getRecentEvents(Number(url.searchParams.get('limit') || 50)) });
     } else if (route === 'scans-by-day') {
-      sendJson(req, res, 200, { data: getScansByDay(days) });
+      sendJson(req, res, 200, { data: await getScansByDay(days) });
     } else if (route === 'signups-by-day') {
-      sendJson(req, res, 200, { data: getSignupsByDay(days) });
+      sendJson(req, res, 200, { data: await getSignupsByDay(days) });
     } else if (route === 'species') {
-      sendJson(req, res, 200, { data: getTopSpecies(days) });
+      sendJson(req, res, 200, { data: await getTopSpecies(days) });
     } else if (route === 'geo') {
-      sendJson(req, res, 200, { data: getGeoBreakdown(days) });
+      sendJson(req, res, 200, { data: await getGeoBreakdown(days) });
     } else if (route === 'page-views-by-day') {
-      sendJson(req, res, 200, { data: getPageViewsByDay(days) });
+      sendJson(req, res, 200, { data: await getPageViewsByDay(days) });
     } else if (route === 'funnel') {
-      sendJson(req, res, 200, getEventFunnel(days));
+      sendJson(req, res, 200, await getEventFunnel(days));
     } else if (route === 'feedback') {
-      sendJson(req, res, 200, { feedback: listFeedback(200) });
+      sendJson(req, res, 200, { feedback: await listFeedback(200) });
     } else if (route === 'instagram-post') {
       // POST /api/admin/instagram-post — trigger one Instagram post
       const pageToken = process.env.IG_PAGE_TOKEN;
@@ -1676,9 +1685,9 @@ const server = http.createServer(async (req, res) => {
         sendJson(req, res, 500, { ok: false, error: err.message });
       }
     } else if (route === 'users') {
-      sendJson(req, res, 200, { users: listAllUsers(Number(url.searchParams.get('limit') || 100)) });
+      sendJson(req, res, 200, { users: await listAllUsers(Number(url.searchParams.get('limit') || 100)) });
     } else if (route === 'visitors') {
-      const visitors = getVisitorBreakdown(days);
+      const visitors = await getVisitorBreakdown(days);
       const total = visitors.reduce((s, v) => s + v.hits, 0);
       const bots = visitors.filter(v => v.type === 'bot');
       const browsers = visitors.filter(v => v.type === 'browser');
@@ -1715,7 +1724,13 @@ const server = http.createServer(async (req, res) => {
   sendJson(req, res, 404, { error: 'Not found' });
 });
 
-server.listen(PORT, HOST, () => {
+dbReady.then(() => {
+  server.listen(PORT, HOST, () => {
+    // eslint-disable-next-line no-console
+    console.log(`Orangutany running at http://${HOST}:${PORT}`);
+  });
+}).catch((err) => {
   // eslint-disable-next-line no-console
-  console.log(`Orangutany running at http://${HOST}:${PORT}`);
+  console.error('[startup] DB initialization failed, server not started:', err);
+  process.exit(1);
 });
