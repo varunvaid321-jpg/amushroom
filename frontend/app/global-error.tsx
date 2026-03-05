@@ -10,7 +10,10 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    if (error.name === "ChunkLoadError" || error.message?.includes("Loading chunk")) {
+    const isChunkError = error.name === "ChunkLoadError" || error.message?.includes("Loading chunk");
+    if (isChunkError && !sessionStorage.getItem("chunk_reload_attempted")) {
+      sessionStorage.setItem("chunk_reload_attempted", "1");
+
       window.location.reload();
     }
   }, [error]);
