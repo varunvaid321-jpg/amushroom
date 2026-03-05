@@ -191,6 +191,24 @@ test('server: all expected API routes are defined', () => {
   }
 });
 
+test('server: no unawaited DB lookup calls in google callback (new user path)', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  // Extract the handleGoogleCallback function body
+  const fnStart = src.indexOf('async function handleGoogleCallback(');
+  const fnEnd = src.indexOf('\nasync function ', fnStart + 1);
+  const fnBody = src.slice(fnStart, fnEnd > 0 ? fnEnd : fnStart + 5000);
+  // All findUserAuthByGoogleSub calls in callback must be awaited
+  const calls = [...fnBody.matchAll(/\bfindUserAuthByGoogleSub\(/g)];
+  const lines = fnBody.split('\n');
+  const unawaited = calls.filter(m => {
+    const pos = m.index;
+    const lineStart = fnBody.lastIndexOf('\n', pos) + 1;
+    const line = fnBody.slice(lineStart, fnBody.indexOf('\n', pos));
+    return !line.includes('await ');
+  });
+  assert.equal(unawaited.length, 0, `Found ${unawaited.length} unawaited findUserAuthByGoogleSub() calls in handleGoogleCallback — new user OAuth will 500`);
+});
+
 test('server: all getAuthContext calls are awaited', () => {
   const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
   assert.ok(src.includes('async function getAuthContext('), 'getAuthContext should be async');
