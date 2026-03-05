@@ -13,6 +13,7 @@ export default function GlobalError({
     const isChunkError = error.name === "ChunkLoadError" || error.message?.includes("Loading chunk");
     if (isChunkError && !sessionStorage.getItem("chunk_reload_attempted")) {
       sessionStorage.setItem("chunk_reload_attempted", "1");
+
       window.location.reload();
     }
   }, [error]);

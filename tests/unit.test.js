@@ -262,6 +262,7 @@ test('error boundary: frontend/app/global-error.tsx exists', () => {
 });
 
 test('error boundary: error.tsx handles ChunkLoadError with guarded auto-reload', () => {
+
   const src = fs.readFileSync(path.join(root, 'frontend/app/error.tsx'), 'utf8');
   assert.ok(src.includes('"use client"'), 'error.tsx must be a Client Component');
   assert.ok(src.includes('ChunkLoadError') || src.includes('Loading chunk'), 'error.tsx must detect ChunkLoadError for post-deploy recovery');
@@ -271,9 +272,11 @@ test('error boundary: error.tsx handles ChunkLoadError with guarded auto-reload'
 });
 
 test('error boundary: global-error.tsx handles ChunkLoadError with guarded auto-reload', () => {
+
   const src = fs.readFileSync(path.join(root, 'frontend/app/global-error.tsx'), 'utf8');
   assert.ok(src.includes('"use client"'), 'global-error.tsx must be a Client Component');
   assert.ok(src.includes('ChunkLoadError') || src.includes('Loading chunk'), 'global-error.tsx must detect ChunkLoadError');
   assert.ok(src.includes('reload'), 'global-error.tsx must call window.location.reload() on ChunkLoadError');
   assert.ok(src.includes('sessionStorage'), 'global-error.tsx must use sessionStorage to prevent infinite reload loop');
+
 });
