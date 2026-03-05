@@ -50,7 +50,28 @@ interface EventRow {
   ip: string | null;
   country: string | null;
   city: string | null;
+  user_agent: string | null;
   created_at: string;
+}
+
+interface VisitorRow {
+  ip: string | null;
+  userAgent: string | null;
+  country: string | null;
+  city: string | null;
+  hits: number;
+  scans: number;
+  firstSeen: string;
+  lastSeen: string;
+  type: "bot" | "browser" | "unknown" | "other";
+}
+
+interface VisitorSummary {
+  totalHits: number;
+  botHits: number;
+  browserHits: number;
+  unknownHits: number;
+  uniqueIPs: number;
 }
 
 async function adminFetch<T>(endpoint: string): Promise<T> {
@@ -67,6 +88,8 @@ export default function AdminPage() {
   const [topSpecies, setTopSpecies] = useState<SpeciesCount[]>([]);
   const [geo, setGeo] = useState<GeoRow[]>([]);
   const [events, setEvents] = useState<EventRow[]>([]);
+  const [visitors, setVisitors] = useState<VisitorRow[]>([]);
+  const [visitorSummary, setVisitorSummary] = useState<VisitorSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -79,6 +102,10 @@ export default function AdminPage() {
       adminFetch<{ data: SpeciesCount[] }>("species?days=30").then((r) => setTopSpecies(r.data)),
       adminFetch<{ data: GeoRow[] }>("geo?days=30").then((r) => setGeo(r.data)),
       adminFetch<{ events: EventRow[] }>("events?limit=50").then((r) => setEvents(r.events)),
+      adminFetch<{ summary: VisitorSummary; visitors: VisitorRow[] }>("visitors?days=30").then((r) => {
+        setVisitorSummary(r.summary);
+        setVisitors(r.visitors);
+      }),
     ])
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -226,6 +253,73 @@ export default function AdminPage() {
             </div>
           </TableCard>
         </div>
+
+        {/* Visitor / Bot Breakdown */}
+        {visitorSummary && (
+          <div className="mb-8">
+            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              Visitor Breakdown (30d)
+            </h2>
+            <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
+              <StatCard label="Total Hits" value={visitorSummary.totalHits} />
+              <StatCard label="Unique IPs" value={visitorSummary.uniqueIPs} />
+              <StatCard label="Browser Hits" value={visitorSummary.browserHits} />
+              <StatCard label="Bot Hits" value={visitorSummary.botHits} />
+              <StatCard label="Unknown Hits" value={visitorSummary.unknownHits} />
+            </div>
+            <Card className="border-border/50 bg-card">
+              <CardContent className="p-4">
+                <div className="max-h-[500px] overflow-y-auto">
+                  <table className="w-full text-sm">
+                    <thead className="sticky top-0 bg-card">
+                      <tr className="border-b border-border/50 text-left text-muted-foreground">
+                        <th className="px-3 py-2">Type</th>
+                        <th className="px-3 py-2">IP</th>
+                        <th className="px-3 py-2">Location</th>
+                        <th className="px-3 py-2">User Agent</th>
+                        <th className="px-3 py-2 text-right">Hits</th>
+                        <th className="px-3 py-2 text-right">Scans</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {visitors.map((v, i) => (
+                        <tr key={i} className="border-b border-border/30">
+                          <td className="px-3 py-2">
+                            <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                              v.type === "bot" ? "bg-red-500/20 text-red-300" :
+                              v.type === "browser" ? "bg-green-500/20 text-green-300" :
+                              "bg-yellow-500/20 text-yellow-300"
+                            }`}>
+                              {v.type}
+                            </span>
+                          </td>
+                          <td className="px-3 py-2 font-mono text-xs text-foreground/80">{v.ip || "—"}</td>
+                          <td className="px-3 py-2 text-foreground/80">
+                            {v.country ? `${v.city || ""} ${v.country}`.trim() : "—"}
+                          </td>
+                          <td className="max-w-[260px] px-3 py-2">
+                            <span className="block truncate text-xs text-muted-foreground" title={v.userAgent || ""}>
+                              {v.userAgent || "—"}
+                            </span>
+                          </td>
+                          <td className="px-3 py-2 text-right tabular-nums text-foreground">{v.hits}</td>
+                          <td className="px-3 py-2 text-right tabular-nums text-foreground/80">{v.scans || 0}</td>
+                        </tr>
+                      ))}
+                      {visitors.length === 0 && (
+                        <tr>
+                          <td colSpan={6} className="px-3 py-4 text-center text-muted-foreground">
+                            No visitor data yet — will populate going forward
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </Container>
     </div>
   );

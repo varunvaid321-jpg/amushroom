@@ -14,6 +14,7 @@ import { ApiError } from "@/lib/api";
 
 export default function Home() {
   const [refreshKey, setRefreshKey] = useState(0);
+  const [viewingSavedScan, setViewingSavedScan] = useState(false);
 
   useEffect(() => { track("page_view", { page: "/" }); }, []);
 
@@ -57,8 +58,16 @@ export default function Home() {
   };
 
   const handleLoadUpload = (uploadId: string) => {
+    setViewingSavedScan(true);
     loadSavedUpload(uploadId);
-    document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
+    const target = window.innerWidth < 1024 ? "results" : "upload";
+    document.getElementById(target)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleBackToLibrary = () => {
+    setViewingSavedScan(false);
+    clearAll();
+    document.getElementById("library")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -95,6 +104,8 @@ export default function Home() {
                 qualityNotice={qualityNotice}
                 quotaExceeded={quotaExceeded}
                 quotaTier={quotaInfo?.tier}
+                isSavedScan={viewingSavedScan}
+                onBackToLibrary={handleBackToLibrary}
               />
             </div>
           </div>

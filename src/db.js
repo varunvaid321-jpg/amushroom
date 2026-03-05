@@ -91,6 +91,7 @@ CREATE TABLE IF NOT EXISTS analytics_events (
   ip TEXT,
   country TEXT,
   city TEXT,
+  user_agent TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
@@ -128,6 +129,7 @@ const FREE_SCAN_LIMIT = Number(process.env.FREE_SCAN_LIMIT || 5);
 try { db.exec('ALTER TABLE users ADD COLUMN tier TEXT NOT NULL DEFAULT \'free\''); } catch { /* column exists */ }
 try { db.exec('ALTER TABLE users ADD COLUMN scans_today INTEGER NOT NULL DEFAULT 0'); } catch { /* column exists */ }
 try { db.exec('ALTER TABLE users ADD COLUMN scans_today_date TEXT NOT NULL DEFAULT \'\''); } catch { /* column exists */ }
+try { db.exec('ALTER TABLE analytics_events ADD COLUMN user_agent TEXT'); } catch { /* column exists */ }
 
 const stmts = {
   createUser: db.prepare(`
@@ -228,8 +230,8 @@ const stmts = {
   `),
 
   insertAnalyticsEvent: db.prepare(`
-    INSERT INTO analytics_events (event, user_id, metadata, ip, country, city, created_at)
-    VALUES (@event, @user_id, @metadata, @ip, @country, @city, @created_at)
+    INSERT INTO analytics_events (event, user_id, metadata, ip, country, city, user_agent, created_at)
+    VALUES (@event, @user_id, @metadata, @ip, @country, @city, @user_agent, @created_at)
   `),
   updateEventGeo: db.prepare(`
     UPDATE analytics_events SET country = @country, city = @city WHERE id = @id
@@ -242,10 +244,22 @@ const stmts = {
       (SELECT COUNT(DISTINCT ip) FROM analytics_events WHERE created_at >= date('now', '-7 days')) AS uniqueVisitors7d
   `),
   recentEvents: db.prepare(`
-    SELECT e.id, e.event, e.user_id, u.name AS user_name, u.email AS user_email, e.metadata, e.ip, e.country, e.city, e.created_at
+    SELECT e.id, e.event, e.user_id, u.name AS user_name, u.email AS user_email, e.metadata, e.ip, e.country, e.city, e.user_agent, e.created_at
     FROM analytics_events e
     LEFT JOIN users u ON u.id = e.user_id
     ORDER BY e.created_at DESC LIMIT ?
+  `),
+  visitorBreakdown: db.prepare(`
+    SELECT ip, user_agent, country, city,
+      COUNT(*) AS hits,
+      MIN(created_at) AS first_seen,
+      MAX(created_at) AS last_seen,
+      SUM(CASE WHEN event = 'scan' THEN 1 ELSE 0 END) AS scans
+    FROM analytics_events
+    WHERE created_at >= date('now', @days || ' days')
+    GROUP BY ip, user_agent
+    ORDER BY hits DESC
+    LIMIT 200
   `),
   scansByDay: db.prepare(`
     SELECT date(created_at) AS day, COUNT(*) AS count
@@ -527,7 +541,7 @@ function getUserUploadDetail(userId, uploadId) {
   };
 }
 
-function trackEvent({ event, userId, metadata, ip }) {
+function trackEvent({ event, userId, metadata, ip, userAgent }) {
   const now = nowIso();
   const result = stmts.insertAnalyticsEvent.run({
     event,
@@ -536,6 +550,7 @@ function trackEvent({ event, userId, metadata, ip }) {
     ip: ip || null,
     country: null,
     city: null,
+    user_agent: userAgent || null,
     created_at: now
   });
   return result.lastInsertRowid;
@@ -567,6 +582,41 @@ function getTopSpecies(days = 30) {
 
 function getGeoBreakdown(days = 30) {
   return stmts.geoBreakdown.all(String(-Math.abs(days)));
+}
+
+const BOT_PATTERNS = [
+  /bot\b/i, /crawl/i, /spider/i, /slurp/i, /scraper/i,
+  /googlebot/i, /bingbot/i, /yandexbot/i, /duckduckbot/i, /baiduspider/i,
+  /facebookexternalhit/i, /twitterbot/i, /linkedinbot/i, /whatsapp/i,
+  /applebot/i, /semrushbot/i, /ahrefsbot/i, /dotbot/i, /mj12bot/i,
+  /bytespider/i, /petalbot/i, /dataprovider/i, /gptbot/i, /claude-web/i,
+  /anthropic-ai/i, /ccbot/i, /python-requests/i, /go-http-client/i,
+  /curl\//i, /wget\//i, /axios\//i, /node-fetch/i, /java\//i,
+  /okhttp/i, /libwww/i, /scrapy/i, /httpclient/i
+];
+
+function classifyUA(ua) {
+  if (!ua) return 'unknown';
+  for (const pat of BOT_PATTERNS) {
+    if (pat.test(ua)) return 'bot';
+  }
+  if (/Chrome|Firefox|Safari|Edge|Opera|OPR/i.test(ua)) return 'browser';
+  return 'other';
+}
+
+function getVisitorBreakdown(days = 30) {
+  const rows = stmts.visitorBreakdown.all({ days: String(-Math.abs(days)) });
+  return rows.map(r => ({
+    ip: r.ip,
+    userAgent: r.user_agent,
+    country: r.country,
+    city: r.city,
+    hits: r.hits,
+    scans: r.scans,
+    firstSeen: r.first_seen,
+    lastSeen: r.last_seen,
+    type: classifyUA(r.user_agent)
+  }));
 }
 
 function listAllUsers(limit = 100) {
@@ -671,6 +721,7 @@ module.exports = {
   getSignupsByDay,
   getTopSpecies,
   getGeoBreakdown,
+  getVisitorBreakdown,
   listAllUsers,
   createPasswordResetToken,
   findValidResetToken,

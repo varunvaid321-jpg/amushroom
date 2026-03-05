@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Microscope, Lock } from "lucide-react";
+import { Loader2, Microscope, Lock, ArrowLeft } from "lucide-react";
 import type { Match, UploadGuidance, ConsistencyCheck } from "@/lib/api";
 import { ProfilePanel } from "./profile-panel";
 import { MatchCard } from "./match-card";
@@ -16,6 +16,8 @@ interface ResultsDockProps {
   qualityNotice?: string;
   quotaExceeded?: boolean;
   quotaTier?: string;
+  isSavedScan?: boolean;
+  onBackToLibrary?: () => void;
 }
 
 export function ResultsDock({
@@ -26,6 +28,8 @@ export function ResultsDock({
   qualityNotice,
   quotaExceeded,
   quotaTier,
+  isSavedScan,
+  onBackToLibrary,
 }: ResultsDockProps) {
   const [authOpen, setAuthOpen] = useState(false);
 
@@ -38,7 +42,7 @@ export function ResultsDock({
       <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-card py-16 text-center">
         <Loader2 className="mb-3 h-8 w-8 animate-spin text-primary" />
         <p className="text-sm text-muted-foreground">
-          Analyzing your photos...
+          {isSavedScan ? "Loading saved scan..." : "Analyzing your photos..."}
         </p>
       </div>
     );
@@ -49,11 +53,24 @@ export function ResultsDock({
 
   if (viableMatches.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-border py-16 text-center">
-        <Microscope className="mb-3 h-10 w-10 text-muted-foreground/40" />
-        <p className="text-sm text-muted-foreground">
-          No confident matches found. Try uploading clearer photos from multiple angles.
-        </p>
+      <div className="space-y-3">
+        {isSavedScan && onBackToLibrary && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onBackToLibrary}
+            className="text-muted-foreground hover:text-foreground -ml-1"
+          >
+            <ArrowLeft className="mr-1 h-4 w-4" />
+            Back to Library
+          </Button>
+        )}
+        <div className="flex flex-col items-center justify-center rounded-xl border border-border py-16 text-center">
+          <Microscope className="mb-3 h-10 w-10 text-muted-foreground/40" />
+          <p className="text-sm text-muted-foreground">
+            No confident matches found. Try uploading clearer photos from multiple angles.
+          </p>
+        </div>
       </div>
     );
   }
@@ -113,6 +130,17 @@ export function ResultsDock({
 
   return (
     <div className="space-y-4">
+      {isSavedScan && onBackToLibrary && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onBackToLibrary}
+          className="text-muted-foreground hover:text-foreground -ml-1"
+        >
+          <ArrowLeft className="mr-1 h-4 w-4" />
+          Back to Library
+        </Button>
+      )}
       {qualityNotice && (
         <div className="rounded-lg bg-yellow-400/10 p-3 text-sm text-yellow-200">
           {qualityNotice}

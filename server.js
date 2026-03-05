@@ -43,6 +43,7 @@ const {
   getSignupsByDay,
   getTopSpecies,
   getGeoBreakdown,
+  getVisitorBreakdown,
   listAllUsers,
   createPasswordResetToken,
   findValidResetToken,
@@ -122,8 +123,8 @@ async function lookupGeo(ip) {
   return null;
 }
 
-function trackAndGeo(event, userId, metadata, ip) {
-  const eventId = trackEvent({ event, userId, metadata, ip });
+function trackAndGeo(event, userId, metadata, ip, userAgent) {
+  const eventId = trackEvent({ event, userId, metadata, ip, userAgent });
   lookupGeo(ip).then(geo => {
     if (geo) updateEventGeo(eventId, geo.country, geo.city);
   }).catch(() => {});
@@ -865,7 +866,7 @@ async function handleAuthRegister(req, res) {
   });
   setSession(res, req, sessionId);
 
-  trackAndGeo('signup', user.id, { email }, getClientIp(req));
+  trackAndGeo('signup', user.id, { email }, getClientIp(req), req.headers['user-agent'] || null);
   sendWelcomeEmail(email, name).catch(() => {});
   sendJson(req, res, 201, { user });
 }
@@ -904,7 +905,7 @@ async function handleAuthLogin(req, res) {
   });
   setSession(res, req, sessionId);
 
-  trackAndGeo('login', userRow.id, { email }, getClientIp(req));
+  trackAndGeo('login', userRow.id, { email }, getClientIp(req), req.headers['user-agent'] || null);
   sendJson(req, res, 200, { user: getPublicUser(userRow.id) });
 }
 
@@ -1268,7 +1269,7 @@ async function handleIdentify(req, res) {
   // Anonymous soft wall — strip results to teaser
   if (quotaExceeded) {
     const teaser = [stripMatchToTeaser(matches[0])];
-    trackAndGeo('scan_quota_exceeded', null, { ip: clientIp, tier: 'anonymous' }, clientIp);
+    trackAndGeo('scan_quota_exceeded', null, { ip: clientIp, tier: 'anonymous' }, clientIp, req.headers['user-agent'] || null);
     sendJson(req, res, 200, {
       matches: teaser,
       uploadGuidance,
@@ -1314,7 +1315,7 @@ async function handleIdentify(req, res) {
     imageCount: images.length,
     species: topMatch?.scientificName,
     confidence: topMatch?.score
-  }, clientIp);
+  }, clientIp, req.headers['user-agent'] || null);
 
   sendJson(req, res, 200, { matches, uploadGuidance, consistencyCheck, uploadId, quota: quotaInfo });
 }
@@ -1550,7 +1551,7 @@ const server = http.createServer(async (req, res) => {
     const auth = getAuthContext(req);
     const event = String(body.event || '').slice(0, 50);
     if (event) {
-      trackAndGeo(event, auth?.user?.id || null, body.metadata || null, getClientIp(req));
+      trackAndGeo(event, auth?.user?.id || null, body.metadata || null, getClientIp(req), req.headers['user-agent'] || null);
     }
     sendJson(req, res, 200, { ok: true });
     return;
@@ -1578,6 +1579,22 @@ const server = http.createServer(async (req, res) => {
       sendJson(req, res, 200, { data: getGeoBreakdown(days) });
     } else if (route === 'users') {
       sendJson(req, res, 200, { users: listAllUsers(Number(url.searchParams.get('limit') || 100)) });
+    } else if (route === 'visitors') {
+      const visitors = getVisitorBreakdown(days);
+      const total = visitors.reduce((s, v) => s + v.hits, 0);
+      const bots = visitors.filter(v => v.type === 'bot');
+      const browsers = visitors.filter(v => v.type === 'browser');
+      const unknown = visitors.filter(v => v.type === 'unknown' || v.type === 'other');
+      sendJson(req, res, 200, {
+        summary: {
+          totalHits: total,
+          botHits: bots.reduce((s, v) => s + v.hits, 0),
+          browserHits: browsers.reduce((s, v) => s + v.hits, 0),
+          unknownHits: unknown.reduce((s, v) => s + v.hits, 0),
+          uniqueIPs: visitors.length
+        },
+        visitors
+      });
     } else {
       jsonError(req, res, 404, 'Unknown admin endpoint.');
     }
