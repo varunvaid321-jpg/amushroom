@@ -1571,7 +1571,7 @@ const server = http.createServer(async (req, res) => {
     let body;
     try { body = await parseBody(req, 4 * 1024); } catch { jsonError(req, res, 400, 'Bad request.'); return; }
     const story = typeof body.story === 'string' ? body.story.slice(0, 500) : null;
-    updateUploadStory({ uploadId, userId: auth.user.id, story });
+    await updateUploadStory({ uploadId, userId: auth.user.id, story });
     sendJson(req, res, 200, { ok: true });
     return;
   }
@@ -1610,7 +1610,7 @@ const server = http.createServer(async (req, res) => {
   // Public cover image endpoint — used by Instagram pipeline for public image URL
   if (req.method === 'GET' && url.pathname.startsWith('/api/uploads/') && url.pathname.endsWith('/cover-image')) {
     const batchId = decodeURIComponent(url.pathname.slice('/api/uploads/'.length, -'/cover-image'.length)).trim();
-    const row = getCoverImageBlob(batchId);
+    const row = await getCoverImageBlob(batchId);
     if (!row) { res.writeHead(404); res.end('Not found'); return; }
     res.writeHead(200, { 'Content-Type': row.mime_type || 'image/jpeg', 'Cache-Control': 'public, max-age=86400' });
     res.end(row.image_blob);
