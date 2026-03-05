@@ -40,6 +40,13 @@ Mushroom identification web app (orangutany.com). Users upload photos, get AI-po
 - No console.log unless intentional server logging
 - Security-first: validate inputs server-side, never trust client MIME types
 
+## Async/Await Safety (CRITICAL after Turso migration)
+- **Every DB function in `src/db.js` is async** — ALL calls must use `await`
+- **Every handler that touches the DB is async** — route dispatcher must `await` them
+- When adding new routes or handlers: always check if the function is async, and await it
+- When migrating any sync API to async: grep ALL call sites and add `await` — missing even one causes silent data corruption (Promises serialize as `{}`)
+- **Test to add**: `npm test` includes a check that all `getAuthContext` calls are awaited — extend this pattern to cover all async DB functions if new ones are added
+
 ## Git Workflow
 - Push directly to main (solo dev, Render auto-deploys)
 - Commit messages: imperative mood, explain "why" not "what"
