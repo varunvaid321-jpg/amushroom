@@ -198,8 +198,12 @@ export async function getUploadDetail(
   return data.upload;
 }
 
-export async function createCheckoutSession(): Promise<{ url: string }> {
-  return apiFetch("/api/stripe/create-checkout-session", { method: "POST" });
+export async function createCheckoutSession(plan: "monthly" | "lifetime" = "monthly"): Promise<{ url: string }> {
+  return apiFetch("/api/stripe/create-checkout-session", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ plan }),
+  });
 }
 
 export async function createPortalSession(): Promise<{ url: string }> {

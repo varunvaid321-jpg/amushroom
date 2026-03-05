@@ -95,24 +95,28 @@ export function UploadPanel({
       {quotaBlocked && tier === "free" && (
         <div className="text-center text-sm text-muted-foreground">
           <p>Daily limit reached.</p>
-          <UpgradeButton />
+          <div className="mt-3 flex flex-col items-center gap-2 sm:flex-row sm:justify-center">
+            <UpgradeButton plan="monthly" label="$7.99/mo" />
+            <UpgradeButton plan="lifetime" label="$49.99 once" highlight />
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-function UpgradeButton() {
+function UpgradeButton({ plan, label, highlight }: { plan: "monthly" | "lifetime"; label: string; highlight?: boolean }) {
   const [loading, setLoading] = useState(false);
   return (
     <Button
       size="sm"
+      variant={highlight ? "default" : "outline"}
       disabled={loading}
-      className="mt-2 gap-1.5"
+      className={`gap-1.5 ${highlight ? "" : "border-primary/30 text-primary hover:bg-primary/10"}`}
       onClick={async () => {
         setLoading(true);
         try {
-          const { url } = await createCheckoutSession();
+          const { url } = await createCheckoutSession(plan);
           window.location.href = url;
         } catch {
           setLoading(false);
@@ -120,7 +124,7 @@ function UpgradeButton() {
       }}
     >
       {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-      Upgrade to Pro — $7.99/mo
+      {plan === "lifetime" ? `Lifetime — ${label}` : `Pro — ${label}`}
     </Button>
   );
 }

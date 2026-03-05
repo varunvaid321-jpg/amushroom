@@ -155,6 +155,7 @@ const ADMIN_EMAILS = new Set((process.env.ADMIN_EMAILS || '').split(',').map(e =
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 const STRIPE_PRICE_ID = process.env.STRIPE_PRICE_ID || '';
+const STRIPE_LIFETIME_PRICE_ID = process.env.STRIPE_LIFETIME_PRICE_ID || '';
 let stripe = null;
 if (STRIPE_SECRET_KEY) {
   const Stripe = require('stripe');
@@ -1232,6 +1233,11 @@ async function handleStripeCheckout(req, res) {
   const auth = await getAuthContext(req);
   if (!auth?.user) { jsonError(req, res, 401, 'Authentication required.'); return; }
 
+  const body = typeof req.body === 'object' ? req.body : {};
+  const plan = body.plan || 'monthly';
+  const isLifetime = plan === 'lifetime' && STRIPE_LIFETIME_PRICE_ID;
+  const priceId = isLifetime ? STRIPE_LIFETIME_PRICE_ID : STRIPE_PRICE_ID;
+
   let customerId = auth.user.stripe_customer_id;
   if (!customerId) {
     const customer = await stripe.customers.create({
@@ -1243,17 +1249,21 @@ async function handleStripeCheckout(req, res) {
     await setUserStripeCustomer(auth.user.id, customerId);
   }
 
-  const session = await stripe.checkout.sessions.create({
-    mode: 'subscription',
+  const sessionParams = {
+    mode: isLifetime ? 'payment' : 'subscription',
     customer: customerId,
-    line_items: [{ price: STRIPE_PRICE_ID, quantity: 1 }],
+    line_items: [{ price: priceId, quantity: 1 }],
     success_url: `${APP_BASE_URL}/?upgraded=1`,
     cancel_url: `${APP_BASE_URL}/`,
-    metadata: { userId: String(auth.user.id) },
-    subscription_data: {
+    metadata: { userId: String(auth.user.id), plan },
+  };
+  if (!isLifetime) {
+    sessionParams.subscription_data = {
       metadata: { userId: String(auth.user.id) },
-    },
-  });
+    };
+  }
+
+  const session = await stripe.checkout.sessions.create(sessionParams);
   sendJson(req, res, 200, { url: session.url });
 }
 
@@ -1305,17 +1315,20 @@ async function handleStripeWebhook(req, res) {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
       const userId = Number(session.metadata?.userId);
-      if (userId && session.subscription) {
-        await setUserSubscription(userId, String(session.subscription), 'pro');
+      const plan = session.metadata?.plan || 'monthly';
+      if (userId) {
+        const isLifetime = plan === 'lifetime' || session.mode === 'payment';
+        const tier = isLifetime ? 'pro_lifetime' : 'pro';
+        const subId = session.subscription ? String(session.subscription) : null;
+        await setUserSubscription(userId, subId, tier);
         await createPaymentRecord({
           userId,
-          stripeSubscriptionId: String(session.subscription),
-          amountCents: session.amount_total || 799,
-          currency: session.currency || 'usd',
-          status: 'active',
+          stripeSubscriptionId: subId,
+          amountCents: session.amount_total || (isLifetime ? 4999 : 799),
+          currency: session.currency || 'cad',
+          status: isLifetime ? 'lifetime' : 'active',
         });
-        console.log(`[stripe] User ${userId} upgraded to pro`);
-        // Send upgrade confirmation email
+        console.log(`[stripe] User ${userId} upgraded to ${tier}`);
         const upgradeUser = await getPublicUser(userId);
         if (upgradeUser?.email) {
           sendUpgradeEmail(upgradeUser.email, upgradeUser.name).catch(() => {});
@@ -1613,7 +1626,8 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && url.pathname === '/api/quota') {
     const auth = await getAuthContext(req);
     if (auth?.user) {
-      const tier = auth.user.tier || 'free';
+      const rawTier = auth.user.tier || 'free';
+      const tier = rawTier === 'pro_lifetime' ? 'pro' : rawTier;
       const q = await checkUserQuota(auth.user.id);
       sendJson(req, res, 200, { tier, used: q.used, limit: q.limit, resetsAt: q.resetsAt });
     } else {
