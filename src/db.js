@@ -9,7 +9,7 @@ const client = createClient({
   authToken: TURSO_TOKEN
 });
 
-const ANON_SCAN_LIMIT = Number(process.env.ANON_SCAN_LIMIT || 5);
+const ANON_SCAN_LIMIT = Number(process.env.ANON_SCAN_LIMIT || 3);
 const FREE_SCAN_LIMIT = Number(process.env.FREE_SCAN_LIMIT || 5);
 
 // Schema + migration — run once at startup
