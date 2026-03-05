@@ -218,16 +218,30 @@ export function ProfilePanel({
             <Separator className="bg-border/50" />
             <div className="space-y-2">
               <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Global Distribution
+                Where It&apos;s Found Worldwide
               </h4>
-              <div className="overflow-hidden rounded-lg border border-border/50 bg-[#1a3a4a]">
+              <div className="relative overflow-hidden rounded-xl border border-border/50" style={{ aspectRatio: '2/1', background: '#0a1628' }}>
+                {/* Base map — land outlines */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://tile.openstreetmap.org/0/0/0.png"
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover opacity-30"
+                  aria-hidden="true"
+                />
+                {/* Occurrence heatmap overlay */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={`https://api.gbif.org/v2/map/occurrence/density/0/0/0@2x.png?style=classic.point&taxonKey=${match.gbifId}`}
-                  alt={`Distribution map of ${match.commonName}`}
-                  className="w-full object-contain"
+                  alt={`Where ${match.commonName} has been recorded worldwide`}
+                  className="absolute inset-0 w-full h-full object-cover"
                   loading="lazy"
                 />
+                {/* Legend */}
+                <div className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded bg-black/60 px-2 py-1">
+                  <span className="inline-block h-2 w-2 rounded-full bg-yellow-400"></span>
+                  <span className="text-[10px] text-white/80">Recorded sightings</span>
+                </div>
               </div>
               <a
                 href={`https://www.gbif.org/species/${match.gbifId}`}
@@ -235,7 +249,7 @@ export function ProfilePanel({
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
               >
-                Explore geographical data for this species on GBIF <ExternalLink className="h-3 w-3" />
+                Explore where this species has been found worldwide <ExternalLink className="h-3 w-3" />
               </a>
             </div>
           </>

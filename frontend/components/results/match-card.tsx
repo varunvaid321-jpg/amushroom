@@ -105,12 +105,14 @@ export function MatchCard({ match, rank }: MatchCardProps) {
         {match.gbifId && (
           <div className="space-y-1">
             <p className="text-xs font-medium text-muted-foreground">Global Distribution</p>
-            <div className="overflow-hidden rounded-lg border border-border/50 bg-[#1a3a4a]">
+            <div className="relative overflow-hidden rounded-lg border border-border/50" style={{ aspectRatio: '2/1', background: '#0a1628' }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="https://tile.openstreetmap.org/0/0/0.png" alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" aria-hidden="true" />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`https://api.gbif.org/v2/map/occurrence/density/0/0/0@2x.png?style=classic.point&taxonKey=${match.gbifId}`}
-                alt={`Distribution map of ${match.commonName}`}
-                className="w-full object-contain"
+                alt={`Where ${match.commonName} has been recorded worldwide`}
+                className="absolute inset-0 w-full h-full object-cover"
                 loading="lazy"
               />
             </div>
@@ -120,7 +122,7 @@ export function MatchCard({ match, rank }: MatchCardProps) {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
             >
-              Explore geographical data for this species on GBIF <ExternalLink className="h-3 w-3" />
+              Explore where this species has been found worldwide <ExternalLink className="h-3 w-3" />
             </a>
           </div>
         )}
