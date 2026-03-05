@@ -197,3 +197,11 @@ export async function getUploadDetail(
   );
   return data.upload;
 }
+
+export async function createCheckoutSession(): Promise<{ url: string }> {
+  return apiFetch("/api/stripe/create-checkout-session", { method: "POST" });
+}
+
+export async function createPortalSession(): Promise<{ url: string }> {
+  return apiFetch("/api/stripe/portal-session");
+}

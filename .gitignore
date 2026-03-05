@@ -8,3 +8,5 @@ data/*.db
 data/*.db-*
 tests/screenshots/*.png
 tests/screenshots/FAIL-*.png
+auth
+auth-wal
