@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Search, RotateCcw, Loader2 } from "lucide-react";
+import { Search, RotateCcw, Loader2, Sparkles } from "lucide-react";
+import { createCheckoutSession } from "@/lib/api";
 
 interface UploadPanelProps {
   photoCount: number;
@@ -79,10 +81,34 @@ export function UploadPanel({
         </p>
       )}
       {quotaBlocked && tier === "free" && (
-        <p className="text-center text-sm text-muted-foreground">
-          Daily limit reached. Come back tomorrow or upgrade to Pro.
-        </p>
+        <div className="text-center text-sm text-muted-foreground">
+          <p>Daily limit reached.</p>
+          <UpgradeButton />
+        </div>
       )}
     </div>
+  );
+}
+
+function UpgradeButton() {
+  const [loading, setLoading] = useState(false);
+  return (
+    <Button
+      size="sm"
+      disabled={loading}
+      className="mt-2 gap-1.5"
+      onClick={async () => {
+        setLoading(true);
+        try {
+          const { url } = await createCheckoutSession();
+          window.location.href = url;
+        } catch {
+          setLoading(false);
+        }
+      }}
+    >
+      {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+      Upgrade to Pro — $7.99/mo
+    </Button>
   );
 }

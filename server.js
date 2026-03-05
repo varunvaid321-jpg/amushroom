@@ -76,9 +76,27 @@ const {
   recordUserScan,
   cleanExpiredAnonQuotas,
   ANON_SCAN_LIMIT,
-  FREE_SCAN_LIMIT
+  FREE_SCAN_LIMIT,
+  PRO_SCAN_DAILY_LIMIT,
+  HOURLY_SCAN_LIMIT,
+  setUserStripeCustomer,
+  setUserSubscription,
+  downgradeUser,
+  findUserByStripeCustomerId,
+  createPaymentRecord,
+  getRevenueStats,
+  logScan,
+  checkAbusePatterns,
+  createAbuseFlag,
+  listAbuseFlags,
+  getUnresolvedAbuseFlagCount,
+  resolveAbuseFlag,
+  markAbuseFlagNotified,
+  suspendUser,
+  unsuspendUser,
+  isUserSuspended
 } = require('./src/db');
-const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification } = require('./src/email');
+const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendAbuseAlertEmail } = require('./src/email');
 const { runOnePost, listPosted } = require('./src/instagram');
 
 const ROOT = __dirname;
@@ -132,6 +150,15 @@ const MIX_CHECK_TRIGGER_TOP_CONFIDENCE = 90;
 const MIX_CHECK_TRIGGER_MARGIN = 15;
 
 const ADMIN_EMAILS = new Set((process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean));
+
+const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
+const STRIPE_PRICE_ID = process.env.STRIPE_PRICE_ID || '';
+let stripe = null;
+if (STRIPE_SECRET_KEY) {
+  const Stripe = require('stripe');
+  stripe = new Stripe(STRIPE_SECRET_KEY);
+}
 
 async function lookupGeo(ip) {
   if (!ip || ip === 'unknown' || ip === '127.0.0.1' || ip === '::1') return null;
@@ -1196,6 +1223,142 @@ async function handleUserUploadDetail(req, res, url) {
   });
 }
 
+async function handleStripeCheckout(req, res) {
+  if (!stripe || !STRIPE_PRICE_ID) {
+    jsonError(req, res, 503, 'Stripe is not configured.');
+    return;
+  }
+  const auth = await getAuthContext(req);
+  if (!auth?.user) { jsonError(req, res, 401, 'Authentication required.'); return; }
+
+  let customerId = auth.user.stripe_customer_id;
+  if (!customerId) {
+    const customer = await stripe.customers.create({ email: auth.user.email, metadata: { userId: String(auth.user.id) } });
+    customerId = customer.id;
+    await setUserStripeCustomer(auth.user.id, customerId);
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    mode: 'subscription',
+    customer: customerId,
+    line_items: [{ price: STRIPE_PRICE_ID, quantity: 1 }],
+    success_url: `${APP_BASE_URL}/?upgraded=1`,
+    cancel_url: `${APP_BASE_URL}/`,
+    metadata: { userId: String(auth.user.id) },
+  });
+  sendJson(req, res, 200, { url: session.url });
+}
+
+async function handleStripePortal(req, res) {
+  if (!stripe) { jsonError(req, res, 503, 'Stripe is not configured.'); return; }
+  const auth = await getAuthContext(req);
+  if (!auth?.user) { jsonError(req, res, 401, 'Authentication required.'); return; }
+  if (!auth.user.stripe_customer_id) { jsonError(req, res, 400, 'No billing account found.'); return; }
+
+  const session = await stripe.billingPortal.sessions.create({
+    customer: auth.user.stripe_customer_id,
+    return_url: `${APP_BASE_URL}/`,
+  });
+  sendJson(req, res, 200, { url: session.url });
+}
+
+function parseRawBody(req, maxBytes = 1024 * 1024) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    let size = 0;
+    req.on('data', (chunk) => {
+      size += chunk.length;
+      if (size > maxBytes) { req.destroy(); reject(new Error('Payload too large')); return; }
+      chunks.push(chunk);
+    });
+    req.on('end', () => resolve(Buffer.concat(chunks)));
+    req.on('error', reject);
+  });
+}
+
+async function handleStripeWebhook(req, res) {
+  if (!stripe || !STRIPE_WEBHOOK_SECRET) {
+    res.writeHead(503); res.end('Stripe not configured'); return;
+  }
+
+  let rawBody;
+  try { rawBody = await parseRawBody(req); } catch { res.writeHead(400); res.end('Bad request'); return; }
+
+  let event;
+  try {
+    const sig = req.headers['stripe-signature'];
+    event = stripe.webhooks.constructEvent(rawBody, sig, STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    console.error('[stripe] Webhook signature verification failed:', err.message);
+    res.writeHead(400); res.end('Invalid signature'); return;
+  }
+
+  try {
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object;
+      const userId = Number(session.metadata?.userId);
+      if (userId && session.subscription) {
+        await setUserSubscription(userId, String(session.subscription), 'pro');
+        await createPaymentRecord({
+          userId,
+          stripeSubscriptionId: String(session.subscription),
+          amountCents: session.amount_total || 799,
+          currency: session.currency || 'usd',
+          status: 'active',
+        });
+        console.log(`[stripe] User ${userId} upgraded to pro`);
+      }
+    } else if (event.type === 'customer.subscription.deleted' || event.type === 'customer.subscription.updated') {
+      const sub = event.data.object;
+      const customerId = sub.customer;
+      const user = await findUserByStripeCustomerId(String(customerId));
+      if (user) {
+        if (sub.status === 'active' || sub.status === 'trialing') {
+          await setUserSubscription(user.id, sub.id, 'pro');
+        } else {
+          await downgradeUser(user.id);
+          console.log(`[stripe] User ${user.id} downgraded — subscription ${sub.status}`);
+        }
+      }
+    } else if (event.type === 'invoice.payment_succeeded') {
+      const invoice = event.data.object;
+      const customerId = invoice.customer;
+      const user = await findUserByStripeCustomerId(String(customerId));
+      if (user) {
+        await createPaymentRecord({
+          userId: user.id,
+          stripeSubscriptionId: String(invoice.subscription || ''),
+          amountCents: invoice.amount_paid || 0,
+          currency: invoice.currency || 'usd',
+          status: 'paid',
+        });
+      }
+    }
+  } catch (err) {
+    console.error(`[stripe] Error processing ${event.type}:`, err.message);
+  }
+
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end('{"received":true}');
+}
+
+async function runAbuseDetection(userId, userEmail, ip) {
+  try {
+    const flags = await checkAbusePatterns(userId, ip);
+    for (const flag of flags) {
+      await createAbuseFlag({ userId, ip, reason: flag.reason, metadata: flag.metadata });
+      const adminEmails = [...ADMIN_EMAILS];
+      if (adminEmails[0]) {
+        sendAbuseAlertEmail(adminEmails[0], {
+          userId, userEmail, ip, reason: flag.reason, metadata: flag.metadata,
+        }).catch(() => {});
+      }
+    }
+  } catch (err) {
+    console.error('[abuse] Detection error:', err.message);
+  }
+}
+
 function stripMatchToTeaser(match) {
   return {
     commonName: match.commonName,
@@ -1246,23 +1409,30 @@ async function handleIdentify(req, res) {
     return;
   }
 
+  // Suspension check
+  if (auth?.user) {
+    const suspended = await isUserSuspended(auth.user.id);
+    if (suspended) {
+      jsonError(req, res, 403, 'Your account has been suspended. Contact support.');
+      return;
+    }
+  }
+
   // Quota check — before calling Kindwise API
   let quotaExceeded = false;
   let quotaInfo = null;
 
   if (auth?.user) {
     const tier = auth.user.tier || 'free';
-    if (tier !== 'pro') {
-      const quota = await checkUserQuota(auth.user.id);
-      quotaInfo = { tier, used: quota.used, limit: quota.limit, resetsAt: quota.resetsAt };
-      if (quota.exceeded) {
-        sendJson(req, res, 403, {
-          error: `You've reached your daily limit of ${quota.limit} scans. Come back tomorrow or upgrade to Pro.`,
-          quota_exceeded: true,
-          quota: quotaInfo
-        });
-        return;
-      }
+    const quota = await checkUserQuota(auth.user.id);
+    quotaInfo = { tier, used: quota.used, limit: quota.limit, resetsAt: quota.resetsAt };
+    if (quota.exceeded) {
+      sendJson(req, res, 403, {
+        error: `You've reached your daily limit of ${quota.limit} scans. Come back tomorrow${tier === 'free' ? ' or upgrade to Pro' : ''}.`,
+        quota_exceeded: true,
+        quota: quotaInfo
+      });
+      return;
     }
   } else {
     const quota = await checkAnonQuota(clientIp);
@@ -1291,11 +1461,12 @@ async function handleIdentify(req, res) {
   // Record the scan against quota
   if (auth?.user) {
     const tier = auth.user.tier || 'free';
-    if (tier !== 'pro') {
-      await recordUserScan(auth.user.id);
-      const updated = await checkUserQuota(auth.user.id);
-      quotaInfo = { tier, used: updated.used, limit: updated.limit, resetsAt: updated.resetsAt };
-    }
+    await recordUserScan(auth.user.id);
+    const updated = await checkUserQuota(auth.user.id);
+    quotaInfo = { tier, used: updated.used, limit: updated.limit, resetsAt: updated.resetsAt };
+    // Log scan and fire-and-forget abuse detection
+    logScan(auth.user.id, clientIp).catch(() => {});
+    runAbuseDetection(auth.user.id, auth.user.email, clientIp);
   } else {
     await recordAnonScan(clientIp);
     const updated = await checkAnonQuota(clientIp);
@@ -1430,12 +1601,8 @@ const server = http.createServer(async (req, res) => {
     const auth = await getAuthContext(req);
     if (auth?.user) {
       const tier = auth.user.tier || 'free';
-      if (tier === 'pro') {
-        sendJson(req, res, 200, { tier: 'pro', used: 0, limit: null, resetsAt: null });
-      } else {
-        const q = await checkUserQuota(auth.user.id);
-        sendJson(req, res, 200, { tier, used: q.used, limit: q.limit, resetsAt: q.resetsAt });
-      }
+      const q = await checkUserQuota(auth.user.id);
+      sendJson(req, res, 200, { tier, used: q.used, limit: q.limit, resetsAt: q.resetsAt });
     } else {
       const q = await checkAnonQuota(getClientIp(req));
       sendJson(req, res, 200, { tier: 'anonymous', used: q.used, limit: q.limit, resetsAt: null });
@@ -1617,6 +1784,23 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // Stripe webhook — must use raw body, not parsed JSON
+  if (req.method === 'POST' && url.pathname === '/api/stripe/webhook') {
+    await handleStripeWebhook(req, res);
+    return;
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/stripe/create-checkout-session') {
+    if (!requireSameOrigin(req, res)) return;
+    await handleStripeCheckout(req, res);
+    return;
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/stripe/portal-session') {
+    await handleStripePortal(req, res);
+    return;
+  }
+
   if (req.method === 'POST' && url.pathname === '/api/identify') {
     if (!requireSameOrigin(req, res)) return;
     if (
@@ -1685,6 +1869,10 @@ const server = http.createServer(async (req, res) => {
       sendJson(req, res, 200, await getEventFunnel(days));
     } else if (route === 'feedback') {
       sendJson(req, res, 200, { feedback: await listFeedback(200) });
+    } else if (route === 'abuse-flags') {
+      sendJson(req, res, 200, { flags: await listAbuseFlags(200), unresolvedCount: await getUnresolvedAbuseFlagCount() });
+    } else if (route === 'revenue') {
+      sendJson(req, res, 200, await getRevenueStats());
     } else if (route === 'instagram-post') {
       // POST /api/admin/instagram-post — trigger one Instagram post
       const pageToken = process.env.IG_PAGE_TOKEN;
@@ -1732,6 +1920,32 @@ const server = http.createServer(async (req, res) => {
         },
         visitors
       });
+    } else {
+      jsonError(req, res, 404, 'Unknown admin endpoint.');
+    }
+    return;
+  }
+
+  if (req.method === 'POST' && url.pathname.startsWith('/api/admin/')) {
+    const auth = await getAuthContext(req);
+    if (!auth?.user || !isAdmin(auth.user)) {
+      jsonError(req, res, 403, 'Admin access required.');
+      return;
+    }
+    const route = url.pathname.slice('/api/admin/'.length);
+    const flagMatch = route.match(/^abuse-flags\/(\d+)\/resolve$/);
+    const suspendMatch = route.match(/^users\/(\d+)\/suspend$/);
+    const unsuspendMatch = route.match(/^users\/(\d+)\/unsuspend$/);
+
+    if (flagMatch) {
+      await resolveAbuseFlag(Number(flagMatch[1]), auth.user.id);
+      sendJson(req, res, 200, { ok: true });
+    } else if (suspendMatch) {
+      await suspendUser(Number(suspendMatch[1]));
+      sendJson(req, res, 200, { ok: true });
+    } else if (unsuspendMatch) {
+      await unsuspendUser(Number(unsuspendMatch[1]));
+      sendJson(req, res, 200, { ok: true });
     } else {
       jsonError(req, res, 404, 'Unknown admin endpoint.');
     }

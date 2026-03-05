@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Container } from "@/components/layout/container";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, ShieldAlert, TrendingUp, TrendingDown, Minus, Mail, CheckCircle, XCircle, MessageSquare } from "lucide-react";
+import { Loader2, ShieldAlert, TrendingUp, TrendingDown, Minus, Mail, CheckCircle, XCircle, MessageSquare, AlertTriangle, DollarSign, Ban, CheckCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AreaChart,
@@ -88,6 +88,24 @@ interface FunnelData {
   signups: number;
   logins: number;
   scans: number;
+}
+
+interface AbuseFlag {
+  id: number;
+  user_id: number | null;
+  user_email: string | null;
+  ip: string | null;
+  reason: string;
+  metadata: string | null;
+  resolved: number;
+  resolved_by: number | null;
+  created_at: string;
+}
+
+interface RevenueData {
+  proSubscriptions: number;
+  mrr: number;
+  totalRevenue: number;
 }
 
 // ── Constants ──────────────────────────────────────────────────────────────────
@@ -236,6 +254,9 @@ export default function AdminPage() {
   const [visitorSummary, setVisitorSummary] = useState<VisitorSummary | null>(null);
   const [funnel, setFunnel] = useState<FunnelData | null>(null);
   const [feedback, setFeedback] = useState<FeedbackRow[]>([]);
+  const [abuseFlags, setAbuseFlags] = useState<AbuseFlag[]>([]);
+  const [unresolvedAbuseCount, setUnresolvedAbuseCount] = useState(0);
+  const [revenue, setRevenue] = useState<RevenueData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -255,6 +276,11 @@ export default function AdminPage() {
       }),
       adminFetch<FunnelData>(`funnel?days=${days}`).then(setFunnel),
       adminFetch<{ feedback: FeedbackRow[] }>("feedback").then((r) => setFeedback(r.feedback)),
+      adminFetch<{ flags: AbuseFlag[]; unresolvedCount: number }>("abuse-flags").then((r) => {
+        setAbuseFlags(r.flags);
+        setUnresolvedAbuseCount(r.unresolvedCount);
+      }),
+      adminFetch<RevenueData>("revenue").then(setRevenue).catch(() => {}),
     ])
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -356,12 +382,24 @@ export default function AdminPage() {
           </div>
         </div>
 
+        {/* Abuse alert banner */}
+        {unresolvedAbuseCount > 0 && (
+          <div className="mb-6 flex items-center gap-3 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3">
+            <AlertTriangle className="h-5 w-5 shrink-0 text-red-400" />
+            <p className="text-sm font-medium text-red-300">
+              {unresolvedAbuseCount} unresolved abuse flag{unresolvedAbuseCount !== 1 ? "s" : ""} — review in the Abuse tab
+            </p>
+          </div>
+        )}
+
         {/* KPI row */}
-        <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
           <KpiCard label="Total Users" value={summary?.totalUsers ?? 0} sub="all time" />
           <KpiCard label="Total Scans" value={summary?.totalScans ?? 0} pct={scansDelta} />
           <KpiCard label="Signups" value={signupsByDay.reduce((s, d) => s + d.count, 0)} pct={signupsDelta} sub={`last ${days}d`} />
           <KpiCard label="Page Views" value={pageViewsByDay.reduce((s, d) => s + d.count, 0)} pct={viewsDelta} sub={`last ${days}d`} />
+          <KpiCard label="Pro Subs" value={revenue?.proSubscriptions ?? 0} sub="active" />
+          <KpiCard label="MRR" value={revenue?.mrr ?? 0} sub="cents/mo" />
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
@@ -370,6 +408,14 @@ export default function AdminPage() {
             <TabsTrigger value="traffic">Traffic</TabsTrigger>
             <TabsTrigger value="species">Species</TabsTrigger>
             <TabsTrigger value="activity">Activity</TabsTrigger>
+            <TabsTrigger value="abuse" className="relative">
+              Abuse
+              {unresolvedAbuseCount > 0 && (
+                <span className="ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500/80 px-1.5 text-[10px] font-bold text-white">
+                  {unresolvedAbuseCount}
+                </span>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="feedback" className="relative">
               Feedback
               {feedback.length > 0 && (
@@ -658,6 +704,84 @@ export default function AdminPage() {
                   </tbody>
                 </table>
               </div>
+            </Section>
+          </TabsContent>
+
+          {/* ── Abuse tab ── */}
+          <TabsContent value="abuse">
+            <Section title={`Abuse Flags (${abuseFlags.length})`}>
+              {abuseFlags.length === 0 ? (
+                <div className="flex flex-col items-center py-12 text-center text-muted-foreground">
+                  <CheckCheck className="mb-2 h-8 w-8 text-green-400/40" />
+                  <p className="text-sm">No abuse flags. All clear.</p>
+                </div>
+              ) : (
+                <div className="max-h-[600px] overflow-y-auto">
+                  <table className="w-full text-sm">
+                    <thead className="sticky top-0" style={{ background: CARD_BG }}>
+                      <tr className="border-b border-border/50 text-left text-muted-foreground">
+                        <th className="px-3 py-2">Type</th>
+                        <th className="px-3 py-2">User</th>
+                        <th className="px-3 py-2">IP</th>
+                        <th className="px-3 py-2">Details</th>
+                        <th className="px-3 py-2 text-right">Time</th>
+                        <th className="px-3 py-2 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {abuseFlags.map((f) => (
+                        <tr key={f.id} className={`border-b border-border/20 hover:bg-muted/10 ${f.resolved ? "opacity-50" : ""}`}>
+                          <td className="px-3 py-2">
+                            <span className="rounded-full bg-red-500/15 px-2 py-0.5 text-xs font-medium text-red-300">
+                              {f.reason}
+                            </span>
+                          </td>
+                          <td className="px-3 py-2 text-foreground/70">{f.user_email || (f.user_id ? `#${f.user_id}` : "—")}</td>
+                          <td className="px-3 py-2 font-mono text-xs text-foreground/70">{f.ip || "—"}</td>
+                          <td className="max-w-[200px] px-3 py-2">
+                            <span className="block truncate text-xs text-muted-foreground" title={f.metadata || ""}>
+                              {f.metadata ? f.metadata.slice(0, 80) : "—"}
+                            </span>
+                          </td>
+                          <td className="px-3 py-2 text-right text-xs text-muted-foreground">
+                            {new Date(f.created_at).toLocaleString()}
+                          </td>
+                          <td className="px-3 py-2 text-right">
+                            <div className="flex justify-end gap-1.5">
+                              {!f.resolved && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-7 gap-1 text-xs"
+                                  onClick={async () => {
+                                    await fetch(`/api/admin/abuse-flags/${f.id}/resolve`, { method: "POST", credentials: "include" });
+                                    setAbuseFlags((prev) => prev.map((x) => x.id === f.id ? { ...x, resolved: 1 } : x));
+                                    setUnresolvedAbuseCount((c) => Math.max(0, c - 1));
+                                  }}
+                                >
+                                  <CheckCheck className="h-3 w-3" /> Resolve
+                                </Button>
+                              )}
+                              {f.user_id && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-7 gap-1 text-xs text-red-400 hover:text-red-300"
+                                  onClick={async () => {
+                                    await fetch(`/api/admin/users/${f.user_id}/suspend`, { method: "POST", credentials: "include" });
+                                  }}
+                                >
+                                  <Ban className="h-3 w-3" /> Suspend
+                                </Button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </Section>
           </TabsContent>
 
