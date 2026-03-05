@@ -773,7 +773,8 @@ async function checkUserQuota(userId) {
   const row = result.rows[0];
   if (!row) return { used: 0, limit: FREE_SCAN_LIMIT, exceeded: false, resetsAt: null };
   const tier = row.tier || 'free';
-  const dailyLimit = tier === 'pro' ? PRO_SCAN_DAILY_LIMIT : FREE_SCAN_LIMIT;
+  const isPro = tier === 'pro' || tier === 'pro_lifetime';
+  const dailyLimit = isPro ? PRO_SCAN_DAILY_LIMIT : FREE_SCAN_LIMIT;
   const today = todayDateStr();
   const used = row.scans_today_date === today ? Number(row.scans_today) : 0;
   const tomorrow = new Date();
