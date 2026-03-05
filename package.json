@@ -5,7 +5,8 @@
   "description": "Orangutany production web app with backend identification proxy and design tokens",
   "dependencies": {
     "@libsql/client": "^0.17.0",
-    "resend": "^6.9.3"
+    "resend": "^6.9.3",
+    "stripe": "^20.4.0"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
@@ -20,7 +21,6 @@
     "test:e2e": "node --test tests/e2e.test.js",
     "test:ui": "node --test tests/ui.test.js",
     "test:all": "node --test tests/unit.test.js && node --test tests/sanity.test.js && node --test tests/e2e.test.js && node --test tests/ui.test.js",
-
     "ci": "npm run check && npm test"
   },
   "engines": {
