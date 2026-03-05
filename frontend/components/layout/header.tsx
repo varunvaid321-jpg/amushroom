@@ -30,7 +30,7 @@ export function Header() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="p-2 text-muted-foreground hover:text-foreground transition-colors self-center mt-1"
+            className="p-2 text-muted-foreground hover:text-foreground transition-colors self-center mt-5"
             aria-label="Menu"
           >
             {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
