@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Container } from "@/components/layout/container";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, ShieldAlert, TrendingUp, TrendingDown, Minus, Mail, CheckCircle, XCircle, MessageSquare, AlertTriangle, DollarSign, Ban, CheckCheck } from "lucide-react";
+import { Loader2, TrendingUp, TrendingDown, Minus, Mail, CheckCircle, XCircle, MessageSquare, AlertTriangle, DollarSign, Ban, CheckCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AreaChart,
@@ -331,12 +331,10 @@ export default function AdminPage() {
   // ── Auth guards ──
 
   if (authLoading) return <Spinner />;
-  if (!user || !isAdmin) return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-3 text-muted-foreground">
-      <ShieldAlert className="h-12 w-12" />
-      <p>Admin access required.</p>
-    </div>
-  );
+  if (!user || !isAdmin) {
+    if (typeof window !== "undefined") window.location.href = "/";
+    return <Spinner />;
+  }
   if (loading) return <Spinner />;
 
   // ── Render ──
