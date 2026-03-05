@@ -22,3 +22,7 @@ services:
         value: true
       - key: HOST
         value: 127.0.0.1
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false
