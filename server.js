@@ -1150,7 +1150,7 @@ async function handleUserUploads(req, res, url) {
   }
 
   const limit = Number(url.searchParams.get('limit') || 20);
-  const uploads = listUserUploads(auth.user.id, limit);
+  const uploads = await listUserUploads(auth.user.id, limit);
   sendJson(req, res, 200, { uploads });
 }
 
