@@ -12,6 +12,14 @@ const nextConfig: NextConfig = {
         source: "/api/:path*",
         destination: `${process.env.API_URL || "http://localhost:3001"}/api/:path*`,
       },
+      {
+        source: "/healthz",
+        destination: `${process.env.API_URL || "http://localhost:3001"}/healthz`,
+      },
+      {
+        source: "/readyz",
+        destination: `${process.env.API_URL || "http://localhost:3001"}/readyz`,
+      },
     ];
   },
 };
