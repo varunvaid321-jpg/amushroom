@@ -1675,7 +1675,7 @@ const server = http.createServer(async (req, res) => {
       }
     } else if (route === 'instagram-posts') {
       // GET /api/admin/instagram-posts — list recent posts
-      sendJson(req, res, 200, { posts: listPosted(50) });
+      sendJson(req, res, 200, { posts: await listPosted(50) });
     } else if (route === 'test-email') {
       const to = auth.user.email;
       try {
