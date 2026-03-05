@@ -13,16 +13,15 @@
  */
 
 const https = require('node:https');
-const Database = require('better-sqlite3');
-const path = require('node:path');
+const { createClient } = require('@libsql/client');
 
-const ROOT = path.join(__dirname, '..');
-const DB_PATH = process.env.DATABASE_PATH || path.join(ROOT, 'data', 'amushroom.db');
-const db = new Database(DB_PATH);
-db.pragma('journal_mode = WAL');
+const client = createClient({
+  url: process.env.TURSO_DATABASE_URL || 'file:data/amushroom.db',
+  authToken: process.env.TURSO_AUTH_TOKEN
+});
 
 // Migration — create instagram_posts table if not exists
-db.exec(`
+const igReady = client.execute(`
   CREATE TABLE IF NOT EXISTS instagram_posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     batch_id TEXT NOT NULL UNIQUE,
@@ -32,7 +31,7 @@ db.exec(`
     status TEXT NOT NULL DEFAULT 'posted',
     FOREIGN KEY(batch_id) REFERENCES upload_batches(id)
   )
-`);
+`).catch(() => {});
 
 const IG_GRAPH = 'https://graph.facebook.com/v19.0';
 
@@ -65,17 +64,17 @@ function postJson(url, payload) {
 
 // ─── Geo lookup for batch ────────────────────────────────────────────────────
 
-function getBatchGeo(batchId) {
-  // Find the scan event associated with this batch's user around the time of upload
-  const row = db.prepare(`
-    SELECT city, country FROM analytics_events
-    WHERE event = 'scan' AND created_at >= (
-      SELECT created_at FROM upload_batches WHERE id = ?
-    )
-    AND city IS NOT NULL AND city != ''
-    ORDER BY created_at ASC LIMIT 1
-  `).get(batchId);
-  return row || null;
+async function getBatchGeo(batchId) {
+  const result = await client.execute({
+    sql: `SELECT city, country FROM analytics_events
+          WHERE event = 'scan' AND created_at >= (
+            SELECT created_at FROM upload_batches WHERE id = ?
+          )
+          AND city IS NOT NULL AND city != ''
+          ORDER BY created_at ASC LIMIT 1`,
+    args: [batchId]
+  });
+  return result.rows[0] || null;
 }
 
 function buildLocationHashtags(city, country) {
@@ -95,7 +94,7 @@ function buildLocationHashtags(city, country) {
 
 // ─── Caption builder ─────────────────────────────────────────────────────────
 
-function buildCaption(batch, match) {
+async function buildCaption(batch, match) {
   const lines = [];
 
   lines.push(`${match.common_name} (${match.scientific_name})`);
@@ -111,7 +110,7 @@ function buildCaption(batch, match) {
   lines.push('');
 
   const baseTags = '#mushrooms #mushroomhunting #foraging #mycology #fungi #wildmushrooms #mushroomidentification #orangutany #ediblemushrooms';
-  const geo = getBatchGeo(batch.batch_id);
+  const geo = await getBatchGeo(batch.batch_id);
   const locationTags = geo ? buildLocationHashtags(geo.city, geo.country) : '';
 
   lines.push(locationTags ? `${baseTags} ${locationTags}` : baseTags);
@@ -121,9 +120,9 @@ function buildCaption(batch, match) {
 
 // ─── Pick candidate ──────────────────────────────────────────────────────────
 
-function pickPostCandidate() {
-  // Find a batch: high confidence, has a cover image blob, not yet posted
-  const row = db.prepare(`
+async function pickPostCandidate() {
+  await igReady;
+  const result = await client.execute(`
     SELECT
       ub.id as batch_id,
       ub.user_story,
@@ -146,25 +145,15 @@ function pickPostCandidate() {
       ub.primary_confidence DESC,
       ub.created_at DESC
     LIMIT 1
-  `).get();
-
-  return row || null;
+  `);
+  return result.rows[0] || null;
 }
 
 // ─── Publish to Instagram ─────────────────────────────────────────────────────
 
-async function publishPost(imageBlob, mimeType, caption, pageToken, igAccountId) {
-  // Instagram requires a public image URL — we host it temporarily via a data upload
-  // Since we can't serve from localhost, we use the Orangutany production image endpoint
-  // The image must be accessible via public URL, so we use the /api/user/uploads/:id image route
-  // For now we accept an imageUrl parameter instead of blob directly
-  throw new Error('publishPost requires a public imageUrl — use publishPostFromUrl instead');
-}
-
 async function publishPostFromUrl(imageUrl, caption, pageToken, igAccountId) {
   console.log(`[instagram] Creating media container for ${imageUrl}`);
 
-  // Step 1: Create media container
   const container = await postJson(
     `${IG_GRAPH}/${igAccountId}/media?access_token=${pageToken}`,
     { image_url: imageUrl, caption }
@@ -177,7 +166,6 @@ async function publishPostFromUrl(imageUrl, caption, pageToken, igAccountId) {
   const containerId = container.id;
   console.log(`[instagram] Container created: ${containerId}`);
 
-  // Step 2: Wait for container to be ready
   let status = 'IN_PROGRESS';
   let attempts = 0;
   while (status === 'IN_PROGRESS' && attempts < 10) {
@@ -194,7 +182,6 @@ async function publishPostFromUrl(imageUrl, caption, pageToken, igAccountId) {
     throw new Error(`Container not ready after ${attempts} attempts, status: ${status}`);
   }
 
-  // Step 3: Publish
   const publish = await postJson(
     `${IG_GRAPH}/${igAccountId}/media_publish?access_token=${pageToken}`,
     { creation_id: containerId }
@@ -210,18 +197,20 @@ async function publishPostFromUrl(imageUrl, caption, pageToken, igAccountId) {
 
 // ─── Mark posted ─────────────────────────────────────────────────────────────
 
-function markPosted(batchId, igMediaId, caption) {
-  db.prepare(`
-    INSERT INTO instagram_posts (batch_id, ig_media_id, caption, posted_at, status)
-    VALUES (?, ?, ?, datetime('now'), 'posted')
-  `).run(batchId, igMediaId, caption);
+async function markPosted(batchId, igMediaId, caption) {
+  await client.execute({
+    sql: `INSERT INTO instagram_posts (batch_id, ig_media_id, caption, posted_at, status)
+          VALUES (?, ?, ?, datetime('now'), 'posted')`,
+    args: [batchId, igMediaId, caption]
+  });
 }
 
-function markFailed(batchId, reason) {
-  db.prepare(`
-    INSERT OR REPLACE INTO instagram_posts (batch_id, ig_media_id, caption, posted_at, status)
-    VALUES (?, NULL, ?, datetime('now'), 'failed')
-  `).run(batchId, reason);
+async function markFailed(batchId, reason) {
+  await client.execute({
+    sql: `INSERT OR REPLACE INTO instagram_posts (batch_id, ig_media_id, caption, posted_at, status)
+          VALUES (?, NULL, ?, datetime('now'), 'failed')`,
+    args: [batchId, reason]
+  });
 }
 
 // ─── Main: run one post ───────────────────────────────────────────────────────
@@ -235,40 +224,42 @@ async function runOnePost(options = {}) {
     throw new Error('IG_PAGE_TOKEN and IG_ACCOUNT_ID must be set');
   }
 
-  const candidate = pickPostCandidate();
+  const candidate = await pickPostCandidate();
   if (!candidate) {
     console.log('[instagram] No eligible candidates to post');
     return null;
   }
 
-  const caption = buildCaption(candidate, candidate);
-  // Build public image URL using the existing preview endpoint
+  const caption = await buildCaption(candidate, candidate);
   const imageUrl = `${baseUrl}/api/user/uploads/${candidate.batch_id}/cover-image`;
 
   console.log(`[instagram] Posting batch ${candidate.batch_id} — ${candidate.common_name} (${candidate.confidence}%)`);
 
   try {
     const mediaId = await publishPostFromUrl(imageUrl, caption, pageToken, igAccountId);
-    markPosted(candidate.batch_id, mediaId, caption);
+    await markPosted(candidate.batch_id, mediaId, caption);
     console.log(`[instagram] Done — ig media id: ${mediaId}`);
     return { batchId: candidate.batch_id, mediaId, caption };
   } catch (err) {
     console.error(`[instagram] Failed to post batch ${candidate.batch_id}:`, err.message);
-    markFailed(candidate.batch_id, err.message);
+    await markFailed(candidate.batch_id, err.message);
     throw err;
   }
 }
 
 // ─── List posted ─────────────────────────────────────────────────────────────
 
-function listPosted(limit = 20) {
-  return db.prepare(`
-    SELECT ip.*, ub.primary_match, ub.primary_confidence, ub.created_at as scan_date
-    FROM instagram_posts ip
-    JOIN upload_batches ub ON ub.id = ip.batch_id
-    ORDER BY ip.posted_at DESC
-    LIMIT ?
-  `).all(limit);
+async function listPosted(limit = 20) {
+  await igReady;
+  const result = await client.execute({
+    sql: `SELECT ip.*, ub.primary_match, ub.primary_confidence, ub.created_at as scan_date
+          FROM instagram_posts ip
+          JOIN upload_batches ub ON ub.id = ip.batch_id
+          ORDER BY ip.posted_at DESC
+          LIMIT ?`,
+    args: [Number(limit)]
+  });
+  return result.rows;
 }
 
 module.exports = { runOnePost, pickPostCandidate, buildCaption, markPosted, listPosted };
