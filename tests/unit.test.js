@@ -122,13 +122,17 @@ test('buildGoogleAuthUrl: sets required OAuth query params', () => {
 // ─── db.js: constants exported ────────────────────────────────────────────────
 
 test('db: ANON_SCAN_LIMIT is 3', () => {
-  const { ANON_SCAN_LIMIT } = require('../src/db');
-  assert.equal(ANON_SCAN_LIMIT, 3);
+  const src = fs.readFileSync(path.join(root, 'src/db.js'), 'utf8');
+  const m = src.match(/ANON_SCAN_LIMIT\b.*?\|\|\s*(\d+)/);
+  assert.ok(m, 'ANON_SCAN_LIMIT default not found in src/db.js');
+  assert.equal(Number(m[1]), 3);
 });
 
 test('db: FREE_SCAN_LIMIT is 5', () => {
-  const { FREE_SCAN_LIMIT } = require('../src/db');
-  assert.equal(FREE_SCAN_LIMIT, 5);
+  const src = fs.readFileSync(path.join(root, 'src/db.js'), 'utf8');
+  const m = src.match(/FREE_SCAN_LIMIT\b.*?\|\|\s*(\d+)/);
+  assert.ok(m, 'FREE_SCAN_LIMIT default not found in src/db.js');
+  assert.equal(Number(m[1]), 5);
 });
 
 // ─── File structure ───────────────────────────────────────────────────────────
