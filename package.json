@@ -14,7 +14,10 @@
     "start": "node server.js",
     "dev": "concurrently \"PORT=3001 APP_BASE_URL=http://localhost:3000 node server.js\" \"cd frontend && npm run dev\"",
     "check": "node --check server.js && node --check src/auth.js && node --check src/db.js && node --check src/email.js && node --check src/google-oauth.js && node --check public/scripts/app.js && node --check public/scripts/auth.js && node --check public/scripts/common-auth.js && node scripts/validate-tokens.js",
-    "test": "node --test tests/*.test.js",
+    "test": "node --test tests/unit.test.js",
+    "test:sanity": "node --test tests/sanity.test.js",
+    "test:e2e": "node --test tests/e2e.test.js",
+    "test:all": "node --test tests/unit.test.js && node --test tests/sanity.test.js && node --test tests/e2e.test.js",
     "ci": "npm run check && npm test"
   },
   "engines": {
