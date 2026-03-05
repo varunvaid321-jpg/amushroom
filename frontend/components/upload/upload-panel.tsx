@@ -69,13 +69,13 @@ export function UploadPanel({
       )}
       {remaining !== null && remaining !== undefined && !quotaBlocked && (
         <p className="text-center text-xs text-muted-foreground">
-          {remaining} of {tier === "anonymous" ? "5 free" : "5 daily"} scan{remaining !== 1 ? "s" : ""} remaining
+          {remaining} of {limit ?? (tier === "anonymous" ? 3 : 5)} {tier === "anonymous" ? "free" : "daily"} scan{remaining !== 1 ? "s" : ""} remaining
         </p>
       )}
       {quotaBlocked && tier === "anonymous" && (
         <p className="text-center text-sm text-muted-foreground">
           You&apos;ve used all free scans.{" "}
-          <a href="/" className="text-primary hover:underline">Create a free account</a> for 5 daily scans.
+          <a href="/" className="text-primary hover:underline">Create a free account</a> for 5 daily scans
         </p>
       )}
       {quotaBlocked && tier === "free" && (
