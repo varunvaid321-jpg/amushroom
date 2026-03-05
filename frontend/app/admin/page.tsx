@@ -108,6 +108,16 @@ interface RevenueData {
   totalRevenue: number;
 }
 
+interface UserScanStat {
+  id: number;
+  email: string;
+  name: string;
+  tier: string;
+  totalScans: number;
+  lastScanAt: string | null;
+  signedUpAt: string;
+}
+
 // ── Constants ──────────────────────────────────────────────────────────────────
 
 const COPPER = "#c8956c";
@@ -257,6 +267,7 @@ export default function AdminPage() {
   const [abuseFlags, setAbuseFlags] = useState<AbuseFlag[]>([]);
   const [unresolvedAbuseCount, setUnresolvedAbuseCount] = useState(0);
   const [revenue, setRevenue] = useState<RevenueData | null>(null);
+  const [userScanStats, setUserScanStats] = useState<UserScanStat[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -281,6 +292,7 @@ export default function AdminPage() {
         setUnresolvedAbuseCount(r.unresolvedCount);
       }),
       adminFetch<RevenueData>("revenue").then(setRevenue).catch(() => {}),
+      adminFetch<{ users: UserScanStat[] }>("user-scan-stats").then((r) => setUserScanStats(r.users)).catch(() => {}),
     ])
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -416,6 +428,7 @@ export default function AdminPage() {
                 </span>
               )}
             </TabsTrigger>
+            <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="feedback" className="relative">
               Feedback
               {feedback.length > 0 && (
@@ -775,6 +788,52 @@ export default function AdminPage() {
                                 </Button>
                               )}
                             </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </Section>
+          </TabsContent>
+
+          {/* ── Users tab ── */}
+          <TabsContent value="users">
+            <Section title={`Users (${userScanStats.length})`}>
+              {userScanStats.length === 0 ? (
+                <p className="py-12 text-center text-sm text-muted-foreground">No users yet</p>
+              ) : (
+                <div className="max-h-[600px] overflow-y-auto">
+                  <table className="w-full text-sm">
+                    <thead className="sticky top-0" style={{ background: CARD_BG }}>
+                      <tr className="border-b border-border/50 text-left text-muted-foreground">
+                        <th className="px-3 py-2">Name</th>
+                        <th className="px-3 py-2">Email</th>
+                        <th className="px-3 py-2">Tier</th>
+                        <th className="px-3 py-2 text-right">Total Scans</th>
+                        <th className="px-3 py-2 text-right">Last Scan</th>
+                        <th className="px-3 py-2 text-right">Signed Up</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {userScanStats.map((u) => (
+                        <tr key={u.id} className="border-b border-border/20 hover:bg-muted/10">
+                          <td className="px-3 py-2 text-foreground">{u.name || "—"}</td>
+                          <td className="px-3 py-2 text-foreground/70">{u.email}</td>
+                          <td className="px-3 py-2">
+                            <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                              u.tier === "pro" ? "bg-primary/15 text-primary" : "bg-zinc-500/15 text-zinc-300"
+                            }`}>
+                              {u.tier}
+                            </span>
+                          </td>
+                          <td className="px-3 py-2 text-right tabular-nums font-medium text-foreground">{u.totalScans}</td>
+                          <td className="px-3 py-2 text-right text-xs text-muted-foreground">
+                            {u.lastScanAt ? new Date(u.lastScanAt).toLocaleDateString() : "—"}
+                          </td>
+                          <td className="px-3 py-2 text-right text-xs text-muted-foreground">
+                            {new Date(u.signedUpAt).toLocaleDateString()}
                           </td>
                         </tr>
                       ))}
