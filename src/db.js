@@ -11,6 +11,10 @@ const client = createClient({
 
 const ANON_SCAN_LIMIT = Number(process.env.ANON_SCAN_LIMIT || 3);
 const FREE_SCAN_LIMIT = Number(process.env.FREE_SCAN_LIMIT || 5);
+const PRO_SCAN_DAILY_LIMIT = Number(process.env.PRO_SCAN_DAILY_LIMIT || 50);
+const HOURLY_SCAN_LIMIT = Number(process.env.HOURLY_SCAN_LIMIT || 15);
+const IP_DAILY_SCAN_LIMIT = Number(process.env.IP_DAILY_SCAN_LIMIT || 60);
+const ABUSE_FLAG_THRESHOLD = Number(process.env.ABUSE_FLAG_THRESHOLD || 30);
 
 // Schema + migration — run once at startup
 const dbReady = (async () => {
@@ -127,6 +131,40 @@ const dbReady = (async () => {
     FOREIGN KEY(user_id) REFERENCES users(id)
   )`);
 
+  await client.execute(`CREATE TABLE IF NOT EXISTS payments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    stripe_subscription_id TEXT,
+    amount_cents INTEGER NOT NULL,
+    currency TEXT NOT NULL DEFAULT 'usd',
+    status TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY(user_id) REFERENCES users(id)
+  )`);
+
+  await client.execute(`CREATE TABLE IF NOT EXISTS abuse_flags (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    ip TEXT,
+    reason TEXT NOT NULL,
+    metadata TEXT,
+    resolved INTEGER NOT NULL DEFAULT 0,
+    resolved_by INTEGER,
+    notified INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY(user_id) REFERENCES users(id)
+  )`);
+
+  await client.execute(`CREATE TABLE IF NOT EXISTS scan_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    ip TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY(user_id) REFERENCES users(id)
+  )`);
+  await client.execute(`CREATE INDEX IF NOT EXISTS idx_scan_log_user_created ON scan_log(user_id, created_at)`);
+  await client.execute(`CREATE INDEX IF NOT EXISTS idx_scan_log_ip_created ON scan_log(ip, created_at)`);
+
   await client.execute(`CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id)`);
   await client.execute(`CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at)`);
   await client.execute(`CREATE INDEX IF NOT EXISTS idx_reset_tokens_token ON password_reset_tokens(token)`);
@@ -140,7 +178,10 @@ const dbReady = (async () => {
     "ALTER TABLE users ADD COLUMN scans_today INTEGER NOT NULL DEFAULT 0",
     "ALTER TABLE users ADD COLUMN scans_today_date TEXT NOT NULL DEFAULT ''",
     "ALTER TABLE analytics_events ADD COLUMN user_agent TEXT",
-    "ALTER TABLE upload_batches ADD COLUMN user_story TEXT"
+    "ALTER TABLE upload_batches ADD COLUMN user_story TEXT",
+    "ALTER TABLE users ADD COLUMN stripe_customer_id TEXT",
+    "ALTER TABLE users ADD COLUMN stripe_subscription_id TEXT",
+    "ALTER TABLE users ADD COLUMN suspended INTEGER NOT NULL DEFAULT 0"
   ];
   for (const sql of migrations) {
     try { await client.execute(sql); } catch { /* column already exists */ }
@@ -161,6 +202,9 @@ function rowToUser(row) {
     tier: row.tier || 'free',
     scans_today: Number(row.scans_today || 0),
     scans_today_date: row.scans_today_date || '',
+    stripe_customer_id: row.stripe_customer_id || null,
+    stripe_subscription_id: row.stripe_subscription_id || null,
+    suspended: Number(row.suspended || 0),
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };
@@ -701,17 +745,19 @@ async function recordAnonScan(ip) {
 
 async function checkUserQuota(userId) {
   const result = await client.execute({
-    sql: 'SELECT scans_today, scans_today_date FROM users WHERE id = ?',
+    sql: 'SELECT scans_today, scans_today_date, tier FROM users WHERE id = ?',
     args: [Number(userId)]
   });
   const row = result.rows[0];
   if (!row) return { used: 0, limit: FREE_SCAN_LIMIT, exceeded: false, resetsAt: null };
+  const tier = row.tier || 'free';
+  const dailyLimit = tier === 'pro' ? PRO_SCAN_DAILY_LIMIT : FREE_SCAN_LIMIT;
   const today = todayDateStr();
   const used = row.scans_today_date === today ? Number(row.scans_today) : 0;
   const tomorrow = new Date();
   tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
   tomorrow.setUTCHours(0, 0, 0, 0);
-  return { used, limit: FREE_SCAN_LIMIT, exceeded: used >= FREE_SCAN_LIMIT, resetsAt: tomorrow.toISOString() };
+  return { used, limit: dailyLimit, exceeded: used >= dailyLimit, resetsAt: tomorrow.toISOString() };
 }
 
 async function recordUserScan(userId) {
@@ -776,6 +822,157 @@ async function getCoverImageBlob(batchId) {
   return result.rows[0] || null;
 }
 
+// ─── Stripe / Payment ────────────────────────────────────────────────────────
+
+async function setUserStripeCustomer(userId, stripeCustomerId) {
+  await client.execute({
+    sql: 'UPDATE users SET stripe_customer_id = ? WHERE id = ?',
+    args: [stripeCustomerId, Number(userId)]
+  });
+}
+
+async function setUserSubscription(userId, stripeSubscriptionId, tier) {
+  await client.execute({
+    sql: 'UPDATE users SET stripe_subscription_id = ?, tier = ?, updated_at = ? WHERE id = ?',
+    args: [stripeSubscriptionId, tier, nowIso(), Number(userId)]
+  });
+}
+
+async function downgradeUser(userId) {
+  await client.execute({
+    sql: "UPDATE users SET tier = 'free', stripe_subscription_id = NULL, updated_at = ? WHERE id = ?",
+    args: [nowIso(), Number(userId)]
+  });
+}
+
+async function findUserByStripeCustomerId(stripeCustomerId) {
+  const result = await client.execute({
+    sql: 'SELECT * FROM users WHERE stripe_customer_id = ?',
+    args: [stripeCustomerId]
+  });
+  return result.rows[0] ? rowToUser(result.rows[0]) : null;
+}
+
+async function createPaymentRecord({ userId, stripeSubscriptionId, amountCents, currency, status }) {
+  await client.execute({
+    sql: 'INSERT INTO payments (user_id, stripe_subscription_id, amount_cents, currency, status) VALUES (?, ?, ?, ?, ?)',
+    args: [Number(userId), stripeSubscriptionId || null, amountCents, currency || 'usd', status]
+  });
+}
+
+async function getRevenueStats() {
+  const subs = await client.execute("SELECT COUNT(*) as count FROM users WHERE tier = 'pro'");
+  const rev = await client.execute("SELECT COALESCE(SUM(amount_cents), 0) as total FROM payments");
+  const proCount = Number(subs.rows[0]?.count || 0);
+  return {
+    proSubscriptions: proCount,
+    mrr: proCount * 799,
+    totalRevenue: Number(rev.rows[0]?.total || 0),
+  };
+}
+
+// ─── Scan logging & Abuse detection ──────────────────────────────────────────
+
+async function logScan(userId, ip) {
+  await client.execute({
+    sql: 'INSERT INTO scan_log (user_id, ip) VALUES (?, ?)',
+    args: [userId ? Number(userId) : null, ip || null]
+  });
+}
+
+async function countRecentScans(userId, ip, windowMinutes) {
+  const cutoff = new Date(Date.now() - windowMinutes * 60 * 1000).toISOString();
+  const result = await client.execute({
+    sql: 'SELECT COUNT(*) as count FROM scan_log WHERE (user_id = ? OR ip = ?) AND created_at >= ?',
+    args: [userId ? Number(userId) : null, ip || '', cutoff]
+  });
+  return Number(result.rows[0]?.count || 0);
+}
+
+async function countIpScansToday(ip) {
+  const today = todayDateStr();
+  const result = await client.execute({
+    sql: "SELECT COUNT(*) as count FROM scan_log WHERE ip = ? AND created_at >= ?",
+    args: [ip, today + 'T00:00:00.000Z']
+  });
+  return Number(result.rows[0]?.count || 0);
+}
+
+async function createAbuseFlag({ userId, ip, reason, metadata }) {
+  await client.execute({
+    sql: 'INSERT INTO abuse_flags (user_id, ip, reason, metadata) VALUES (?, ?, ?, ?)',
+    args: [userId ? Number(userId) : null, ip || null, reason, metadata ? JSON.stringify(metadata) : null]
+  });
+}
+
+async function listAbuseFlags(limit = 200) {
+  const result = await client.execute({
+    sql: `SELECT a.*, u.email as user_email FROM abuse_flags a
+          LEFT JOIN users u ON u.id = a.user_id
+          ORDER BY a.created_at DESC LIMIT ?`,
+    args: [Math.min(Number(limit), 500)]
+  });
+  return result.rows.map(r => ({ ...r, id: Number(r.id), user_id: r.user_id !== null ? Number(r.user_id) : null }));
+}
+
+async function getUnresolvedAbuseFlagCount() {
+  const result = await client.execute("SELECT COUNT(*) as count FROM abuse_flags WHERE resolved = 0");
+  return Number(result.rows[0]?.count || 0);
+}
+
+async function resolveAbuseFlag(flagId, resolvedBy) {
+  await client.execute({
+    sql: 'UPDATE abuse_flags SET resolved = 1, resolved_by = ? WHERE id = ?',
+    args: [resolvedBy ? Number(resolvedBy) : null, Number(flagId)]
+  });
+}
+
+async function markAbuseFlagNotified(flagId) {
+  await client.execute({
+    sql: 'UPDATE abuse_flags SET notified = 1 WHERE id = ?',
+    args: [Number(flagId)]
+  });
+}
+
+async function suspendUser(userId) {
+  await client.execute({
+    sql: 'UPDATE users SET suspended = 1, updated_at = ? WHERE id = ?',
+    args: [nowIso(), Number(userId)]
+  });
+}
+
+async function unsuspendUser(userId) {
+  await client.execute({
+    sql: 'UPDATE users SET suspended = 0, updated_at = ? WHERE id = ?',
+    args: [nowIso(), Number(userId)]
+  });
+}
+
+async function isUserSuspended(userId) {
+  const result = await client.execute({
+    sql: 'SELECT suspended FROM users WHERE id = ?',
+    args: [Number(userId)]
+  });
+  return Number(result.rows[0]?.suspended || 0) === 1;
+}
+
+async function checkAbusePatterns(userId, ip) {
+  const flags = [];
+  const hourlyCount = await countRecentScans(userId, ip, 60);
+  if (hourlyCount >= HOURLY_SCAN_LIMIT) {
+    flags.push({ reason: 'hourly_burst', metadata: { count: hourlyCount, limit: HOURLY_SCAN_LIMIT } });
+  }
+  const ipDaily = await countIpScansToday(ip);
+  if (ipDaily >= IP_DAILY_SCAN_LIMIT) {
+    flags.push({ reason: 'ip_daily_cap', metadata: { count: ipDaily, limit: IP_DAILY_SCAN_LIMIT } });
+  }
+  const twoHourCount = await countRecentScans(userId, ip, 120);
+  if (twoHourCount >= ABUSE_FLAG_THRESHOLD) {
+    flags.push({ reason: 'suspicious_velocity', metadata: { count: twoHourCount, window: '2h', threshold: ABUSE_FLAG_THRESHOLD } });
+  }
+  return flags;
+}
+
 module.exports = {
   dbReady,
   createUser,
@@ -820,5 +1017,23 @@ module.exports = {
   insertFeedback,
   listFeedback,
   ANON_SCAN_LIMIT,
-  FREE_SCAN_LIMIT
+  FREE_SCAN_LIMIT,
+  PRO_SCAN_DAILY_LIMIT,
+  HOURLY_SCAN_LIMIT,
+  setUserStripeCustomer,
+  setUserSubscription,
+  downgradeUser,
+  findUserByStripeCustomerId,
+  createPaymentRecord,
+  getRevenueStats,
+  logScan,
+  checkAbusePatterns,
+  createAbuseFlag,
+  listAbuseFlags,
+  getUnresolvedAbuseFlagCount,
+  resolveAbuseFlag,
+  markAbuseFlagNotified,
+  suspendUser,
+  unsuspendUser,
+  isUserSuspended
 };
