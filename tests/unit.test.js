@@ -226,6 +226,43 @@ test('server: all getAuthContext calls are awaited', () => {
   assert.equal(unawaited.length, 0, `Found ${unawaited.length} unawaited getAuthContext() calls — auth guards will break`);
 });
 
+test('server: all async DB function calls are awaited', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  const dbSrc = fs.readFileSync(path.join(root, 'src/db.js'), 'utf8');
+
+  // Extract all async function names exported from db.js
+  const exportMatch = dbSrc.match(/module\.exports\s*=\s*\{([^}]+)\}/);
+  assert.ok(exportMatch, 'Could not find module.exports in db.js');
+  const exportedNames = exportMatch[1].match(/\b[a-zA-Z_]\w*\b/g) || [];
+
+  // Also find which ones are async
+  const asyncFns = exportedNames.filter(name => {
+    const pattern = new RegExp(`async function ${name}\\b`);
+    return pattern.test(dbSrc);
+  });
+
+  assert.ok(asyncFns.length > 0, 'No async DB functions found — test is broken');
+
+  const lines = src.split('\n');
+  const unawaited = [];
+
+  for (const fn of asyncFns) {
+    const callPattern = new RegExp(`\\b${fn}\\(`, 'g');
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (callPattern.test(line) && !line.includes('await ') && !line.includes('function ') && !line.includes('//') && !line.includes('.catch(') && !line.includes('.then(')) {
+        unawaited.push({ fn, line: i + 1, text: line.trim() });
+      }
+    }
+  }
+
+  assert.equal(
+    unawaited.length, 0,
+    `Found ${unawaited.length} unawaited async DB call(s) in server.js:\n` +
+    unawaited.map(u => `  Line ${u.line}: ${u.fn}() — ${u.text}`).join('\n')
+  );
+});
+
 test('server: crash handlers registered (uncaughtException, unhandledRejection)', () => {
   const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
   assert.ok(src.includes('uncaughtException'), 'Missing uncaughtException handler');
