@@ -66,7 +66,7 @@ async function sendWelcomeEmail(to, name) {
       <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to bottom, transparent, #161616);border-radius:0 0 14px 14px;"></div>
     </div>
 
-    <p style="margin:0 0 8px;font-size:13px;font-style:italic;color:#888;text-align:center;">Laetiporus sulphureus — Chicken of the Woods</p>
+    <p style="margin:4px 0 16px;font-size:13px;font-style:italic;color:#888;text-align:center;">Laetiporus sulphureus — Chicken of the Woods</p>
 
     <p style="margin:0 0 32px;font-size:16px;line-height:1.7;color:#e0e0e0;">Upload photos from multiple angles and get a detailed breakdown of species, edibility, look-alikes, and confidence score — the same quality of insight a seasoned forager brings to the field, right in your pocket.</p>
     <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
