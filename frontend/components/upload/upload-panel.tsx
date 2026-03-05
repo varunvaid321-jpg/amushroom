@@ -10,6 +10,7 @@ interface UploadPanelProps {
   onClear: () => void;
   statusText?: string;
   remaining?: number | null;
+  limit?: number | null;
   tier?: string;
   quotaBlocked?: boolean;
 }
@@ -21,6 +22,7 @@ export function UploadPanel({
   onClear,
   statusText,
   remaining,
+  limit,
   tier,
   quotaBlocked,
 }: UploadPanelProps) {
@@ -73,7 +75,7 @@ export function UploadPanel({
       {quotaBlocked && tier === "anonymous" && (
         <p className="text-center text-sm text-muted-foreground">
           You&apos;ve used all free scans.{" "}
-          <a href="/" className="text-primary hover:underline">Create a free account</a> for 5 scans per day.
+          <a href="/" className="text-primary hover:underline">Create a free account</a> for 5 daily scans.
         </p>
       )}
       {quotaBlocked && tier === "free" && (
