@@ -8,7 +8,8 @@
     "resend": "^6.9.3"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "playwright": "^1.58.2"
   },
   "scripts": {
     "start": "node server.js",
@@ -17,7 +18,8 @@
     "test": "node --test tests/unit.test.js",
     "test:sanity": "node --test tests/sanity.test.js",
     "test:e2e": "node --test tests/e2e.test.js",
-    "test:all": "node --test tests/unit.test.js && node --test tests/sanity.test.js && node --test tests/e2e.test.js",
+    "test:ui": "node --test tests/ui.test.js",
+    "test:all": "node --test tests/unit.test.js && node --test tests/sanity.test.js && node --test tests/e2e.test.js && node --test tests/ui.test.js",
     "ci": "npm run check && npm test"
   },
   "engines": {

@@ -6,3 +6,5 @@ coverage
 .claude
 data/*.db
 data/*.db-*
+tests/screenshots/*.png
+tests/screenshots/FAIL-*.png
