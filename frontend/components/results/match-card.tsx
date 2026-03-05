@@ -120,7 +120,7 @@ export function MatchCard({ match, rank }: MatchCardProps) {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
             >
-              View on GBIF <ExternalLink className="h-3 w-3" />
+              Explore geographical data for this species on GBIF <ExternalLink className="h-3 w-3" />
             </a>
           </div>
         )}
