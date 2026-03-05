@@ -279,6 +279,19 @@ const stmts = {
     WHERE primary_match IS NOT NULL AND created_at >= date('now', ? || ' days')
     GROUP BY primary_match ORDER BY count DESC LIMIT 10
   `),
+  pageViewsByDay: db.prepare(`
+    SELECT date(created_at) AS day, COUNT(*) AS count
+    FROM analytics_events
+    WHERE event = 'page_view' AND created_at >= date('now', ? || ' days')
+    GROUP BY day ORDER BY day
+  `),
+  eventFunnel: db.prepare(`
+    SELECT event, COUNT(*) AS count
+    FROM analytics_events
+    WHERE event IN ('page_view','signup','login','scan')
+      AND created_at >= date('now', ? || ' days')
+    GROUP BY event
+  `),
   geoBreakdown: db.prepare(`
     SELECT country, city, COUNT(*) AS count
     FROM analytics_events
@@ -580,6 +593,21 @@ function getTopSpecies(days = 30) {
   return stmts.topSpecies.all(String(-Math.abs(days)));
 }
 
+function getPageViewsByDay(days = 30) {
+  return stmts.pageViewsByDay.all(String(-Math.abs(days)));
+}
+
+function getEventFunnel(days = 30) {
+  const rows = stmts.eventFunnel.all(String(-Math.abs(days)));
+  const map = Object.fromEntries(rows.map(r => [r.event, r.count]));
+  return {
+    pageViews: map.page_view || 0,
+    signups: map.signup || 0,
+    logins: map.login || 0,
+    scans: map.scan || 0,
+  };
+}
+
 function getGeoBreakdown(days = 30) {
   return stmts.geoBreakdown.all(String(-Math.abs(days)));
 }
@@ -722,6 +750,8 @@ module.exports = {
   getTopSpecies,
   getGeoBreakdown,
   getVisitorBreakdown,
+  getPageViewsByDay,
+  getEventFunnel,
   listAllUsers,
   createPasswordResetToken,
   findValidResetToken,

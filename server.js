@@ -44,6 +44,8 @@ const {
   getTopSpecies,
   getGeoBreakdown,
   getVisitorBreakdown,
+  getPageViewsByDay,
+  getEventFunnel,
   listAllUsers,
   createPasswordResetToken,
   findValidResetToken,
@@ -1577,6 +1579,10 @@ const server = http.createServer(async (req, res) => {
       sendJson(req, res, 200, { data: getTopSpecies(days) });
     } else if (route === 'geo') {
       sendJson(req, res, 200, { data: getGeoBreakdown(days) });
+    } else if (route === 'page-views-by-day') {
+      sendJson(req, res, 200, { data: getPageViewsByDay(days) });
+    } else if (route === 'funnel') {
+      sendJson(req, res, 200, getEventFunnel(days));
     } else if (route === 'users') {
       sendJson(req, res, 200, { users: listAllUsers(Number(url.searchParams.get('limit') || 100)) });
     } else if (route === 'visitors') {
