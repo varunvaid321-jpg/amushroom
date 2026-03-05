@@ -57,9 +57,17 @@ async function sendWelcomeEmail(to, name) {
 
   const greeting = name ? `Hi ${name},` : 'Hi there,';
   const html = baseTemplate(`
-    <h1 style="margin:0 0 24px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Welcome to Orangutany!</h1>
+    <h1 style="margin:0 0 20px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Welcome to Orangutany!</h1>
     <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">${greeting}</p>
-    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">You now have access to one of the most accurate mushroom identification experiences available — combining machine learning models trained on millions of specimens with expert mycological knowledge to give you high-confidence IDs you can actually trust.</p>
+    <p style="margin:0 0 24px;font-size:16px;line-height:1.7;color:#e0e0e0;">You now have access to one of the most accurate mushroom identification experiences available — combining machine learning models trained on millions of specimens with expert mycological knowledge to give you high-confidence IDs you can actually trust.</p>
+
+    <div style="margin:0 0 24px;border-radius:14px;overflow:hidden;position:relative;">
+      <img src="https://orangutany.com/images/chicken-email.jpg" alt="Chicken of the Woods mushroom" width="100%" style="display:block;width:100%;border-radius:14px;border:0;" />
+      <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to bottom, transparent, #161616);border-radius:0 0 14px 14px;"></div>
+    </div>
+
+    <p style="margin:0 0 8px;font-size:13px;font-style:italic;color:#888;text-align:center;">Laetiporus sulphureus — Chicken of the Woods</p>
+
     <p style="margin:0 0 32px;font-size:16px;line-height:1.7;color:#e0e0e0;">Upload photos from multiple angles and get a detailed breakdown of species, edibility, look-alikes, and confidence score — the same quality of insight a seasoned forager brings to the field, right in your pocket.</p>
     <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
     <tr><td style="background-color:#f97316;border-radius:10px;">
