@@ -1,3 +1,15 @@
+// Catch any unhandled crash so it shows up in Render logs
+process.on('uncaughtException', (err) => {
+  // eslint-disable-next-line no-console
+  console.error('[crash] uncaughtException:', err);
+  process.exit(1);
+});
+process.on('unhandledRejection', (reason) => {
+  // eslint-disable-next-line no-console
+  console.error('[crash] unhandledRejection:', reason);
+  process.exit(1);
+});
+
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -190,8 +202,13 @@ const CONTENT_TYPES = {
 const identifyRateLimitStore = new Map();
 const authRateLimitStore = new Map();
 
+// Track DB init state for /api/ping diagnostic endpoint
+let dbInitialized = false;
+let dbInitError = null;
+
 // Startup and periodic cleanup run after DB is initialized
 dbReady.then(() => {
+  dbInitialized = true;
   deleteExpiredSessions().catch(() => {});
   deleteExpiredResetTokens().catch(() => {});
   setInterval(() => {
@@ -200,9 +217,10 @@ dbReady.then(() => {
     cleanExpiredAnonQuotas().catch(() => {});
   }, SESSION_CLEANUP_INTERVAL_MS).unref();
 }).catch((err) => {
+  dbInitError = err;
   // eslint-disable-next-line no-console
   console.error('[startup] DB initialization failed:', err);
-  process.exit(1);
+  // Do not exit — keep server alive so /api/ping can report the error
 });
 
 function securityHeaders(req) {
@@ -1385,8 +1403,20 @@ const server = http.createServer(async (req, res) => {
       status: ready ? 'ready' : 'not_ready',
       checks: {
         apiKeyConfigured: ready,
-        databaseReady: true
+        databaseReady: dbInitialized,
+        dbError: dbInitError ? String(dbInitError) : null
       }
+    });
+    return;
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/ping') {
+    sendJson(req, res, 200, {
+      ok: true,
+      dbReady: dbInitialized,
+      dbError: dbInitError ? String(dbInitError) : null,
+      uptime: Math.round(process.uptime()),
+      tursoUrl: process.env.TURSO_DATABASE_URL ? process.env.TURSO_DATABASE_URL.replace(/\?.*/, '') : 'not set'
     });
     return;
   }
@@ -1724,13 +1754,12 @@ const server = http.createServer(async (req, res) => {
   sendJson(req, res, 404, { error: 'Not found' });
 });
 
-dbReady.then(() => {
-  server.listen(PORT, HOST, () => {
-    // eslint-disable-next-line no-console
-    console.log(`Orangutany running at http://${HOST}:${PORT}`);
-  });
-}).catch((err) => {
+// Always start listening — even if DB failed, /api/ping will report the error
+server.listen(PORT, HOST, () => {
   // eslint-disable-next-line no-console
-  console.error('[startup] DB initialization failed, server not started:', err);
-  process.exit(1);
+  console.log(`Orangutany running at http://${HOST}:${PORT}`);
+});
+dbReady.catch((err) => {
+  // eslint-disable-next-line no-console
+  console.error('[startup] DB initialization failed:', err);
 });
