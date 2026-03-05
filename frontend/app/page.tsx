@@ -10,6 +10,7 @@ import { HistoryTable } from "@/components/portfolio/history-table";
 import { Container } from "@/components/layout/container";
 import { useUploads } from "@/hooks/use-uploads";
 import { useQuota } from "@/hooks/use-quota";
+import { useAuth } from "@/hooks/use-auth";
 import { ApiError } from "@/lib/api";
 
 export default function Home() {
@@ -20,6 +21,7 @@ export default function Home() {
 
   const uploads = useUploads();
   const quota = useQuota();
+  const { user } = useAuth();
   const {
     files,
     previews,
@@ -34,6 +36,8 @@ export default function Home() {
     removeSlot,
     clearAll,
     loadSavedUpload,
+    uploadStory,
+    saveStory,
     quotaExceeded,
     quotaInfo,
   } = uploads;
@@ -106,6 +110,9 @@ export default function Home() {
                 quotaTier={quotaInfo?.tier}
                 isSavedScan={viewingSavedScan}
                 onBackToLibrary={handleBackToLibrary}
+                isLoggedIn={!!user}
+                uploadStory={uploadStory}
+                onSaveStory={saveStory}
               />
             </div>
           </div>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Loader2, Microscope, Lock, ArrowLeft } from "lucide-react";
+import { useRef, useState } from "react";
+import { Loader2, Microscope, Lock, ArrowLeft, BookOpen, CheckCircle2 } from "lucide-react";
 import type { Match, UploadGuidance, ConsistencyCheck } from "@/lib/api";
 import { ProfilePanel } from "./profile-panel";
 import { MatchCard } from "./match-card";
@@ -18,6 +18,9 @@ interface ResultsDockProps {
   quotaTier?: string;
   isSavedScan?: boolean;
   onBackToLibrary?: () => void;
+  isLoggedIn?: boolean;
+  uploadStory?: string | null;
+  onSaveStory?: (story: string) => Promise<void>;
 }
 
 export function ResultsDock({
@@ -30,8 +33,16 @@ export function ResultsDock({
   quotaTier,
   isSavedScan,
   onBackToLibrary,
+  isLoggedIn,
+  uploadStory,
+  onSaveStory,
 }: ResultsDockProps) {
   const [authOpen, setAuthOpen] = useState(false);
+  const [storyText, setStoryText] = useState("");
+  const [storySaved, setStorySaved] = useState(false);
+  const [storySaving, setStorySaving] = useState(false);
+  const [storyDismissed, setStoryDismissed] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   if (state === "idle") {
     return null;
@@ -127,6 +138,20 @@ export function ResultsDock({
   }
 
   const secondaryMatches = viableMatches.slice(1);
+  const topConfidence = viableMatches[0]?.score ?? 0;
+  const showStoryPrompt = isLoggedIn && !isSavedScan && !storyDismissed && !storySaved && topConfidence >= 70 && !!onSaveStory;
+  const savedStoryToShow = isSavedScan && uploadStory ? uploadStory : null;
+
+  const handleSaveStory = async () => {
+    if (!storyText.trim() || !onSaveStory) return;
+    setStorySaving(true);
+    try {
+      await onSaveStory(storyText.trim());
+      setStorySaved(true);
+    } finally {
+      setStorySaving(false);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -161,6 +186,63 @@ export function ResultsDock({
               <MatchCard key={i} match={m} rank={i + 2} />
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Story prompt — shown after new high-confidence scans for logged-in users */}
+      {showStoryPrompt && (
+        <div className="rounded-xl border border-border/60 bg-card/50 p-4">
+          <div className="mb-3 flex items-center gap-2">
+            <BookOpen className="h-4 w-4 text-primary/70" />
+            <span className="text-sm font-medium text-foreground">Add to your foraging journal</span>
+            <button
+              onClick={() => setStoryDismissed(true)}
+              className="ml-auto text-xs text-muted-foreground/60 hover:text-muted-foreground"
+            >
+              Skip
+            </button>
+          </div>
+          <p className="mb-3 text-xs text-muted-foreground">
+            Where did you find it? Anything interesting about the spot?
+          </p>
+          <textarea
+            ref={textareaRef}
+            value={storyText}
+            onChange={(e) => setStoryText(e.target.value.slice(0, 500))}
+            placeholder="e.g. Found a cluster at the base of an oak tree after last night's rain…"
+            rows={3}
+            className="w-full resize-none rounded-lg border border-border/50 bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+          />
+          <div className="mt-2 flex items-center justify-between">
+            <span className="text-xs text-muted-foreground/50">{storyText.length}/500</span>
+            <Button
+              size="sm"
+              disabled={!storyText.trim() || storySaving}
+              onClick={handleSaveStory}
+              className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40"
+            >
+              {storySaving ? <Loader2 className="h-3 w-3 animate-spin" /> : "Save"}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Saved confirmation */}
+      {storySaved && (
+        <div className="flex items-center gap-2 rounded-lg border border-green-800/40 bg-green-900/20 px-4 py-3 text-sm text-green-300">
+          <CheckCircle2 className="h-4 w-4 shrink-0" />
+          Saved to your journal.
+        </div>
+      )}
+
+      {/* Show story when viewing a saved scan */}
+      {savedStoryToShow && (
+        <div className="rounded-xl border border-border/40 bg-card/30 p-5">
+          <div className="mb-3 flex items-center gap-2">
+            <BookOpen className="h-4 w-4 text-primary/60" />
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Your Journal Entry</span>
+          </div>
+          <p className="text-sm leading-relaxed text-foreground/80 whitespace-pre-wrap">{savedStoryToShow}</p>
         </div>
       )}
     </div>

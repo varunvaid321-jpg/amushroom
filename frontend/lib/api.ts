@@ -67,6 +67,7 @@ export interface UploadSummary {
   primaryConfidence: number;
   mixedSpecies: boolean;
   consistencyMessage: string;
+  userStory: string | null;
   coverImageUrl: string;
   coverFileName: string;
   previewImages: { id: number; role: string; filename: string; mimeType: string; previewUrl: string }[];
@@ -82,6 +83,7 @@ export interface UploadDetail {
   primaryConfidence: number;
   mixedSpecies: boolean;
   consistencyMessage: string;
+  userStory: string | null;
   images: { id: number; role: string; filename: string; mimeType: string; bytes: number; createdAt: string; previewUrl: string }[];
   matches: Match[];
   uploadGuidance: UploadGuidance;
@@ -171,6 +173,13 @@ export async function listUploads(limit = 20): Promise<UploadSummary[]> {
     `/api/user/uploads?limit=${limit}`,
   );
   return data.uploads;
+}
+
+export async function saveStory(uploadId: string, story: string): Promise<void> {
+  await apiFetch(`/api/user/uploads/${uploadId}/story`, {
+    method: "PATCH",
+    body: JSON.stringify({ story }),
+  });
 }
 
 export async function getUploadDetail(

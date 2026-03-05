@@ -15,6 +15,7 @@ import {
   ExternalLink,
   ImageIcon,
   AlertTriangle,
+  BookOpen,
 } from "lucide-react";
 import { track } from "@/lib/track";
 
@@ -260,7 +261,12 @@ function HistoryRow({
         )}
       </td>
       <td className="max-w-[200px] px-4 py-3">
-        <p className="truncate text-xs text-muted-foreground">{matchSummary}</p>
+        <div className="flex items-center gap-1.5">
+          <p className="truncate text-xs text-muted-foreground">{matchSummary}</p>
+          {upload.userStory && (
+            <BookOpen className="h-3 w-3 shrink-0 text-primary/60" aria-label="Has journal entry" />
+          )}
+        </div>
       </td>
       <td className="px-4 py-3 text-right">
         {isLowConfidence ? (

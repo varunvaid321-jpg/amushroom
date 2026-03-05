@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { identify, getUploadDetail, type Match, type UploadGuidance, type ConsistencyCheck, type ImageMeta, type QuotaInfo } from "@/lib/api";
+import { identify, getUploadDetail, saveStory as apiSaveStory, type Match, type UploadGuidance, type ConsistencyCheck, type ImageMeta, type QuotaInfo } from "@/lib/api";
 import { prepareImageForUpload } from "@/lib/image-utils";
 import { SLOT_ROLES } from "@/components/upload/photo-slots";
 
@@ -17,6 +17,7 @@ export function useUploads() {
   const [qualityNotice, setQualityNotice] = useState<string>("");
   const [statusText, setStatusText] = useState("");
   const [currentUploadId, setCurrentUploadId] = useState<string | null>(null);
+  const [uploadStory, setUploadStory] = useState<string | null>(null);
   const [quotaExceeded, setQuotaExceeded] = useState(false);
   const [quotaInfo, setQuotaInfo] = useState<QuotaInfo | null>(null);
 
@@ -64,6 +65,7 @@ export function useUploads() {
     setQualityNotice("");
     setStatusText("");
     setCurrentUploadId(null);
+    setUploadStory(null);
     setQuotaExceeded(false);
     setQuotaInfo(null);
     // Clear URL param
@@ -158,6 +160,7 @@ export function useUploads() {
       setConsistencyCheck(detail.consistencyCheck || null);
       setUploadGuidance(detail.uploadGuidance || null);
       setCurrentUploadId(uploadId);
+      setUploadStory(detail.userStory ?? null);
       setResultsState("ready");
       setStatusText("");
 
@@ -181,6 +184,12 @@ export function useUploads() {
     }
   }, [loadSavedUpload]);
 
+  const saveStory = useCallback(async (story: string) => {
+    if (!currentUploadId) return;
+    await apiSaveStory(currentUploadId, story);
+    setUploadStory(story);
+  }, [currentUploadId]);
+
   // Handle popstate
   useEffect(() => {
     const handler = () => {
@@ -203,6 +212,7 @@ export function useUploads() {
     qualityNotice,
     statusText,
     currentUploadId,
+    uploadStory,
     quotaExceeded,
     quotaInfo,
     addFile,
@@ -210,5 +220,6 @@ export function useUploads() {
     clearAll,
     analyze,
     loadSavedUpload,
+    saveStory,
   };
 }

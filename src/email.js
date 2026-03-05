@@ -59,7 +59,7 @@ async function sendWelcomeEmail(to, name) {
   const html = baseTemplate(`
     <h1 style="margin:0 0 20px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Welcome to Orangutany!</h1>
     <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">${greeting}</p>
-    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">Machine learning trained on millions of specimens, combined with expert mycological knowledge — giving you high-confidence IDs you can trust.</p>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">We use AI trained on millions of real mushroom specimens to give you accurate, confident identifications — so you know exactly what you're looking at.</p>
 
     <img src="https://orangutany.com/images/chicken-email.jpg" alt="Chicken of the Woods mushroom" width="100%" style="display:block;width:100%;border-radius:14px;border:0;margin:0 0 6px;" />
     <p style="margin:0 0 20px;font-size:13px;font-style:italic;color:#888;text-align:center;">Laetiporus sulphureus — Chicken of the Woods</p>
