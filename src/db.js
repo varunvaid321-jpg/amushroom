@@ -674,6 +674,28 @@ async function listAllUsers(limit = 100) {
   return result.rows.map(r => ({ ...r, id: Number(r.id) }));
 }
 
+async function getUserScanStats() {
+  const result = await client.execute(`
+    SELECT u.id, u.email, u.name, u.tier,
+           COUNT(ub.id) AS total_scans,
+           MAX(ub.created_at) AS last_scan_at,
+           u.created_at AS signed_up_at
+    FROM users u
+    LEFT JOIN upload_batches ub ON ub.user_id = u.id
+    GROUP BY u.id
+    ORDER BY total_scans DESC
+  `);
+  return result.rows.map(r => ({
+    id: Number(r.id),
+    email: r.email,
+    name: r.name || '',
+    tier: r.tier || 'free',
+    totalScans: Number(r.total_scans),
+    lastScanAt: r.last_scan_at || null,
+    signedUpAt: r.signed_up_at,
+  }));
+}
+
 async function createPasswordResetToken({ userId, token, expiresAt }) {
   await client.execute({
     sql: `INSERT INTO password_reset_tokens (user_id, token, expires_at, created_at)
@@ -1035,5 +1057,6 @@ module.exports = {
   markAbuseFlagNotified,
   suspendUser,
   unsuspendUser,
-  isUserSuspended
+  isUserSuspended,
+  getUserScanStats
 };

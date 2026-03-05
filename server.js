@@ -64,6 +64,7 @@ const {
   insertFeedback,
   listFeedback,
   listAllUsers,
+  getUserScanStats,
   createPasswordResetToken,
   findValidResetToken,
   markResetTokenUsed,
@@ -1916,6 +1917,8 @@ const server = http.createServer(async (req, res) => {
       }
     } else if (route === 'users') {
       sendJson(req, res, 200, { users: await listAllUsers(Number(url.searchParams.get('limit') || 100)) });
+    } else if (route === 'user-scan-stats') {
+      sendJson(req, res, 200, { users: await getUserScanStats() });
     } else if (route === 'visitors') {
       const visitors = await getVisitorBreakdown(days);
       const total = visitors.reduce((s, v) => s + v.hits, 0);
