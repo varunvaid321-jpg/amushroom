@@ -212,6 +212,35 @@ export function ProfilePanel({
           </>
         )}
 
+        {/* Global Distribution Map */}
+        {match.gbifId && (
+          <>
+            <Separator className="bg-border/50" />
+            <div className="space-y-2">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Global Distribution
+              </h4>
+              <div className="overflow-hidden rounded-lg border border-border/50">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`https://api.gbif.org/v2/map/occurrence/density/0/0/0@2x.png?style=classic.point&taxonKey=${match.gbifId}`}
+                  alt={`Distribution map of ${match.commonName}`}
+                  className="h-36 w-full object-cover bg-[#1a3a4a]"
+                  loading="lazy"
+                />
+              </div>
+              <a
+                href={`https://www.gbif.org/species/${match.gbifId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+              >
+                View full range on GBIF <ExternalLink className="h-3 w-3" />
+              </a>
+            </div>
+          </>
+        )}
+
         {/* Wiki Link */}
         {match.wikiUrl && (
           <a
