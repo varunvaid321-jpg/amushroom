@@ -260,8 +260,10 @@ function SavedStoryEditor({
     setSaved(false);
   }, [story]);
 
+  const hasChanges = text.trim() !== (story || "").trim();
+
   const handleSave = async () => {
-    if (!text.trim() || !onSave) return;
+    if (!text.trim() || !onSave || !hasChanges) return;
     setSaving(true);
     try {
       await onSave(text.trim());
@@ -295,7 +297,7 @@ function SavedStoryEditor({
         <div className="space-y-2">
           <textarea
             value={text}
-            onChange={(e) => setText(e.target.value.slice(0, 500))}
+            onChange={(e) => { setText(e.target.value.slice(0, 500)); setSaved(false); }}
             placeholder="Where did you find it? Anything interesting about the spot?"
             rows={3}
             className="w-full resize-none rounded-lg border border-border/50 bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
@@ -303,15 +305,15 @@ function SavedStoryEditor({
           />
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground/50">{text.length}/500</span>
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
               {story && (
-                <button onClick={() => { setText(story); setEditing(false); }} className="text-xs text-muted-foreground hover:text-foreground">
+                <button onClick={() => { setText(story); setEditing(false); setSaved(false); }} className="text-xs text-muted-foreground hover:text-foreground">
                   Cancel
                 </button>
               )}
               <Button
                 size="sm"
-                disabled={!text.trim() || saving}
+                disabled={!text.trim() || saving || !hasChanges}
                 onClick={handleSave}
                 className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40"
               >
@@ -324,8 +326,8 @@ function SavedStoryEditor({
         <div className="space-y-2">
           <p className="text-sm leading-relaxed text-foreground/80 whitespace-pre-wrap">{text}</p>
           {saved && (
-            <div className="flex items-center gap-1.5 text-xs text-green-400">
-              <CheckCircle2 className="h-3 w-3" /> Saved
+            <div className="flex items-center gap-1.5 text-xs text-green-500">
+              <CheckCircle2 className="h-3 w-3" /> Saved to your journal
             </div>
           )}
         </div>
