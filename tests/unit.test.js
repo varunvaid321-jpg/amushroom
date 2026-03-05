@@ -261,17 +261,19 @@ test('error boundary: frontend/app/global-error.tsx exists', () => {
   assert.ok(fs.existsSync(file), 'app/global-error.tsx missing — root layout errors show raw Next.js error page');
 });
 
-test('error boundary: error.tsx handles ChunkLoadError with auto-reload', () => {
+test('error boundary: error.tsx handles ChunkLoadError with guarded auto-reload', () => {
   const src = fs.readFileSync(path.join(root, 'frontend/app/error.tsx'), 'utf8');
   assert.ok(src.includes('"use client"'), 'error.tsx must be a Client Component');
   assert.ok(src.includes('ChunkLoadError') || src.includes('Loading chunk'), 'error.tsx must detect ChunkLoadError for post-deploy recovery');
   assert.ok(src.includes('reload'), 'error.tsx must call window.location.reload() on ChunkLoadError');
+  assert.ok(src.includes('sessionStorage'), 'error.tsx must use sessionStorage to prevent infinite reload loop');
   assert.ok(src.includes('reset'), 'error.tsx must accept and use the reset prop');
 });
 
-test('error boundary: global-error.tsx handles ChunkLoadError with auto-reload', () => {
+test('error boundary: global-error.tsx handles ChunkLoadError with guarded auto-reload', () => {
   const src = fs.readFileSync(path.join(root, 'frontend/app/global-error.tsx'), 'utf8');
   assert.ok(src.includes('"use client"'), 'global-error.tsx must be a Client Component');
   assert.ok(src.includes('ChunkLoadError') || src.includes('Loading chunk'), 'global-error.tsx must detect ChunkLoadError');
   assert.ok(src.includes('reload'), 'global-error.tsx must call window.location.reload() on ChunkLoadError');
+  assert.ok(src.includes('sessionStorage'), 'global-error.tsx must use sessionStorage to prevent infinite reload loop');
 });

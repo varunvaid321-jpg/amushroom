@@ -12,7 +12,10 @@ export default function Error({
   useEffect(() => {
     // ChunkLoadError happens after a deploy when the browser has cached old
     // JS chunk URLs that no longer exist. Auto-reload once to fetch fresh chunks.
-    if (error.name === "ChunkLoadError" || error.message?.includes("Loading chunk")) {
+    // sessionStorage flag prevents an infinite reload loop if the error persists.
+    const isChunkError = error.name === "ChunkLoadError" || error.message?.includes("Loading chunk");
+    if (isChunkError && !sessionStorage.getItem("chunk_reload_attempted")) {
+      sessionStorage.setItem("chunk_reload_attempted", "1");
       window.location.reload();
     }
   }, [error]);
