@@ -1121,7 +1121,7 @@ async function handleGoogleCallback(req, res, url) {
         googleSub: profile.sub,
         emailVerified: profile.emailVerified
       });
-      user = findUserAuthByGoogleSub(profile.sub);
+      user = await findUserAuthByGoogleSub(profile.sub);
     }
   }
 

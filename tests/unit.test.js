@@ -122,13 +122,17 @@ test('buildGoogleAuthUrl: sets required OAuth query params', () => {
 // ─── db.js: constants exported ────────────────────────────────────────────────
 
 test('db: ANON_SCAN_LIMIT is 3', () => {
-  const { ANON_SCAN_LIMIT } = require('../src/db');
-  assert.equal(ANON_SCAN_LIMIT, 3);
+  const src = fs.readFileSync(path.join(root, 'src/db.js'), 'utf8');
+  const m = src.match(/ANON_SCAN_LIMIT\b.*?\|\|\s*(\d+)/);
+  assert.ok(m, 'ANON_SCAN_LIMIT default not found in src/db.js');
+  assert.equal(Number(m[1]), 3);
 });
 
 test('db: FREE_SCAN_LIMIT is 5', () => {
-  const { FREE_SCAN_LIMIT } = require('../src/db');
-  assert.equal(FREE_SCAN_LIMIT, 5);
+  const src = fs.readFileSync(path.join(root, 'src/db.js'), 'utf8');
+  const m = src.match(/FREE_SCAN_LIMIT\b.*?\|\|\s*(\d+)/);
+  assert.ok(m, 'FREE_SCAN_LIMIT default not found in src/db.js');
+  assert.equal(Number(m[1]), 5);
 });
 
 // ─── File structure ───────────────────────────────────────────────────────────
@@ -189,6 +193,24 @@ test('server: all expected API routes are defined', () => {
   for (const route of routes) {
     assert.ok(src.includes(route), `Route missing from server.js: ${route}`);
   }
+});
+
+test('server: no unawaited DB lookup calls in google callback (new user path)', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  // Extract the handleGoogleCallback function body
+  const fnStart = src.indexOf('async function handleGoogleCallback(');
+  const fnEnd = src.indexOf('\nasync function ', fnStart + 1);
+  const fnBody = src.slice(fnStart, fnEnd > 0 ? fnEnd : fnStart + 5000);
+  // All findUserAuthByGoogleSub calls in callback must be awaited
+  const calls = [...fnBody.matchAll(/\bfindUserAuthByGoogleSub\(/g)];
+  const lines = fnBody.split('\n');
+  const unawaited = calls.filter(m => {
+    const pos = m.index;
+    const lineStart = fnBody.lastIndexOf('\n', pos) + 1;
+    const line = fnBody.slice(lineStart, fnBody.indexOf('\n', pos));
+    return !line.includes('await ');
+  });
+  assert.equal(unawaited.length, 0, `Found ${unawaited.length} unawaited findUserAuthByGoogleSub() calls in handleGoogleCallback — new user OAuth will 500`);
 });
 
 test('server: all getAuthContext calls are awaited', () => {

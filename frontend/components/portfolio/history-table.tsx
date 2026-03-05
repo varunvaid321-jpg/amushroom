@@ -102,7 +102,10 @@ export function HistoryTable({ onLoadUpload, refreshKey }: HistoryTableProps) {
           />
           <StatPill
             label="Avg Confidence"
-            value={`${uploads.length > 0 ? Math.round(uploads.reduce((s, u) => s + u.primaryConfidence, 0) / uploads.length) : 0}%`}
+            value={(() => {
+              const withConf = uploads.filter((u) => u.primaryConfidence != null);
+              return `${withConf.length > 0 ? Math.round(withConf.reduce((s, u) => s + u.primaryConfidence!, 0) / withConf.length) : 0}%`;
+            })()}
           />
           <StatPill
             label="Unique Species"
@@ -204,7 +207,7 @@ function HistoryRow({
   });
 
   const topMatch = upload.topMatches[0];
-  const isLowConfidence = upload.primaryConfidence < 30;
+  const isLowConfidence = (upload.primaryConfidence ?? 0) < 30;
   const displayName = isLowConfidence
     ? "No confident match"
     : topMatch?.commonName || upload.primaryMatch;
@@ -254,7 +257,7 @@ function HistoryRow({
         <span
           className={`font-bold tabular-nums ${confidenceColor(upload.primaryConfidence)}`}
         >
-          {upload.primaryConfidence}%
+          {upload.primaryConfidence ?? 0}%
         </span>
         {upload.mixedSpecies && (
           <AlertTriangle className="ml-1 inline h-3 w-3 text-yellow-400" />

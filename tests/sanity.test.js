@@ -106,7 +106,38 @@ test('/about returns 200', async () => {
   assert.equal(r.status, 200, `/about returned ${r.status}`);
 });
 
-// ─── 5. Health ────────────────────────────────────────────────────────────────
+// ─── 5. Auth data integrity ───────────────────────────────────────────────────
+
+test('/api/auth/me response shape is valid (no 500, no missing fields)', async () => {
+  const r = await get('/api/auth/me');
+  assert.equal(r.status, 200, `/api/auth/me returned ${r.status} — likely a server crash, check logs`);
+  assert.ok(r.json !== null, '/api/auth/me must return JSON');
+  assert.ok('user' in r.json, '/api/auth/me response missing user field');
+  assert.ok('isAdmin' in r.json, '/api/auth/me response missing isAdmin field');
+});
+
+test('/api/auth/config response shape is valid', async () => {
+  const r = await get('/api/auth/config');
+  assert.equal(r.status, 200);
+  assert.ok(r.json !== null, '/api/auth/config must return JSON');
+  assert.ok('googleAuthEnabled' in r.json, '/api/auth/config missing googleAuthEnabled');
+});
+
+test('homepage HTML does not contain Next.js error boundary fallback text', async () => {
+  const r = await get('/');
+  assert.equal(r.status, 200);
+  // If SSR crashes, Next.js renders the error boundary text server-side
+  assert.ok(!r.body.includes('Application error'), `Homepage SSR returned Application error — possible crash in page component`);
+  assert.ok(!r.body.includes('Something went wrong'), `Homepage SSR returned error boundary — check API calls during SSR`);
+});
+
+test('/api/user/uploads returns structured error (not 500) when unauthenticated', async () => {
+  const r = await get('/api/user/uploads');
+  assert.ok(r.status === 401, `Expected 401, got ${r.status} — if 500, auth guard is crashing (missing await?)`);
+  assert.ok(r.json?.error, 'Error response should include error message');
+});
+
+// ─── 6. Health ────────────────────────────────────────────────────────────────
 
 test('/healthz returns 200', async () => {
   const r = await get('/healthz');
