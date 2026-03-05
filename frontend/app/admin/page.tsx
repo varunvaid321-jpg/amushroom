@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Container } from "@/components/layout/container";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, ShieldAlert, TrendingUp, TrendingDown, Minus, Mail, CheckCircle, XCircle } from "lucide-react";
+import { Loader2, ShieldAlert, TrendingUp, TrendingDown, Minus, Mail, CheckCircle, XCircle, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AreaChart,
@@ -68,6 +68,19 @@ interface VisitorSummary {
   browserHits: number;
   unknownHits: number;
   uniqueIPs: number;
+}
+
+interface FeedbackRow {
+  id: number;
+  user_id: number | null;
+  email: string | null;
+  name: string | null;
+  user_email: string | null;
+  user_name: string | null;
+  message: string;
+  also_email: number;
+  ip: string | null;
+  created_at: string;
 }
 
 interface FunnelData {
@@ -222,6 +235,7 @@ export default function AdminPage() {
   const [visitors, setVisitors] = useState<VisitorRow[]>([]);
   const [visitorSummary, setVisitorSummary] = useState<VisitorSummary | null>(null);
   const [funnel, setFunnel] = useState<FunnelData | null>(null);
+  const [feedback, setFeedback] = useState<FeedbackRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -240,6 +254,7 @@ export default function AdminPage() {
         setVisitors(r.visitors);
       }),
       adminFetch<FunnelData>(`funnel?days=${days}`).then(setFunnel),
+      adminFetch<{ feedback: FeedbackRow[] }>("feedback").then((r) => setFeedback(r.feedback)),
     ])
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -355,6 +370,14 @@ export default function AdminPage() {
             <TabsTrigger value="traffic">Traffic</TabsTrigger>
             <TabsTrigger value="species">Species</TabsTrigger>
             <TabsTrigger value="activity">Activity</TabsTrigger>
+            <TabsTrigger value="feedback" className="relative">
+              Feedback
+              {feedback.length > 0 && (
+                <span className="ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary/80 px-1.5 text-[10px] font-bold text-primary-foreground">
+                  {feedback.length}
+                </span>
+              )}
+            </TabsTrigger>
           </TabsList>
 
           {/* ── Overview tab ── */}
@@ -635,6 +658,47 @@ export default function AdminPage() {
                   </tbody>
                 </table>
               </div>
+            </Section>
+          </TabsContent>
+
+          {/* ── Feedback tab ── */}
+          <TabsContent value="feedback">
+            <Section title={`User Feedback (${feedback.length})`}>
+              {feedback.length === 0 ? (
+                <div className="flex flex-col items-center py-12 text-center text-muted-foreground">
+                  <MessageSquare className="mb-2 h-8 w-8 text-muted-foreground/40" />
+                  <p className="text-sm">No feedback submitted yet.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {feedback.map((f) => {
+                    const from = f.user_name || f.user_email || f.name || f.email || (f.user_id ? `User #${f.user_id}` : "Anonymous");
+                    const contact = f.email || f.user_email || null;
+                    return (
+                      <div key={f.id} className="rounded-lg border border-border/30 bg-muted/10 p-4">
+                        <div className="mb-2 flex items-start justify-between gap-3">
+                          <div>
+                            <span className="font-medium text-foreground">{from}</span>
+                            {contact && (
+                              <span className="ml-2 text-xs text-muted-foreground">{contact}</span>
+                            )}
+                            {f.also_email === 1 && (
+                              <span className="ml-2 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium text-primary">wants reply</span>
+                            )}
+                          </div>
+                          <span className="shrink-0 text-xs text-muted-foreground">
+                            {new Date(f.created_at).toLocaleString()}
+                          </span>
+                        </div>
+                        <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/80">{f.message}</p>
+                        {f.ip && (
+                          <p className="mt-2 font-mono text-[11px] text-muted-foreground/50">IP: {f.ip}</p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </Section>
           </TabsContent>
         </Tabs>
