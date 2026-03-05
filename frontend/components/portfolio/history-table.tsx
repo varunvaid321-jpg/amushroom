@@ -204,7 +204,7 @@ function HistoryRow({
   });
 
   const topMatch = upload.topMatches[0];
-  const isLowConfidence = upload.primaryConfidence < 50;
+  const isLowConfidence = upload.primaryConfidence < 30;
   const displayName = isLowConfidence
     ? "No confident match"
     : topMatch?.commonName || upload.primaryMatch;
