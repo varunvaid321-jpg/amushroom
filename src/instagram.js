@@ -63,17 +63,43 @@ function postJson(url, payload) {
   });
 }
 
+// ─── Geo lookup for batch ────────────────────────────────────────────────────
+
+function getBatchGeo(batchId) {
+  // Find the scan event associated with this batch's user around the time of upload
+  const row = db.prepare(`
+    SELECT city, country FROM analytics_events
+    WHERE event = 'scan' AND created_at >= (
+      SELECT created_at FROM upload_batches WHERE id = ?
+    )
+    AND city IS NOT NULL AND city != ''
+    ORDER BY created_at ASC LIMIT 1
+  `).get(batchId);
+  return row || null;
+}
+
+function buildLocationHashtags(city, country) {
+  const tags = [];
+  if (city) {
+    const slug = city.toLowerCase().replace(/[^a-z0-9]/g, '');
+    tags.push(`#${slug}foraging`);
+    tags.push(`#${slug}mushrooms`);
+  }
+  if (country) {
+    const slug = country.toLowerCase().replace(/[^a-z0-9]/g, '');
+    tags.push(`#${slug}foraging`);
+    tags.push(`#${slug}mushrooms`);
+  }
+  return [...new Set(tags)].join(' ');
+}
+
 // ─── Caption builder ─────────────────────────────────────────────────────────
 
 function buildCaption(batch, match) {
   const lines = [];
 
   lines.push(`${match.common_name} (${match.scientific_name})`);
-  lines.push(`${match.confidence}% confidence`);
-
-  if (match.edibility && match.edibility !== 'unknown') {
-    lines.push(`Edibility: ${match.edibility}`);
-  }
+  lines.push(`${match.confidence}% confidence · ${match.edibility && match.edibility !== 'unknown' ? match.edibility : 'Edibility unknown'}`);
 
   if (batch.user_story) {
     lines.push('');
@@ -81,10 +107,14 @@ function buildCaption(batch, match) {
   }
 
   lines.push('');
-  lines.push('Identified with Orangutany — free AI mushroom identification.');
-  lines.push('Link in bio.');
+  lines.push('Identify yours free at orangutany.com — link in bio.');
   lines.push('');
-  lines.push('#mushrooms #mushroomhunting #foraging #mycology #fungi #wildmushroooms #mushroomidentification #orangutany');
+
+  const baseTags = '#mushrooms #mushroomhunting #foraging #mycology #fungi #wildmushrooms #mushroomidentification #orangutany #ediblemushrooms';
+  const geo = getBatchGeo(batch.batch_id);
+  const locationTags = geo ? buildLocationHashtags(geo.city, geo.country) : '';
+
+  lines.push(locationTags ? `${baseTags} ${locationTags}` : baseTags);
 
   return lines.join('\n');
 }
