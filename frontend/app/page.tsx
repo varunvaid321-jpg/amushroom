@@ -95,6 +95,7 @@ export default function Home() {
                 onClear={clearAll}
                 statusText={statusText}
                 remaining={quota.remaining}
+                limit={quota.limit}
                 tier={quota.tier}
                 quotaBlocked={quotaBlocked}
               />
