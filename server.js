@@ -48,6 +48,8 @@ const {
   getEventFunnel,
   updateUploadStory,
   getCoverImageBlob,
+  insertFeedback,
+  listFeedback,
   listAllUsers,
   createPasswordResetToken,
   findValidResetToken,
@@ -63,7 +65,7 @@ const {
   ANON_SCAN_LIMIT,
   FREE_SCAN_LIMIT
 } = require('./src/db');
-const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail } = require('./src/email');
+const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification } = require('./src/email');
 const { runOnePost, listPosted } = require('./src/instagram');
 
 const ROOT = __dirname;
@@ -1535,6 +1537,37 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // Feedback submission
+  if (req.method === 'POST' && url.pathname === '/api/feedback') {
+    let body;
+    try { body = await parseBody(req, 8 * 1024); } catch { jsonError(req, res, 400, 'Bad request.'); return; }
+    const message = typeof body.message === 'string' ? body.message.trim().slice(0, 2000) : '';
+    if (!message) { jsonError(req, res, 400, 'Message is required.'); return; }
+    const auth = getAuthContext(req);
+    const alsoEmail = body.alsoEmail === true;
+    const ip = getClientIp(req);
+    insertFeedback({
+      userId: auth?.user?.id || null,
+      email: auth?.user?.email || (typeof body.email === 'string' ? body.email.slice(0, 200) : null),
+      name: auth?.user?.name || null,
+      message,
+      alsoEmail,
+      ip,
+    });
+    // Notify admin
+    const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim()).filter(Boolean);
+    if (adminEmails[0]) {
+      sendFeedbackNotification(adminEmails[0], {
+        name: auth?.user?.name || null,
+        email: auth?.user?.email || body.email || null,
+        message,
+        ip,
+      });
+    }
+    sendJson(req, res, 200, { ok: true });
+    return;
+  }
+
   // Public cover image endpoint — used by Instagram pipeline for public image URL
   if (req.method === 'GET' && url.pathname.startsWith('/api/uploads/') && url.pathname.endsWith('/cover-image')) {
     const batchId = decodeURIComponent(url.pathname.slice('/api/uploads/'.length, -'/cover-image'.length)).trim();
@@ -1611,6 +1644,8 @@ const server = http.createServer(async (req, res) => {
       sendJson(req, res, 200, { data: getPageViewsByDay(days) });
     } else if (route === 'funnel') {
       sendJson(req, res, 200, getEventFunnel(days));
+    } else if (route === 'feedback') {
+      sendJson(req, res, 200, { feedback: listFeedback(200) });
     } else if (route === 'instagram-post') {
       // POST /api/admin/instagram-post — trigger one Instagram post
       const pageToken = process.env.IG_PAGE_TOKEN;

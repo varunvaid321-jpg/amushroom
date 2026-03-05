@@ -35,8 +35,8 @@ export default function PrivacyPage() {
 
           <h2 className="text-xl font-semibold text-foreground">4. Third-Party Services</h2>
           <p>
-            We use third-party AI services (Kindwise API) for mushroom identification. Photos you
-            upload are sent to this service for processing. We may also use Google OAuth for
+            We use third-party AI services for mushroom identification. Photos you
+            upload are sent to these services for processing. We may also use Google OAuth for
             authentication if you choose to sign in with Google.
           </p>
 

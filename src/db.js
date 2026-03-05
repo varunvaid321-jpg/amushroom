@@ -114,6 +114,18 @@ CREATE TABLE IF NOT EXISTS scan_quotas (
   first_scan_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS feedback (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER,
+  email TEXT,
+  name TEXT,
+  message TEXT NOT NULL,
+  also_email INTEGER NOT NULL DEFAULT 0,
+  ip TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
 CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at);
 CREATE INDEX IF NOT EXISTS idx_reset_tokens_token ON password_reset_tokens(token);
@@ -734,6 +746,23 @@ function cleanExpiredAnonQuotas() {
   stmts.cleanOldAnonQuotas.run(cutoff);
 }
 
+function insertFeedback({ userId, email, name, message, alsoEmail, ip }) {
+  return db.prepare(`
+    INSERT INTO feedback (user_id, email, name, message, also_email, ip)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `).run(userId || null, email || null, name || null, message, alsoEmail ? 1 : 0, ip || null);
+}
+
+function listFeedback(limit = 100) {
+  return db.prepare(`
+    SELECT f.*, u.email as user_email, u.name as user_name
+    FROM feedback f
+    LEFT JOIN users u ON u.id = f.user_id
+    ORDER BY f.created_at DESC
+    LIMIT ?
+  `).all(limit);
+}
+
 function getCoverImageBlob(batchId) {
   return db.prepare(`
     SELECT image_blob, mime_type FROM upload_images
@@ -782,6 +811,8 @@ module.exports = {
   recordUserScan,
   cleanExpiredAnonQuotas,
   getCoverImageBlob,
+  insertFeedback,
+  listFeedback,
   ANON_SCAN_LIMIT,
   FREE_SCAN_LIMIT
 };

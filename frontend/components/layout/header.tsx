@@ -7,11 +7,13 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Container } from "./container";
-import { Menu, X } from "lucide-react";
+import { Menu, X, MessageSquare } from "lucide-react";
+import { FeedbackModal } from "@/components/feedback/feedback-modal";
 
 export function Header() {
   const { user, isAdmin, loading, logout, openAuthModal } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === "/";
 
@@ -121,10 +123,19 @@ export function Header() {
               >
                 About
               </Link>
+              <div className="my-1 h-px bg-border/40" />
+              <button
+                onClick={() => { setMenuOpen(false); setFeedbackOpen(true); }}
+                className="w-full text-left px-3 py-2.5 text-sm font-medium text-primary/80 hover:text-primary hover:bg-muted/30 rounded-lg transition-colors flex items-center gap-2"
+              >
+                <MessageSquare className="h-4 w-4" />
+                Share Feedback
+              </button>
             </nav>
           </Container>
         </div>
       )}
+      <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </header>
   );
 }

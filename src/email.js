@@ -122,4 +122,23 @@ async function sendTestEmail(to) {
   return result?.data?.id;
 }
 
-module.exports = { emailEnabled, sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail };
+async function sendFeedbackNotification(adminEmail, { name, email, message, ip }) {
+  if (!resend) return;
+  const from = name ? `${name}${email ? ` (${email})` : ''}` : (email || 'Anonymous');
+  const html = baseTemplate(`
+    <h1 style="margin:0 0 20px;font-size:22px;font-weight:700;color:#ffffff;">New Feedback</h1>
+    <p style="margin:0 0 8px;font-size:14px;color:#888;">From: <strong style="color:#e0e0e0;">${from}</strong></p>
+    <p style="margin:0 0 20px;font-size:14px;color:#888;">IP: ${ip || 'unknown'}</p>
+    <div style="background:#1a1a1a;border-radius:10px;padding:16px 20px;margin:0 0 20px;">
+      <p style="margin:0;font-size:16px;line-height:1.7;color:#e0e0e0;white-space:pre-wrap;">${message}</p>
+    </div>
+  `);
+  try {
+    await resend.emails.send({ from: FROM_EMAIL, to: adminEmail, subject: `Orangutany Feedback — ${from}`, html });
+    console.log(`[email] Feedback notification sent to ${adminEmail}`);
+  } catch (err) {
+    console.error(`[email] Failed to send feedback notification:`, err.message);
+  }
+}
+
+module.exports = { emailEnabled, sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification };

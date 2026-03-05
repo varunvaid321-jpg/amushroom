@@ -175,6 +175,13 @@ export async function listUploads(limit = 20): Promise<UploadSummary[]> {
   return data.uploads;
 }
 
+export async function submitFeedback(message: string, alsoEmail: boolean, email?: string): Promise<void> {
+  await apiFetch('/api/feedback', {
+    method: 'POST',
+    body: JSON.stringify({ message, alsoEmail, email }),
+  });
+}
+
 export async function saveStory(uploadId: string, story: string): Promise<void> {
   await apiFetch(`/api/user/uploads/${uploadId}/story`, {
     method: "PATCH",

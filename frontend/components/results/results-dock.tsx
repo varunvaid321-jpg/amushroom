@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Loader2, Microscope, Lock, ArrowLeft, BookOpen, CheckCircle2 } from "lucide-react";
 import type { Match, UploadGuidance, ConsistencyCheck } from "@/lib/api";
 import { ProfilePanel } from "./profile-panel";
@@ -140,7 +140,6 @@ export function ResultsDock({
   const secondaryMatches = viableMatches.slice(1);
   const topConfidence = viableMatches[0]?.score ?? 0;
   const showStoryPrompt = isLoggedIn && !isSavedScan && !storyDismissed && !storySaved && topConfidence >= 70 && !!onSaveStory;
-  const savedStoryToShow = isSavedScan && uploadStory ? uploadStory : null;
 
   const handleSaveStory = async () => {
     if (!storyText.trim() || !onSaveStory) return;
@@ -235,14 +234,100 @@ export function ResultsDock({
         </div>
       )}
 
-      {/* Show story when viewing a saved scan */}
-      {savedStoryToShow && (
-        <div className="rounded-xl border border-border/40 bg-card/30 p-5">
-          <div className="mb-3 flex items-center gap-2">
-            <BookOpen className="h-4 w-4 text-primary/60" />
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Your Journal Entry</span>
+      {/* Show/edit story when viewing a saved scan */}
+      {isSavedScan && (
+        <SavedStoryEditor story={uploadStory ?? null} onSave={onSaveStory} />
+      )}
+    </div>
+  );
+}
+
+function SavedStoryEditor({
+  story,
+  onSave,
+}: {
+  story: string | null;
+  onSave?: (s: string) => Promise<void>;
+}) {
+  const [editing, setEditing] = useState(!story);
+  const [text, setText] = useState(story || "");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    setText(story || "");
+    setEditing(!story);
+    setSaved(false);
+  }, [story]);
+
+  const handleSave = async () => {
+    if (!text.trim() || !onSave) return;
+    setSaving(true);
+    try {
+      await onSave(text.trim());
+      setSaved(true);
+      setEditing(false);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="rounded-xl border border-border/40 bg-card/30 p-5">
+      <div className="mb-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <BookOpen className="h-4 w-4 text-primary/60" />
+          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Your Journal Entry
+          </span>
+        </div>
+        {!editing && (
+          <button
+            onClick={() => { setEditing(true); setSaved(false); }}
+            className="text-xs text-primary/70 hover:text-primary transition-colors"
+          >
+            Edit
+          </button>
+        )}
+      </div>
+
+      {editing ? (
+        <div className="space-y-2">
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value.slice(0, 500))}
+            placeholder="Where did you find it? Anything interesting about the spot?"
+            rows={3}
+            className="w-full resize-none rounded-lg border border-border/50 bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+            autoFocus
+          />
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground/50">{text.length}/500</span>
+            <div className="flex gap-2">
+              {story && (
+                <button onClick={() => { setText(story); setEditing(false); }} className="text-xs text-muted-foreground hover:text-foreground">
+                  Cancel
+                </button>
+              )}
+              <Button
+                size="sm"
+                disabled={!text.trim() || saving}
+                onClick={handleSave}
+                className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40"
+              >
+                {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : "Save"}
+              </Button>
+            </div>
           </div>
-          <p className="text-sm leading-relaxed text-foreground/80 whitespace-pre-wrap">{savedStoryToShow}</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <p className="text-sm leading-relaxed text-foreground/80 whitespace-pre-wrap">{text}</p>
+          {saved && (
+            <div className="flex items-center gap-1.5 text-xs text-green-400">
+              <CheckCircle2 className="h-3 w-3" /> Saved
+            </div>
+          )}
         </div>
       )}
     </div>
