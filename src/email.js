@@ -59,8 +59,8 @@ async function sendWelcomeEmail(to, name) {
   const html = baseTemplate(`
     <h1 style="margin:0 0 24px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Welcome to Orangutany!</h1>
     <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">${greeting}</p>
-    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">Thanks for creating an account. You can now upload mushroom photos and get AI-powered identifications, build your portfolio, and track your foraging history.</p>
-    <p style="margin:0 0 32px;font-size:16px;line-height:1.7;color:#e0e0e0;">Ready to identify your first mushroom?</p>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">You now have access to one of the most accurate mushroom identification experiences available — combining machine learning models trained on millions of specimens with expert mycological knowledge to give you high-confidence IDs you can actually trust.</p>
+    <p style="margin:0 0 32px;font-size:16px;line-height:1.7;color:#e0e0e0;">Upload photos from multiple angles and get a detailed breakdown of species, edibility, look-alikes, and confidence score — the same quality of insight a seasoned forager brings to the field, right in your pocket.</p>
     <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
     <tr><td style="background-color:#f97316;border-radius:10px;">
       <a href="https://orangutany.com" style="display:inline-block;padding:14px 32px;font-size:16px;font-weight:600;color:#0a0a0a;text-decoration:none;letter-spacing:0.2px;">Start Identifying</a>
