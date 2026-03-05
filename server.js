@@ -1142,8 +1142,8 @@ async function handleGoogleCallback(req, res, url) {
   redirect(req, res, sanitizeReturnPath(stateValue.returnTo || '/', '/'));
 }
 
-function handleUserUploads(req, res, url) {
-  const auth = getAuthContext(req);
+async function handleUserUploads(req, res, url) {
+  const auth = await getAuthContext(req);
   if (!auth?.user?.id) {
     jsonError(req, res, 401, 'Authentication required.');
     return;
@@ -1565,7 +1565,7 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'PATCH' && url.pathname.startsWith('/api/user/uploads/') && url.pathname.endsWith('/story')) {
     if (!requireSameOrigin(req, res)) return;
-    const auth = getAuthContext(req);
+    const auth = await getAuthContext(req);
     if (!auth?.user) { jsonError(req, res, 401, 'Not authenticated.'); return; }
     const uploadId = decodeURIComponent(url.pathname.slice('/api/user/uploads/'.length, -'/story'.length)).trim();
     let body;
@@ -1660,7 +1660,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'GET' && url.pathname.startsWith('/api/admin/')) {
-    const auth = getAuthContext(req);
+    const auth = await getAuthContext(req);
     if (!auth?.user || !isAdmin(auth.user)) {
       jsonError(req, res, 403, 'Admin access required.');
       return;
