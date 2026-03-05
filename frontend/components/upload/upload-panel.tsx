@@ -69,7 +69,17 @@ export function UploadPanel({
           {statusText}
         </p>
       )}
-      {remaining !== null && remaining !== undefined && !quotaBlocked && (
+      {tier === "pro" && (
+        <div className="flex items-center justify-center gap-1.5">
+          <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2.5 py-0.5 text-xs font-semibold text-primary">
+            <Sparkles className="h-3 w-3" /> Pro
+          </span>
+          {remaining !== null && remaining !== undefined && (
+            <span className="text-xs text-muted-foreground">{remaining} of {limit} scans today</span>
+          )}
+        </div>
+      )}
+      {tier !== "pro" && remaining !== null && remaining !== undefined && !quotaBlocked && (
         <p className="text-center text-xs text-muted-foreground">
           {remaining} of {limit ?? (tier === "anonymous" ? 3 : 5)} {tier === "anonymous" ? "free" : "daily"} scan{remaining !== 1 ? "s" : ""} remaining
         </p>

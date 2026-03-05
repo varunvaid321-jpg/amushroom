@@ -12,12 +12,23 @@ import { useUploads } from "@/hooks/use-uploads";
 import { useQuota } from "@/hooks/use-quota";
 import { useAuth } from "@/hooks/use-auth";
 import { ApiError } from "@/lib/api";
+import { Sparkles, X } from "lucide-react";
 
 export default function Home() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [viewingSavedScan, setViewingSavedScan] = useState(false);
+  const [showUpgradeBanner, setShowUpgradeBanner] = useState(false);
 
   useEffect(() => { track("page_view", { page: "/" }); }, []);
+
+  // Show success banner when returning from Stripe checkout
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("upgraded") === "1") {
+      setShowUpgradeBanner(true);
+      window.history.replaceState({}, "", "/");
+    }
+  }, []);
 
   const uploads = useUploads();
   const quota = useQuota();
@@ -77,6 +88,21 @@ export default function Home() {
   return (
     <>
       <Hero />
+      {showUpgradeBanner && (
+        <div className="border-b border-primary/20 bg-primary/10">
+          <Container>
+            <div className="flex items-center justify-between gap-3 py-3">
+              <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                <Sparkles className="h-4 w-4" />
+                Welcome to Pro! You now have 50 scans per day. A confirmation email is on its way.
+              </div>
+              <button onClick={() => setShowUpgradeBanner(false)} className="text-primary/60 hover:text-primary">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </Container>
+        </div>
+      )}
       <section id="upload" className="py-12">
         <Container>
           <div className="grid gap-8 lg:grid-cols-[1fr,420px]">
