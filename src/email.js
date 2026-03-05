@@ -22,7 +22,7 @@ function baseTemplate(content) {
 <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="max-width:520px;background-color:#161616;border-radius:16px;border:1px solid #262626;overflow:hidden;">
 
 <tr><td style="padding:36px 0 28px;text-align:center;">
-  <span style="font-size:32px;font-weight:700;color:#f97316;letter-spacing:-0.5px;">🍄 Orangutany</span>
+  <span style="font-size:32px;font-weight:700;color:#f97316;letter-spacing:-0.5px;">Orangutany</span>
 </td></tr>
 
 <tr><td style="padding:0 44px;">
@@ -77,7 +77,7 @@ async function sendWelcomeEmail(to, name) {
   `);
 
   try {
-    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Welcome to Orangutany 🍄', html });
+    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Welcome to Orangutany', html });
     console.log(`[email] Welcome sent to ${to} — id: ${result?.data?.id || 'unknown'}`);
   } catch (err) {
     console.error(`[email] Failed to send welcome to ${to}:`, err.message, err.statusCode || '');
