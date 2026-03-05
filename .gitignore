@@ -1,4 +1,5 @@
 .env
+.env.production
 .DS_Store
 node_modules
 npm-debug.log*
@@ -8,5 +9,5 @@ data/*.db
 data/*.db-*
 tests/screenshots/*.png
 tests/screenshots/FAIL-*.png
-auth
-auth-wal
+/auth
+/auth-wal
