@@ -7,6 +7,8 @@
 | **Unit** | `tests/unit.test.js` | Every PR, pre-commit | None |
 | **Sanity** | `tests/sanity.test.js` | Every deploy / after major change | None |
 | **Functional** | `tests/e2e.test.js` | Before releases, after infra changes | `TEST_ADMIN_EMAIL`, `TEST_ADMIN_PASSWORD`, `TEST_USER_EMAIL`, `TEST_USER_PASSWORD` |
+| **UI** | `tests/ui.test.js` | After UI changes, before releases | None (admin/user creds for full coverage) |
+
 
 ---
 
@@ -30,7 +32,9 @@ node --test tests/e2e.test.js
 npm test                      # runs unit only (CI default)
 npm run test:sanity           # sanity check against production
 npm run test:e2e              # full functional (set env vars first)
-npm run test:all              # unit + sanity + functional
+npm run test:ui               # UI browser tests (Playwright, headless Chromium)
+npm run test:all              # unit + sanity + functional + UI
+
 ```
 
 Against a local or staging server:
@@ -56,6 +60,18 @@ TEST_BASE_URL=http://localhost:3001 node --test tests/sanity.test.js
 - Google auth enabled
 - Core pages load: `/`, `/learn`, `/about`
 - `/healthz` responds
+
+### UI (`tests/ui.test.js`) — run after UI changes
+- Real browser (headless Chromium via Playwright)
+- Screenshots saved to `tests/screenshots/` — FAIL-*.png on failures
+- Homepage: title, "Identify wild mushrooms from photos" headline, upload area, Analyze Photos button disabled, "X of 3 free scans remaining" quota
+- Auth modal: Log in / Sign Up Free buttons, Google sign-in button, wrong-password error
+- Pages: forgot-password, about, learn (≥3 articles), privacy, terms
+- Mobile (390px): no horizontal overflow, Analyze button tappable (≥36px height)
+- Admin dashboard: stat cards visible, totalUsers ≥ 1 (requires credentials)
+- 404: not blank, stays on-site
+- Link integrity: all internal links return < 400
+
 
 ### Functional (`tests/e2e.test.js`) — run when needed
 Everything in Sanity plus:
@@ -114,6 +130,8 @@ Run this before any major migration or schema change.
 - [ ] `npm run check` passes (syntax validation)
 - [ ] `node --test tests/unit.test.js` passes
 - [ ] `node --test tests/sanity.test.js` passes (after deploy)
+- [ ] `node --test tests/ui.test.js` passes (after UI changes)
+
 - [ ] No `better-sqlite3` imports introduced
 - [ ] All `getAuthContext()` calls have `await`
 - [ ] `render.yaml` plan still `free`
