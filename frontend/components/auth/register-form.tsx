@@ -38,6 +38,13 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void } = {}) {
 
     setLoading(true);
     try {
+      // Include honeypot field if filled (bots only)
+      const honeypot = (document.querySelector('input[name="website"]') as HTMLInputElement)?.value;
+      if (honeypot) {
+        // Bot detected — pretend success
+        if (onSuccess) onSuccess();
+        return;
+      }
       await register(name, email, password);
       if (onSuccess) onSuccess();
       else window.location.href = "/";
@@ -54,6 +61,8 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void } = {}) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
+      {/* Honeypot — hidden from real users, bots fill it */}
+      <input type="text" name="website" tabIndex={-1} autoComplete="off" className="absolute -left-[9999px] h-0 w-0 opacity-0" aria-hidden="true" />
       <div className="space-y-2">
         <Label htmlFor="reg-name">Name</Label>
         <Input

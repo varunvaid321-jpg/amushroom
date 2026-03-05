@@ -230,6 +230,13 @@ const CONTENT_TYPES = {
 
 const identifyRateLimitStore = new Map();
 const authRateLimitStore = new Map();
+const globalRateLimitStore = new Map();
+const loginFailStore = new Map(); // track failed login attempts per email
+
+const GLOBAL_RATE_LIMIT_WINDOW_MS = 60_000;
+const GLOBAL_RATE_LIMIT_MAX = 120; // 120 requests/min per IP
+const LOGIN_LOCKOUT_ATTEMPTS = 5;
+const LOGIN_LOCKOUT_WINDOW_MS = 15 * 60_000; // 15 min lockout after 5 failures
 
 // Track DB init state for /api/ping diagnostic endpoint
 let dbInitialized = false;
@@ -378,6 +385,22 @@ function requireSameOrigin(req, res) {
   if (isSameOriginOrNoOrigin(req)) return true;
   jsonError(req, res, 403, 'Blocked by origin policy.');
   return false;
+}
+
+function recordLoginFailure(key) {
+  const now = Date.now();
+  const entry = loginFailStore.get(key);
+  if (!entry || now >= entry.resetAt) {
+    loginFailStore.set(key, { count: 1, resetAt: now + LOGIN_LOCKOUT_WINDOW_MS });
+  } else {
+    entry.count += 1;
+  }
+  // Cleanup old entries
+  if (loginFailStore.size > 5000) {
+    for (const [k, v] of loginFailStore.entries()) {
+      if (now >= v.resetAt) loginFailStore.delete(k);
+    }
+  }
 }
 
 function enforceRouteRateLimit(req, res, store, windowMs, maxRequests, message) {
@@ -888,6 +911,12 @@ async function handleAuthRegister(req, res) {
     return;
   }
 
+  // Honeypot: bots fill hidden fields — reject silently
+  if (body.website || body.url || body.phone_confirm) {
+    sendJson(req, res, 200, { user: { id: 0, email: '', name: '' } }); // fake success
+    return;
+  }
+
   const email = normalizeEmail(body.email);
   const password = String(body.password || '');
   const name = String(body.name || '').trim();
@@ -946,17 +975,31 @@ async function handleAuthLogin(req, res) {
   const email = normalizeEmail(body.email);
   const password = String(body.password || '');
 
+  // Brute-force lockout: 5 failed attempts in 15 min = locked
+  const lockKey = email || getClientIp(req);
+  const lockEntry = loginFailStore.get(lockKey);
+  if (lockEntry && lockEntry.count >= LOGIN_LOCKOUT_ATTEMPTS && Date.now() < lockEntry.resetAt) {
+    const retryAfter = Math.ceil((lockEntry.resetAt - Date.now()) / 1000);
+    sendJson(req, res, 429, { error: 'Too many failed login attempts. Please try again later.' }, { 'Retry-After': String(retryAfter) });
+    return;
+  }
+
   const userRow = await findUserAuthByEmail(email);
   if (!userRow || !userRow.password_hash || !userRow.password_salt) {
+    recordLoginFailure(lockKey);
     jsonError(req, res, 401, 'Invalid email or password.');
     return;
   }
 
   const ok = verifyPassword(password, userRow.password_salt, userRow.password_hash);
   if (!ok) {
+    recordLoginFailure(lockKey);
     jsonError(req, res, 401, 'Invalid email or password.');
     return;
   }
+
+  // Clear failures on success
+  loginFailStore.delete(lockKey);
 
   const sessionId = createId();
   await createSession({
@@ -1607,6 +1650,11 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // Global rate limit — 120 req/min per IP (excludes health checks above)
+  if (!enforceRouteRateLimit(req, res, globalRateLimitStore, GLOBAL_RATE_LIMIT_WINDOW_MS, GLOBAL_RATE_LIMIT_MAX, 'Too many requests. Please slow down.')) {
+    return;
+  }
+
   if (req.method === 'GET' && url.pathname === '/api/ping') {
     sendJson(req, res, 200, {
       ok: true,
@@ -1873,7 +1921,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && url.pathname.startsWith('/api/admin/')) {
     const auth = await getAuthContext(req);
     if (!auth?.user || !isAdmin(auth.user)) {
-      jsonError(req, res, 403, 'Admin access required.');
+      jsonError(req, res, 404, 'Not found.');
       return;
     }
     const route = url.pathname.slice('/api/admin/'.length);
@@ -1958,7 +2006,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && url.pathname.startsWith('/api/admin/')) {
     const auth = await getAuthContext(req);
     if (!auth?.user || !isAdmin(auth.user)) {
-      jsonError(req, res, 403, 'Admin access required.');
+      jsonError(req, res, 404, 'Not found.');
       return;
     }
     const route = url.pathname.slice('/api/admin/'.length);
