@@ -89,7 +89,6 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <SampleResult />
       {showUpgradeBanner && (
         <div className="border-b border-primary/20 bg-primary/10">
           <Container>
@@ -105,6 +104,7 @@ export default function Home() {
           </Container>
         </div>
       )}
+      <SampleResult />
       <section id="upload" className="py-12">
         <Container>
           <div className="grid gap-8 lg:grid-cols-[1fr,420px]">
