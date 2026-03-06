@@ -30,19 +30,24 @@ export function PhotoSlots({
   disabled,
 }: PhotoSlotsProps) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-      {Array.from({ length: 5 }, (_, i) => (
-        <Slot
-          key={i}
-          index={i}
-          label={SLOT_LABELS[i]}
-          file={files[i]}
-          preview={previews[i]}
-          onAddFile={onAddFile}
-          onRemove={() => onRemoveSlot(i)}
-          disabled={disabled}
-        />
-      ))}
+    <div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        {Array.from({ length: 5 }, (_, i) => (
+          <Slot
+            key={i}
+            index={i}
+            label={SLOT_LABELS[i]}
+            file={files[i]}
+            preview={previews[i]}
+            onAddFile={onAddFile}
+            onRemove={() => onRemoveSlot(i)}
+            disabled={disabled}
+          />
+        ))}
+      </div>
+      <p className="mt-2 text-center text-xs text-muted-foreground">
+        One photo is enough — more angles improve confidence.
+      </p>
     </div>
   );
 }
