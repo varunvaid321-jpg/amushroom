@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#0e1a0e"/>
+  <!-- Symmetric mushroom-cap arch: smooth wide curve, tapers to thin points at both ends -->
+  <path d="
+    M 65 380
+    Q 100 130 256 120
+    Q 412 130 447 380
+    Q 410 160 256 148
+    Q 102 160 65 380
+    Z
+  " fill="#c8956c"/>
+</svg>
