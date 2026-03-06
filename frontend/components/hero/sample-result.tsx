@@ -58,13 +58,12 @@ export function SampleResult() {
             <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Where it&apos;s found worldwide
             </h4>
-            <div className="overflow-hidden rounded-xl bg-[#2a3a2a]">
+            <div className="relative overflow-hidden rounded-xl bg-[#2a3a2a]" style={{ aspectRatio: "2 / 1" }}>
               <Image
                 src="/images/sample-distribution-map.png"
                 alt="Global distribution map of Amanita muscaria showing recorded sightings"
-                width={1024}
-                height={1024}
-                className="w-full"
+                fill
+                className="object-contain p-4"
                 style={{ imageRendering: "pixelated" }}
               />
             </div>
