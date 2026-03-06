@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "About Orangutany",
   description:
-    "Orangutany is an AI-powered mushroom identification platform with a glocal mindset — global AI, local foraging knowledge. Learn about our mission to make mushroom education safe, free, and accessible.",
+    "Orangutany takes the guesswork out of mushroom identification. AI trained on millions of images — species matches, distribution maps, seasonality. Think global, forage local.",
   alternates: { canonical: "/about" },
 };
 
@@ -17,30 +17,34 @@ export default function AboutPage() {
             About Orangutany
           </h1>
           <p className="text-lg leading-relaxed">
-            Orangutany was born out of a deep love for mushrooms, foraging, and
-            the quiet magic of walking through the woods with your eyes on the
-            forest floor. We believe that nature&rsquo;s most fascinating kingdom
-            deserves modern tools&mdash;accessible to anyone, anywhere.
+            Orangutany takes the guesswork out of mushroom identification. Snap a
+            photo, and our AI&mdash;trained on millions of mushroom
+            images&mdash;instantly identifies the species with confidence scores,
+            edibility info, and look-alike warnings.
           </p>
 
           <div className="space-y-4">
             <h2 className="text-xl font-semibold text-foreground">
-              Why We Started Orangutany
+              What We Offer
             </h2>
             <p>
-              After years of squinting at field guides and cross-referencing blurry
-              photos on forums, our team set out to build something better. Something that could
-              look at a photo and give you a confident, well-reasoned
-              identification&mdash;with edibility info, look-alike warnings, and
-              the humility to say &ldquo;not sure&rdquo; when
-              confidence is low.
+              <strong>AI Identification</strong> &mdash; Our machine learning models are
+              trained on millions of mushroom datasets. Scan any photo and get species
+              matches with confidence scores, so you always know how certain the result is.
             </p>
             <p>
-              Orangutany is that tool. We built it for curious, self-taught,
-              cautious people who are deeply in love with the world
-              beneath the canopy. Whether you&rsquo;re a beginner picking your
-              first field mushroom or a seasoned forager chasing morels in
-              spring&mdash;wherever you are in the world&mdash;this is for you.
+              <strong>Distribution Maps</strong> &mdash; See exactly where each species
+              grows around the world. Know whether that mushroom is common in your region
+              or an unusual find.
+            </p>
+            <p>
+              <strong>Seasonality</strong> &mdash; Find out when to expect each species.
+              Plan your foraging trips around peak fruiting seasons.
+            </p>
+            <p>
+              <strong>Safety First</strong> &mdash; Edibility info, look-alike warnings,
+              and the honesty to say &ldquo;not sure&rdquo; when confidence is low.
+              Matches below 50% are flagged so you never get a false sense of certainty.
             </p>
           </div>
 
@@ -51,16 +55,15 @@ export default function AboutPage() {
             <p>
               Mushrooms don&rsquo;t respect borders. The same chanterelle
               that grows in Ontario woodlands fruits in Scandinavian forests and
-              Indian hill stations. Our identification engine is trained on species
-              from every continent, but we know that foraging is always local&mdash;shaped
-              by your climate, your soil, and the trees around you.
+              Indian hill stations. Our AI is trained on species from every continent,
+              but foraging is always local&mdash;shaped by your climate, your soil,
+              and the trees around you.
             </p>
             <p>
-              That&rsquo;s why Orangutany pairs global AI with regional
-              context: local look-alike warnings, habitat-aware suggestions, and
-              educational content that respects the diversity of ecosystems
-              worldwide. We&rsquo;re building a platform for the global foraging
-              community, one identification at a time.
+              That&rsquo;s why Orangutany pairs global machine learning with
+              local context: distribution maps that show where species grow,
+              seasonality data for your region, and educational content that
+              respects the diversity of ecosystems worldwide.
             </p>
           </div>
 
