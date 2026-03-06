@@ -103,7 +103,7 @@ export default function Home() {
           </Container>
         </div>
       )}
-      <section id="upload" className="py-12">
+      <section id="upload" className="pt-4 pb-12">
         <Container>
           <div className="grid gap-8 lg:grid-cols-[1fr,420px]">
             <div className="space-y-6">
