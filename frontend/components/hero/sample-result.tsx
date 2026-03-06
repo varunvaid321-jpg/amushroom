@@ -17,10 +17,10 @@ export function SampleResult() {
             See what you get
           </p>
           <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-foreground sm:text-4xl">
-            Real AI-powered results
+            Expert-validated results
           </h2>
           <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
-            Upload a photo. Get an instant identification in seconds.
+            Built on a world-class identification engine trained and validated by mycologists. Designed in Canada.
           </p>
         </div>
 
