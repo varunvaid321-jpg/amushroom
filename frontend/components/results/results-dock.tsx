@@ -5,7 +5,7 @@ import { Loader2, Microscope, Lock, ArrowLeft, BookOpen, CheckCircle2 } from "lu
 import type { Match, UploadGuidance, ConsistencyCheck } from "@/lib/api";
 import { ProfilePanel } from "./profile-panel";
 import { MatchCard } from "./match-card";
-import { AuthModal } from "@/components/auth/auth-modal";
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 
 interface ResultsDockProps {
@@ -37,7 +37,7 @@ export function ResultsDock({
   uploadStory,
   onSaveStory,
 }: ResultsDockProps) {
-  const [authOpen, setAuthOpen] = useState(false);
+  const { openAuthModal } = useAuth();
   const [storyText, setStoryText] = useState("");
   const [storySaved, setStorySaved] = useState(false);
   const [storySaving, setStorySaving] = useState(false);
@@ -127,12 +127,11 @@ export function ResultsDock({
             <p className="mb-4 text-sm text-muted-foreground">
               Create a free account to unlock edibility info, traits, look-alikes, and get 5 IDs per day.
             </p>
-            <Button onClick={() => setAuthOpen(true)} className="bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button onClick={() => openAuthModal("register")} className="bg-primary text-primary-foreground hover:bg-primary/90">
               Create Free Account
             </Button>
           </div>
         </div>
-        <AuthModal open={authOpen} onOpenChange={setAuthOpen} defaultTab="register" />
       </div>
     );
   }
