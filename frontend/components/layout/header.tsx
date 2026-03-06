@@ -102,13 +102,13 @@ export function Header() {
                   My Library
                 </button>
               )}
-              <Link
-                href="/learn"
+              <a
+                href="https://guide.orangutany.com"
                 onClick={() => setMenuOpen(false)}
                 className="px-3 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted/30 rounded-lg transition-colors"
               >
                 Learn About Mushrooms
-              </Link>
+              </a>
               <Link
                 href="/resources"
                 onClick={() => setMenuOpen(false)}
