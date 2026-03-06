@@ -25,6 +25,16 @@ export function SampleResult() {
         </div>
 
         <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-border/50 bg-card shadow-2xl shadow-black/20">
+          {/* Mushroom photo */}
+          <div className="relative h-56 sm:h-72">
+            <Image
+              src="/images/sample-fly-agaric.webp"
+              alt="Fly agaric mushrooms with bright red caps and white spots"
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
           {/* Name + confidence + badges */}
           <div className="flex items-start justify-between gap-4 p-6 sm:p-8">
             <div>
