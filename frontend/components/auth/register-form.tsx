@@ -63,6 +63,19 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void } = {}) {
     <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
       {/* Honeypot — hidden from real users, bots fill it */}
       <input type="text" name="website" tabIndex={-1} autoComplete="off" className="absolute -left-[9999px] h-0 w-0 opacity-0" aria-hidden="true" />
+      {googleAuthEnabled && (
+        <>
+          <GoogleButton />
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">or</span>
+            </div>
+          </div>
+        </>
+      )}
       <div className="space-y-2">
         <Label htmlFor="reg-name">Name</Label>
         <Input
@@ -139,19 +152,6 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void } = {}) {
         {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
         Create Account
       </Button>
-      {googleAuthEnabled && (
-        <>
-          <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">or</span>
-            </div>
-          </div>
-          <GoogleButton />
-        </>
-      )}
     </form>
   );
 }
