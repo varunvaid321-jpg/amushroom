@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     template: "%s | Orangutany",
   },
   description:
-    "Identify mushrooms instantly from photos. Orangutany uses AI to give you species names, confidence scores, edibility info, and look-alike warnings. Free to use.",
+    "Take the guesswork out of mushroom identification. Orangutany uses AI trained on millions of mushroom images to instantly ID species, show global distribution maps, and tell you when to expect them. Think global, forage local.",
   keywords: [
     "mushroom identifier",
     "mushroom identification app",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Orangutany | AI Mushroom Identifier",
     description:
-      "Snap a photo, get an instant mushroom ID. Free AI-powered identification with edibility info and look-alike warnings.",
+      "Take the guesswork out of mushroom ID. AI trained on millions of images — species matches, distribution maps, and seasonality. Think global, forage local.",
     url: "https://orangutany.com",
     siteName: "Orangutany",
     locale: "en_US",
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "Orangutany | AI Mushroom Identifier",
     description:
-      "Snap a photo, get an instant mushroom ID. Free AI-powered identification.",
+      "Take the guesswork out of mushroom ID. AI trained on millions of images — distribution maps and seasonality included.",
     images: ["/images/appicon.png"],
   },
   robots: {
@@ -93,7 +93,7 @@ export default function RootLayout({
                     height: 512,
                   },
                   description:
-                    "AI-powered mushroom identification platform with free educational resources on fungi, foraging safety, and ecology.",
+                    "AI-powered mushroom identification — trained on millions of images. Species matches, global distribution maps, seasonality, and educational resources. Think global, forage local.",
                   sameAs: [],
                   contactPoint: {
                     "@type": "ContactPoint",
@@ -110,7 +110,7 @@ export default function RootLayout({
                     "@id": "https://orangutany.com/#organization",
                   },
                   description:
-                    "Identify mushrooms instantly from photos. Free AI-powered identification with edibility info, look-alike warnings, and educational guides.",
+                    "Take the guesswork out of mushroom identification. AI trained on millions of images — species matches, distribution maps, seasonality, and free educational guides.",
                   potentialAction: {
                     "@type": "SearchAction",
                     target: "https://orangutany.com/learn?q={search_term_string}",
