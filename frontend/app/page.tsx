@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Hero } from "@/components/hero/hero";
-import { SampleResult } from "@/components/hero/sample-result";
 import { track } from "@/lib/track";
 import { PhotoSlots } from "@/components/upload/photo-slots";
 import { UploadPanel } from "@/components/upload/upload-panel";
@@ -104,7 +103,6 @@ export default function Home() {
           </Container>
         </div>
       )}
-      <SampleResult />
       <section id="upload" className="py-12">
         <Container>
           <div className="grid gap-8 lg:grid-cols-[1fr,420px]">
