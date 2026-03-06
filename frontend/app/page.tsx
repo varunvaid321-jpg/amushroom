@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Hero } from "@/components/hero/hero";
+import { SampleResult } from "@/components/hero/sample-result";
 import { track } from "@/lib/track";
 import { PhotoSlots } from "@/components/upload/photo-slots";
 import { UploadPanel } from "@/components/upload/upload-panel";
@@ -88,6 +89,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <SampleResult />
       {showUpgradeBanner && (
         <div className="border-b border-primary/20 bg-primary/10">
           <Container>
