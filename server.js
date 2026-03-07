@@ -1548,10 +1548,11 @@ async function handleIdentify(req, res) {
           }).catch(() => {});
         }
       }
+      const isPro = tier === 'pro' || tier === 'pro_lifetime';
       sendJson(req, res, 403, {
-        error: `You've reached your daily limit of ${quota.limit} scans. Come back tomorrow${tier === 'free' ? ' or upgrade to Pro' : ''}.`,
+        error: isPro ? 'Please try again later.' : `You've reached your daily scan limit. Come back tomorrow or upgrade to Pro.`,
         quota_exceeded: true,
-        quota: quotaInfo
+        quota: isPro ? { tier, used: quota.used, limit: null, resetsAt: quota.resetsAt } : quotaInfo
       });
       return;
     }

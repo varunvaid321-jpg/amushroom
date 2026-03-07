@@ -6,7 +6,7 @@ import { Container } from "@/components/layout/container";
 import { Zap, Shield, Check, Sparkles, Crown, Loader2 } from "lucide-react";
 
 const BENEFITS = [
-  { icon: Sparkles, title: "Scan to your heart's content", desc: "No more daily limits" },
+  { icon: Sparkles, title: "Scan to your heart's content", desc: "Identify as much as you want" },
   { icon: Zap, title: "Instant AI identification", desc: "Powered by millions of verified observations" },
   { icon: Shield, title: "Full edibility & look-alike details", desc: "Every match with complete safety data" },
   { icon: Check, title: "Priority support", desc: "Get help when you need it" },
@@ -59,7 +59,7 @@ export default function UpgradePage() {
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Upgrade to Pro</h1>
         <p className="mt-2 text-muted-foreground max-w-md mx-auto">
-          Never worry about scan limits again. Get the full identification experience.
+          Get the full mushroom identification experience.
         </p>
       </div>
 
