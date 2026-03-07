@@ -53,7 +53,7 @@ export function Header() {
             />
           </Link>
           <a
-            href={user ? `https://guide.orangutany.com/mushrooms?user=${encodeURIComponent(user.name || user.email)}` : "https://guide.orangutany.com/mushrooms"}
+            href="https://guide.orangutany.com/mushrooms"
             className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-muted/40 px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
           >
             <BookOpen className="h-3.5 w-3.5" />
@@ -139,7 +139,7 @@ export function Header() {
                 </button>
               )}
               <a
-                href={user ? `https://guide.orangutany.com/mushrooms?user=${encodeURIComponent(user.name || user.email)}` : "https://guide.orangutany.com/mushrooms"}
+                href="https://guide.orangutany.com/mushrooms"
                 onClick={() => setMenuOpen(false)}
                 className="px-3 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted/30 rounded-lg transition-colors"
               >
