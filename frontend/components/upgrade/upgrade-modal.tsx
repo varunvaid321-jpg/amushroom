@@ -1,10 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { Sparkles, Zap, Shield, Infinity, Loader2, X, Check } from "lucide-react";
-import { createCheckoutSession } from "@/lib/api";
 import { useUpgrade } from "@/hooks/use-upgrade";
-import { track } from "@/lib/track";
 
 const BENEFITS = [
   { icon: Infinity, text: "Unlimited mushroom scans" },
@@ -14,7 +11,26 @@ const BENEFITS = [
 ];
 
 export function UpgradeModal() {
-  const { upgradeOpen, closeUpgrade } = useUpgrade();
+  const { upgradeOpen, closeUpgrade, startCheckout, checkoutLoading, redirectMessage, cancelPending } = useUpgrade();
+
+  // Show redirect confirmation when going to Stripe after login
+  if (redirectMessage) {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+        <div className="relative mx-4 w-full max-w-sm rounded-2xl border border-border bg-background p-6 shadow-xl text-center">
+          <Loader2 className="mx-auto mb-3 h-6 w-6 animate-spin text-primary" />
+          <p className="text-sm font-medium text-foreground">{redirectMessage}</p>
+          <button
+            onClick={cancelPending}
+            className="mt-4 text-xs text-muted-foreground hover:text-foreground"
+          >
+            Cancel and stay here
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (!upgradeOpen) return null;
 
@@ -53,8 +69,21 @@ export function UpgradeModal() {
         </ul>
 
         <div className="flex flex-col gap-3 sm:flex-row">
-          <PlanButton plan="lifetime" label="$49.99" sublabel="one time" primary />
-          <PlanButton plan="monthly" label="$7.99" sublabel="per month" />
+          <PlanButton
+            plan="lifetime"
+            label="$49.99"
+            sublabel="one time"
+            primary
+            onClick={startCheckout}
+            loading={checkoutLoading}
+          />
+          <PlanButton
+            plan="monthly"
+            label="$7.99"
+            sublabel="per month"
+            onClick={startCheckout}
+            loading={checkoutLoading}
+          />
         </div>
 
         <p className="mt-4 text-center text-[11px] text-muted-foreground/60">
@@ -70,14 +99,16 @@ function PlanButton({
   label,
   sublabel,
   primary,
+  onClick,
+  loading,
 }: {
   plan: "monthly" | "lifetime";
   label: string;
   sublabel: string;
   primary?: boolean;
+  onClick: (plan: "monthly" | "lifetime") => void;
+  loading: boolean;
 }) {
-  const [loading, setLoading] = useState(false);
-
   return (
     <button
       disabled={loading}
@@ -86,16 +117,7 @@ function PlanButton({
           ? "bg-primary text-primary-foreground hover:bg-primary/90"
           : "border border-primary/30 text-primary hover:bg-primary/10"
       } disabled:opacity-50`}
-      onClick={async () => {
-        setLoading(true);
-        track("button_click", { button: "upgrade", plan });
-        try {
-          const { url } = await createCheckoutSession(plan);
-          window.location.href = url;
-        } catch {
-          setLoading(false);
-        }
-      }}
+      onClick={() => onClick(plan)}
     >
       {loading ? (
         <Loader2 className="h-4 w-4 animate-spin" />

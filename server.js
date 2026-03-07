@@ -1867,6 +1867,9 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'POST' && url.pathname === '/api/stripe/create-checkout-session') {
     if (!requireSameOrigin(req, res)) return;
+    let body;
+    try { body = await parseBody(req, 4 * 1024); } catch { jsonError(req, res, 400, 'Bad request.'); return; }
+    req.body = body;
     await handleStripeCheckout(req, res);
     return;
   }

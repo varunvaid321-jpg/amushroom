@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Search, RotateCcw, Loader2, Sparkles, Zap, Shield, Infinity } from "lucide-react";
-import { createCheckoutSession } from "@/lib/api";
 import { useUpgrade } from "@/hooks/use-upgrade";
 
 interface UploadPanelProps {
@@ -109,6 +108,7 @@ export function UploadPanel({
 }
 
 function UpgradeCard() {
+  const { startCheckout, checkoutLoading } = useUpgrade();
   return (
     <div className="mx-auto max-w-sm rounded-xl border border-primary/30 bg-primary/5 p-5">
       <div className="mb-3 flex items-center justify-center gap-2">
@@ -124,42 +124,22 @@ function UpgradeCard() {
         <span className="flex items-center gap-1"><Shield className="h-3.5 w-3.5 text-primary" /> Priority support</span>
       </div>
       <div className="flex flex-col gap-2 sm:flex-row">
-        <UpgradeButton plan="lifetime" label="$49.99" sublabel="one time" primary />
-        <UpgradeButton plan="monthly" label="$7.99" sublabel="per month" />
+        <button
+          disabled={checkoutLoading}
+          onClick={() => startCheckout("lifetime")}
+          className="flex flex-1 flex-col items-center gap-0.5 rounded-lg px-4 py-3 text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+        >
+          {checkoutLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <><span className="text-base">$49.99</span><span className="text-[11px] font-normal text-primary-foreground/70">one time</span></>}
+        </button>
+        <button
+          disabled={checkoutLoading}
+          onClick={() => startCheckout("monthly")}
+          className="flex flex-1 flex-col items-center gap-0.5 rounded-lg px-4 py-3 text-sm font-semibold border border-primary/30 text-primary hover:bg-primary/10 disabled:opacity-50"
+        >
+          {checkoutLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <><span className="text-base">$7.99</span><span className="text-[11px] font-normal text-muted-foreground">per month</span></>}
+        </button>
       </div>
       <p className="mt-3 text-center text-[11px] text-muted-foreground/60">Cancel monthly anytime. Lifetime is forever.</p>
     </div>
-  );
-}
-
-function UpgradeButton({ plan, label, sublabel, primary }: { plan: "monthly" | "lifetime"; label: string; sublabel: string; primary?: boolean }) {
-  const [loading, setLoading] = useState(false);
-  return (
-    <button
-      disabled={loading}
-      className={`flex flex-1 flex-col items-center gap-0.5 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
-        primary
-          ? "bg-primary text-primary-foreground hover:bg-primary/90"
-          : "border border-primary/30 text-primary hover:bg-primary/10"
-      } disabled:opacity-50`}
-      onClick={async () => {
-        setLoading(true);
-        try {
-          const { url } = await createCheckoutSession(plan);
-          window.location.href = url;
-        } catch {
-          setLoading(false);
-        }
-      }}
-    >
-      {loading ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
-      ) : (
-        <>
-          <span className="text-base">{label}</span>
-          <span className={`text-[11px] font-normal ${primary ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{sublabel}</span>
-        </>
-      )}
-    </button>
   );
 }
