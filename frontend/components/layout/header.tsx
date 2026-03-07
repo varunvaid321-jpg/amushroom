@@ -102,14 +102,6 @@ export function Header() {
               >
                 Identify a Mushroom
               </button>
-              {user && (
-                <button
-                  onClick={() => navTo("library")}
-                  className="w-full text-left px-3 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted/30 rounded-lg transition-colors"
-                >
-                  My Library
-                </button>
-              )}
               <a
                 href={user ? `https://guide.orangutany.com/mushrooms?user=${encodeURIComponent(user.name || user.email)}` : "https://guide.orangutany.com/mushrooms"}
                 onClick={() => setMenuOpen(false)}
@@ -117,6 +109,14 @@ export function Header() {
               >
                 Learn About Mushrooms
               </a>
+              {user && (
+                <button
+                  onClick={() => navTo("library")}
+                  className="w-full text-left px-3 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted/30 rounded-lg transition-colors"
+                >
+                  My Identifications
+                </button>
+              )}
               <Link
                 href="/resources"
                 onClick={() => setMenuOpen(false)}
