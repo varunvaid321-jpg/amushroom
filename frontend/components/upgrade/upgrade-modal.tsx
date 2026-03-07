@@ -1,7 +1,8 @@
 "use client";
 
-import { Sparkles, Zap, Shield, Infinity, Loader2, X, Check } from "lucide-react";
+import { Sparkles, Zap, Shield, Infinity, Loader2, X, Check, Crown } from "lucide-react";
 import { useUpgrade } from "@/hooks/use-upgrade";
+import { useAuth } from "@/hooks/use-auth";
 
 const BENEFITS = [
   { icon: Infinity, text: "Unlimited mushroom scans" },
@@ -12,6 +13,8 @@ const BENEFITS = [
 
 export function UpgradeModal() {
   const { upgradeOpen, closeUpgrade, startCheckout, checkoutLoading, redirectMessage, cancelPending } = useUpgrade();
+  const { user } = useAuth();
+  const isPro = user?.tier === "pro" || user?.tier === "pro_lifetime";
 
   // Show redirect confirmation when going to Stripe after login
   if (redirectMessage) {
@@ -33,6 +36,33 @@ export function UpgradeModal() {
   }
 
   if (!upgradeOpen) return null;
+
+  // Already Pro — show confirmation
+  if (isPro) {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeUpgrade} />
+        <div className="relative mx-4 w-full max-w-sm rounded-2xl border border-border bg-background p-6 shadow-xl text-center">
+          <button onClick={closeUpgrade} className="absolute right-4 top-4 text-muted-foreground hover:text-foreground" aria-label="Close">
+            <X className="h-5 w-5" />
+          </button>
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/15">
+            <Crown className="h-6 w-6 text-primary" />
+          </div>
+          <h2 className="text-lg font-bold text-foreground">You&apos;re already a Pro member!</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            You have unlimited scans. Keep identifying mushrooms to your heart&apos;s content.
+          </p>
+          <button
+            onClick={closeUpgrade}
+            className="mt-5 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+          >
+            Got it
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center">
