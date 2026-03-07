@@ -487,8 +487,8 @@ async function getUserUploadDetail(userId, uploadId) {
       scientificName: row.scientific_name || 'Unknown species',
       commonName: row.common_name || row.scientific_name || 'Unknown species',
       score: row.confidence !== null ? Number(row.confidence) : 0,
-      edible: row.edibility || 'Unknown',
-      psychedelic: row.psychedelic || 'Unknown',
+      edible: row.edibility || 'Edibility Unknown',
+      psychedelic: row.psychedelic || 'Psychoactivity Unknown',
       traits: [],
       whyMatch: [],
       caution: 'Do not consume without local expert verification.'

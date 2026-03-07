@@ -60,7 +60,7 @@ export function MatchCard({ match, rank }: MatchCardProps) {
                 ) : null}
                 {match.edible}
               </Badge>
-              {match.psychedelic !== "Unknown" && (
+              {match.psychedelic !== "Unknown" && match.psychedelic !== "Psychoactivity Unknown" && (
                 <Badge variant={chipVariant(match.psychedelic)} className="text-xs">
                   Psychoactive: {match.psychedelic}
                 </Badge>

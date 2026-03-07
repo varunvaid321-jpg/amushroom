@@ -64,7 +64,7 @@ export function ProfilePanel({
             ) : null}
             {match.edible}
           </Badge>
-          {match.psychedelic !== "Unknown" && (
+          {match.psychedelic !== "Unknown" && match.psychedelic !== "Psychoactivity Unknown" && (
             <Badge variant={chipVariant(match.psychedelic)}>
               Psychoactive: {match.psychedelic}
             </Badge>
