@@ -5,6 +5,7 @@ export interface User {
   emailVerified: boolean;
   tier: string;
   membershipStartedAt: string | null;
+  membershipExpiresAt: string | null;
   hasStripeCustomer: boolean;
   createdAt: string;
   updatedAt: string;

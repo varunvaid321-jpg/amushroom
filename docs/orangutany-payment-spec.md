@@ -1,26 +1,29 @@
 # Orangutany Payment & Membership System Specification
 
-**Version**: 1.0
+**Version**: 2.0 (Updated March 7 2026)
 **Status**: Mandatory Reference Document
 
 All payment-related code must follow this document.
 
-## Current State (Audited March 7 2026)
+## Current State (All Implemented)
 
-The system ALREADY correctly implements:
-- Stripe Checkout Sessions (NOT payment links)
-- Auth guard before checkout (`getAuthContext()` on checkout route)
-- User ID passed in Stripe session metadata
-- Webhook-based membership activation
-- Billing portal route (`/api/stripe/portal-session`)
-
-**There are zero Stripe payment links in the codebase.**
+- Stripe Checkout Sessions (NOT payment links) -- zero payment links in codebase
+- Auth guard before checkout (`getAuthContext()`)
+- User ID in Stripe session metadata
+- Webhook-based membership activation (returns 500 on errors so Stripe retries)
+- Monthly subscription auto-cancelled on lifetime upgrade (PR #80)
+- Pending upgrade plan persisted in sessionStorage (survives Google OAuth redirect)
+- Immutable audit log (signup, login, tier change, payment events)
+- Membership badge in header (green = Pro, purple = Lifetime)
+- Dedicated `/upgrade` page with benefits + plan cards
+- `/account/billing` dashboard (membership info, Stripe portal, upgrade path)
+- Admin alert when pro user hits daily cap
+- Logout refreshes to homepage (clears stale state)
 
 ## 1. Core Principle
 
 A user must be authenticated before any payment begins.
 
-Correct workflow:
 ```
 anonymous -> login/signup -> stripe checkout session -> webhook -> membership activated
 ```
@@ -35,110 +38,145 @@ Stripe only processes payments. Orangutany database stores membership state.
 | Pro Monthly | `pro` | $7.99/mo | subscription |
 | Pro Lifetime | `pro_lifetime` | $49.99 | one-time payment |
 
-Database column: `users.tier`
+Database columns:
+- `users.tier` -- membership state
+- `stripe_customer_id` -- Stripe customer
+- `stripe_subscription_id` -- active subscription (NULL for lifetime)
+- `membership_started_at` -- set on first upgrade, never overwritten (COALESCE)
 
-Additional columns:
-- `stripe_customer_id`
-- `stripe_subscription_id`
-- `membership_started_at` (TODO: add)
-- `membership_expires_at` (TODO: add)
-
-## 3. Scan Limits (BY DESIGN - DO NOT CHANGE)
+## 3. Scan Limits (INTERNAL -- NEVER SHOW TO USERS)
 
 | Tier | Daily Limit | Rationale |
 |------|-------------|-----------|
 | Anonymous | 3 total (by IP) | Conversion funnel |
 | Free | 5/day | Conversion funnel |
-| Pro / Pro Lifetime | **50/day** | **Fraud prevention** |
+| Pro / Pro Lifetime | 50/day | Fraud prevention |
 
-The 50/day Pro cap is intentional. It prevents a single compromised account from depleting all Kindwise API credits. This cap is linked to abuse detection in the admin dashboard. An admin alert should fire when any account hits this cap.
-
-**NEVER change Pro to "unlimited".**
+**CRITICAL RULES:**
+- The 50/day Pro cap is silent fraud protection. Users must NEVER see this number.
+- No UI text may reference "50 scans", "unlimited scans", or any Pro scan count.
+- When a Pro user hits 50/day, the analyze button silently disables until next day. No error message, no explanation.
+- Free/anonymous users see their remaining count (e.g. "3 of 5 daily scans remaining") but Pro users see nothing.
+- Admin alert fires when any Pro account hits the cap.
 
 ## 4. Authentication Requirement
 
-All upgrade attempts must verify authentication first.
+All upgrade attempts verify authentication first.
 
-Implementation: `getAuthContext()` in server.js (already correct)
+Server: `getAuthContext()` returns 401 if not authenticated.
 
-Frontend: `useUpgrade` hook stores pending plan in ref, opens auth modal, auto-triggers checkout after login (already correct)
+Frontend: `useUpgrade` hook flow:
+1. User clicks upgrade
+2. If not logged in: store plan in `sessionStorage` + open auth modal
+3. After login: `useEffect` detects user + pending plan -> auto-triggers `doCheckout`
+4. Google OAuth: sessionStorage survives the redirect, ref would not
 
 ## 5. Upgrade Entry Points
 
-Upgrade buttons exist in:
-- Header badge (desktop)
-- Hamburger menu
-- Quota remaining display
-- Free user blocked (daily limit hit)
-- Anonymous blocked (all scans used)
-- Results nudge
-- Results soft wall
+All route through `useUpgrade` hook:
+- Header "Upgrade" badge (for free logged-in users)
+- Hamburger menu "Upgrade to Pro"
+- Quota remaining display "Go Pro" link
+- Free user daily limit hit -> UpgradeCard with plan buttons
+- Anonymous all scans used -> sign up prompt + "or Upgrade to Pro"
+- Results dock nudge "Enjoying Orangutany? Upgrade to Pro"
 
-All route through `useUpgrade` hook -> `openUpgrade()` or `startCheckout()`.
-
-## 6. Stripe Checkout Flow (Already Implemented)
+## 6. Stripe Checkout Flow
 
 ```
 POST /api/stripe/create-checkout-session
-  -> verify auth (getAuthContext)
-  -> create/find Stripe customer
-  -> create checkout session with user_id in metadata
+  -> verify auth (getAuthContext, 401 if not)
+  -> create/find Stripe customer (reuse if exists)
+  -> create checkout session with userId + plan in metadata
   -> return session URL
-  -> redirect to Stripe
+  -> frontend redirects to Stripe
+  -> after payment: redirect to /?upgraded=1
 ```
 
-## 7. Webhook (Already Implemented)
+## 7. Webhook
 
 Endpoint: `POST /api/stripe/webhook`
 
-Events handled:
-- `checkout.session.completed` -> activate membership
-- `invoice.payment_succeeded` -> record payment
-- `customer.subscription.deleted` -> downgrade to free
+Signature verified via `stripe.webhooks.constructEvent`.
 
-## 8. What's Missing (Implementation TODO)
+Events:
+- `checkout.session.completed` -> activate membership, create payment record, write audit log, send upgrade email. If lifetime: cancel existing monthly subscription first.
+- `invoice.payment_succeeded` -> create payment record, write audit log
+- `customer.subscription.deleted` / `customer.subscription.updated` -> downgrade to free if status not active/trialing
 
-### 8.1 Dedicated `/upgrade` page
-Conversion screen with benefits + plan cards before Stripe redirect.
-Currently only a modal.
+**Error handling**: Returns 500 on application errors so Stripe retries (up to 3 days).
 
-### 8.2 `/account/billing` page
-- View membership type
-- View billing history
-- Cancel monthly plan (via Stripe billing portal - route exists, UI missing)
-- Upgrade monthly -> lifetime
+## 8. UI Rules
 
-### 8.3 Membership badge in header
-Show visible badge: Pro Member / Pro Lifetime / Free User
-Currently just hides the upgrade button for pro users.
+### Pro users see:
+- Membership badge in header (green "Pro" or purple "Lifetime") linking to /account/billing
+- No scan count, no quota display, no upgrade prompts
 
-### 8.4 Monthly -> Lifetime upgrade path
-Cancel existing subscription + create lifetime checkout.
-No UI for this currently.
+### Free users see:
+- "X of 5 daily scans remaining" with "Go Pro" link
+- When blocked: UpgradeCard with plan buttons
+- Upgrade nudge after results
 
-### 8.5 `membership_started_at` column
-Add to users table, set on webhook activation.
+### Anonymous users see:
+- "X of 3 free scans remaining" with "Go Pro" link
+- When blocked: sign up prompt + upgrade option
+- Soft wall on results (locked edibility info)
 
-### 8.6 Admin alert for Pro cap hit
-When any account reaches 50 scans/day, trigger alert in admin dashboard.
+### After upgrade:
+- Welcome banner: "Welcome to Pro! A confirmation email is on its way."
+- All upgrade prompts disappear
+- Membership badge appears in header
 
-## 9. Guardrails
+## 9. Monthly to Lifetime Upgrade
+
+Flow:
+1. Billing page shows "Upgrade to Lifetime ($49.99)" for monthly users
+2. Calls `startCheckout("lifetime")` -> creates new checkout session
+3. Webhook receives `checkout.session.completed` with plan=lifetime
+4. Server cancels existing monthly subscription via `stripe.subscriptions.cancel()`
+5. Sets tier to `pro_lifetime`, subscription_id to NULL
+
+## 10. Billing Dashboard (`/account/billing`)
+
+Shows:
+- Membership type and badge
+- Member since date
+- Plan price
+- Monthly users: "Manage Subscription" (Stripe portal) + "Upgrade to Lifetime"
+- Lifetime users: "View Receipts" (Stripe portal)
+- Free users: "Upgrade to Pro" link
+
+Portal return URL: `/account/billing`
+
+## 11. Audit Log
+
+Table: `audit_log` (immutable, 3-year minimum retention)
+- INSERT-only. No DELETE or UPDATE functions exist.
+- Events: `signup`, `login`, `tier_change`, `payment`
+- Fields: event_type, user_id, user_email, details (JSON), ip, created_at
+
+## 12. Guardrails
 
 1. Never start Stripe checkout without authentication
 2. Never change membership without webhook confirmation
-3. Frontend must always read membership from API (never assume)
-4. Payment success page must verify membership before rendering
-5. All upgrade buttons route through `useUpgrade` hook
-6. No Stripe payment links - ever
-7. Pro 50/day cap is fraud prevention - never remove
+3. Frontend reads membership from API (never assumes)
+4. All upgrade buttons route through `useUpgrade` hook
+5. No Stripe payment links -- ever
+6. Pro scan cap is silent -- never show the number to users
+7. Webhook returns 500 on errors (Stripe retries)
+8. Monthly sub cancelled before lifetime activation
+9. Pending plan survives OAuth redirect via sessionStorage
+10. Audit log is immutable -- no delete path exists
 
-## 10. Testing Checklist
+## 13. Testing Checklist
 
 - [ ] Anonymous upgrade attempt -> login required
 - [ ] Monthly payment -> tier = `pro`
 - [ ] Lifetime purchase -> tier = `pro_lifetime`
-- [ ] Monthly -> lifetime upgrade -> subscription cancelled, tier changed
+- [ ] Monthly -> lifetime -> old subscription cancelled, tier changed
 - [ ] Free user -> blocked after 5 scans
-- [ ] Pro user -> allowed up to 50/day, blocked after
-- [ ] Membership badge visible in header
-- [ ] Admin alert when pro user hits 50/day cap
+- [ ] Pro user -> silently blocked after daily cap, no message shown
+- [ ] Membership badge visible in header for Pro/Lifetime
+- [ ] No "50 scans" or "unlimited" text anywhere in UI
+- [ ] Admin alert when pro user hits daily cap
+- [ ] Google OAuth -> upgrade intent preserved across redirect
