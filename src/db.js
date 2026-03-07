@@ -196,7 +196,8 @@ const dbReady = (async () => {
     "ALTER TABLE users ADD COLUMN stripe_customer_id TEXT",
     "ALTER TABLE users ADD COLUMN stripe_subscription_id TEXT",
     "ALTER TABLE users ADD COLUMN suspended INTEGER NOT NULL DEFAULT 0",
-    "ALTER TABLE users ADD COLUMN membership_started_at TEXT"
+    "ALTER TABLE users ADD COLUMN membership_started_at TEXT",
+    "ALTER TABLE users ADD COLUMN membership_expires_at TEXT"
   ];
   for (const sql of migrations) {
     try { await client.execute(sql); } catch { /* column already exists */ }
@@ -221,6 +222,7 @@ function rowToUser(row) {
     stripe_subscription_id: row.stripe_subscription_id || null,
     suspended: Number(row.suspended || 0),
     membership_started_at: row.membership_started_at || null,
+    membership_expires_at: row.membership_expires_at || null,
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };
@@ -228,7 +230,7 @@ function rowToUser(row) {
 
 async function getPublicUser(id) {
   const result = await client.execute({
-    sql: 'SELECT id, email, name, email_verified, tier, scans_today, scans_today_date, stripe_customer_id, stripe_subscription_id, membership_started_at, created_at, updated_at FROM users WHERE id = ?',
+    sql: 'SELECT id, email, name, email_verified, tier, scans_today, scans_today_date, stripe_customer_id, stripe_subscription_id, membership_started_at, membership_expires_at, created_at, updated_at FROM users WHERE id = ?',
     args: [Number(id)]
   });
   const row = result.rows[0];
@@ -310,6 +312,7 @@ async function getSessionWithUser(sessionId) {
       u.scans_today_date,
       u.stripe_customer_id,
       u.membership_started_at,
+      u.membership_expires_at,
       u.created_at,
       u.updated_at
     FROM sessions s
@@ -873,10 +876,10 @@ async function setUserStripeCustomer(userId, stripeCustomerId) {
   });
 }
 
-async function setUserSubscription(userId, stripeSubscriptionId, tier) {
+async function setUserSubscription(userId, stripeSubscriptionId, tier, expiresAt) {
   await client.execute({
-    sql: 'UPDATE users SET stripe_subscription_id = ?, tier = ?, membership_started_at = COALESCE(membership_started_at, ?), updated_at = ? WHERE id = ?',
-    args: [stripeSubscriptionId, tier, nowIso(), nowIso(), Number(userId)]
+    sql: 'UPDATE users SET stripe_subscription_id = ?, tier = ?, membership_started_at = COALESCE(membership_started_at, ?), membership_expires_at = ?, updated_at = ? WHERE id = ?',
+    args: [stripeSubscriptionId, tier, nowIso(), expiresAt || null, nowIso(), Number(userId)]
   });
 }
 

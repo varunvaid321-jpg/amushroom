@@ -97,10 +97,20 @@ export default function BillingPage() {
           )}
 
           {isMonthly && (
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Plan</span>
-              <span className="text-sm text-foreground">$7.99 / month</span>
-            </div>
+            <>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Plan</span>
+                <span className="text-sm text-foreground">$7.99 / month</span>
+              </div>
+              {user.membershipExpiresAt && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Renews on</span>
+                  <span className="text-sm text-foreground">
+                    {new Date(user.membershipExpiresAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                  </span>
+                </div>
+              )}
+            </>
           )}
 
           {isLifetime && (

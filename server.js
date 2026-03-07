@@ -465,6 +465,7 @@ function toPublicUser(userRow) {
     emailVerified: Boolean(userRow.email_verified ?? userRow.emailVerified),
     tier: userRow.tier || 'free',
     membershipStartedAt: userRow.membership_started_at || null,
+    membershipExpiresAt: userRow.membership_expires_at || null,
     hasStripeCustomer: !!(userRow.stripe_customer_id),
     createdAt: userRow.created_at || userRow.createdAt,
     updatedAt: userRow.updated_at || userRow.updatedAt
@@ -1384,7 +1385,18 @@ async function handleStripeWebhook(req, res) {
           }
         }
 
-        await setUserSubscription(userId, subId, tier);
+        // For monthly subs, get period end for membership_expires_at
+        let expiresAt = null;
+        if (!isLifetime && subId && stripe) {
+          try {
+            const sub = await stripe.subscriptions.retrieve(subId);
+            if (sub.current_period_end) {
+              expiresAt = new Date(sub.current_period_end * 1000).toISOString();
+            }
+          } catch { /* non-critical */ }
+        }
+
+        await setUserSubscription(userId, subId, tier, expiresAt);
         await createPaymentRecord({
           userId,
           stripeSubscriptionId: subId,
@@ -1406,7 +1418,8 @@ async function handleStripeWebhook(req, res) {
       const user = await findUserByStripeCustomerId(String(customerId));
       if (user) {
         if (sub.status === 'active' || sub.status === 'trialing') {
-          await setUserSubscription(user.id, sub.id, 'pro');
+          const expiresAt = sub.current_period_end ? new Date(sub.current_period_end * 1000).toISOString() : null;
+          await setUserSubscription(user.id, sub.id, 'pro', expiresAt);
         } else {
           await downgradeUser(user.id);
           writeAuditLog({ eventType: 'tier_change', userId: user.id, userEmail: user.email, details: { tier: 'free', reason: 'subscription_' + sub.status } }).catch(() => {});
