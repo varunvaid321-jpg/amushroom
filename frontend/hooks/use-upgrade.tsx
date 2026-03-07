@@ -37,6 +37,14 @@ export function UpgradeProvider({ children }: { children: ReactNode }) {
   const pendingPlan = useRef<PendingAction>(null);
   const { user, openAuthModal } = useAuth();
 
+  // Restore pending plan from sessionStorage (survives Google OAuth redirect)
+  useEffect(() => {
+    const stored = sessionStorage.getItem("pendingUpgradePlan");
+    if (stored && !pendingPlan.current) {
+      pendingPlan.current = { plan: stored as "monthly" | "lifetime" };
+    }
+  }, []);
+
   const openUpgrade = useCallback(() => setUpgradeOpen(true), []);
   const closeUpgrade = useCallback(() => setUpgradeOpen(false), []);
 
@@ -59,6 +67,7 @@ export function UpgradeProvider({ children }: { children: ReactNode }) {
       track("button_click", { button: "upgrade", plan });
       if (!user) {
         pendingPlan.current = { plan };
+        sessionStorage.setItem("pendingUpgradePlan", plan);
         setUpgradeOpen(false);
         openAuthModal("register");
         return;
@@ -71,6 +80,7 @@ export function UpgradeProvider({ children }: { children: ReactNode }) {
 
   const cancelPending = useCallback(() => {
     pendingPlan.current = null;
+    sessionStorage.removeItem("pendingUpgradePlan");
     setCheckoutLoading(false);
     setRedirectMessage(null);
   }, []);
@@ -80,6 +90,7 @@ export function UpgradeProvider({ children }: { children: ReactNode }) {
     if (user && pendingPlan.current) {
       const { plan } = pendingPlan.current;
       pendingPlan.current = null;
+      sessionStorage.removeItem("pendingUpgradePlan");
       doCheckout(plan);
     }
   }, [user, doCheckout]);

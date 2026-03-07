@@ -228,7 +228,7 @@ function rowToUser(row) {
 
 async function getPublicUser(id) {
   const result = await client.execute({
-    sql: 'SELECT id, email, name, email_verified, tier, scans_today, scans_today_date, stripe_customer_id, membership_started_at, created_at, updated_at FROM users WHERE id = ?',
+    sql: 'SELECT id, email, name, email_verified, tier, scans_today, scans_today_date, stripe_customer_id, stripe_subscription_id, membership_started_at, created_at, updated_at FROM users WHERE id = ?',
     args: [Number(id)]
   });
   const row = result.rows[0];
@@ -238,6 +238,7 @@ async function getPublicUser(id) {
     email: row.email,
     name: row.name || '',
     emailVerified: Boolean(row.email_verified),
+    stripe_subscription_id: row.stripe_subscription_id || null,
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };
