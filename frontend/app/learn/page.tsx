@@ -1,6 +1,6 @@
-import { Container } from "@/components/layout/container";
-import Link from "next/link";
+import { Suspense } from "react";
 import type { Metadata } from "next";
+import { LearnContent } from "./learn-content";
 
 export const metadata: Metadata = {
   title: "Learn About Mushrooms",
@@ -75,14 +75,6 @@ const articles = [
   },
 ];
 
-const categoryColors: Record<string, string> = {
-  Basics: "bg-emerald-900/50 text-emerald-300",
-  Identification: "bg-amber-900/50 text-amber-300",
-  Ecology: "bg-cyan-900/50 text-cyan-300",
-  Safety: "bg-red-900/50 text-red-300",
-  Foraging: "bg-orange-900/50 text-orange-300",
-};
-
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
@@ -105,45 +97,14 @@ const jsonLd = {
 
 export default function LearnPage() {
   return (
-    <section className="py-16">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Container className="max-w-4xl">
-        <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-foreground">
-          Learn About Mushrooms
-        </h1>
-        <p className="mt-4 text-lg text-foreground/70">
-          Free educational guides on mushroom identification, ecology, and
-          foraging safety. Whether you&rsquo;re a curious beginner or an
-          experienced forager, there&rsquo;s always more to discover about the
-          fascinating kingdom of fungi.
-        </p>
-
-        <div className="mt-12 grid gap-6 sm:grid-cols-2">
-          {articles.map((article) => (
-            <Link
-              key={article.slug}
-              href={`/learn/${article.slug}`}
-              className="group rounded-xl border border-border/50 bg-card p-6 transition-colors hover:border-primary/30 hover:bg-muted/20"
-            >
-              <span
-                className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${categoryColors[article.category] || "bg-muted text-muted-foreground"}`}
-              >
-                {article.category}
-              </span>
-              <h2 className="mt-3 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
-                {article.title}
-              </h2>
-              <p className="mt-2 text-sm text-foreground/60 leading-relaxed">
-                {article.summary}
-              </p>
-            </Link>
-          ))}
-        </div>
-
-      </Container>
-    </section>
+      <Suspense>
+        <LearnContent articles={articles} />
+      </Suspense>
+    </>
   );
 }
