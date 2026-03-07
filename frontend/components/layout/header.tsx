@@ -7,13 +7,17 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Container } from "./container";
-import { Menu, X, MessageSquare, BookOpen } from "lucide-react";
+import { Menu, X, MessageSquare, BookOpen, Sparkles, Loader2 } from "lucide-react";
 import { FeedbackModal } from "@/components/feedback/feedback-modal";
+import { useQuota } from "@/hooks/use-quota";
+import { createCheckoutSession } from "@/lib/api";
 
 export function Header() {
   const { user, isAdmin, loading, logout, openAuthModal } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [proLoading, setProLoading] = useState(false);
+  const quota = useQuota();
   const pathname = usePathname();
   const isHome = pathname === "/";
 
@@ -61,6 +65,24 @@ export function Header() {
               <span className="text-xs sm:text-sm font-medium text-foreground truncate max-w-[60px] sm:max-w-[120px]">
                 Hi, {user.name || user.email}
               </span>
+              {quota.tier !== "pro" && (
+                <button
+                  disabled={proLoading}
+                  onClick={async () => {
+                    setProLoading(true);
+                    try {
+                      const { url } = await createCheckoutSession("lifetime");
+                      window.location.href = url;
+                    } catch {
+                      setProLoading(false);
+                    }
+                  }}
+                  className="flex items-center gap-1 rounded-full bg-primary/15 px-2.5 py-1 text-[11px] sm:text-xs font-semibold text-primary hover:bg-primary/25 transition-colors disabled:opacity-50"
+                >
+                  {proLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                  <span className="hidden sm:inline">Go Pro</span>
+                </button>
+              )}
               {isAdmin && (
                 <Link href="/admin">
                   <Button variant="ghost" size="sm" className="text-primary h-8 px-2 text-xs sm:text-sm sm:px-3">
@@ -83,7 +105,7 @@ export function Header() {
                 Log in
               </button>
               <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => openAuthModal("register")}>
-                Sign Up Free
+                Sign Up
               </Button>
             </>
           )}
