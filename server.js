@@ -95,7 +95,9 @@ const {
   markAbuseFlagNotified,
   suspendUser,
   unsuspendUser,
-  isUserSuspended
+  isUserSuspended,
+  writeAuditLog,
+  getAuditLogs
 } = require('./src/db');
 const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendAbuseAlertEmail } = require('./src/email');
 const { runOnePost, listPosted } = require('./src/instagram');
@@ -961,6 +963,7 @@ async function handleAuthRegister(req, res) {
   setSession(res, req, sessionId);
 
   trackAndGeo('signup', user.id, { email }, getClientIp(req), req.headers['user-agent'] || null);
+  writeAuditLog({ eventType: 'signup', userId: user.id, userEmail: email, details: { method: 'email' }, ip: getClientIp(req) }).catch(() => {});
   sendWelcomeEmail(email, name).catch(() => {});
   sendJson(req, res, 201, { user });
 }
@@ -1014,6 +1017,7 @@ async function handleAuthLogin(req, res) {
   setSession(res, req, sessionId);
 
   trackAndGeo('login', userRow.id, { email }, getClientIp(req), req.headers['user-agent'] || null);
+  writeAuditLog({ eventType: 'login', userId: userRow.id, userEmail: email, details: { method: 'email' }, ip: getClientIp(req) }).catch(() => {});
   sendJson(req, res, 200, { user: await getPublicUser(userRow.id) });
 }
 
@@ -1213,6 +1217,7 @@ async function handleGoogleCallback(req, res, url) {
     userAgent: String(req.headers['user-agent'] || '')
   });
   setSession(res, req, sessionId);
+  writeAuditLog({ eventType: 'login', userId: user.id, userEmail: user.email, details: { method: 'google' }, ip: getClientIp(req) }).catch(() => {});
   redirect(req, res, sanitizeReturnPath(stateValue.returnTo || '/', '/'));
 }
 
@@ -1374,6 +1379,8 @@ async function handleStripeWebhook(req, res) {
           status: isLifetime ? 'lifetime' : 'active',
         });
         console.log(`[stripe] User ${userId} upgraded to ${tier}`);
+        writeAuditLog({ eventType: 'tier_change', userId, details: { tier, plan, mode: session.mode, amountCents: session.amount_total } }).catch(() => {});
+        writeAuditLog({ eventType: 'payment', userId, details: { amountCents: session.amount_total || (isLifetime ? 4999 : 799), currency: session.currency || 'cad', plan, status: isLifetime ? 'lifetime' : 'active' } }).catch(() => {});
         const upgradeUser = await getPublicUser(userId);
         if (upgradeUser?.email) {
           sendUpgradeEmail(upgradeUser.email, upgradeUser.name).catch(() => {});
@@ -1388,6 +1395,7 @@ async function handleStripeWebhook(req, res) {
           await setUserSubscription(user.id, sub.id, 'pro');
         } else {
           await downgradeUser(user.id);
+          writeAuditLog({ eventType: 'tier_change', userId: user.id, userEmail: user.email, details: { tier: 'free', reason: 'subscription_' + sub.status } }).catch(() => {});
           console.log(`[stripe] User ${user.id} downgraded — subscription ${sub.status}`);
         }
       }
