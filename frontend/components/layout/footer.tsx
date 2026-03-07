@@ -14,12 +14,12 @@ export function Footer() {
           className="h-6 w-auto opacity-70"
         />
         <div className="flex gap-6">
+          <Link href="/about" className="hover:text-foreground transition-colors">
+            About Us
+          </Link>
           <a href="https://guide.orangutany.com" className="hover:text-foreground transition-colors">
             Learn
           </a>
-          <Link href="/about" className="hover:text-foreground transition-colors">
-            About
-          </Link>
           <Link href="/terms" className="hover:text-foreground transition-colors">
             Terms
           </Link>
