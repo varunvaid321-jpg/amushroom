@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Container } from "@/components/layout/container";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, AlertTriangle, CheckCheck, Ban } from "lucide-react";
+import { Loader2, AlertTriangle, CheckCheck, Ban, MessageSquare } from "lucide-react";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -43,6 +43,19 @@ interface VisitorRow {
   firstSeen: string;
   lastSeen: string;
   type: "bot" | "browser" | "unknown" | "other";
+}
+
+interface FeedbackRow {
+  id: number;
+  user_id: number | null;
+  email: string | null;
+  name: string | null;
+  user_email: string | null;
+  user_name: string | null;
+  message: string;
+  also_email: number;
+  ip: string | null;
+  created_at: string;
 }
 
 interface AbuseFlag {
@@ -134,6 +147,7 @@ export default function AdminPage() {
   const [visitors, setVisitors] = useState<VisitorRow[]>([]);
   const [abuseFlags, setAbuseFlags] = useState<AbuseFlag[]>([]);
   const [unresolvedAbuseCount, setUnresolvedAbuseCount] = useState(0);
+  const [feedback, setFeedback] = useState<FeedbackRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -143,6 +157,7 @@ export default function AdminPage() {
       adminFetch<{ users: UserScanStat[] }>("user-scan-stats").then((r) => setUserScanStats(r.users)).catch(() => {}),
       adminFetch<{ events: EventRow[] }>("events?limit=200").then((r) => setEvents(r.events)),
       adminFetch<{ summary: unknown; visitors: VisitorRow[] }>("visitors?days=30").then((r) => setVisitors(r.visitors)),
+      adminFetch<{ feedback: FeedbackRow[] }>("feedback").then((r) => setFeedback(r.feedback)).catch(() => {}),
       adminFetch<{ flags: AbuseFlag[]; unresolvedCount: number }>("abuse-flags").then((r) => {
         setAbuseFlags(r.flags);
         setUnresolvedAbuseCount(r.unresolvedCount);
@@ -318,6 +333,40 @@ export default function AdminPage() {
               </tbody>
             </table>
           </div>
+        </Section>
+
+        {/* User Feedback */}
+        <Section title={`User Feedback (${feedback.length})`}>
+          {feedback.length === 0 ? (
+            <div className="flex flex-col items-center py-8 text-center text-muted-foreground">
+              <MessageSquare className="mb-2 h-8 w-8 text-muted-foreground/40" />
+              <p className="text-sm">No feedback yet.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {feedback.map((f) => {
+                const from = f.user_name || f.user_email || f.name || f.email || (f.user_id ? `User #${f.user_id}` : "Anonymous");
+                const contact = f.email || f.user_email || null;
+                return (
+                  <div key={f.id} className="rounded-lg border border-border/30 bg-muted/10 p-4">
+                    <div className="mb-2 flex items-start justify-between gap-3">
+                      <div>
+                        <span className="font-medium text-foreground">{from}</span>
+                        {contact && <span className="ml-2 text-xs text-muted-foreground">{contact}</span>}
+                        {f.also_email === 1 && (
+                          <span className="ml-2 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium text-primary">wants reply</span>
+                        )}
+                      </div>
+                      <span className="shrink-0 text-xs text-muted-foreground">
+                        {new Date(f.created_at).toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/80">{f.message}</p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </Section>
 
         {/* Abuse Flags */}
