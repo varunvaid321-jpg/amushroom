@@ -85,7 +85,7 @@ export function UpgradeModal() {
           </div>
           <h2 className="text-xl font-bold text-foreground">Upgrade to Pro</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Never worry about scan limits again.
+            The full mushroom identification experience.
           </p>
         </div>
 
