@@ -3,9 +3,9 @@ import { Container } from "@/components/layout/container";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About Orangutany Mushroom ID",
+  title: "About Orangutany",
   description:
-    "Orangutany takes the guesswork out of mushroom identification. AI trained on millions of images — species matches, distribution maps, seasonality. Think global, forage local.",
+    "Orangutany takes the guesswork out of mushroom identification. Upload a photo and get species matches, distribution maps, and seasonality. Built in Canada. Think global, forage local.",
   alternates: { canonical: "/about" },
 };
 
@@ -18,12 +18,11 @@ export default function AboutPage() {
         </Link>
         <article className="prose prose-invert max-w-none space-y-8 text-foreground/80">
           <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-foreground">
-            About Orangutany Mushroom ID
+            About Orangutany
           </h1>
           <p className="text-lg leading-relaxed">
             Orangutany takes the guesswork out of mushroom identification. Snap a
-            photo, and our AI&mdash;trained on millions of mushroom
-            images&mdash;instantly identifies the species with confidence scores,
+            photo and instantly get species matches with confidence scores,
             edibility info, and look-alike warnings.
           </p>
 
@@ -32,9 +31,9 @@ export default function AboutPage() {
               What We Offer
             </h2>
             <p>
-              <strong>AI Identification</strong> &mdash; Our machine learning models are
-              trained on millions of mushroom datasets. Scan any photo and get species
-              matches with confidence scores, so you always know how certain the result is.
+              <strong>Photo Identification</strong> &mdash; Upload a photo of any
+              mushroom and get species matches with confidence scores, so you always
+              know how certain the result is.
             </p>
             <p>
               <strong>Distribution Maps</strong> &mdash; See exactly where each species
@@ -59,12 +58,12 @@ export default function AboutPage() {
             <p>
               Mushrooms don&rsquo;t respect borders. The same chanterelle
               that grows in Ontario woodlands fruits in Scandinavian forests and
-              Indian hill stations. Our AI is trained on species from every continent,
-              but foraging is always local&mdash;shaped by your climate, your soil,
-              and the trees around you.
+              Indian hill stations. Our identification covers species from every
+              continent, but foraging is always local&mdash;shaped by your climate,
+              your soil, and the trees around you.
             </p>
             <p>
-              That&rsquo;s why Orangutany pairs global machine learning with
+              That&rsquo;s why Orangutany pairs broad species knowledge with
               local context: distribution maps that show where species grow,
               seasonality data for your region, and educational content that
               respects the diversity of ecosystems worldwide.
@@ -78,7 +77,7 @@ export default function AboutPage() {
             <p>
               We&rsquo;re on a mission to make mushroom education safe, free, and
               accessible to everyone. From free educational guides and species
-              databases to AI-powered identification, we want to lower the barrier
+              databases to photo identification, we want to lower the barrier
               to understanding fungi&mdash;while never compromising on safety.
             </p>
             <p className="text-sm text-muted-foreground">
