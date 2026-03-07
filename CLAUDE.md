@@ -1,13 +1,13 @@
 # Orangutany — Claude Code Guidelines
 
 ## Project Overview
-Mushroom identification web app (orangutany.com). Users upload photos, get AI-powered identification via Kindwise API. Supports email/password and Google OAuth login. 3-tier quota system: anonymous (5 total by IP), free (5/day), pro (unlimited, future).
+Mushroom identification web app (orangutany.com). Users upload photos, get AI-powered identification via Kindwise API. Supports email/password and Google OAuth login. Stripe payments (monthly $7.99, lifetime $49.99).
 
 ## Tech Stack
 
 ### Backend
 - **Runtime**: Node.js (vanilla HTTP server, no framework)
-- **Database**: SQLite via better-sqlite3
+- **Database**: SQLite via Turso (@libsql/client)
 - **Email**: Resend API (transactional emails — welcome, password reset)
 - **Auth**: Session-based (scrypt passwords) + Google OAuth 2.0
 - **AI**: Kindwise API for mushroom identification
@@ -56,6 +56,37 @@ Mushroom identification web app (orangutany.com). Users upload photos, get AI-po
 - When adding new routes or handlers: always check if the function is async, and await it
 - When migrating any sync API to async: grep ALL call sites and add `await` — missing even one causes silent data corruption (Promises serialize as `{}`)
 - **Test to add**: `npm test` includes a check that all `getAuthContext` calls are awaited — extend this pattern to cover all async DB functions if new ones are added
+
+## Payment System Rules (CRITICAL — read /docs/orangutany-payment-spec.md before ANY payment work)
+
+### Mandatory spec reference
+Before modifying ANY payment, billing, upgrade, membership, or Stripe code, read `/docs/orangutany-payment-spec.md` (v2.0). Do not deviate from it.
+
+### Pro scan cap is SILENT (NEVER leak to users)
+- Pro users have a 50/day scan cap. This is internal fraud prevention.
+- **NEVER** show "50 scans", "unlimited scans", "daily limit", or any scan count to Pro users in UI text, error messages, or API responses.
+- When Pro user hits cap: analyze button silently disables. No error message, no explanation.
+- Server 403 for Pro returns `"Please try again later."` with `limit: null` — never the actual number.
+- Free/anonymous users DO see their remaining count (e.g. "3 of 5 daily scans remaining").
+
+### Payment architecture (do not change pattern)
+- Stripe Checkout Sessions + Webhooks (NOT payment links). Zero payment links allowed.
+- Auth required before checkout (`getAuthContext()` returns 401 if not authenticated).
+- Membership changes ONLY via webhook — never from frontend or direct API call.
+- Webhook returns 500 on application errors so Stripe retries.
+- Monthly subscription auto-cancelled on lifetime upgrade.
+- Pending upgrade plan stored in `sessionStorage` (survives OAuth redirect).
+- `useUpgrade` hook is the single entry point for all upgrade flows.
+
+### Audit log (immutable)
+- `audit_log` table: INSERT-only, no DELETE/UPDATE. 3-year minimum retention.
+- Events: signup, login, tier_change, payment.
+- Never add DELETE or UPDATE functions for audit_log.
+
+### UI rules for membership
+- Pro badge in header: green for Pro, purple for Lifetime, links to /account/billing.
+- All upgrade prompts disappear for Pro/Lifetime users.
+- Upgrade copy must never promise "unlimited" or reference scan numbers.
 
 ## Sitemap Architecture (orangutany.com + guide.orangutany.com)
 - Two sitemaps — Google requires sitemap URLs to match host (subdomains are separate sites)
