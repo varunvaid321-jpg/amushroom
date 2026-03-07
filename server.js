@@ -1370,6 +1370,20 @@ async function handleStripeWebhook(req, res) {
         const isLifetime = plan === 'lifetime' || session.mode === 'payment';
         const tier = isLifetime ? 'pro_lifetime' : 'pro';
         const subId = session.subscription ? String(session.subscription) : null;
+
+        // Cancel existing monthly subscription when upgrading to lifetime
+        if (isLifetime) {
+          const existingUser = await getPublicUser(userId);
+          if (existingUser?.stripe_subscription_id) {
+            try {
+              await stripe.subscriptions.cancel(existingUser.stripe_subscription_id);
+              console.log(`[stripe] Cancelled monthly sub ${existingUser.stripe_subscription_id} for lifetime upgrade user ${userId}`);
+            } catch (cancelErr) {
+              console.error(`[stripe] Failed to cancel existing sub for user ${userId}:`, cancelErr.message);
+            }
+          }
+        }
+
         await setUserSubscription(userId, subId, tier);
         await createPaymentRecord({
           userId,
