@@ -4,6 +4,8 @@ export interface User {
   name: string | null;
   emailVerified: boolean;
   tier: string;
+  membershipStartedAt: string | null;
+  hasStripeCustomer: boolean;
   createdAt: string;
   updatedAt: string;
 }
