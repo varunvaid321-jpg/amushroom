@@ -1,4 +1,10 @@
+import { Metadata } from "next";
 import { Container } from "@/components/layout/container";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  alternates: { canonical: "/privacy" },
+};
 
 export default function PrivacyPage() {
   return (

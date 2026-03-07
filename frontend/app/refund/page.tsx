@@ -1,4 +1,10 @@
+import { Metadata } from "next";
 import { Container } from "@/components/layout/container";
+
+export const metadata: Metadata = {
+  title: "Refund Policy",
+  alternates: { canonical: "/refund" },
+};
 
 export default function RefundPage() {
   return (

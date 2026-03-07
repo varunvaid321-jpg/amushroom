@@ -1,4 +1,10 @@
+import { Metadata } from "next";
 import { Container } from "@/components/layout/container";
+
+export const metadata: Metadata = {
+  title: "Terms of Service",
+  alternates: { canonical: "/terms" },
+};
 
 export default function TermsPage() {
   return (
