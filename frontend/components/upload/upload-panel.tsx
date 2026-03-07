@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Search, RotateCcw, Loader2, Sparkles, Zap, Shield, Infinity } from "lucide-react";
 import { useUpgrade } from "@/hooks/use-upgrade";
+import { useAuth } from "@/hooks/use-auth";
 
 interface UploadPanelProps {
   photoCount: number;
@@ -29,6 +29,7 @@ export function UploadPanel({
   quotaBlocked,
 }: UploadPanelProps) {
   const { openUpgrade } = useUpgrade();
+  const { openAuthModal } = useAuth();
   const isDisabled = photoCount === 0 || analyzing || quotaBlocked;
   const isFree = tier === "free" || tier === "anonymous";
 
@@ -97,9 +98,18 @@ export function UploadPanel({
           <Sparkles className="mx-auto mb-2 h-5 w-5 text-primary" />
           <p className="mb-1 text-sm font-semibold text-foreground">You&apos;ve used all free scans</p>
           <p className="mb-3 text-xs text-muted-foreground">Create a free account to get 5 scans every day, or go Pro for unlimited.</p>
-          <a href="/" className="inline-block rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
+          <button
+            onClick={() => openAuthModal("register")}
+            className="inline-block rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+          >
             Sign Up Free
-          </a>
+          </button>
+          <button
+            onClick={openUpgrade}
+            className="mt-2 block mx-auto text-xs font-semibold text-primary hover:underline"
+          >
+            or Upgrade to Pro
+          </button>
         </div>
       )}
       {quotaBlocked && tier === "free" && <UpgradeCard />}
