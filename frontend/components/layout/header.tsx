@@ -29,10 +29,10 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background">
       <Container className="flex h-16 items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="p-2 text-muted-foreground hover:text-foreground transition-colors self-center mt-5"
+            className="p-2 text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Menu"
           >
             {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

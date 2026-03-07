@@ -65,6 +65,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (email: string, password: string) => {
     const u = await apiLogin(email, password);
     setUser(u);
+    // Refresh admin flag from server after login
+    try { const data = await getMe(); setAdminFlag(data.isAdmin); } catch { setAdminFlag(false); }
     return u;
   }, []);
 
@@ -72,6 +74,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (name: string, email: string, password: string) => {
       const u = await apiRegister(name, email, password);
       setUser(u);
+      // New registrations are never admin
+      setAdminFlag(false);
       return u;
     },
     [],
@@ -80,6 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(async () => {
     await apiLogout();
     setUser(null);
+    setAdminFlag(false);
   }, []);
 
   const openAuthModal = useCallback((tab: "login" | "register" = "login") => {
