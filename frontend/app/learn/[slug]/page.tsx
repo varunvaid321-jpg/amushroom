@@ -1,8 +1,10 @@
+import { Suspense } from "react";
 import { Container } from "@/components/layout/container";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { ArticleHighlighter } from "./highlight-client";
 
 type ArticleContent = {
   title: string;
@@ -650,6 +652,9 @@ export default async function ArticlePage({
 
   return (
     <section className="py-16">
+      <Suspense>
+        <ArticleHighlighter />
+      </Suspense>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

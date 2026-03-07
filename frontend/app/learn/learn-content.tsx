@@ -184,7 +184,7 @@ export function LearnContent({ articles }: { articles: Article[] }) {
             return (
               <Link
                 key={item.slug}
-                href={`/learn/${item.slug}`}
+                href={q ? `/learn/${item.slug}?highlight=${encodeURIComponent(q)}` : `/learn/${item.slug}`}
                 className="group rounded-xl border border-border/50 bg-card p-5 transition-colors hover:border-primary/30 hover:bg-muted/20"
               >
                 <div className="flex items-center gap-2">
@@ -216,14 +216,15 @@ export function LearnContent({ articles }: { articles: Article[] }) {
 
                 {/* Context snippet — shows WHERE the match was found */}
                 {result?.snippet && (
-                  <div className="mt-2.5 rounded-md bg-muted/30 px-3 py-2 text-xs leading-relaxed text-foreground/50">
-                    <span className="font-medium text-foreground/70">
-                      {result.matchSource === "heading" ? "" : "..."}
-                    </span>
-                    <HighlightedText text={result.snippet} query={q} />
-                    {result.matchSource !== "heading" && (
-                      <span className="font-medium text-foreground/70">...</span>
+                  <div className="mt-2.5 rounded-md border border-primary/10 bg-primary/5 px-3 py-2 text-xs leading-relaxed text-foreground/70">
+                    {result.snippetHeading && (
+                      <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-primary/60">
+                        {result.snippetHeading}
+                      </span>
                     )}
+                    <span>&ldquo;</span>
+                    <HighlightedText text={result.snippet} query={q} />
+                    <span>&rdquo;</span>
                   </div>
                 )}
               </Link>
@@ -254,7 +255,7 @@ function HighlightedText({ text, query }: { text: string; query: string }) {
     <>
       {segments.map((seg, i) =>
         seg.highlight ? (
-          <mark key={i} className="bg-primary/20 text-foreground rounded-sm px-0.5">
+          <mark key={i} className="bg-primary/30 text-foreground font-semibold rounded-sm px-0.5">
             {seg.text}
           </mark>
         ) : (

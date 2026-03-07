@@ -18,6 +18,8 @@ export interface SearchResult {
   category: string;
   /** The matched snippet with the query term in context */
   snippet: string | null;
+  /** Section heading where the snippet came from */
+  snippetHeading: string | null;
   /** Where the match was found */
   matchSource: "title" | "summary" | "category" | "body" | "heading" | "synonym";
   /** Relevance score (higher = better) */
@@ -205,12 +207,42 @@ export function searchArticles(articles: ArticleData[], query: string): SearchRe
     }
 
     if (bestScore > 0) {
+      // Always try to find a body snippet so user sees WHERE the match is
+      let bodySnippet = bestSnippet;
+      let snippetHeading: string | null = null;
+      if (!bodySnippet || bestSource === "title" || bestSource === "category") {
+        for (const section of article.sections) {
+          for (const paragraph of section.body) {
+            for (const term of expandedTerms) {
+              if (paragraph.toLowerCase().includes(term)) {
+                bodySnippet = extractSnippet(paragraph, [term]);
+                snippetHeading = section.heading;
+                break;
+              }
+            }
+            if (bodySnippet && bodySnippet !== bestSnippet) break;
+          }
+          if (bodySnippet && bodySnippet !== bestSnippet) break;
+        }
+      }
+      // For heading matches, prefix with section name
+      if (bestSource === "heading" && bestSnippet?.startsWith("Section:")) {
+        // Find first paragraph of that section for a real snippet
+        const headingName = bestSnippet.replace("Section: ", "");
+        snippetHeading = headingName;
+        const sec = article.sections.find((s) => s.heading === headingName);
+        if (sec && sec.body[0]) {
+          bodySnippet = extractSnippet(sec.body[0], expandedTerms) || sec.body[0].slice(0, 140) + "...";
+        }
+      }
+
       results.push({
         slug: article.slug,
         title: article.title,
         summary: article.summary,
         category: article.category,
-        snippet: bestSnippet,
+        snippet: bodySnippet,
+        snippetHeading,
         matchSource: bestSource,
         score: bestScore,
       });
