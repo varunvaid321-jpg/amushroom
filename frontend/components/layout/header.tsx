@@ -29,7 +29,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background">
       <Container className="flex h-16 items-center justify-between">
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="p-2 text-muted-foreground hover:text-foreground transition-colors"
@@ -55,15 +55,15 @@ export function Header() {
             Learn About Mushrooms
           </a>
         </div>
-        <nav className="flex items-center gap-2 sm:gap-3">
+        <nav className="flex shrink-0 items-center gap-2 sm:gap-3">
           {loading ? null : user ? (
-            <div className="flex items-center gap-2 sm:gap-3">
-              <span className="text-sm font-medium text-foreground truncate max-w-[100px] sm:max-w-[150px]">
+            <div className="flex items-center gap-1 sm:gap-2">
+              <span className="text-xs sm:text-sm font-medium text-foreground truncate max-w-[60px] sm:max-w-[120px]">
                 Hi, {user.name || user.email}
               </span>
               {isAdmin && (
                 <Link href="/admin">
-                  <Button variant="ghost" size="sm" className="text-primary h-8 px-2 sm:px-3">
+                  <Button variant="ghost" size="sm" className="text-primary h-8 px-2 text-xs sm:text-sm sm:px-3">
                     Admin
                   </Button>
                 </Link>
@@ -72,7 +72,7 @@ export function Header() {
                 variant="ghost"
                 size="sm"
                 onClick={logout}
-                className="text-muted-foreground hover:text-foreground h-8 px-2 sm:px-3"
+                className="text-muted-foreground hover:text-foreground h-8 px-2 text-xs sm:text-sm sm:px-3"
               >
                 Logout
               </Button>
