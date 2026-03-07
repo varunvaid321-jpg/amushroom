@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Container } from "./container";
-import { Menu, X, MessageSquare } from "lucide-react";
+import { Menu, X, MessageSquare, BookOpen } from "lucide-react";
 import { FeedbackModal } from "@/components/feedback/feedback-modal";
 
 export function Header() {
@@ -47,6 +47,13 @@ export function Header() {
               priority
             />
           </Link>
+          <a
+            href="https://guide.orangutany.com/mushrooms"
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-muted/40 px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+          >
+            <BookOpen className="h-3.5 w-3.5" />
+            Learn About Mushrooms
+          </a>
         </div>
         <nav className="flex items-center gap-3">
           {loading ? null : user ? (
@@ -103,7 +110,7 @@ export function Header() {
                 </button>
               )}
               <a
-                href="https://guide.orangutany.com"
+                href="https://guide.orangutany.com/mushrooms"
                 onClick={() => setMenuOpen(false)}
                 className="px-3 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted/30 rounded-lg transition-colors"
               >
