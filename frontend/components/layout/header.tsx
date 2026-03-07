@@ -104,12 +104,8 @@ export function Header() {
               <button onClick={() => openAuthModal("login")} className="text-sm text-muted-foreground hover:text-foreground">
                 Log in
               </button>
-              <Button size="sm" variant="outline" className="border-primary/30 text-primary hover:bg-primary/10" onClick={() => openAuthModal("register")}>
-                Sign Up Free
-              </Button>
-              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 gap-1" onClick={() => openAuthModal("register")}>
-                <Sparkles className="h-3.5 w-3.5" />
-                Go Pro
+              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => openAuthModal("register")}>
+                Sign Up
               </Button>
             </>
           )}
