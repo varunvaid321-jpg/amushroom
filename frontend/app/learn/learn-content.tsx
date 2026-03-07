@@ -98,9 +98,20 @@ export function LearnContent({ articles }: { articles: Article[] }) {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
             placeholder="Search topics... try &quot;deadly&quot;, &quot;edible&quot;, &quot;spore print&quot;..."
-            className="w-full rounded-lg border border-border bg-card pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+            className="w-full rounded-lg border border-border bg-card pl-10 pr-10 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
           />
+          {search.trim() && (
+            <button
+              type="button"
+              onClick={() => { document.activeElement instanceof HTMLElement && document.activeElement.blur(); }}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md bg-primary p-1 text-background transition hover:bg-primary/90"
+              aria-label="Search"
+            >
+              <Search className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
 
         {/* Category chips */}
