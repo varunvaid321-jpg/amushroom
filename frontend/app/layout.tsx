@@ -41,7 +41,6 @@ export const metadata: Metadata = {
     title: "Orangutany | AI Mushroom Identifier",
     description:
       "Take the guesswork out of mushroom ID. AI trained on millions of images — species matches, distribution maps, and seasonality. Think global, forage local.",
-    url: "https://orangutany.com",
     siteName: "Orangutany",
     locale: "en_US",
     type: "website",
