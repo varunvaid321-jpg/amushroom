@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Manrope, Sora } from "next/font/google";
 import { AuthProvider } from "@/hooks/use-auth";
+import { UpgradeProvider } from "@/hooks/use-upgrade";
+import { UpgradeModal } from "@/components/upgrade/upgrade-modal";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import "./globals.css";
@@ -120,9 +122,12 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen font-[family-name:var(--font-manrope)] antialiased">
         <AuthProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
+          <UpgradeProvider>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+            <UpgradeModal />
+          </UpgradeProvider>
         </AuthProvider>
       </body>
     </html>

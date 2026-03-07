@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Search, RotateCcw, Loader2, Sparkles, Zap, Shield, Infinity } from "lucide-react";
 import { createCheckoutSession } from "@/lib/api";
+import { useUpgrade } from "@/hooks/use-upgrade";
 
 interface UploadPanelProps {
   photoCount: number;
@@ -28,7 +29,9 @@ export function UploadPanel({
   tier,
   quotaBlocked,
 }: UploadPanelProps) {
+  const { openUpgrade } = useUpgrade();
   const isDisabled = photoCount === 0 || analyzing || quotaBlocked;
+  const isFree = tier === "free" || tier === "anonymous";
 
   return (
     <div className="space-y-3">
@@ -84,6 +87,10 @@ export function UploadPanel({
       {tier !== "pro" && remaining !== null && remaining !== undefined && !quotaBlocked && (
         <p className="text-center text-xs text-muted-foreground">
           {remaining} of {limit ?? (tier === "anonymous" ? 3 : 5)} {tier === "anonymous" ? "free" : "daily"} scan{remaining !== 1 ? "s" : ""} remaining
+          {" "}&middot;{" "}
+          <button onClick={openUpgrade} className="font-semibold text-primary hover:underline">
+            Go unlimited
+          </button>
         </p>
       )}
       {quotaBlocked && tier === "anonymous" && (

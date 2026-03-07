@@ -6,6 +6,7 @@ import type { Match, UploadGuidance, ConsistencyCheck } from "@/lib/api";
 import { ProfilePanel } from "./profile-panel";
 import { MatchCard } from "./match-card";
 import { useAuth } from "@/hooks/use-auth";
+import { useUpgrade } from "@/hooks/use-upgrade";
 import { Button } from "@/components/ui/button";
 
 interface ResultsDockProps {
@@ -37,7 +38,9 @@ export function ResultsDock({
   uploadStory,
   onSaveStory,
 }: ResultsDockProps) {
-  const { openAuthModal } = useAuth();
+  const { openAuthModal, user } = useAuth();
+  const { openUpgrade } = useUpgrade();
+  const canUpgrade = user && user.tier !== "pro" && user.tier !== "pro_lifetime";
   const [storyText, setStoryText] = useState("");
   const [storySaved, setStorySaved] = useState(false);
   const [storySaving, setStorySaving] = useState(false);
@@ -125,11 +128,16 @@ export function ResultsDock({
               Full results are locked
             </p>
             <p className="mb-4 text-sm text-muted-foreground">
-              Create a free account to unlock edibility info, traits, look-alikes, and get 5 IDs per day.
+              Create a free account to unlock edibility info, traits, look-alikes, and get 5 IDs per day. Or go Pro for unlimited.
             </p>
-            <Button onClick={() => openAuthModal("register")} className="bg-primary text-primary-foreground hover:bg-primary/90">
-              Create Free Account
-            </Button>
+            <div className="flex flex-col items-center gap-2">
+              <Button onClick={() => openAuthModal("register")} className="bg-primary text-primary-foreground hover:bg-primary/90">
+                Create Free Account
+              </Button>
+              <button onClick={openUpgrade} className="text-xs font-semibold text-primary hover:underline">
+                or Upgrade to Pro
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -236,6 +244,17 @@ export function ResultsDock({
       {/* Show/edit story when viewing a saved scan */}
       {isSavedScan && (
         <SavedStoryEditor story={uploadStory ?? null} onSave={onSaveStory} />
+      )}
+
+      {/* Upgrade nudge for free users after seeing results */}
+      {canUpgrade && !isSavedScan && (
+        <button
+          onClick={openUpgrade}
+          className="w-full rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-center text-xs text-muted-foreground hover:bg-primary/10 transition-colors"
+        >
+          Want unlimited scans?{" "}
+          <span className="font-semibold text-primary">Upgrade to Pro</span>
+        </button>
       )}
     </div>
   );

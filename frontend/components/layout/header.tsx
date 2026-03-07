@@ -7,16 +7,19 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Container } from "./container";
-import { Menu, X, MessageSquare, BookOpen } from "lucide-react";
+import { Menu, X, MessageSquare, BookOpen, Sparkles } from "lucide-react";
 import { FeedbackModal } from "@/components/feedback/feedback-modal";
 import { scrollToId } from "@/lib/scroll";
+import { useUpgrade } from "@/hooks/use-upgrade";
 
 export function Header() {
   const { user, isAdmin, loading, logout, openAuthModal } = useAuth();
+  const { openUpgrade } = useUpgrade();
   const [menuOpen, setMenuOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const showUpgrade = !!user && user.tier !== "pro" && user.tier !== "pro_lifetime";
 
   function navTo(hash: string) {
     setMenuOpen(false);
@@ -62,6 +65,16 @@ export function Header() {
               <span className="text-xs sm:text-sm font-medium text-foreground truncate max-w-[60px] sm:max-w-[120px]">
                 Hi, {user.name || user.email}
               </span>
+              {showUpgrade && (
+                <button
+                  onClick={openUpgrade}
+                  className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2.5 py-1 text-[11px] font-semibold text-primary hover:bg-primary/25 transition-colors"
+                >
+                  <Sparkles className="h-3 w-3" />
+                  <span className="hidden sm:inline">Upgrade</span>
+                  <span className="sm:hidden">Pro</span>
+                </button>
+              )}
               {isAdmin && (
                 <Link href="/admin">
                   <Button variant="ghost" size="sm" className="text-primary h-8 px-2 text-xs sm:text-sm sm:px-3">
@@ -102,6 +115,15 @@ export function Header() {
               >
                 Identify a Mushroom
               </button>
+              {(!user || showUpgrade) && (
+                <button
+                  onClick={() => { setMenuOpen(false); openUpgrade(); }}
+                  className="w-full text-left px-3 py-2.5 text-sm font-semibold text-primary hover:bg-primary/10 rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Upgrade to Pro
+                </button>
+              )}
               <a
                 href={user ? `https://guide.orangutany.com/mushrooms?user=${encodeURIComponent(user.name || user.email)}` : "https://guide.orangutany.com/mushrooms"}
                 onClick={() => setMenuOpen(false)}
