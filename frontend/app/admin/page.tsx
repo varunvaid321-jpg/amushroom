@@ -330,7 +330,7 @@ export default function AdminPage() {
   const browserVisitors = visitors.filter((v) => v.type === "browser");
   const totalHits = browserVisitors.reduce((s, v) => s + v.hits, 0);
   const totalScans = events.filter((e) => e.event === "scan").length;
-  const totalSignups = events.filter((e) => e.event === "signup").length;
+  const totalSignups = userScanStats.length;
   const uniqueVisitors = browserVisitors.length;
 
   // Event breakdown for horizontal bar chart
@@ -435,7 +435,7 @@ export default function AdminPage() {
         {/* KPI cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <KpiCard label="Page Views (30d)" value={totalHits.toLocaleString()} icon={Eye} accent="text-blue-400" active={activeKpi === "views"} onClick={() => setActiveKpi(activeKpi === "views" ? null : "views")} />
-          <KpiCard label="Scans" value={totalScans} icon={Scan} accent="text-primary" active={activeKpi === "scans"} onClick={() => setActiveKpi(activeKpi === "scans" ? null : "scans")} />
+          <KpiCard label="Recent Scans" value={totalScans} icon={Scan} accent="text-primary" active={activeKpi === "scans"} onClick={() => setActiveKpi(activeKpi === "scans" ? null : "scans")} />
           <KpiCard label="Signups" value={totalSignups} icon={Users} accent="text-purple-400" active={activeKpi === "signups"} onClick={() => setActiveKpi(activeKpi === "signups" ? null : "signups")} />
           <KpiCard label="Unique Visitors" value={uniqueVisitors} icon={TrendingUp} accent="text-amber-400" active={activeKpi === "visitors"} onClick={() => setActiveKpi(activeKpi === "visitors" ? null : "visitors")} />
         </div>
