@@ -7,6 +7,9 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/admin", "/api/"],
     },
-    sitemap: "https://orangutany.com/sitemap.xml",
+    sitemap: [
+      "https://orangutany.com/sitemap.xml",
+      "https://guide.orangutany.com/sitemap.xml",
+    ],
   };
 }
