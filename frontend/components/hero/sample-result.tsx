@@ -3,11 +3,10 @@
 import Image from "next/image";
 import { Container } from "@/components/layout/container";
 import { AlertTriangle, FlaskConical, Microscope, ArrowDown } from "lucide-react";
+import { scrollToId } from "@/lib/scroll";
 
 export function SampleResult() {
-  const scrollToUpload = () => {
-    document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
-  };
+  const scrollToUpload = () => scrollToId("upload");
 
   return (
     <section className="border-t border-border/30 bg-background py-16">

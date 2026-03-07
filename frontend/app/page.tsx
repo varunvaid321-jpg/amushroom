@@ -12,6 +12,7 @@ import { useUploads } from "@/hooks/use-uploads";
 import { useQuota } from "@/hooks/use-quota";
 import { useAuth } from "@/hooks/use-auth";
 import { ApiError } from "@/lib/api";
+import { scrollToId } from "@/lib/scroll";
 import { Sparkles, X } from "lucide-react";
 
 export default function Home() {
@@ -68,7 +69,7 @@ export default function Home() {
     setRefreshKey((k) => k + 1);
     // On mobile, scroll to results after analysis
     if (window.innerWidth < 1024) {
-      document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
+      scrollToId("results");
     }
   };
 
@@ -76,13 +77,13 @@ export default function Home() {
     setViewingSavedScan(true);
     loadSavedUpload(uploadId);
     const target = window.innerWidth < 1024 ? "results" : "upload";
-    document.getElementById(target)?.scrollIntoView({ behavior: "smooth" });
+    scrollToId(target);
   };
 
   const handleBackToLibrary = () => {
     setViewingSavedScan(false);
     clearAll();
-    document.getElementById("library")?.scrollIntoView({ behavior: "smooth" });
+    scrollToId("library");
   };
 
   return (
