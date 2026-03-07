@@ -58,7 +58,7 @@ export function Header() {
         <nav className="flex items-center gap-2 sm:gap-3">
           {loading ? null : user ? (
             <div className="flex items-center gap-2 sm:gap-3">
-              <span className="text-xs sm:text-sm text-muted-foreground truncate max-w-[80px] sm:max-w-[120px]">
+              <span className="text-sm font-medium text-foreground truncate max-w-[100px] sm:max-w-[150px]">
                 Hi, {user.name || user.email}
               </span>
               {isAdmin && (
