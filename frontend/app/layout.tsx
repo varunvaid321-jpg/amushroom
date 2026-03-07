@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     template: "%s | Orangutany",
   },
   description:
-    "We love mushrooms as much as you do. Orangutany helps you identify wild species from photos — with edibility info, look-alike warnings, distribution maps, and real foraging knowledge. Built by foragers, for foragers.",
+    "We love mushrooms as much as you do. Orangutany helps you identify wild species from photos — with edibility info, look-alike warnings, distribution maps, and real foraging knowledge. Engineered in Canada with world-class precision.",
   keywords: [
     "mushroom identifier",
     "mushroom identification app",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Orangutany — Mushroom Identification for People Who Love Mushrooms",
     description:
-      "We love mushrooms as much as you do. Identify wild species from photos — edibility info, look-alike warnings, and real foraging knowledge. Built by foragers, for foragers.",
+      "We love mushrooms as much as you do. Identify wild species from photos — edibility info, look-alike warnings, and real foraging knowledge. Engineered in Canada with world-class precision.",
     siteName: "Orangutany",
     locale: "en_US",
     type: "website",
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "Orangutany — Mushroom Identification for People Who Love Mushrooms",
     description:
-      "We love mushrooms as much as you do. Identify species from photos with edibility info, look-alikes, and foraging knowledge.",
+      "We love mushrooms as much as you do. Identify species from photos with edibility info, look-alikes, and foraging knowledge. Engineered in Canada.",
     images: ["/images/appicon.png"],
   },
   robots: {
@@ -88,7 +88,7 @@ export default function RootLayout({
                     height: 512,
                   },
                   description:
-                    "Mushroom identification for people who love mushrooms. Species matches, edibility info, distribution maps, look-alike warnings, and foraging guides. Built by foragers, for foragers.",
+                    "Mushroom identification for people who love mushrooms. Species matches, edibility info, distribution maps, look-alike warnings, and foraging guides. Precision-engineered in Canada.",
                   sameAs: [],
                   contactPoint: {
                     "@type": "ContactPoint",
@@ -105,7 +105,7 @@ export default function RootLayout({
                     "@id": "https://orangutany.com/#organization",
                   },
                   description:
-                    "We love mushrooms as much as you do. Identify wild species from photos, learn what's edible and what's deadly, and explore foraging guides built by people who actually forage.",
+                    "We love mushrooms as much as you do. Identify wild species from photos, learn what's edible and what's deadly, and explore foraging guides — precision-engineered in Canada.",
                   potentialAction: {
                     "@type": "SearchAction",
                     target: "https://orangutany.com/learn?q={search_term_string}",
