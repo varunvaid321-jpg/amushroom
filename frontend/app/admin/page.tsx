@@ -9,6 +9,17 @@ import { Loader2, AlertTriangle, CheckCheck, Ban, MessageSquare } from "lucide-r
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
+interface DailyPageView {
+  day: string;
+  count: number;
+}
+
+interface GeoRow {
+  country: string;
+  city: string | null;
+  count: number;
+}
+
 interface UserScanStat {
   id: number;
   email: string;
@@ -137,6 +148,187 @@ function EventBadge({ event }: { event: string }) {
   );
 }
 
+// ── Charts ──────────────────────────────────────────────────────────────────────
+
+function TrafficChart({ data }: { data: DailyPageView[] }) {
+  if (data.length === 0) return <p className="py-8 text-center text-sm text-muted-foreground">No traffic data yet</p>;
+
+  // Fill in missing days with 0
+  const filled: DailyPageView[] = [];
+  const today = new Date();
+  for (let i = 89; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const day = d.toISOString().slice(0, 10);
+    const found = data.find((r) => r.day === day);
+    filled.push({ day, count: found ? found.count : 0 });
+  }
+
+  const max = Math.max(...filled.map((d) => d.count), 1);
+  const W = 700;
+  const H = 180;
+  const padL = 36;
+  const padB = 24;
+  const chartW = W - padL;
+  const chartH = H - padB;
+
+  const points = filled.map((d, i) => {
+    const x = padL + (i / (filled.length - 1)) * chartW;
+    const y = chartH - (d.count / max) * chartH;
+    return { x, y, ...d };
+  });
+
+  const linePath = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`).join(" ");
+  const areaPath = `${linePath} L${points[points.length - 1].x},${chartH} L${padL},${chartH} Z`;
+
+  // Y-axis labels
+  const yTicks = [0, Math.round(max / 2), max];
+
+  return (
+    <div className="overflow-x-auto">
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full min-w-[500px]" preserveAspectRatio="xMidYMid meet">
+        {/* Grid lines */}
+        {yTicks.map((t) => {
+          const y = chartH - (t / max) * chartH;
+          return (
+            <g key={t}>
+              <line x1={padL} y1={y} x2={W} y2={y} stroke="currentColor" className="text-border/30" strokeDasharray="4 4" />
+              <text x={padL - 4} y={y + 3} textAnchor="end" className="fill-muted-foreground text-[9px]">{t}</text>
+            </g>
+          );
+        })}
+        {/* Area fill */}
+        <path d={areaPath} className="fill-primary/10" />
+        {/* Line */}
+        <path d={linePath} fill="none" className="stroke-primary" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Dots on non-zero days */}
+        {points.filter((p) => p.count > 0).map((p) => (
+          <circle key={p.day} cx={p.x} cy={p.y} r="3" className="fill-primary" />
+        ))}
+        {/* X-axis month labels */}
+        {points.filter((_, i) => i % 30 === 0 || i === points.length - 1).map((p) => (
+          <text key={p.day} x={p.x} y={H - 4} textAnchor="middle" className="fill-muted-foreground text-[9px]">
+            {new Date(p.day + "T12:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+          </text>
+        ))}
+      </svg>
+    </div>
+  );
+}
+
+const DONUT_COLORS = [
+  "#22c55e", "#3b82f6", "#f59e0b", "#a855f7", "#ec4899", "#06b6d4", "#84cc16", "#f97316",
+];
+const BOT_COLOR = "#ef4444";
+
+function GeoDonut({ visitors, geoData }: { visitors: VisitorRow[]; geoData: GeoRow[] }) {
+  // Aggregate by country from geo data
+  const byCountry: Record<string, number> = {};
+  for (const g of geoData) {
+    const c = g.country || "Unknown";
+    byCountry[c] = (byCountry[c] || 0) + g.count;
+  }
+  const countryEntries = Object.entries(byCountry).sort((a, b) => b[1] - a[1]);
+
+  // Bot vs browser from visitors
+  const botHits = visitors.filter((v) => v.type === "bot").reduce((s, v) => s + v.hits, 0);
+  const browserHits = visitors.filter((v) => v.type === "browser").reduce((s, v) => s + v.hits, 0);
+  const otherHits = visitors.filter((v) => v.type !== "bot" && v.type !== "browser").reduce((s, v) => s + v.hits, 0);
+
+  const totalHits = botHits + browserHits + otherHits || 1;
+
+  // Donut: countries
+  const totalGeo = countryEntries.reduce((s, [, c]) => s + c, 0) || 1;
+  const R = 60;
+  const r = 38;
+  const cx = 80;
+  const cy = 80;
+
+  function arcSlice(startAngle: number, endAngle: number, color: string, key: string) {
+    const s = (startAngle - 90) * (Math.PI / 180);
+    const e = (endAngle - 90) * (Math.PI / 180);
+    const largeArc = endAngle - startAngle > 180 ? 1 : 0;
+    const x1 = cx + R * Math.cos(s), y1 = cy + R * Math.sin(s);
+    const x2 = cx + R * Math.cos(e), y2 = cy + R * Math.sin(e);
+    const x3 = cx + r * Math.cos(e), y3 = cy + r * Math.sin(e);
+    const x4 = cx + r * Math.cos(s), y4 = cy + r * Math.sin(s);
+    return <path key={key} d={`M${x1},${y1} A${R},${R} 0 ${largeArc} 1 ${x2},${y2} L${x3},${y3} A${r},${r} 0 ${largeArc} 0 ${x4},${y4} Z`} fill={color} />;
+  }
+
+  const slices: React.ReactNode[] = [];
+  let angle = 0;
+  const top5 = countryEntries.slice(0, 7);
+  const otherGeo = countryEntries.slice(7).reduce((s, [, c]) => s + c, 0);
+  const items = [...top5, ...(otherGeo > 0 ? [["Other", otherGeo] as [string, number]] : [])];
+
+  for (let i = 0; i < items.length; i++) {
+    const [, count] = items[i];
+    const sweep = (count / totalGeo) * 360;
+    if (sweep > 0.5) {
+      slices.push(arcSlice(angle, angle + sweep - 0.5, DONUT_COLORS[i % DONUT_COLORS.length], `geo-${i}`));
+    }
+    angle += sweep;
+  }
+
+  return (
+    <div className="flex flex-col sm:flex-row gap-6 items-start">
+      {/* Country donut */}
+      <div className="flex items-center gap-4">
+        <svg width="160" height="160" viewBox="0 0 160 160">
+          {slices.length > 0 ? slices : <circle cx={cx} cy={cy} r={R} fill="none" stroke="currentColor" className="text-border/30" strokeWidth="2" />}
+          <text x={cx} y={cy - 4} textAnchor="middle" className="fill-foreground text-[14px] font-semibold">{totalGeo}</text>
+          <text x={cx} y={cy + 10} textAnchor="middle" className="fill-muted-foreground text-[9px]">events</text>
+        </svg>
+        <div className="space-y-1">
+          {items.map(([country, count], i) => (
+            <div key={country} className="flex items-center gap-2 text-xs">
+              <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
+              <span className="text-foreground">{countryFlag(country as string)} {country}</span>
+              <span className="text-muted-foreground">({count})</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Bot vs Browser bars */}
+      <div className="flex-1 min-w-[200px]">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Real vs Bots (30d)</p>
+        <div className="space-y-2">
+          <div>
+            <div className="flex justify-between text-xs mb-1">
+              <span className="text-green-400">Real users</span>
+              <span className="text-muted-foreground">{browserHits} ({Math.round((browserHits / totalHits) * 100)}%)</span>
+            </div>
+            <div className="h-3 rounded-full bg-muted overflow-hidden">
+              <div className="h-full rounded-full bg-green-500" style={{ width: `${(browserHits / totalHits) * 100}%` }} />
+            </div>
+          </div>
+          <div>
+            <div className="flex justify-between text-xs mb-1">
+              <span className="text-red-400">Bots</span>
+              <span className="text-muted-foreground">{botHits} ({Math.round((botHits / totalHits) * 100)}%)</span>
+            </div>
+            <div className="h-3 rounded-full bg-muted overflow-hidden">
+              <div className="h-full rounded-full bg-red-500" style={{ width: `${(botHits / totalHits) * 100}%` }} />
+            </div>
+          </div>
+          {otherHits > 0 && (
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span className="text-yellow-400">Unknown</span>
+                <span className="text-muted-foreground">{otherHits} ({Math.round((otherHits / totalHits) * 100)}%)</span>
+              </div>
+              <div className="h-3 rounded-full bg-muted overflow-hidden">
+                <div className="h-full rounded-full bg-yellow-500" style={{ width: `${(otherHits / totalHits) * 100}%` }} />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Main page ──────────────────────────────────────────────────────────────────
 
 export default function AdminPage() {
@@ -145,6 +337,8 @@ export default function AdminPage() {
   const [userScanStats, setUserScanStats] = useState<UserScanStat[]>([]);
   const [events, setEvents] = useState<EventRow[]>([]);
   const [visitors, setVisitors] = useState<VisitorRow[]>([]);
+  const [dailyViews, setDailyViews] = useState<DailyPageView[]>([]);
+  const [geoData, setGeoData] = useState<GeoRow[]>([]);
   const [abuseFlags, setAbuseFlags] = useState<AbuseFlag[]>([]);
   const [unresolvedAbuseCount, setUnresolvedAbuseCount] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackRow[]>([]);
@@ -157,6 +351,8 @@ export default function AdminPage() {
       adminFetch<{ users: UserScanStat[] }>("user-scan-stats").then((r) => setUserScanStats(r.users)).catch(() => {}),
       adminFetch<{ events: EventRow[] }>("events?limit=200").then((r) => setEvents(r.events)),
       adminFetch<{ summary: unknown; visitors: VisitorRow[] }>("visitors?days=30").then((r) => setVisitors(r.visitors)),
+      adminFetch<{ data: DailyPageView[] }>("page-views-by-day?days=90").then((r) => setDailyViews(r.data)).catch(() => {}),
+      adminFetch<{ data: GeoRow[] }>("geo?days=30").then((r) => setGeoData(r.data)).catch(() => {}),
       adminFetch<{ feedback: FeedbackRow[] }>("feedback").then((r) => setFeedback(r.feedback)).catch(() => {}),
       adminFetch<{ flags: AbuseFlag[]; unresolvedCount: number }>("abuse-flags").then((r) => {
         setAbuseFlags(r.flags);
@@ -211,6 +407,16 @@ export default function AdminPage() {
             </p>
           </div>
         )}
+
+        {/* Daily Traffic Chart */}
+        <Section title="Homepage Traffic — Last 90 Days">
+          <TrafficChart data={dailyViews} />
+        </Section>
+
+        {/* Geo & Bot Breakdown */}
+        <Section title="Traffic Breakdown — Last 30 Days">
+          <GeoDonut visitors={visitors} geoData={geoData} />
+        </Section>
 
         {/* Registered Users */}
         <Section title={`Registered Users (${totalUsers})`}>

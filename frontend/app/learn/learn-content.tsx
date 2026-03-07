@@ -36,6 +36,17 @@ export function LearnContent({ articles }: { articles: Article[] }) {
     if (q) setSearch(q);
   }, [searchParams]);
 
+  // Keep URL in sync with search
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (search.trim()) {
+      url.searchParams.set("q", search.trim());
+    } else {
+      url.searchParams.delete("q");
+    }
+    window.history.replaceState({}, "", url.toString());
+  }, [search]);
+
   const q = search.trim().toLowerCase();
 
   const filtered = articles.filter((a) => {
@@ -107,9 +118,14 @@ export function LearnContent({ articles }: { articles: Article[] }) {
                   href={`/learn/${a.slug}`}
                   className="rounded-lg border border-primary/30 bg-primary/5 p-4 transition hover:bg-primary/10"
                 >
-                  <span className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-medium ${categoryColors[a.category] || "bg-muted text-muted-foreground"}`}>
-                    {a.category}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-medium ${categoryColors[a.category] || "bg-muted text-muted-foreground"}`}>
+                      {a.category}
+                    </span>
+                    <span className="inline-block rounded-full bg-primary/15 text-primary px-2.5 py-0.5 text-[10px] font-medium">
+                      Popular
+                    </span>
+                  </div>
                   <h3 className="mt-2 text-sm font-semibold text-foreground">{a.title}</h3>
                 </Link>
               ))}
