@@ -25,6 +25,16 @@ Mushroom identification web app (orangutany.com). Users upload photos, get AI-po
 - **Domain**: orangutany.com (Cloudflare DNS)
 - **Email domain**: noreply@orangutany.com (verified via Resend + Cloudflare DKIM/SPF/DMARC)
 
+## Render Env Var Safety (CRITICAL — caused production outage March 5 2026)
+- **Render PUT /env-vars REPLACES ALL vars** — if you PUT only new vars, everything else is deleted
+- **MANDATORY procedure for ANY env var change**:
+  1. `GET /v1/services/{id}/env-vars` — fetch all current vars
+  2. Merge new/changed vars into the full list
+  3. `PUT` the complete merged set
+  4. `GET` again to verify all vars are present
+- **Local backup**: `.env.production` contains all production credentials — update it whenever env vars change
+- **Never store credentials only on Render** — if they get wiped, they're gone forever
+
 ## Cost Rules (MANDATORY)
 - **Render plan is Starter ($7/mo USD). NEVER upgrade the plan, add instances, enable autoscaling, or make any change that increases cost beyond $7/mo.**
 - Do not add paid databases, paid add-ons, or additional Render services
@@ -46,6 +56,14 @@ Mushroom identification web app (orangutany.com). Users upload photos, get AI-po
 - When adding new routes or handlers: always check if the function is async, and await it
 - When migrating any sync API to async: grep ALL call sites and add `await` — missing even one causes silent data corruption (Promises serialize as `{}`)
 - **Test to add**: `npm test` includes a check that all `getAuthContext` calls are awaited — extend this pattern to cover all async DB functions if new ones are added
+
+## Sitemap Architecture (orangutany.com + guide.orangutany.com)
+- Two sitemaps — Google requires sitemap URLs to match host (subdomains are separate sites)
+- orangutany.com/sitemap.xml — 16 pages (app, learn articles, legal) via `frontend/app/sitemap.ts`
+- guide.orangutany.com/sitemap.xml — 106 species + articles + guides via `app/sitemap.ts` in orangutany-seo repo
+- Both robots.txt files list BOTH sitemaps for cross-discovery
+- Stale `public/sitemap.xml` and `public/robots.txt` (old orangutanyID.com refs) have been deleted — dynamic `app/sitemap.ts` and `app/robots.ts` are the source of truth
+- If adding pages to either site, update the corresponding sitemap.ts
 
 ## Git Workflow
 - Push directly to main (solo dev, Render auto-deploys)
