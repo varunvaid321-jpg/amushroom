@@ -462,6 +462,8 @@ function toPublicUser(userRow) {
     name: userRow.name || '',
     emailVerified: Boolean(userRow.email_verified ?? userRow.emailVerified),
     tier: userRow.tier || 'free',
+    membershipStartedAt: userRow.membership_started_at || null,
+    hasStripeCustomer: !!(userRow.stripe_customer_id),
     createdAt: userRow.created_at || userRow.createdAt,
     updatedAt: userRow.updated_at || userRow.updatedAt
   };
@@ -1496,6 +1498,18 @@ async function handleIdentify(req, res) {
     const quota = await checkUserQuota(auth.user.id);
     quotaInfo = { tier, used: quota.used, limit: quota.limit, resetsAt: quota.resetsAt };
     if (quota.exceeded) {
+      // Alert admins when a pro user hits their daily cap (fraud prevention)
+      if (tier === 'pro' || tier === 'pro_lifetime') {
+        console.warn(`[quota] Pro user ${auth.user.id} (${auth.user.email}) hit daily cap of ${quota.limit}`);
+        const adminEmails = [...ADMIN_EMAILS];
+        if (adminEmails[0]) {
+          sendAbuseAlertEmail(adminEmails[0], {
+            userId: auth.user.id, userEmail: auth.user.email, ip: clientIp,
+            reason: 'pro_daily_cap_hit',
+            metadata: { tier, scansToday: quota.used, limit: quota.limit },
+          }).catch(() => {});
+        }
+      }
       sendJson(req, res, 403, {
         error: `You've reached your daily limit of ${quota.limit} scans. Come back tomorrow${tier === 'free' ? ' or upgrade to Pro' : ''}.`,
         quota_exceeded: true,

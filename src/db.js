@@ -181,7 +181,8 @@ const dbReady = (async () => {
     "ALTER TABLE upload_batches ADD COLUMN user_story TEXT",
     "ALTER TABLE users ADD COLUMN stripe_customer_id TEXT",
     "ALTER TABLE users ADD COLUMN stripe_subscription_id TEXT",
-    "ALTER TABLE users ADD COLUMN suspended INTEGER NOT NULL DEFAULT 0"
+    "ALTER TABLE users ADD COLUMN suspended INTEGER NOT NULL DEFAULT 0",
+    "ALTER TABLE users ADD COLUMN membership_started_at TEXT"
   ];
   for (const sql of migrations) {
     try { await client.execute(sql); } catch { /* column already exists */ }
@@ -205,6 +206,7 @@ function rowToUser(row) {
     stripe_customer_id: row.stripe_customer_id || null,
     stripe_subscription_id: row.stripe_subscription_id || null,
     suspended: Number(row.suspended || 0),
+    membership_started_at: row.membership_started_at || null,
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };
@@ -212,7 +214,7 @@ function rowToUser(row) {
 
 async function getPublicUser(id) {
   const result = await client.execute({
-    sql: 'SELECT id, email, name, email_verified, tier, scans_today, scans_today_date, created_at, updated_at FROM users WHERE id = ?',
+    sql: 'SELECT id, email, name, email_verified, tier, scans_today, scans_today_date, stripe_customer_id, membership_started_at, created_at, updated_at FROM users WHERE id = ?',
     args: [Number(id)]
   });
   const row = result.rows[0];
@@ -291,6 +293,8 @@ async function getSessionWithUser(sessionId) {
       u.tier,
       u.scans_today,
       u.scans_today_date,
+      u.stripe_customer_id,
+      u.membership_started_at,
       u.created_at,
       u.updated_at
     FROM sessions s
@@ -856,8 +860,8 @@ async function setUserStripeCustomer(userId, stripeCustomerId) {
 
 async function setUserSubscription(userId, stripeSubscriptionId, tier) {
   await client.execute({
-    sql: 'UPDATE users SET stripe_subscription_id = ?, tier = ?, updated_at = ? WHERE id = ?',
-    args: [stripeSubscriptionId, tier, nowIso(), Number(userId)]
+    sql: 'UPDATE users SET stripe_subscription_id = ?, tier = ?, membership_started_at = COALESCE(membership_started_at, ?), updated_at = ? WHERE id = ?',
+    args: [stripeSubscriptionId, tier, nowIso(), nowIso(), Number(userId)]
   });
 }
 

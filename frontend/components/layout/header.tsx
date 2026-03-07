@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Container } from "./container";
-import { Menu, X, MessageSquare, BookOpen, Sparkles } from "lucide-react";
+import { Menu, X, MessageSquare, BookOpen, Sparkles, Crown } from "lucide-react";
 import { FeedbackModal } from "@/components/feedback/feedback-modal";
 import { scrollToId } from "@/lib/scroll";
 import { useUpgrade } from "@/hooks/use-upgrade";
@@ -19,7 +19,8 @@ export function Header() {
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const showUpgrade = !!user && user.tier !== "pro" && user.tier !== "pro_lifetime";
+  const isPro = user?.tier === "pro" || user?.tier === "pro_lifetime";
+  const showUpgrade = !!user && !isPro;
 
   function navTo(hash: string) {
     setMenuOpen(false);
@@ -65,6 +66,19 @@ export function Header() {
               <span className="text-xs sm:text-sm font-medium text-foreground truncate max-w-[60px] sm:max-w-[120px]">
                 Hi, {user.name || user.email}
               </span>
+              {isPro && (
+                <Link
+                  href="/account/billing"
+                  className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                    user?.tier === "pro_lifetime"
+                      ? "bg-purple-500/15 text-purple-400 hover:bg-purple-500/25"
+                      : "bg-green-500/15 text-green-400 hover:bg-green-500/25"
+                  }`}
+                >
+                  <Crown className="h-3 w-3" />
+                  <span className="hidden sm:inline">{user?.tier === "pro_lifetime" ? "Lifetime" : "Pro"}</span>
+                </Link>
+              )}
               {showUpgrade && (
                 <button
                   onClick={openUpgrade}
@@ -85,7 +99,7 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={logout}
+                onClick={async () => { await logout(); window.location.href = "/"; }}
                 className="text-muted-foreground hover:text-foreground h-8 px-2 text-xs sm:text-sm sm:px-3"
               >
                 Logout
@@ -132,12 +146,21 @@ export function Header() {
                 Learn About Mushrooms
               </a>
               {user && (
-                <button
-                  onClick={() => navTo("library")}
-                  className="w-full text-left px-3 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted/30 rounded-lg transition-colors"
-                >
-                  My Identifications
-                </button>
+                <>
+                  <button
+                    onClick={() => navTo("library")}
+                    className="w-full text-left px-3 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted/30 rounded-lg transition-colors"
+                  >
+                    My Identifications
+                  </button>
+                  <Link
+                    href="/account/billing"
+                    onClick={() => setMenuOpen(false)}
+                    className="px-3 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted/30 rounded-lg transition-colors"
+                  >
+                    Account & Billing
+                  </Link>
+                </>
               )}
               <Link
                 href="/resources"
