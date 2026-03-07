@@ -65,6 +65,34 @@ Mushroom identification web app (orangutany.com). Users upload photos, get AI-po
 - Stale `public/sitemap.xml` and `public/robots.txt` (old orangutanyID.com refs) have been deleted — dynamic `app/sitemap.ts` and `app/robots.ts` are the source of truth
 - If adding pages to either site, update the corresponding sitemap.ts
 
+## Scroll Behavior Rules (CRITICAL — broken 3 times in March 2026)
+
+The homepage has scroll targets (`#upload`, `#results`, `#library`) triggered by hero CTA, hamburger menu, and history table clicks. These MUST land so the user sees the right content.
+
+### Required viewport on scroll to `#upload` (phone)
+The screen must clearly show ALL of these after scrolling:
+1. "One photo is enough" hint text
+2. All 5 upload photo boxes
+3. The Analyze button / quota text / upgrade CTA
+
+If any layout change pushes these out of a single phone viewport (~667px minus 64px header = ~600px usable), the scroll target or layout must be adjusted.
+
+### Implementation rules
+1. **Every scrollable section must have `scroll-mt-[72px]`** (64px header + 8px buffer). If you add a new `id=""` that gets scrolled to, add this class.
+2. **Use `scrollToId()` from `frontend/lib/scroll.ts`** — never write raw `scrollIntoView` or `window.scrollTo` elsewhere. This function has browser fallback + safety correction.
+3. **Never remove or reduce `scroll-mt-*`** classes without testing on a real phone viewport (375px wide, 667px tall).
+4. **After any layout change to the upload section** (padding, spacing, new elements above the boxes), verify the scroll lands correctly:
+   - Check: does the hint text show at the top?
+   - Check: is the Analyze button visible without scrolling further?
+   - If not, adjust `scroll-mt-*` or section padding.
+5. **The safety check** in `scroll.ts` auto-corrects after 600ms if the element ends up behind the header. Do not remove this.
+6. **Test targets**: `#upload` (from hero + hamburger), `#results` (after analyze on mobile), `#library` (from back-to-library button).
+
+### What went wrong (history)
+- PR #68: Used `scroll-margin-top` CSS property — some mobile browsers ignored it
+- PR #69: Switched to `scrollIntoView` + `scroll-mt-*` Tailwind class — worked on desktop, inconsistent on phone
+- PR #73: Added manual fallback + 600ms safety correction — most robust approach
+
 ## Git Workflow
 - Push directly to main (solo dev, Render auto-deploys)
 - Commit messages: imperative mood, explain "why" not "what"
