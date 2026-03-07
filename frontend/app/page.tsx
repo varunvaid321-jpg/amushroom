@@ -104,7 +104,7 @@ export default function Home() {
           </Container>
         </div>
       )}
-      <section id="upload" className="pt-4 pb-12">
+      <section id="upload" className="scroll-mt-[72px] pt-4 pb-12">
         <Container>
           <div className="grid gap-8 lg:grid-cols-[1fr,420px]">
             <div className="space-y-6">
@@ -127,7 +127,7 @@ export default function Home() {
                 quotaBlocked={quotaBlocked}
               />
             </div>
-            <div id="results" className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
+            <div id="results" className="scroll-mt-[72px] lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
               <ResultsDock
                 state={resultsState}
                 matches={matches}
@@ -146,7 +146,7 @@ export default function Home() {
           </div>
         </Container>
       </section>
-      <div id="library">
+      <div id="library" className="scroll-mt-[72px]">
         <HistoryTable onLoadUpload={handleLoadUpload} refreshKey={refreshKey} />
       </div>
     </>
