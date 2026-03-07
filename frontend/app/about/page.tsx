@@ -1,8 +1,9 @@
+import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About Orangutany",
+  title: "About Orangutany Mushroom ID",
   description:
     "Orangutany takes the guesswork out of mushroom identification. AI trained on millions of images — species matches, distribution maps, seasonality. Think global, forage local.",
   alternates: { canonical: "/about" },
@@ -12,9 +13,12 @@ export default function AboutPage() {
   return (
     <section className="py-16">
       <Container className="max-w-3xl">
+        <Link href="/" className="inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline mb-6">
+          ← Back to Home
+        </Link>
         <article className="prose prose-invert max-w-none space-y-8 text-foreground/80">
           <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-foreground">
-            About Orangutany
+            About Orangutany Mushroom ID
           </h1>
           <p className="text-lg leading-relaxed">
             Orangutany takes the guesswork out of mushroom identification. Snap a

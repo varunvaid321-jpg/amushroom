@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import type { Metadata } from "next";
 
@@ -70,6 +71,9 @@ export default function ResourcesPage() {
   return (
     <section className="py-16">
       <Container className="max-w-3xl">
+        <Link href="/" className="inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline mb-6">
+          ← Back to Home
+        </Link>
         <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-foreground">
           External Resources
         </h1>
