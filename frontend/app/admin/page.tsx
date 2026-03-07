@@ -97,15 +97,18 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-function KpiCard({ label, value, icon: Icon, accent }: { label: string; value: string | number; icon: React.ElementType; accent?: string }) {
+function KpiCard({ label, value, icon: Icon, accent, active, onClick }: { label: string; value: string | number; icon: React.ElementType; accent?: string; active?: boolean; onClick?: () => void }) {
   return (
-    <div className="rounded-lg border border-border/30 bg-muted/10 p-4">
+    <button
+      onClick={onClick}
+      className={`w-full text-left rounded-lg border p-4 transition cursor-pointer ${active ? "border-primary/60 bg-primary/10 ring-1 ring-primary/30" : "border-border/30 bg-muted/10 hover:border-border/60 hover:bg-muted/20"}`}
+    >
       <div className="flex items-center gap-2 mb-1">
         <Icon className={`h-4 w-4 ${accent || "text-muted-foreground"}`} />
         <span className="text-xs text-muted-foreground">{label}</span>
       </div>
       <p className="text-2xl font-bold tabular-nums text-foreground">{value}</p>
-    </div>
+    </button>
   );
 }
 
@@ -290,6 +293,7 @@ export default function AdminPage() {
   const [unresolvedAbuseCount, setUnresolvedAbuseCount] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeKpi, setActiveKpi] = useState<string | null>(null);
 
   useEffect(() => {
     if (authLoading || !isAdmin) return;
@@ -430,11 +434,118 @@ export default function AdminPage() {
 
         {/* KPI cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <KpiCard label="Page Views (30d)" value={totalHits.toLocaleString()} icon={Eye} accent="text-blue-400" />
-          <KpiCard label="Scans" value={totalScans} icon={Scan} accent="text-primary" />
-          <KpiCard label="Signups" value={totalSignups} icon={Users} accent="text-purple-400" />
-          <KpiCard label="Unique Visitors" value={uniqueVisitors} icon={TrendingUp} accent="text-amber-400" />
+          <KpiCard label="Page Views (30d)" value={totalHits.toLocaleString()} icon={Eye} accent="text-blue-400" active={activeKpi === "views"} onClick={() => setActiveKpi(activeKpi === "views" ? null : "views")} />
+          <KpiCard label="Scans" value={totalScans} icon={Scan} accent="text-primary" active={activeKpi === "scans"} onClick={() => setActiveKpi(activeKpi === "scans" ? null : "scans")} />
+          <KpiCard label="Signups" value={totalSignups} icon={Users} accent="text-purple-400" active={activeKpi === "signups"} onClick={() => setActiveKpi(activeKpi === "signups" ? null : "signups")} />
+          <KpiCard label="Unique Visitors" value={uniqueVisitors} icon={TrendingUp} accent="text-amber-400" active={activeKpi === "visitors"} onClick={() => setActiveKpi(activeKpi === "visitors" ? null : "visitors")} />
         </div>
+
+        {/* KPI detail panels */}
+        {activeKpi === "views" && (
+          <Section title="Page View Details (Last 7 Days)">
+            {(() => {
+              const last7 = dailyViews
+                .sort((a, b) => b.day.localeCompare(a.day))
+                .slice(0, 7);
+              return last7.length > 0 ? (
+                <div className="space-y-1.5">
+                  {last7.map((d) => (
+                    <div key={d.day} className="flex items-center justify-between rounded-lg px-3 py-2 hover:bg-muted/10">
+                      <span className="text-sm text-foreground">{new Date(d.day + "T12:00:00").toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}</span>
+                      <span className="text-sm font-bold tabular-nums text-foreground">{d.count.toLocaleString()} views</span>
+                    </div>
+                  ))}
+                  <div className="mt-2 flex items-center justify-between rounded-lg border-t border-border/30 px-3 pt-3">
+                    <span className="text-sm font-medium text-muted-foreground">7-day total</span>
+                    <span className="text-sm font-bold tabular-nums text-primary">{last7.reduce((s, d) => s + d.count, 0).toLocaleString()} views</span>
+                  </div>
+                </div>
+              ) : (
+                <p className="py-4 text-center text-sm text-muted-foreground">No page view data yet</p>
+              );
+            })()}
+          </Section>
+        )}
+
+        {activeKpi === "scans" && (
+          <Section title="Recent Scans">
+            {(() => {
+              const scanEvents = events.filter((e) => e.event === "scan").slice(0, 20);
+              return scanEvents.length > 0 ? (
+                <div className="space-y-1.5">
+                  {scanEvents.map((e) => (
+                    <div key={e.id} className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-muted/10">
+                      <span className="shrink-0 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium text-primary">scan</span>
+                      <span className="min-w-0 truncate text-sm text-foreground">{e.user_name || e.user_email || "anonymous"}</span>
+                      <span className="hidden sm:block shrink-0 text-xs text-foreground/50">{e.country ? `${countryFlag(e.country)} ${e.city || e.country}` : ""}</span>
+                      <span className="ml-auto shrink-0 text-xs text-muted-foreground tabular-nums">{timeAgo(e.created_at)}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="py-4 text-center text-sm text-muted-foreground">No scans yet</p>
+              );
+            })()}
+          </Section>
+        )}
+
+        {activeKpi === "signups" && (
+          <Section title="Recent Signups">
+            {(() => {
+              const signupEvents = events.filter((e) => e.event === "signup").slice(0, 20);
+              const signupUsers = userScanStats
+                .sort((a, b) => new Date(b.signedUpAt).getTime() - new Date(a.signedUpAt).getTime())
+                .slice(0, 20);
+              return signupUsers.length > 0 ? (
+                <div className="space-y-1.5">
+                  {signupUsers.map((u) => (
+                    <div key={u.id} className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-muted/10">
+                      <span className="shrink-0 rounded-full bg-purple-500/15 px-2 py-0.5 text-[10px] font-medium text-purple-300">signup</span>
+                      <span className="text-sm font-medium text-foreground">{u.name || "\u2014"}</span>
+                      <span className="min-w-0 truncate text-xs text-foreground/60">{u.email}</span>
+                      <span className="hidden sm:block shrink-0 text-xs text-muted-foreground">
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${u.tier === "pro" ? "bg-primary/15 text-primary" : "bg-zinc-500/15 text-zinc-300"}`}>{u.tier}</span>
+                      </span>
+                      <span className="ml-auto shrink-0 text-xs text-muted-foreground tabular-nums">{u.totalScans} scans</span>
+                      <span className="shrink-0 text-xs text-muted-foreground">{new Date(u.signedUpAt).toLocaleDateString()}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="py-4 text-center text-sm text-muted-foreground">No signups yet</p>
+              );
+            })()}
+          </Section>
+        )}
+
+        {activeKpi === "visitors" && (
+          <Section title="Unique Visitors (30d)">
+            {browserVisitors.length > 0 ? (
+              <div className="space-y-1.5 max-h-[500px] overflow-y-auto">
+                {browserVisitors
+                  .sort((a, b) => b.hits - a.hits)
+                  .slice(0, 30)
+                  .map((v, i) => (
+                    <div key={i} className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-muted/10">
+                      <span className="shrink-0 text-sm font-bold tabular-nums text-amber-400">{v.hits}</span>
+                      <span className="shrink-0 text-xs text-muted-foreground">hits</span>
+                      {v.scans > 0 && (
+                        <>
+                          <span className="shrink-0 text-sm font-bold tabular-nums text-primary">{v.scans}</span>
+                          <span className="shrink-0 text-xs text-muted-foreground">scans</span>
+                        </>
+                      )}
+                      <span className="text-xs text-foreground/60">{v.country ? `${countryFlag(v.country)} ${v.city || v.country}` : "Unknown"}</span>
+                      <span className="hidden sm:block text-xs text-foreground/40">{v.userAgent ? parseDevice(v.userAgent) : ""}</span>
+                      <span className="ml-auto shrink-0 text-xs text-muted-foreground tabular-nums">{timeAgo(v.lastSeen)}</span>
+                    </div>
+                  ))}
+              </div>
+            ) : (
+              <p className="py-4 text-center text-sm text-muted-foreground">No visitor data yet</p>
+            )}
+          </Section>
+        )}
 
         {/* Traffic trend */}
         <Section title="Traffic Trend — 90 Days">
