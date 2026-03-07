@@ -17,16 +17,15 @@ const sora = Sora({
 
 export const metadata: Metadata = {
   title: {
-    default: "Orangutany | AI Mushroom Identifier",
+    default: "Orangutany — Mushroom Identification for People Who Love Mushrooms",
     template: "%s | Orangutany",
   },
   description:
-    "Take the guesswork out of mushroom identification. Orangutany uses AI trained on millions of mushroom images to instantly ID species, show global distribution maps, and tell you when to expect them. Think global, forage local.",
+    "We love mushrooms as much as you do. Orangutany helps you identify wild species from photos — with edibility info, look-alike warnings, distribution maps, and real foraging knowledge. Built by foragers, for foragers.",
   keywords: [
     "mushroom identifier",
     "mushroom identification app",
     "identify mushrooms from photo",
-    "AI mushroom ID",
     "foraging app",
     "wild mushroom identifier",
     "Orangutany",
@@ -35,9 +34,9 @@ export const metadata: Metadata = {
   ],
   metadataBase: new URL("https://orangutany.com"),
   openGraph: {
-    title: "Orangutany | AI Mushroom Identifier",
+    title: "Orangutany — Mushroom Identification for People Who Love Mushrooms",
     description:
-      "Take the guesswork out of mushroom ID. AI trained on millions of images — species matches, distribution maps, and seasonality. Think global, forage local.",
+      "We love mushrooms as much as you do. Identify wild species from photos — edibility info, look-alike warnings, and real foraging knowledge. Built by foragers, for foragers.",
     siteName: "Orangutany",
     locale: "en_US",
     type: "website",
@@ -46,15 +45,15 @@ export const metadata: Metadata = {
         url: "/images/appicon.png",
         width: 512,
         height: 512,
-        alt: "Orangutany — AI Mushroom Identifier",
+        alt: "Orangutany — Mushroom Identification",
       },
     ],
   },
   twitter: {
     card: "summary",
-    title: "Orangutany | AI Mushroom Identifier",
+    title: "Orangutany — Mushroom Identification for People Who Love Mushrooms",
     description:
-      "Take the guesswork out of mushroom ID. AI trained on millions of images — distribution maps and seasonality included.",
+      "We love mushrooms as much as you do. Identify species from photos with edibility info, look-alikes, and foraging knowledge.",
     images: ["/images/appicon.png"],
   },
   robots: {
@@ -89,7 +88,7 @@ export default function RootLayout({
                     height: 512,
                   },
                   description:
-                    "AI-powered mushroom identification — trained on millions of images. Species matches, global distribution maps, seasonality, and educational resources. Think global, forage local.",
+                    "Mushroom identification for people who love mushrooms. Species matches, edibility info, distribution maps, look-alike warnings, and foraging guides. Built by foragers, for foragers.",
                   sameAs: [],
                   contactPoint: {
                     "@type": "ContactPoint",
@@ -106,7 +105,7 @@ export default function RootLayout({
                     "@id": "https://orangutany.com/#organization",
                   },
                   description:
-                    "Take the guesswork out of mushroom identification. AI trained on millions of images — species matches, distribution maps, seasonality, and free educational guides.",
+                    "We love mushrooms as much as you do. Identify wild species from photos, learn what's edible and what's deadly, and explore foraging guides built by people who actually forage.",
                   potentialAction: {
                     "@type": "SearchAction",
                     target: "https://orangutany.com/learn?q={search_term_string}",

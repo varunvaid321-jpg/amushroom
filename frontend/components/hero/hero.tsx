@@ -17,7 +17,7 @@ export function Hero() {
       <Container className="flex flex-col items-center text-center">
         <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border/50 bg-muted/50 px-4 py-1.5 text-xs font-medium text-gold">
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-green-400" />
-          Trained on Millions of Species
+          100+ Species Covered
         </div>
         <h1 className="mb-4 max-w-2xl font-[family-name:var(--font-heading)] text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
           Identify wild mushrooms{" "}
