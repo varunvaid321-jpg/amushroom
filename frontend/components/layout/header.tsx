@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Container } from "./container";
 import { Menu, X, MessageSquare, BookOpen } from "lucide-react";
 import { FeedbackModal } from "@/components/feedback/feedback-modal";
+import { scrollToId } from "@/lib/scroll";
 
 export function Header() {
   const { user, isAdmin, loading, logout, openAuthModal } = useAuth();
@@ -20,7 +21,7 @@ export function Header() {
   function navTo(hash: string) {
     setMenuOpen(false);
     if (isHome) {
-      document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+      scrollToId(hash);
     } else {
       window.location.href = `/#${hash}`;
     }

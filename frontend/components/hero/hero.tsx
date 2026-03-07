@@ -6,15 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Container } from "@/components/layout/container";
 import { useAuth } from "@/hooks/use-auth";
 import { ArrowDown, Search } from "lucide-react";
+import { scrollToId } from "@/lib/scroll";
 
 export function Hero() {
   const { user, openAuthModal } = useAuth();
   const [learnQuery, setLearnQuery] = useState("");
   const router = useRouter();
 
-  const scrollToUpload = () => {
-    document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
-  };
+  const scrollToUpload = () => scrollToId("upload");
 
   const handleLearnSearch = (e: React.FormEvent) => {
     e.preventDefault();
