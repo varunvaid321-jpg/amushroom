@@ -1325,7 +1325,7 @@ async function handleStripePortal(req, res) {
 
   const session = await stripe.billingPortal.sessions.create({
     customer: auth.user.stripe_customer_id,
-    return_url: `${APP_BASE_URL}/`,
+    return_url: `${APP_BASE_URL}/account/billing`,
   });
   sendJson(req, res, 200, { url: session.url });
 }
@@ -1375,12 +1375,12 @@ async function handleStripeWebhook(req, res) {
           userId,
           stripeSubscriptionId: subId,
           amountCents: session.amount_total || (isLifetime ? 4999 : 799),
-          currency: session.currency || 'cad',
+          currency: session.currency || 'usd',
           status: isLifetime ? 'lifetime' : 'active',
         });
         console.log(`[stripe] User ${userId} upgraded to ${tier}`);
         writeAuditLog({ eventType: 'tier_change', userId, details: { tier, plan, mode: session.mode, amountCents: session.amount_total } }).catch(() => {});
-        writeAuditLog({ eventType: 'payment', userId, details: { amountCents: session.amount_total || (isLifetime ? 4999 : 799), currency: session.currency || 'cad', plan, status: isLifetime ? 'lifetime' : 'active' } }).catch(() => {});
+        writeAuditLog({ eventType: 'payment', userId, details: { amountCents: session.amount_total || (isLifetime ? 4999 : 799), currency: session.currency || 'usd', plan, status: isLifetime ? 'lifetime' : 'active' } }).catch(() => {});
         const upgradeUser = await getPublicUser(userId);
         if (upgradeUser?.email) {
           sendUpgradeEmail(upgradeUser.email, upgradeUser.name).catch(() => {});
@@ -1415,6 +1415,9 @@ async function handleStripeWebhook(req, res) {
     }
   } catch (err) {
     console.error(`[stripe] Error processing ${event.type}:`, err.message);
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Webhook processing failed' }));
+    return;
   }
 
   res.writeHead(200, { 'Content-Type': 'application/json' });

@@ -5,7 +5,7 @@ import { useUpgrade } from "@/hooks/use-upgrade";
 import { useAuth } from "@/hooks/use-auth";
 
 const BENEFITS = [
-  { icon: Infinity, text: "Unlimited mushroom scans" },
+  { icon: Infinity, text: "50 mushroom scans per day" },
   { icon: Zap, text: "Instant AI identification" },
   { icon: Shield, text: "Priority support" },
   { icon: Check, text: "Full edibility and look-alike details" },
@@ -51,7 +51,7 @@ export function UpgradeModal() {
           </div>
           <h2 className="text-lg font-bold text-foreground">You&apos;re already a Pro member!</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            You have unlimited scans. Keep identifying mushrooms to your heart&apos;s content.
+            You have 50 scans per day. Keep identifying mushrooms to your heart&apos;s content.
           </p>
           <button
             onClick={closeUpgrade}
