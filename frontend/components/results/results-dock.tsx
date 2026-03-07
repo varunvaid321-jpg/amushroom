@@ -128,7 +128,7 @@ export function ResultsDock({
               Full results are locked
             </p>
             <p className="mb-4 text-sm text-muted-foreground">
-              Create a free account to unlock edibility info, traits, look-alikes, and get 5 IDs per day. Or go Pro for unlimited.
+              Create a free account to unlock edibility info, traits, look-alikes, and more. Or go Pro for the full experience.
             </p>
             <div className="flex flex-col items-center gap-2">
               <Button onClick={() => openAuthModal("register")} className="bg-primary text-primary-foreground hover:bg-primary/90">
@@ -252,7 +252,7 @@ export function ResultsDock({
           onClick={openUpgrade}
           className="w-full rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-center text-xs text-muted-foreground hover:bg-primary/10 transition-colors"
         >
-          Want unlimited scans?{" "}
+          Enjoying Orangutany?{" "}
           <span className="font-semibold text-primary">Upgrade to Pro</span>
         </button>
       )}

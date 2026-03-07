@@ -3,10 +3,10 @@
 import { useAuth } from "@/hooks/use-auth";
 import { useUpgrade } from "@/hooks/use-upgrade";
 import { Container } from "@/components/layout/container";
-import { Infinity, Zap, Shield, Check, Sparkles, Crown, Loader2 } from "lucide-react";
+import { Zap, Shield, Check, Sparkles, Crown, Loader2 } from "lucide-react";
 
 const BENEFITS = [
-  { icon: Infinity, title: "50 scans per day", desc: "vs 5 for free accounts" },
+  { icon: Sparkles, title: "Scan to your heart's content", desc: "No more daily limits" },
   { icon: Zap, title: "Instant AI identification", desc: "Powered by millions of verified observations" },
   { icon: Shield, title: "Full edibility & look-alike details", desc: "Every match with complete safety data" },
   { icon: Check, title: "Priority support", desc: "Get help when you need it" },
@@ -34,7 +34,7 @@ export default function UpgradePage() {
         </div>
         <h1 className="text-2xl font-bold text-foreground">You&apos;re a Pro member!</h1>
         <p className="mt-2 text-muted-foreground">
-          You have 50 scans per day. Keep identifying mushrooms to your heart&apos;s content.
+          Enjoy the full Pro experience. Keep identifying mushrooms to your heart&apos;s content.
         </p>
         <a href="/account/billing" className="mt-6 inline-block text-sm text-primary hover:underline">
           View billing &rarr;

@@ -89,10 +89,12 @@ export default function BillingPage() {
             </div>
           )}
 
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Daily scans</span>
-            <span className="text-sm text-foreground">{isPro ? "50 / day" : "5 / day"}</span>
-          </div>
+          {!isPro && (
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">Daily scans</span>
+              <span className="text-sm text-foreground">5 / day</span>
+            </div>
+          )}
 
           {isMonthly && (
             <div className="flex items-center justify-between">
