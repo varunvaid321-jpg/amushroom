@@ -48,22 +48,22 @@ export function Header() {
             />
           </Link>
           <a
-            href="https://guide.orangutany.com/mushrooms"
+            href={user ? `https://guide.orangutany.com/mushrooms?user=${encodeURIComponent(user.name || user.email)}` : "https://guide.orangutany.com/mushrooms"}
             className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-muted/40 px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
           >
             <BookOpen className="h-3.5 w-3.5" />
             Learn About Mushrooms
           </a>
         </div>
-        <nav className="flex items-center gap-3">
+        <nav className="flex items-center gap-2 sm:gap-3">
           {loading ? null : user ? (
-            <>
-              <span className="hidden sm:inline text-sm text-muted-foreground truncate max-w-[120px]">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="text-xs sm:text-sm text-muted-foreground truncate max-w-[80px] sm:max-w-[120px]">
                 Hi, {user.name || user.email}
               </span>
               {isAdmin && (
                 <Link href="/admin">
-                  <Button variant="ghost" size="sm" className="text-primary">
+                  <Button variant="ghost" size="sm" className="text-primary h-8 px-2 sm:px-3">
                     Admin
                   </Button>
                 </Link>
@@ -72,11 +72,11 @@ export function Header() {
                 variant="ghost"
                 size="sm"
                 onClick={logout}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground h-8 px-2 sm:px-3"
               >
                 Logout
               </Button>
-            </>
+            </div>
           ) : (
             <>
               <button onClick={() => openAuthModal("login")} className="text-sm text-muted-foreground hover:text-foreground">
@@ -110,7 +110,7 @@ export function Header() {
                 </button>
               )}
               <a
-                href="https://guide.orangutany.com/mushrooms"
+                href={user ? `https://guide.orangutany.com/mushrooms?user=${encodeURIComponent(user.name || user.email)}` : "https://guide.orangutany.com/mushrooms"}
                 onClick={() => setMenuOpen(false)}
                 className="px-3 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted/30 rounded-lg transition-colors"
               >
