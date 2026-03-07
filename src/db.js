@@ -165,6 +165,20 @@ const dbReady = (async () => {
   await client.execute(`CREATE INDEX IF NOT EXISTS idx_scan_log_user_created ON scan_log(user_id, created_at)`);
   await client.execute(`CREATE INDEX IF NOT EXISTS idx_scan_log_ip_created ON scan_log(ip, created_at)`);
 
+  // Immutable audit log — NEVER DELETE records. 3-year retention minimum.
+  // Tracks: signups, tier changes, payments, subscription cancellations
+  await client.execute(`CREATE TABLE IF NOT EXISTS audit_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    event_type TEXT NOT NULL,
+    user_id INTEGER,
+    user_email TEXT,
+    details TEXT,
+    ip TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )`);
+  await client.execute(`CREATE INDEX IF NOT EXISTS idx_audit_log_user_id ON audit_log(user_id)`);
+  await client.execute(`CREATE INDEX IF NOT EXISTS idx_audit_log_event_type ON audit_log(event_type)`);
+
   await client.execute(`CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id)`);
   await client.execute(`CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at)`);
   await client.execute(`CREATE INDEX IF NOT EXISTS idx_reset_tokens_token ON password_reset_tokens(token)`);
@@ -1000,6 +1014,25 @@ async function checkAbusePatterns(userId, ip) {
   return flags;
 }
 
+// Immutable audit log — NEVER delete. 3-year minimum retention.
+async function writeAuditLog({ eventType, userId, userEmail, details, ip }) {
+  await client.execute({
+    sql: 'INSERT INTO audit_log (event_type, user_id, user_email, details, ip) VALUES (?, ?, ?, ?, ?)',
+    args: [eventType, userId ? Number(userId) : null, userEmail || null, typeof details === 'object' ? JSON.stringify(details) : (details || null), ip || null]
+  });
+}
+
+async function getAuditLogs({ userId, eventType, limit = 100 } = {}) {
+  let sql = 'SELECT * FROM audit_log WHERE 1=1';
+  const args = [];
+  if (userId) { sql += ' AND user_id = ?'; args.push(Number(userId)); }
+  if (eventType) { sql += ' AND event_type = ?'; args.push(eventType); }
+  sql += ' ORDER BY id DESC LIMIT ?';
+  args.push(limit);
+  const result = await client.execute({ sql, args });
+  return result.rows;
+}
+
 module.exports = {
   dbReady,
   createUser,
@@ -1063,5 +1096,7 @@ module.exports = {
   suspendUser,
   unsuspendUser,
   isUserSuspended,
-  getUserScanStats
+  getUserScanStats,
+  writeAuditLog,
+  getAuditLogs
 };
