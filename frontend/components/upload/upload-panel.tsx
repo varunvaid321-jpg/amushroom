@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Search, RotateCcw, Loader2, Sparkles, Zap, Shield } from "lucide-react";
 import { useUpgrade } from "@/hooks/use-upgrade";
 import { useAuth } from "@/hooks/use-auth";
-import { canShowUpgrade } from "@/lib/platform";
+import { canShowUpgradeCTA } from "@/lib/app-review-policy";
 
 interface UploadPanelProps {
   photoCount: number;
@@ -76,7 +76,7 @@ export function UploadPanel({
       {tier !== "pro" && tier !== "pro_lifetime" && remaining !== null && remaining !== undefined && !quotaBlocked && (
         <p className="text-center text-xs text-muted-foreground">
           {remaining} of {limit ?? (tier === "anonymous" ? 3 : 5)} {tier === "anonymous" ? "free" : "daily"} scan{remaining !== 1 ? "s" : ""} remaining
-          {canShowUpgrade() && (
+          {canShowUpgradeCTA() && (
             <>
               {" "}&middot;{" "}
               <button onClick={openUpgrade} className="font-semibold text-primary hover:underline">
@@ -91,7 +91,7 @@ export function UploadPanel({
           <Sparkles className="mx-auto mb-2 h-5 w-5 text-primary" />
           <p className="mb-1 text-sm font-semibold text-foreground">You&apos;ve used all free scans</p>
           <p className="mb-3 text-xs text-muted-foreground">
-            {canShowUpgrade()
+            {canShowUpgradeCTA()
               ? "Create a free account to get daily scans, or go Pro for the full experience."
               : "Create a free account to get daily scans."}
           </p>
@@ -101,7 +101,7 @@ export function UploadPanel({
           >
             Sign Up Free
           </button>
-          {canShowUpgrade() && (
+          {canShowUpgradeCTA() && (
             <button
               onClick={openUpgrade}
               className="mt-2 block mx-auto text-xs font-semibold text-primary hover:underline"
@@ -111,7 +111,7 @@ export function UploadPanel({
           )}
         </div>
       )}
-      {quotaBlocked && tier === "free" && canShowUpgrade() && <UpgradeCard />}
+      {quotaBlocked && tier === "free" && canShowUpgradeCTA() && <UpgradeCard />}
     </div>
   );
 }

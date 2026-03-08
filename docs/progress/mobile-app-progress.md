@@ -69,5 +69,18 @@
 | Release checklist pass | not_started | | | |
 | Final audit | not_started | | | |
 
+## iOS Review Hardening Pass
+
+| Item | Status | Date Started | Date Completed | Notes |
+|------|--------|-------------|----------------|-------|
+| iOS app review rules | completed | 2026-03-07 | 2026-03-07 | `/rules/ios-app-review-rules.md` |
+| iOS review hardening spec | completed | 2026-03-07 | 2026-03-07 | `/docs/specs/ios-review-hardening-spec.md` |
+| iOS review hardening checklist | completed | 2026-03-07 | 2026-03-07 | `/docs/checklists/ios-review-hardening-checklist.md` |
+| Payment surface audit | completed | 2026-03-07 | 2026-03-07 | 13 surfaces audited, 11 suppressed, 2 allowed |
+| Account deletion spec | completed | 2026-03-07 | 2026-03-07 | BLOCKING — not yet implemented |
+| App privacy inventory | completed | 2026-03-07 | 2026-03-07 | 16 data types, 6 third-party services |
+| App review notes draft | completed | 2026-03-07 | 2026-03-07 | Test account TBD |
+| Open issues updated | completed | 2026-03-07 | 2026-03-07 | 5 new issues added |
+
 ## Blockers
-- None currently
+- Account deletion: in-app initiation not implemented (BLOCKING for App Store submission)

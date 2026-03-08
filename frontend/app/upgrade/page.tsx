@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/hooks/use-auth";
 import { useUpgrade } from "@/hooks/use-upgrade";
-import { canShowUpgrade } from "@/lib/platform";
+import { canShowUpgradeCTA } from "@/lib/app-review-policy";
 import { Container } from "@/components/layout/container";
 import { Zap, Shield, Check, Sparkles, Crown, Loader2 } from "lucide-react";
 
@@ -27,7 +27,7 @@ export default function UpgradePage() {
   }
 
   // Native app — no upgrade page
-  if (!canShowUpgrade()) {
+  if (!canShowUpgradeCTA()) {
     return (
       <Container className="py-16 text-center max-w-lg mx-auto">
         <h1 className="text-xl font-bold text-foreground">Manage Your Subscription</h1>
