@@ -97,7 +97,10 @@ const {
   unsuspendUser,
   isUserSuspended,
   writeAuditLog,
-  getAuditLogs
+  getAuditLogs,
+  addNewsletterSubscriber,
+  listNewsletterSubscribers,
+  getNewsletterStats
 } = require('./src/db');
 const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendAbuseAlertEmail } = require('./src/email');
 const { runOnePost, listPosted } = require('./src/instagram');
@@ -1902,6 +1905,36 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // Newsletter subscription (accepts cross-origin from guide.orangutany.com)
+  if (req.method === 'OPTIONS' && url.pathname === '/api/newsletter') {
+    res.writeHead(204, {
+      'Access-Control-Allow-Origin': 'https://guide.orangutany.com',
+      'Access-Control-Allow-Methods': 'POST',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Max-Age': '86400',
+    });
+    res.end();
+    return;
+  }
+  if (req.method === 'POST' && url.pathname === '/api/newsletter') {
+    res.setHeader('Access-Control-Allow-Origin', 'https://guide.orangutany.com');
+    let body;
+    try { body = await parseBody(req, 4 * 1024); } catch { jsonError(req, res, 400, 'Bad request.'); return; }
+    const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
+    if (!email || !validateEmail(email)) { jsonError(req, res, 400, 'Valid email is required.'); return; }
+    const name = typeof body.name === 'string' ? body.name.trim().slice(0, 100) : '';
+    const country = typeof body.country === 'string' ? body.country.trim().slice(0, 100) : '';
+    try {
+      await addNewsletterSubscriber(email, name, country);
+      sendJson(req, res, 200, { ok: true });
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('[newsletter] subscription error:', err);
+      jsonError(req, res, 500, 'Something went wrong.');
+    }
+    return;
+  }
+
   // Public cover image endpoint — used by Instagram pipeline for public image URL
   if (req.method === 'GET' && url.pathname.startsWith('/api/uploads/') && url.pathname.endsWith('/cover-image')) {
     const batchId = decodeURIComponent(url.pathname.slice('/api/uploads/'.length, -'/cover-image'.length)).trim();
@@ -2004,6 +2037,10 @@ const server = http.createServer(async (req, res) => {
       sendJson(req, res, 200, { flags: await listAbuseFlags(200), unresolvedCount: await getUnresolvedAbuseFlagCount() });
     } else if (route === 'revenue') {
       sendJson(req, res, 200, await getRevenueStats());
+    } else if (route === 'newsletter') {
+      const subscribers = await listNewsletterSubscribers();
+      const stats = await getNewsletterStats();
+      sendJson(req, res, 200, { subscribers, ...stats });
     } else if (route === 'instagram-post') {
       // POST /api/admin/instagram-post — trigger one Instagram post
       const pageToken = process.env.IG_PAGE_TOKEN;

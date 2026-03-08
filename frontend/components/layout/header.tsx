@@ -176,6 +176,13 @@ export function Header() {
               >
                 About
               </Link>
+              <a
+                href="https://guide.orangutany.com/newsletter"
+                onClick={() => setMenuOpen(false)}
+                className="px-3 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-muted/30 rounded-lg transition-colors"
+              >
+                Newsletter
+              </a>
               <div className="my-1 h-px bg-border/40" />
               <button
                 onClick={() => { setMenuOpen(false); setFeedbackOpen(true); }}

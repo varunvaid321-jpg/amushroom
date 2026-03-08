@@ -179,6 +179,15 @@ const dbReady = (async () => {
   await client.execute(`CREATE INDEX IF NOT EXISTS idx_audit_log_user_id ON audit_log(user_id)`);
   await client.execute(`CREATE INDEX IF NOT EXISTS idx_audit_log_event_type ON audit_log(event_type)`);
 
+  await client.execute(`CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    name TEXT,
+    country TEXT,
+    subscribed_at TEXT NOT NULL DEFAULT (datetime('now')),
+    unsubscribed_at TEXT
+  )`);
+
   await client.execute(`CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id)`);
   await client.execute(`CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at)`);
   await client.execute(`CREATE INDEX IF NOT EXISTS idx_reset_tokens_token ON password_reset_tokens(token)`);
@@ -1037,6 +1046,40 @@ async function getAuditLogs({ userId, eventType, limit = 100 } = {}) {
   return result.rows;
 }
 
+async function addNewsletterSubscriber(email, name, country) {
+  await dbReady;
+  const now = nowIso();
+  try {
+    await client.execute({
+      sql: `INSERT INTO newsletter_subscribers (email, name, country, subscribed_at) VALUES (?, ?, ?, ?)`,
+      args: [email.toLowerCase().trim(), name || null, country || null, now]
+    });
+    return { success: true };
+  } catch (err) {
+    if (err.message && err.message.includes('UNIQUE')) {
+      // Already subscribed — update name/country silently
+      await client.execute({
+        sql: `UPDATE newsletter_subscribers SET name = ?, country = ?, unsubscribed_at = NULL WHERE email = ?`,
+        args: [name || null, country || null, email.toLowerCase().trim()]
+      });
+      return { success: true };
+    }
+    throw err;
+  }
+}
+
+async function listNewsletterSubscribers() {
+  await dbReady;
+  const result = await client.execute(`SELECT id, email, name, country, subscribed_at, unsubscribed_at FROM newsletter_subscribers ORDER BY subscribed_at DESC`);
+  return result.rows;
+}
+
+async function getNewsletterStats() {
+  await dbReady;
+  const total = await client.execute(`SELECT COUNT(*) as count FROM newsletter_subscribers WHERE unsubscribed_at IS NULL`);
+  return { activeSubscribers: Number(total.rows[0].count) };
+}
+
 module.exports = {
   dbReady,
   createUser,
@@ -1102,5 +1145,8 @@ module.exports = {
   isUserSuspended,
   getUserScanStats,
   writeAuditLog,
-  getAuditLogs
+  getAuditLogs,
+  addNewsletterSubscriber,
+  listNewsletterSubscribers,
+  getNewsletterStats
 };

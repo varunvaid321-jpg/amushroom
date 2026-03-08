@@ -33,6 +33,11 @@ interface VisitorRow {
   type: "bot" | "browser" | "unknown" | "other";
 }
 
+interface NewsletterSub {
+  id: number; email: string; name: string | null;
+  country: string | null; subscribed_at: string; unsubscribed_at: string | null;
+}
+
 interface FeedbackRow {
   id: number; user_id: number | null; email: string | null;
   name: string | null; user_email: string | null; user_name: string | null;
@@ -292,6 +297,8 @@ export default function AdminPage() {
   const [abuseFlags, setAbuseFlags] = useState<AbuseFlag[]>([]);
   const [unresolvedAbuseCount, setUnresolvedAbuseCount] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackRow[]>([]);
+  const [newsletterSubs, setNewsletterSubs] = useState<NewsletterSub[]>([]);
+  const [newsletterCount, setNewsletterCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [activeKpi, setActiveKpi] = useState<string | null>(null);
 
@@ -305,6 +312,7 @@ export default function AdminPage() {
       adminFetch<{ data: DailyPageView[] }>("page-views-by-day?days=90").then((r) => setDailyViews(r.data)).catch(() => {}),
       adminFetch<{ data: GeoRow[] }>("geo?days=30").then((r) => setGeoData(r.data)).catch(() => {}),
       adminFetch<{ feedback: FeedbackRow[] }>("feedback").then((r) => setFeedback(r.feedback)).catch(() => {}),
+      adminFetch<{ subscribers: NewsletterSub[]; activeSubscribers: number }>("newsletter").then((r) => { setNewsletterSubs(r.subscribers); setNewsletterCount(r.activeSubscribers); }).catch(() => {}),
       adminFetch<{ flags: AbuseFlag[]; unresolvedCount: number }>("abuse-flags").then((r) => {
         setAbuseFlags(r.flags);
         setUnresolvedAbuseCount(r.unresolvedCount);
@@ -722,6 +730,29 @@ export default function AdminPage() {
                   </div>
                 );
               })}
+            </div>
+          )}
+        </Section>
+
+        {/* Newsletter Subscribers */}
+        <Section title={`Newsletter Subscribers (${newsletterCount} active)`}>
+          {newsletterSubs.length === 0 ? (
+            <div className="flex flex-col items-center py-8 text-center text-muted-foreground">
+              <Users className="mb-2 h-8 w-8 text-muted-foreground/40" />
+              <p className="text-sm">No subscribers yet.</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {newsletterSubs.map((s) => (
+                <div key={s.id} className={`flex items-center justify-between gap-3 rounded-lg border border-border/20 px-4 py-3 ${s.unsubscribed_at ? "opacity-50" : ""}`}>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="truncate text-sm font-medium text-foreground">{s.email}</span>
+                    {s.name && <span className="hidden sm:block text-xs text-muted-foreground">{s.name}</span>}
+                    {s.country && <span className="hidden sm:block rounded-full bg-muted/30 px-2 py-0.5 text-[10px] text-muted-foreground">{s.country}</span>}
+                  </div>
+                  <span className="shrink-0 text-xs text-muted-foreground">{new Date(s.subscribed_at).toLocaleDateString()}</span>
+                </div>
+              ))}
             </div>
           )}
         </Section>
