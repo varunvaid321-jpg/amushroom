@@ -431,11 +431,13 @@ test('payments: webhook writes audit log for tier changes', () => {
 
 // ─── Peer review: Customer workflow expert ───────────────────────────────────
 
-test('customer: billing page renders Upgrade to Lifetime for monthly users', () => {
+test('customer: billing page offers lifetime switch and in-app cancel for monthly users', () => {
   const src = fs.readFileSync(path.join(root, 'frontend/app/account/billing/page.tsx'), 'utf8');
-  assert.ok(src.includes('Upgrade to Lifetime'), 'Monthly users must see Upgrade to Lifetime button');
+  assert.ok(src.includes('Lifetime'), 'Monthly users must see switch-to-lifetime option');
   assert.ok(src.includes('startCheckout("lifetime")') || src.includes("startCheckout('lifetime')"),
-    'Upgrade to Lifetime must call startCheckout with lifetime plan');
+    'Lifetime switch must call startCheckout with lifetime plan');
+  assert.ok(src.includes('cancelSubscription'), 'Billing page must support in-app cancellation');
+  assert.ok(src.includes('Cancel Subscription'), 'Cancel button must be visible for monthly users');
 });
 
 // ─── Peer review: Integration expert ─────────────────────────────────────────
