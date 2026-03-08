@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/hooks/use-auth";
 import { useUpgrade } from "@/hooks/use-upgrade";
+import { canShowUpgrade } from "@/lib/platform";
 import { createPortalSession } from "@/lib/api";
 import { Container } from "@/components/layout/container";
 import { Crown, Loader2, ExternalLink } from "lucide-react";
@@ -125,7 +126,7 @@ export default function BillingPage() {
       {/* Actions */}
       <div className="space-y-3">
         {/* Free user - upgrade */}
-        {!isPro && (
+        {!isPro && canShowUpgrade() && (
           <a
             href="/upgrade"
             className="flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition"
@@ -145,12 +146,14 @@ export default function BillingPage() {
               {portalLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ExternalLink className="h-4 w-4" />}
               Manage Subscription
             </button>
-            <button
-              onClick={() => startCheckout("lifetime")}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-primary/30 px-6 py-3 text-sm font-medium text-primary hover:bg-primary/10 transition"
-            >
-              Upgrade to Lifetime ($49.99)
-            </button>
+            {canShowUpgrade() && (
+              <button
+                onClick={() => startCheckout("lifetime")}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-primary/30 px-6 py-3 text-sm font-medium text-primary hover:bg-primary/10 transition"
+              >
+                Upgrade to Lifetime ($49.99)
+              </button>
+            )}
           </>
         )}
 

@@ -3,6 +3,7 @@
 import { Sparkles, Zap, Shield, Loader2, X, Check, Crown } from "lucide-react";
 import { useUpgrade } from "@/hooks/use-upgrade";
 import { useAuth } from "@/hooks/use-auth";
+import { canShowUpgrade } from "@/lib/platform";
 
 const BENEFITS = [
   { icon: Sparkles, text: "Scan to your heart's content" },
@@ -17,7 +18,7 @@ export function UpgradeModal() {
   const isPro = user?.tier === "pro" || user?.tier === "pro_lifetime";
 
   // Show redirect confirmation when going to Stripe after login
-  if (redirectMessage) {
+  if (redirectMessage && canShowUpgrade()) {
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center">
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
@@ -35,7 +36,7 @@ export function UpgradeModal() {
     );
   }
 
-  if (!upgradeOpen) return null;
+  if (!upgradeOpen || !canShowUpgrade()) return null;
 
   // Already Pro — show confirmation
   if (isPro) {

@@ -11,6 +11,7 @@ import { Menu, X, MessageSquare, BookOpen, Sparkles, Crown } from "lucide-react"
 import { FeedbackModal } from "@/components/feedback/feedback-modal";
 import { scrollToId } from "@/lib/scroll";
 import { useUpgrade } from "@/hooks/use-upgrade";
+import { canShowUpgrade } from "@/lib/platform";
 
 export function Header() {
   const { user, isAdmin, loading, logout, openAuthModal } = useAuth();
@@ -20,7 +21,7 @@ export function Header() {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const isPro = user?.tier === "pro" || user?.tier === "pro_lifetime";
-  const showUpgrade = !!user && !isPro;
+  const showUpgrade = !!user && !isPro && canShowUpgrade();
 
   function navTo(hash: string) {
     setMenuOpen(false);
@@ -129,7 +130,7 @@ export function Header() {
               >
                 Identify a Mushroom
               </button>
-              {(!user || showUpgrade) && (
+              {canShowUpgrade() && (!user || showUpgrade) && (
                 <button
                   onClick={() => { setMenuOpen(false); openUpgrade(); }}
                   className="w-full text-left px-3 py-2.5 text-sm font-semibold text-primary hover:bg-primary/10 rounded-lg transition-colors flex items-center gap-2"
