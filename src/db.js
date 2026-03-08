@@ -1080,6 +1080,51 @@ async function getNewsletterStats() {
   return { activeSubscribers: Number(total.rows[0].count) };
 }
 
+async function getAdminScanGallery(limit = 200) {
+  const batches = await client.execute({
+    sql: `SELECT b.id, b.user_id, b.created_at, b.image_count, b.primary_match, b.primary_confidence,
+                 u.email, u.name
+          FROM upload_batches b
+          LEFT JOIN users u ON b.user_id = u.id
+          ORDER BY b.created_at DESC
+          LIMIT ?`,
+    args: [limit]
+  });
+
+  const scans = [];
+  for (const batch of batches.rows) {
+    const imgs = await client.execute({
+      sql: 'SELECT id, mime_type, image_blob FROM upload_images WHERE batch_id = ? ORDER BY id ASC LIMIT 1',
+      args: [batch.id]
+    });
+    const thumb = imgs.rows.length > 0
+      ? `data:${imgs.rows[0].mime_type || 'image/jpeg'};base64,${Buffer.from(imgs.rows[0].image_blob).toString('base64')}`
+      : null;
+
+    // Get country from the closest scan event
+    const geo = await client.execute({
+      sql: `SELECT country, city FROM analytics_events
+            WHERE event = 'scan' AND user_id = ? AND created_at <= datetime(?, '+1 minute')
+            ORDER BY created_at DESC LIMIT 1`,
+      args: [batch.user_id ? Number(batch.user_id) : null, batch.created_at]
+    });
+
+    scans.push({
+      id: batch.id,
+      userName: batch.name || null,
+      userEmail: batch.email || null,
+      primaryMatch: batch.primary_match,
+      primaryConfidence: batch.primary_confidence ? Number(batch.primary_confidence) : null,
+      imageCount: Number(batch.image_count),
+      thumbnail: thumb,
+      country: geo.rows[0]?.country || null,
+      city: geo.rows[0]?.city || null,
+      createdAt: batch.created_at
+    });
+  }
+  return scans;
+}
+
 module.exports = {
   dbReady,
   createUser,
@@ -1148,5 +1193,6 @@ module.exports = {
   getAuditLogs,
   addNewsletterSubscriber,
   listNewsletterSubscribers,
-  getNewsletterStats
+  getNewsletterStats,
+  getAdminScanGallery
 };

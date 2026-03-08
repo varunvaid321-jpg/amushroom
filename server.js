@@ -100,7 +100,8 @@ const {
   getAuditLogs,
   addNewsletterSubscriber,
   listNewsletterSubscribers,
-  getNewsletterStats
+  getNewsletterStats,
+  getAdminScanGallery
 } = require('./src/db');
 const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendAbuseAlertEmail } = require('./src/email');
 const { runOnePost, listPosted } = require('./src/instagram');
@@ -2090,6 +2091,9 @@ const server = http.createServer(async (req, res) => {
         },
         visitors
       });
+    } else if (route === 'scan-gallery') {
+      const limit = Number(url.searchParams.get('limit') || 200);
+      sendJson(req, res, 200, { scans: await getAdminScanGallery(limit) });
     } else {
       jsonError(req, res, 404, 'Unknown admin endpoint.');
     }
