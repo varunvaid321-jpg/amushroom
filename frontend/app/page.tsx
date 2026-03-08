@@ -14,6 +14,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { ApiError } from "@/lib/api";
 import { scrollToId } from "@/lib/scroll";
 import { Sparkles, X } from "lucide-react";
+import { LearnSection } from "@/components/hero/learn-section";
 
 export default function Home() {
   const [refreshKey, setRefreshKey] = useState(0);
@@ -146,6 +147,7 @@ export default function Home() {
           </div>
         </Container>
       </section>
+      <LearnSection />
       <div id="library" className="scroll-mt-[72px]">
         <HistoryTable onLoadUpload={handleLoadUpload} refreshKey={refreshKey} />
       </div>
