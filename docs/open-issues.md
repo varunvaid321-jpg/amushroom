@@ -2,6 +2,16 @@
 
 Unresolved decisions and questions. Must be resolved before or during implementation.
 
+**Last updated:** 2026-03-08
+
+## Resolved Since Last Update
+
+### Billing Page Bugs — RESOLVED (PR #97, March 8 2026)
+- **Manage Subscription always failed**: `toPublicUser()` didn't include `stripe_customer_id`, so portal handler always returned "No billing account found". Fixed in server.js + src/db.js.
+- **Back-button stuck spinner**: bfcache restored frozen React state after Stripe redirect. Fixed with `pageshow` listener in both `use-upgrade.tsx` and `billing/page.tsx`.
+- **Silent error on portal/checkout failure**: Errors were caught but no message shown. Now shows visible error text.
+- **67 unit tests** added covering financial workflows (PR #98).
+
 ## Payment Flow for iOS
 - **Issue**: Apple requires In-App Purchase for digital subscriptions sold inside apps (Guideline 3.1.1)
 - **Current approach**: V1 directs users to orangutany.com/upgrade in Safari for payment. App shows membership status but does not initiate purchases.

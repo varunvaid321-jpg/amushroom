@@ -1,5 +1,7 @@
 # Mobile App Progress Tracker
 
+**Last updated:** 2026-03-08
+
 ## Phase 1: Governance and Planning
 
 | Item | Status | Date Started | Date Completed | Notes |
@@ -82,5 +84,16 @@
 | App review notes draft | completed | 2026-03-07 | 2026-03-07 | Test account TBD |
 | Open issues updated | completed | 2026-03-07 | 2026-03-07 | 5 new issues added |
 
+## Web Payment Fixes (prerequisite for mobile)
+
+| Item | Status | Date Started | Date Completed | Notes |
+|------|--------|-------------|----------------|-------|
+| Fix toPublicUser missing stripe_customer_id | completed | 2026-03-08 | 2026-03-08 | PR #97 — root cause of portal failure |
+| Fix bfcache stuck spinners (portal + checkout) | completed | 2026-03-08 | 2026-03-08 | PR #97 — pageshow listeners |
+| Add visible error messages for payment failures | completed | 2026-03-08 | 2026-03-08 | PR #97 — portal + checkout errors |
+| Add 24 financial workflow tests | completed | 2026-03-08 | 2026-03-08 | PR #98 — 43→67 tests |
+| Clean up stale git branches | completed | 2026-03-08 | 2026-03-08 | 10 branches deleted, only main + mobile-app-capacitor remain |
+
 ## Blockers
 - Account deletion: in-app initiation not implemented (BLOCKING for App Store submission)
+- Apple Developer Program enrollment ($99) — needed before any Xcode build or submission
