@@ -243,6 +243,116 @@ test('payment: all email.js exports used in server.js exist', () => {
   assert.equal(missing.length, 0, `server.js imports from email.js that don't exist: ${missing.join(', ')}`);
 });
 
+// ─── Financial workflow: billing page & upgrade hook ─────────────────────────
+
+test('billing: openPortal error state exists and displays to user', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/app/account/billing/page.tsx'), 'utf8');
+  assert.ok(src.includes('portalError'), 'billing page must have portalError state for Manage Subscription failures');
+  assert.ok(
+    src.includes('setPortalError(') && src.includes('catch'),
+    'billing page must set portalError in catch block so users see failure feedback'
+  );
+  // Must render the error
+  assert.ok(
+    src.includes('{portalError') || src.includes('portalError &&'),
+    'billing page must conditionally render portalError message'
+  );
+});
+
+test('billing: openPortal clears previous error on retry', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/app/account/billing/page.tsx'), 'utf8');
+  const fnStart = src.indexOf('async function openPortal()');
+  const fnEnd = src.indexOf('}', src.indexOf('catch', fnStart) + 20);
+  const fnBody = src.slice(fnStart, fnEnd);
+  // setPortalError(null) must come before the try/await
+  const clearIdx = fnBody.indexOf('setPortalError(null)');
+  const tryIdx = fnBody.indexOf('try');
+  assert.ok(clearIdx > 0 && clearIdx < tryIdx, 'openPortal must clear portalError before try block');
+});
+
+test('billing: portal session route exists as GET', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  assert.ok(
+    src.includes("req.method === 'GET'") && src.includes('/api/stripe/portal-session'),
+    'Portal session must be a GET route'
+  );
+});
+
+test('billing: portal handler requires auth and stripe_customer_id', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  const fnStart = src.indexOf('async function handleStripePortal(');
+  const fnEnd = src.indexOf('\nasync function ', fnStart + 1);
+  const fnBody = src.slice(fnStart, fnEnd > 0 ? fnEnd : fnStart + 500);
+  assert.ok(fnBody.includes('getAuthContext'), 'Portal handler must check authentication');
+  assert.ok(fnBody.includes('401'), 'Portal handler must return 401 for unauthenticated');
+  assert.ok(fnBody.includes('stripe_customer_id'), 'Portal handler must check for stripe customer');
+  assert.ok(fnBody.includes('billingPortal.sessions.create'), 'Portal handler must create billing portal session');
+});
+
+test('billing: Manage Subscription button gated by hasStripeCustomer', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/app/account/billing/page.tsx'), 'utf8');
+  assert.ok(
+    src.includes('user.hasStripeCustomer'),
+    'Manage Subscription must be gated by hasStripeCustomer to avoid showing button when no Stripe customer exists'
+  );
+});
+
+test('upgrade hook: bfcache cleanup via pageshow listener', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/hooks/use-upgrade.tsx'), 'utf8');
+  assert.ok(src.includes('pageshow'), 'UpgradeProvider must listen for pageshow event (bfcache restore)');
+  assert.ok(src.includes('e.persisted') || src.includes('event.persisted'), 'pageshow handler must check persisted flag');
+  assert.ok(
+    src.includes('setCheckoutLoading(false)'),
+    'pageshow handler must reset checkoutLoading to prevent stuck spinner on back-navigation'
+  );
+  assert.ok(
+    src.includes('setRedirectMessage(null)'),
+    'pageshow handler must clear redirectMessage to dismiss overlay on back-navigation'
+  );
+});
+
+test('upgrade hook: doCheckout catch resets both loading and redirectMessage', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/hooks/use-upgrade.tsx'), 'utf8');
+  const fnStart = src.indexOf('const doCheckout');
+  const fnEnd = src.indexOf('const startCheckout');
+  const fnBody = src.slice(fnStart, fnEnd);
+  const catchIdx = fnBody.indexOf('.catch(');
+  assert.ok(catchIdx > 0, 'doCheckout must have a catch block');
+  const catchBody = fnBody.slice(catchIdx);
+  assert.ok(catchBody.includes('setCheckoutLoading(false)'), 'doCheckout catch must reset checkoutLoading');
+  assert.ok(catchBody.includes('setRedirectMessage(null)'), 'doCheckout catch must reset redirectMessage');
+});
+
+test('upgrade hook: cancelPending clears all checkout state', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/hooks/use-upgrade.tsx'), 'utf8');
+  const fnStart = src.indexOf('const cancelPending');
+  const fnEnd = src.indexOf('}, [', fnStart);
+  const fnBody = src.slice(fnStart, fnEnd);
+  assert.ok(fnBody.includes('setCheckoutLoading(false)'), 'cancelPending must reset checkoutLoading');
+  assert.ok(fnBody.includes('setRedirectMessage(null)'), 'cancelPending must reset redirectMessage');
+  assert.ok(fnBody.includes("sessionStorage.removeItem"), 'cancelPending must clear sessionStorage');
+});
+
+test('upgrade hook: pendingUpgradePlan stored in sessionStorage not localStorage', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/hooks/use-upgrade.tsx'), 'utf8');
+  assert.ok(src.includes('sessionStorage'), 'Must use sessionStorage for pending plan (survives OAuth redirect, cleared on tab close)');
+  assert.ok(!src.includes('localStorage'), 'Must NOT use localStorage for pending plan (would persist across sessions)');
+});
+
+test('billing: account deletion endpoint exists', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  assert.ok(src.includes('/api/auth/delete-account'), 'Delete account endpoint must exist (Apple Guideline 5.1.1)');
+  assert.ok(src.includes("method === 'DELETE'") || src.includes('method === "DELETE"'), 'Delete account must use DELETE method');
+});
+
+test('billing: frontend createPortalSession calls correct endpoint', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/lib/api.ts'), 'utf8');
+  // Search a wider window around the function definition
+  const fnStart = src.indexOf('createPortalSession');
+  const fnBody = src.slice(fnStart, fnStart + 200);
+  assert.ok(fnBody.includes('/api/stripe/portal-session'), 'createPortalSession must call /api/stripe/portal-session');
+});
+
 // ─── File structure ───────────────────────────────────────────────────────────
 
 test('structure: required production files exist', () => {
