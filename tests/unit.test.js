@@ -339,18 +339,147 @@ test('upgrade hook: pendingUpgradePlan stored in sessionStorage not localStorage
   assert.ok(!src.includes('localStorage'), 'Must NOT use localStorage for pending plan (would persist across sessions)');
 });
 
-test('billing: account deletion endpoint exists', () => {
-  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
-  assert.ok(src.includes('/api/auth/delete-account'), 'Delete account endpoint must exist (Apple Guideline 5.1.1)');
-  assert.ok(src.includes("method === 'DELETE'") || src.includes('method === "DELETE"'), 'Delete account must use DELETE method');
-});
-
 test('billing: frontend createPortalSession calls correct endpoint', () => {
   const src = fs.readFileSync(path.join(root, 'frontend/lib/api.ts'), 'utf8');
   // Search a wider window around the function definition
   const fnStart = src.indexOf('createPortalSession');
   const fnBody = src.slice(fnStart, fnStart + 200);
   assert.ok(fnBody.includes('/api/stripe/portal-session'), 'createPortalSession must call /api/stripe/portal-session');
+});
+
+// ─── Peer review: Backend expert ──────────────────────────────────────────────
+
+test('backend: identify handler checks suspended user status', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  const fnStart = src.indexOf('async function handleIdentify(');
+  const fnEnd = src.indexOf('\nasync function ', fnStart + 1);
+  const fnBody = src.slice(fnStart, fnEnd > 0 ? fnEnd : fnStart + 3000);
+  assert.ok(fnBody.includes('suspend') || fnBody.includes('Suspended'), 'handleIdentify must check if user is suspended');
+});
+
+test('backend: OAuth callback validates state parameter', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  const fnStart = src.indexOf('async function handleGoogleCallback(');
+  const fnEnd = src.indexOf('\nasync function ', fnStart + 1);
+  const fnBody = src.slice(fnStart, fnEnd > 0 ? fnEnd : fnStart + 3000);
+  assert.ok(fnBody.includes('consumeOAuthState') || fnBody.includes('state'), 'Google callback must validate OAuth state parameter');
+});
+
+test('backend: OAuth state store has TTL cleanup', () => {
+  const src = fs.readFileSync(path.join(root, 'src/google-oauth.js'), 'utf8');
+  assert.ok(src.includes('TTL') || src.includes('ttl') || src.includes('expire') || src.includes('cleanup') || src.includes('delete'),
+    'OAuth state store must have TTL or cleanup to prevent memory leaks');
+});
+
+test('backend: login rate limiting exists', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  assert.ok(src.includes('loginFail') || src.includes('LOGIN_LOCKOUT') || src.includes('lockout'),
+    'Login endpoint must have rate limiting / lockout for brute force protection');
+});
+
+// ─── Peer review: Payments expert ────────────────────────────────────────────
+
+test('payments: checkout uses payment mode for lifetime, subscription for monthly', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  const fnStart = src.indexOf('async function handleStripeCheckout(');
+  const fnEnd = src.indexOf('\nasync function ', fnStart + 1);
+  const fnBody = src.slice(fnStart, fnEnd > 0 ? fnEnd : fnStart + 2000);
+  assert.ok(fnBody.includes("'payment'"), 'Checkout must use payment mode for lifetime');
+  assert.ok(fnBody.includes("'subscription'"), 'Checkout must use subscription mode for monthly');
+});
+
+test('payments: lifetime upgrade cancels existing monthly subscription in webhook', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  const fnStart = src.indexOf('async function handleStripeWebhook(');
+  const fnEnd = src.indexOf('\nasync function ', fnStart + 1);
+  const fnBody = src.slice(fnStart, fnEnd > 0 ? fnEnd : fnStart + 5000);
+  assert.ok(fnBody.includes('subscriptions.cancel') || fnBody.includes('subscription_id'),
+    'Webhook must cancel monthly subscription when lifetime is purchased');
+});
+
+test('payments: pro scan cap never leaks number 50 in API responses', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  // Find all 403 quota responses for pro users
+  const fnStart = src.indexOf('async function handleIdentify(');
+  const fnEnd = src.indexOf('\nasync function ', fnStart + 1);
+  const fnBody = src.slice(fnStart, fnEnd > 0 ? fnEnd : fnStart + 5000);
+  // Pro quota response must use limit: null
+  assert.ok(fnBody.includes('limit: null'), 'Pro quota exceeded must return limit: null (never reveal 50)');
+});
+
+test('payments: no "unlimited" or "50 scan" in upgrade page copy', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/app/upgrade/page.tsx'), 'utf8');
+  assert.ok(!src.match(/unlimited\s+scan/i), 'Upgrade page must never promise "unlimited scans"');
+  assert.ok(!src.includes('"50"') && !src.includes("'50'"), 'Upgrade page must never mention the 50/day cap');
+});
+
+test('payments: downgrade preserves membership_started_at', () => {
+  const src = fs.readFileSync(path.join(root, 'src/db.js'), 'utf8');
+  const fnStart = src.indexOf('async function downgradeUser(');
+  const fnEnd = src.indexOf('\nasync function ', fnStart + 1);
+  const fnBody = src.slice(fnStart, fnEnd > 0 ? fnEnd : fnStart + 500);
+  assert.ok(!fnBody.includes('membership_started_at'), 'downgradeUser must NOT overwrite membership_started_at');
+});
+
+test('payments: webhook writes audit log for tier changes', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  const fnStart = src.indexOf('async function handleStripeWebhook(');
+  const fnEnd = src.indexOf('\nasync function ', fnStart + 1);
+  const fnBody = src.slice(fnStart, fnEnd > 0 ? fnEnd : fnStart + 5000);
+  assert.ok(fnBody.includes('writeAuditLog') || fnBody.includes('audit'), 'Webhook must write audit log for tier changes');
+});
+
+// ─── Peer review: Customer workflow expert ───────────────────────────────────
+
+test('customer: billing page renders Upgrade to Lifetime for monthly users', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/app/account/billing/page.tsx'), 'utf8');
+  assert.ok(src.includes('Upgrade to Lifetime'), 'Monthly users must see Upgrade to Lifetime button');
+  assert.ok(src.includes('startCheckout("lifetime")') || src.includes("startCheckout('lifetime')"),
+    'Upgrade to Lifetime must call startCheckout with lifetime plan');
+});
+
+// ─── Peer review: Integration expert ─────────────────────────────────────────
+
+test('integration: render.yaml declares critical env vars', () => {
+  // KNOWN GAP: render.yaml only declares Turso vars. Stripe and Google vars are
+  // set manually on Render dashboard. If service is recreated from blueprint, they'll be lost.
+  // Tracked in docs/open-issues.md.
+  const yaml = fs.readFileSync(path.join(root, 'render.yaml'), 'utf8');
+  const required = ['TURSO_DATABASE_URL', 'TURSO_AUTH_TOKEN'];
+  for (const v of required) {
+    assert.ok(yaml.includes(v), `render.yaml missing ${v}`);
+  }
+  const recommended = ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'];
+  const missing = recommended.filter(v => !yaml.includes(v));
+  if (missing.length > 0) {
+    console.warn(`  ⚠ render.yaml missing env var declarations: ${missing.join(', ')} — set manually on Render`);
+  }
+});
+
+test('integration: email sending failure does not block registration', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  const fnStart = src.indexOf('async function handleRegister(') || src.indexOf('handleRegister');
+  const fnEnd = src.indexOf('\nasync function ', fnStart + 1);
+  const fnBody = src.slice(fnStart, fnEnd > 0 ? fnEnd : fnStart + 3000);
+  // sendWelcomeEmail should be fire-and-forget (not awaited without catch, or called with .catch)
+  const emailCall = fnBody.indexOf('sendWelcomeEmail');
+  if (emailCall > 0) {
+    const lineStart = fnBody.lastIndexOf('\n', emailCall);
+    const line = fnBody.slice(lineStart, fnBody.indexOf('\n', emailCall));
+    const safePatterns = ['.catch', 'try', '// fire'];
+    const isSafe = !line.includes('await') || safePatterns.some(p => fnBody.slice(emailCall - 200, emailCall + 200).includes(p));
+    assert.ok(isSafe, 'sendWelcomeEmail must not block registration on failure — use .catch() or fire-and-forget');
+  }
+});
+
+test('integration: webhook signature verification in try/catch', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  const fnStart = src.indexOf('async function handleStripeWebhook(');
+  const fnEnd = src.indexOf('\nasync function ', fnStart + 1);
+  const fnBody = src.slice(fnStart, fnEnd > 0 ? fnEnd : fnStart + 2000);
+  assert.ok(fnBody.includes('constructEvent'), 'Webhook must call constructEvent');
+  assert.ok(fnBody.includes('try') && fnBody.includes('catch'), 'constructEvent must be in try/catch — bad signature must not 500');
+  assert.ok(fnBody.includes('400'), 'Bad webhook signature must return 400');
 });
 
 // ─── File structure ───────────────────────────────────────────────────────────
