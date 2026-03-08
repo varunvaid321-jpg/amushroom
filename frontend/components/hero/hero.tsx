@@ -36,6 +36,12 @@ export function Hero() {
           Identify wild mushrooms{" "}
           <span className="text-primary">from photos</span>
         </h1>
+        {/* Style #20: Line + Word — sub-brand identifier */}
+        <div className="mb-6 flex items-center justify-center gap-2.5">
+          <div className="h-px w-6 bg-primary" />
+          <span className="text-[11px] uppercase tracking-[3px] text-primary">Mushroom ID</span>
+          <div className="h-px w-6 bg-primary" />
+        </div>
         <p className="mb-8 max-w-lg text-lg text-muted-foreground">
           Upload a photo and get instant identification with confidence scores,
           edibility info, and look-alike warnings.
