@@ -44,11 +44,11 @@ export function Header() {
           </button>
           <Link href="/" className="flex items-center">
             <Image
-              src="/images/logo-mushroom-id.png"
-              alt="Orangutany Mushroom ID"
+              src="/images/logo.png"
+              alt="Orangutany"
               width={160}
-              height={50}
-              className="h-12 w-auto"
+              height={40}
+              className="h-10 w-auto"
               priority
             />
           </Link>
