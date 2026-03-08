@@ -5,7 +5,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { Container } from "@/components/layout/container";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, AlertTriangle, CheckCheck, Ban, MessageSquare, TrendingUp, Users, Scan, Eye } from "lucide-react";
+import { Loader2, AlertTriangle, CheckCheck, Ban, MessageSquare, TrendingUp, Users, Scan, Eye, Camera } from "lucide-react";
+import Link from "next/link";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -417,7 +418,13 @@ export default function AdminPage() {
       <Container className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-foreground">Admin</h1>
+          <div className="flex items-center gap-4">
+            <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-foreground">Admin</h1>
+            <Link href="/admin/scans" className="inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-muted/30 px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+              <Camera className="h-3.5 w-3.5" />
+              Scan Gallery
+            </Link>
+          </div>
           <p className="text-sm text-muted-foreground">
             {totalUsers} user{totalUsers !== 1 ? "s" : ""}
             {Object.entries(tierCounts).map(([tier, count]) => (
