@@ -212,3 +212,14 @@ export async function createCheckoutSession(plan: "monthly" | "lifetime" = "mont
 export async function createPortalSession(): Promise<{ url: string }> {
   return apiFetch("/api/stripe/portal-session");
 }
+
+export async function deleteAccount(): Promise<{ ok: boolean }> {
+  const res = await fetch("/api/account/delete", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ confirm: true }),
+  });
+  if (!res.ok) throw new Error("Failed to delete account");
+  return res.json();
+}

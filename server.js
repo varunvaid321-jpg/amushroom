@@ -100,7 +100,8 @@ const {
   getAuditLogs,
   addNewsletterSubscriber,
   listNewsletterSubscribers,
-  getNewsletterStats
+  getNewsletterStats,
+  deleteUserAccount
 } = require('./src/db');
 const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendAbuseAlertEmail } = require('./src/email');
 const { runOnePost, listPosted } = require('./src/instagram');
@@ -1035,6 +1036,48 @@ async function handleAuthLogout(req, res) {
   sendJson(req, res, 200, { ok: true });
 }
 
+async function handleDeleteAccount(req, res) {
+  const auth = await getAuthContext(req);
+  if (!auth) { jsonError(req, res, 401, 'Not authenticated'); return; }
+
+  let body;
+  try {
+    body = await parseBody(req, 1024);
+  } catch (error) {
+    jsonError(req, res, 400, error.message);
+    return;
+  }
+
+  if (!body.confirm) {
+    jsonError(req, res, 400, 'Must confirm account deletion');
+    return;
+  }
+
+  const user = auth.user;
+
+  // Cancel Stripe subscription if user is pro with an active subscription
+  if ((user.tier === 'pro') && stripe) {
+    try {
+      // Fetch full user record to get stripe_subscription_id
+      const fullUser = await getPublicUser(user.id);
+      if (fullUser?.stripe_subscription_id) {
+        await stripe.subscriptions.cancel(fullUser.stripe_subscription_id);
+        // eslint-disable-next-line no-console
+        console.log(`[account-delete] Cancelled Stripe subscription ${fullUser.stripe_subscription_id} for user ${user.id}`);
+      }
+    } catch (stripeErr) {
+      // eslint-disable-next-line no-console
+      console.error(`[account-delete] Failed to cancel Stripe sub for user ${user.id}:`, stripeErr.message);
+      // Proceed with deletion anyway
+    }
+  }
+
+  await deleteUserAccount(user.id);
+
+  clearSession(res, req);
+  sendJson(req, res, 200, { ok: true });
+}
+
 async function handleForgotPassword(req, res) {
   let body;
   try {
@@ -1787,6 +1830,12 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && url.pathname === '/api/auth/logout') {
     if (!requireSameOrigin(req, res)) return;
     await handleAuthLogout(req, res);
+    return;
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/account/delete') {
+    if (!requireSameOrigin(req, res)) return;
+    await handleDeleteAccount(req, res);
     return;
   }
 

@@ -3,7 +3,7 @@
 import { useAuth } from "@/hooks/use-auth";
 import { useUpgrade } from "@/hooks/use-upgrade";
 import { canShowUpgradeCTA } from "@/lib/app-review-policy";
-import { createPortalSession } from "@/lib/api";
+import { createPortalSession, deleteAccount } from "@/lib/api";
 import { Container } from "@/components/layout/container";
 import { Crown, Loader2, ExternalLink } from "lucide-react";
 import { useState } from "react";
@@ -12,6 +12,8 @@ export default function BillingPage() {
   const { user, loading, openAuthModal } = useAuth();
   const { startCheckout } = useUpgrade();
   const [portalLoading, setPortalLoading] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   if (loading) {
     return (
@@ -173,6 +175,58 @@ export default function BillingPage() {
       <p className="mt-8 text-center text-[11px] text-muted-foreground/60">
         Payments processed securely by Stripe. Cancel monthly anytime via Manage Subscription.
       </p>
+
+      {/* Danger zone */}
+      <div className="mt-10 rounded-xl border border-destructive/30 p-5">
+        <h2 className="text-sm font-semibold text-destructive mb-2">Danger Zone</h2>
+        {!deleteConfirm ? (
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-muted-foreground">Permanently delete your account and all data.</p>
+            <button
+              onClick={() => setDeleteConfirm(true)}
+              className="text-xs font-medium text-destructive hover:text-destructive/80 transition-colors"
+            >
+              Delete Account
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <p className="text-sm text-foreground">
+              This will permanently delete your account, all identifications, saved photos, and account data. This cannot be undone.
+            </p>
+            {isPro && (
+              <p className="text-xs text-muted-foreground">
+                Your subscription will be cancelled automatically.
+              </p>
+            )}
+            <div className="flex items-center gap-3">
+              <button
+                disabled={deleting}
+                onClick={async () => {
+                  setDeleting(true);
+                  try {
+                    await deleteAccount();
+                    window.location.href = "/";
+                  } catch {
+                    setDeleting(false);
+                    setDeleteConfirm(false);
+                  }
+                }}
+                className="rounded-lg bg-destructive px-4 py-2 text-sm font-semibold text-white hover:bg-destructive/90 disabled:opacity-50"
+              >
+                {deleting ? "Deleting..." : "Yes, Delete My Account"}
+              </button>
+              <button
+                onClick={() => setDeleteConfirm(false)}
+                disabled={deleting}
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </Container>
   );
 }
