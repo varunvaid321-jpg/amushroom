@@ -42,7 +42,7 @@ export function Header() {
           >
             {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex flex-col items-start">
             <Image
               src="/images/logo.png"
               alt="Orangutany"
@@ -51,6 +51,11 @@ export function Header() {
               className="h-10 w-auto"
               priority
             />
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <div className="h-px w-4 bg-primary" />
+              <span className="text-[9px] uppercase tracking-[2px] text-primary">Mushroom ID</span>
+              <div className="h-px w-4 bg-primary" />
+            </div>
           </Link>
           <a
             href="https://guide.orangutany.com/mushrooms"
