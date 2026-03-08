@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Manrope, Sora } from "next/font/google";
 import { AuthProvider } from "@/hooks/use-auth";
 import { UpgradeProvider } from "@/hooks/use-upgrade";
@@ -16,6 +16,14 @@ const sora = Sora({
   subsets: ["latin"],
   variable: "--font-sora",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: {

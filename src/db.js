@@ -1080,6 +1080,111 @@ async function getNewsletterStats() {
   return { activeSubscribers: Number(total.rows[0].count) };
 }
 
+async function deleteUserAccount(userId) {
+  const uid = Number(userId);
+
+  // Get user email for newsletter unsubscribe and audit log
+  const userResult = await client.execute({
+    sql: 'SELECT email FROM users WHERE id = ?',
+    args: [uid]
+  });
+  const userEmail = userResult.rows[0]?.email || null;
+
+  const tx = await client.transaction('write');
+  try {
+    // 1. Delete upload_images for this user's batches
+    await tx.execute({
+      sql: 'DELETE FROM upload_images WHERE batch_id IN (SELECT id FROM upload_batches WHERE user_id = ?)',
+      args: [uid]
+    });
+
+    // 2. Delete identification_matches for this user's batches
+    await tx.execute({
+      sql: 'DELETE FROM identification_matches WHERE batch_id IN (SELECT id FROM upload_batches WHERE user_id = ?)',
+      args: [uid]
+    });
+
+    // 3. Delete upload_batches
+    await tx.execute({
+      sql: 'DELETE FROM upload_batches WHERE user_id = ?',
+      args: [uid]
+    });
+
+    // 4. Delete sessions
+    await tx.execute({
+      sql: 'DELETE FROM sessions WHERE user_id = ?',
+      args: [uid]
+    });
+
+    // 5. Delete feedback
+    await tx.execute({
+      sql: 'DELETE FROM feedback WHERE user_id = ?',
+      args: [uid]
+    });
+
+    // 6. Delete scan_log
+    await tx.execute({
+      sql: 'DELETE FROM scan_log WHERE user_id = ?',
+      args: [uid]
+    });
+
+    // 7. Delete abuse_flags
+    await tx.execute({
+      sql: 'DELETE FROM abuse_flags WHERE user_id = ?',
+      args: [uid]
+    });
+
+    // 8. Delete password_reset_tokens
+    await tx.execute({
+      sql: 'DELETE FROM password_reset_tokens WHERE user_id = ?',
+      args: [uid]
+    });
+
+    // 9. Delete payments
+    await tx.execute({
+      sql: 'DELETE FROM payments WHERE user_id = ?',
+      args: [uid]
+    });
+
+    // 10. Unsubscribe from newsletter
+    if (userEmail) {
+      await tx.execute({
+        sql: 'UPDATE newsletter_subscribers SET unsubscribed_at = ? WHERE email = ?',
+        args: [nowIso(), userEmail.toLowerCase().trim()]
+      });
+    }
+
+    // 11. Anonymize audit_log (never delete — 3-year retention)
+    await tx.execute({
+      sql: "UPDATE audit_log SET user_email = '[deleted]', details = json_replace(COALESCE(details, '{}'), '$.email', '[deleted]') WHERE user_id = ?",
+      args: [uid]
+    });
+
+    // 12. Nullify analytics_events user association
+    await tx.execute({
+      sql: 'UPDATE analytics_events SET user_id = NULL WHERE user_id = ?',
+      args: [uid]
+    });
+
+    // 13. Write final audit log entry before deleting user
+    await tx.execute({
+      sql: "INSERT INTO audit_log (event_type, user_id, user_email, details, ip) VALUES (?, ?, ?, ?, ?)",
+      args: ['account_deleted', uid, '[deleted]', JSON.stringify({ reason: 'user_requested' }), null]
+    });
+
+    // 14. Delete the user
+    await tx.execute({
+      sql: 'DELETE FROM users WHERE id = ?',
+      args: [uid]
+    });
+
+    await tx.commit();
+  } catch (err) {
+    await tx.rollback();
+    throw err;
+  }
+}
+
 module.exports = {
   dbReady,
   createUser,
@@ -1148,5 +1253,6 @@ module.exports = {
   getAuditLogs,
   addNewsletterSubscriber,
   listNewsletterSubscribers,
-  getNewsletterStats
+  getNewsletterStats,
+  deleteUserAccount
 };

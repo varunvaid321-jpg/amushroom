@@ -11,3 +11,12 @@ tests/screenshots/*.png
 tests/screenshots/FAIL-*.png
 /auth
 /auth-wal
+
+# Capacitor native build artifacts
+frontend/ios/App/Pods
+frontend/ios/DerivedData
+frontend/android/.gradle
+frontend/android/app/build
+frontend/android/build
+frontend/android/local.properties
+frontend/out

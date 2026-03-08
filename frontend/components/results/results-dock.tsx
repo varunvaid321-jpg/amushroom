@@ -7,6 +7,7 @@ import { ProfilePanel } from "./profile-panel";
 import { MatchCard } from "./match-card";
 import { useAuth } from "@/hooks/use-auth";
 import { useUpgrade } from "@/hooks/use-upgrade";
+import { canShowUpgradeCTA } from "@/lib/app-review-policy";
 import { Button } from "@/components/ui/button";
 
 interface ResultsDockProps {
@@ -128,15 +129,19 @@ export function ResultsDock({
               Full results are locked
             </p>
             <p className="mb-4 text-sm text-muted-foreground">
-              Create a free account to unlock edibility info, traits, look-alikes, and more. Or go Pro for the full experience.
+              {canShowUpgradeCTA()
+                ? "Create a free account to unlock edibility info, traits, look-alikes, and more. Or go Pro for the full experience."
+                : "Create a free account to unlock edibility info, traits, look-alikes, and more."}
             </p>
             <div className="flex flex-col items-center gap-2">
               <Button onClick={() => openAuthModal("register")} className="bg-primary text-primary-foreground hover:bg-primary/90">
                 Create Free Account
               </Button>
-              <button onClick={openUpgrade} className="text-xs font-semibold text-primary hover:underline">
-                or Upgrade to Pro
-              </button>
+              {canShowUpgradeCTA() && (
+                <button onClick={openUpgrade} className="text-xs font-semibold text-primary hover:underline">
+                  or Upgrade to Pro
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -247,7 +252,7 @@ export function ResultsDock({
       )}
 
       {/* Upgrade nudge for free users after seeing results */}
-      {canUpgrade && !isSavedScan && (
+      {canUpgrade && !isSavedScan && canShowUpgradeCTA() && (
         <button
           onClick={openUpgrade}
           className="w-full rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-center text-xs text-muted-foreground hover:bg-primary/10 transition-colors"

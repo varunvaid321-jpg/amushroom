@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 import { Camera, ImagePlus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { isNative, pickImageNative } from "@/lib/capacitor-camera";
 
 const SLOT_LABELS = [
   "Top of cap",
@@ -75,6 +76,24 @@ function Slot({
   const hasImage = !!file || !!preview;
   const displayPreview = preview || (file ? URL.createObjectURL(file) : null);
 
+  const handleGallery = useCallback(async () => {
+    if (isNative()) {
+      const f = await pickImageNative('gallery');
+      if (f) onAddFile(f, index);
+    } else {
+      inputRef.current?.click();
+    }
+  }, [onAddFile, index]);
+
+  const handleCamera = useCallback(async () => {
+    if (isNative()) {
+      const f = await pickImageNative('camera');
+      if (f) onAddFile(f, index);
+    } else {
+      cameraRef.current?.click();
+    }
+  }, [onAddFile, index]);
+
   return (
     <div
       className={cn(
@@ -95,7 +114,7 @@ function Slot({
           />
           <button
             onClick={onRemove}
-            className="absolute right-1 top-1 rounded-full bg-black/60 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
+            className="absolute right-1 top-1 rounded-full bg-black/60 p-1 text-white opacity-100 sm:opacity-0 transition-opacity sm:group-hover:opacity-100"
             aria-label={`Remove ${label}`}
           >
             <X className="h-3.5 w-3.5" />
@@ -109,14 +128,14 @@ function Slot({
           <span className="text-sm font-medium text-muted-foreground">{label}</span>
           <div className="flex gap-3">
             <button
-              onClick={() => inputRef.current?.click()}
+              onClick={handleGallery}
               className="rounded-xl bg-muted/50 p-3 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               aria-label={`Select photo for ${label}`}
             >
               <ImagePlus className="h-7 w-7" />
             </button>
             <button
-              onClick={() => cameraRef.current?.click()}
+              onClick={handleCamera}
               className="rounded-xl bg-muted/50 p-3 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               aria-label={`Take photo for ${label}`}
             >

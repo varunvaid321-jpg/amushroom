@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Search, RotateCcw, Loader2, Sparkles, Zap, Shield } from "lucide-react";
 import { useUpgrade } from "@/hooks/use-upgrade";
 import { useAuth } from "@/hooks/use-auth";
+import { canShowUpgradeCTA } from "@/lib/app-review-policy";
 
 interface UploadPanelProps {
   photoCount: number;
@@ -75,32 +76,42 @@ export function UploadPanel({
       {tier !== "pro" && tier !== "pro_lifetime" && remaining !== null && remaining !== undefined && !quotaBlocked && (
         <p className="text-center text-xs text-muted-foreground">
           {remaining} of {limit ?? (tier === "anonymous" ? 3 : 5)} {tier === "anonymous" ? "free" : "daily"} scan{remaining !== 1 ? "s" : ""} remaining
-          {" "}&middot;{" "}
-          <button onClick={openUpgrade} className="font-semibold text-primary hover:underline">
-            Go Pro
-          </button>
+          {canShowUpgradeCTA() && (
+            <>
+              {" "}&middot;{" "}
+              <button onClick={openUpgrade} className="font-semibold text-primary hover:underline">
+                Go Pro
+              </button>
+            </>
+          )}
         </p>
       )}
       {quotaBlocked && tier === "anonymous" && (
         <div className="mx-auto max-w-sm rounded-xl border border-primary/30 bg-primary/5 p-5 text-center">
           <Sparkles className="mx-auto mb-2 h-5 w-5 text-primary" />
           <p className="mb-1 text-sm font-semibold text-foreground">You&apos;ve used all free scans</p>
-          <p className="mb-3 text-xs text-muted-foreground">Create a free account to get daily scans, or go Pro for the full experience.</p>
+          <p className="mb-3 text-xs text-muted-foreground">
+            {canShowUpgradeCTA()
+              ? "Create a free account to get daily scans, or go Pro for the full experience."
+              : "Create a free account to get daily scans."}
+          </p>
           <button
             onClick={() => openAuthModal("register")}
             className="inline-block rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
           >
             Sign Up Free
           </button>
-          <button
-            onClick={openUpgrade}
-            className="mt-2 block mx-auto text-xs font-semibold text-primary hover:underline"
-          >
-            or Upgrade to Pro
-          </button>
+          {canShowUpgradeCTA() && (
+            <button
+              onClick={openUpgrade}
+              className="mt-2 block mx-auto text-xs font-semibold text-primary hover:underline"
+            >
+              or Upgrade to Pro
+            </button>
+          )}
         </div>
       )}
-      {quotaBlocked && tier === "free" && <UpgradeCard />}
+      {quotaBlocked && tier === "free" && canShowUpgradeCTA() && <UpgradeCard />}
     </div>
   );
 }
