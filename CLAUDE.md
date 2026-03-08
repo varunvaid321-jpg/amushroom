@@ -128,6 +128,14 @@ If any layout change pushes these out of a single phone viewport (~667px minus 6
 - Push directly to main (solo dev, Render auto-deploys)
 - Commit messages: imperative mood, explain "why" not "what"
 
+## Session Closing Rule (MANDATORY)
+Before ending a session, on context compaction, or when user says "session closing":
+1. Update ALL applicable `docs/*.md` and `docs/**/*.md` files with work completed this session
+2. Update `docs/open-issues.md` — mark resolved issues, add new ones discovered
+3. Update `docs/progress/mobile-app-progress.md` — mark completed items with dates
+4. Update memory files (`~/.claude/projects/*/memory/`) with any new learnings
+5. This is non-negotiable — no session ends without docs being current
+
 ## Guardrails (before every push)
 - `npm run check` must pass
 - `npm test` must pass
