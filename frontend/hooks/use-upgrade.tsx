@@ -58,7 +58,8 @@ export function UpgradeProvider({ children }: { children: ReactNode }) {
       })
       .catch(() => {
         setCheckoutLoading(false);
-        setRedirectMessage(null);
+        setRedirectMessage("Something went wrong starting checkout. Please try again.");
+        setTimeout(() => setRedirectMessage(null), 5000);
       });
   }, []);
 
@@ -83,6 +84,18 @@ export function UpgradeProvider({ children }: { children: ReactNode }) {
     sessionStorage.removeItem("pendingUpgradePlan");
     setCheckoutLoading(false);
     setRedirectMessage(null);
+  }, []);
+
+  // Reset loading state when page is restored from bfcache (browser Back button)
+  useEffect(() => {
+    function handlePageShow(e: PageTransitionEvent) {
+      if (e.persisted) {
+        setCheckoutLoading(false);
+        setRedirectMessage(null);
+      }
+    }
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
   }, []);
 
   // After login/register, if there's a pending plan, auto-checkout

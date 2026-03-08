@@ -5,12 +5,24 @@ import { useUpgrade } from "@/hooks/use-upgrade";
 import { createPortalSession } from "@/lib/api";
 import { Container } from "@/components/layout/container";
 import { Crown, Loader2, ExternalLink } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function BillingPage() {
   const { user, loading, openAuthModal } = useAuth();
   const { startCheckout } = useUpgrade();
   const [portalLoading, setPortalLoading] = useState(false);
+  const [portalError, setPortalError] = useState<string | null>(null);
+
+  // Reset portalLoading when page is restored from bfcache (browser Back button)
+  useEffect(() => {
+    function handlePageShow(e: PageTransitionEvent) {
+      if (e.persisted) {
+        setPortalLoading(false);
+      }
+    }
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
+  }, []);
 
   if (loading) {
     return (
@@ -41,11 +53,13 @@ export default function BillingPage() {
 
   async function openPortal() {
     setPortalLoading(true);
+    setPortalError(null);
     try {
       const { url } = await createPortalSession();
       window.location.href = url;
     } catch {
       setPortalLoading(false);
+      setPortalError("Could not open subscription management. Please try again.");
     }
   }
 
@@ -152,6 +166,10 @@ export default function BillingPage() {
               Upgrade to Lifetime ($49.99)
             </button>
           </>
+        )}
+
+        {portalError && (
+          <p className="text-sm text-red-400 text-center">{portalError}</p>
         )}
 
         {/* Lifetime user - portal for receipts */}

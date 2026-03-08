@@ -470,6 +470,8 @@ function toPublicUser(userRow) {
     tier: userRow.tier || 'free',
     membershipStartedAt: userRow.membership_started_at || null,
     membershipExpiresAt: userRow.membership_expires_at || null,
+    stripe_customer_id: userRow.stripe_customer_id || null,
+    stripe_subscription_id: userRow.stripe_subscription_id || null,
     hasStripeCustomer: !!(userRow.stripe_customer_id),
     createdAt: userRow.created_at || userRow.createdAt,
     updatedAt: userRow.updated_at || userRow.updatedAt
