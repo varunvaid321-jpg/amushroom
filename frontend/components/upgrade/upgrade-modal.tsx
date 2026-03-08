@@ -22,8 +22,8 @@ export function UpgradeModal() {
       <div className="fixed inset-0 z-[100] flex items-center justify-center">
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
         <div className="relative mx-4 w-full max-w-sm rounded-2xl border border-border bg-background p-6 shadow-xl text-center">
-          <Loader2 className="mx-auto mb-3 h-6 w-6 animate-spin text-primary" />
-          <p className="text-sm font-medium text-foreground">{redirectMessage}</p>
+          {checkoutLoading && <Loader2 className="mx-auto mb-3 h-6 w-6 animate-spin text-primary" />}
+          <p className={`text-sm font-medium ${checkoutLoading ? "text-foreground" : "text-red-400"}`}>{redirectMessage}</p>
           <button
             onClick={cancelPending}
             className="mt-4 text-xs text-muted-foreground hover:text-foreground"

@@ -320,6 +320,7 @@ async function getSessionWithUser(sessionId) {
       u.scans_today,
       u.scans_today_date,
       u.stripe_customer_id,
+      u.stripe_subscription_id,
       u.membership_started_at,
       u.membership_expires_at,
       u.created_at,
