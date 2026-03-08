@@ -212,3 +212,7 @@ export async function createCheckoutSession(plan: "monthly" | "lifetime" = "mont
 export async function createPortalSession(): Promise<{ url: string }> {
   return apiFetch("/api/stripe/portal-session");
 }
+
+export async function cancelSubscription(): Promise<{ success: boolean; tier: string }> {
+  return apiFetch("/api/stripe/cancel-subscription", { method: "POST" });
+}
