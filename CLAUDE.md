@@ -151,16 +151,40 @@ Before ending a session, on context compaction, or when user says "session closi
 - `src/google-oauth.js` — OAuth state and flow
 - `src/email.js` — Resend integration (welcome + password reset emails)
 
-### Local Databases (scan result enrichment)
-- `species-lookup.json` — 129 species from guide DB for look-alike images & guide links
-- `mushroom-stories.json` — 288 species with curated fun facts ("Did You Know?")
-- `scripts/regenerate-species-lookup.sh` — regenerate after adding species to guide
+### Scan Result Enrichment (AUTHORITATIVE — what we add on top of the API)
+
+The Kindwise API returns species matches with confidence scores. Two local databases enrich those results:
+
+**`species-lookup.json`** (130 species from guide DB, keyed by scientific name lowercase):
+- Guide link → `guide.orangutany.com/mushrooms/{slug}`
+- Common name from our database
+- Look-alike species with:
+  - Look-alike images (from our guide image library)
+  - Distinction text (how to tell them apart)
+  - Guide slug (if the look-alike species is also in our DB)
+
+**`mushroom-stories.json`** (535 species with curated fun facts):
+- "Did You Know?" one-liner shown in expanded card view
+- Curated per-species trivia/story
+
+**What the user sees in scan results:**
+- 1-3 horizontal result cards (full-bleed hero image, confidence pill, name, edibility banner, "Tap for more" hint)
+- Tap card image for full uncropped photo lightbox (portal-rendered, scroll-locked)
+- Click card to expand: full story, traits, look-alikes with images, taxonomy, distribution map
+- Link to our guide page (if species exists in our 130-species DB)
+- Look-alike entries also link to guide pages when the look-alike has a slug in our DB
+
+**Graceful fallback:** If a species isn't in either database, no story or guide link appears. No empty holes, no broken images.
+
+**Scripts:**
+- `scripts/regenerate-species-lookup.sh` — regenerates species-lookup.json from guide database
+- Both files are loaded by server.js at startup, zero external API calls for enrichment
 
 ### MANDATORY: After adding new species to guide.orangutany.com
 1. Run `scripts/regenerate-species-lookup.sh` to update species-lookup.json
 2. Optionally add a story entry in mushroom-stories.json
 3. Commit both files in amushroom repo via PR
-Skipping this means new species won't appear as guide links or show look-alike images in scan results.
+Skipping this means new species won't appear as guide links, show look-alike images, or display fun facts in scan results.
 
 ### Frontend
 - `frontend/app/page.tsx` — Homepage (upload + identify flow)
