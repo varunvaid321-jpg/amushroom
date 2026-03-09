@@ -21,6 +21,7 @@ export interface Match {
   taxonomy: { genus: string; family: string; order: string };
   lookAlikes: (string | { name: string; slug: string; imageUrl: string; distinction: string })[];
   guideUrl: string | null;
+  story: string | null;
   description: string;
   wikiUrl: string;
   representativeImage: string;
