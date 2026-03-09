@@ -94,7 +94,9 @@ export function MatchCard({ match, rank }: MatchCardProps) {
         {match.lookAlikes.length > 0 && (
           <div className="text-xs text-muted-foreground">
             <AlertTriangle className="mr-1 inline h-3 w-3 text-yellow-400" />
-            Look-alikes: {match.lookAlikes.slice(0, 2).join(", ")}
+            Don&apos;t confuse with: {match.lookAlikes.slice(0, 2).map((la) =>
+              typeof la === "string" ? la : la.name
+            ).join(", ")}
           </div>
         )}
 
@@ -130,16 +132,28 @@ export function MatchCard({ match, rank }: MatchCardProps) {
           </div>
         )}
 
-        {match.wikiUrl && (
-          <a
-            href={match.wikiUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
-          >
-            Wikipedia <ExternalLink className="h-3 w-3" />
-          </a>
-        )}
+        <div className="flex flex-wrap gap-3">
+          {match.guideUrl && (
+            <a
+              href={match.guideUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+            >
+              Full guide <ExternalLink className="h-3 w-3" />
+            </a>
+          )}
+          {match.wikiUrl && (
+            <a
+              href={match.wikiUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+            >
+              Wikipedia <ExternalLink className="h-3 w-3" />
+            </a>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

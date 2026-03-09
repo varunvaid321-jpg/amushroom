@@ -19,7 +19,8 @@ export interface Match {
   psychedelic: string;
   traits: string[];
   taxonomy: { genus: string; family: string; order: string };
-  lookAlikes: string[];
+  lookAlikes: (string | { name: string; slug: string; imageUrl: string; distinction: string })[];
+  guideUrl: string | null;
   description: string;
   wikiUrl: string;
   representativeImage: string;
