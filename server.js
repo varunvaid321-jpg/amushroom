@@ -106,6 +106,15 @@ const {
 const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendAbuseAlertEmail } = require('./src/email');
 const { runOnePost, listPosted } = require('./src/instagram');
 
+// Guide species lookup for enriching scan results with look-alike images & guide links
+const SPECIES_LOOKUP = (() => {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(__dirname, 'species-lookup.json'), 'utf8'));
+  } catch {
+    return {};
+  }
+})();
+
 const ROOT = __dirname;
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const TOKEN_FILE = path.join(ROOT, 'design', 'tokens', 'tokens.json');
@@ -703,11 +712,17 @@ function normalizeMatches(payload, uploadGuidance) {
     const scientificName = suggestion.name || firstText(details.scientific_name) || commonName;
     const traits = extractTraits(details);
     const taxonomy = details.taxonomy && typeof details.taxonomy === 'object' ? details.taxonomy : null;
-    const lookAlikes = Array.isArray(details.look_alike)
+    // Enrich look-alikes with guide data (images, distinction, guide links)
+    const rawLookAlikes = Array.isArray(details.look_alike)
       ? details.look_alike
           .map((item) => (item && typeof item.name === 'string' ? item.name.trim() : ''))
           .filter(Boolean)
           .slice(0, 5)
+      : [];
+    const guideEntry = SPECIES_LOOKUP[scientificName.toLowerCase()];
+    const guideLookAlikes = guideEntry?.lookAlikes || [];
+    const lookAlikes = rawLookAlikes.length > 0 || guideLookAlikes.length > 0
+      ? (guideLookAlikes.length > 0 ? guideLookAlikes : rawLookAlikes).slice(0, 5)
       : [];
     const wikiUrl = firstText(details.url);
     const description = firstText(details.description) || firstText(details.wiki_description);
@@ -736,6 +751,7 @@ function normalizeMatches(payload, uploadGuidance) {
       description,
       wikiUrl,
       lookAlikes,
+      guideUrl: guideEntry ? `https://guide.orangutany.com/mushrooms/${guideEntry.slug}` : null,
       representativeImage,
       rank: firstText(details.rank),
       gbifId: details.gbif_id ?? null,
@@ -1505,6 +1521,7 @@ function stripMatchToTeaser(match) {
     traits: [],
     taxonomy: {},
     lookAlikes: [],
+    guideUrl: null,
     description: '',
     wikiUrl: '',
     representativeImage: '',

@@ -137,16 +137,48 @@ export function ProfilePanel({
             <Separator className="bg-border/50" />
             <div>
               <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Look-Alikes
+                Don&apos;t Confuse With
               </h4>
-              <ul className="space-y-1 text-sm text-foreground/80">
-                {match.lookAlikes.map((la, i) => (
-                  <li key={i} className="flex items-start gap-1.5">
-                    <AlertTriangle className="mt-0.5 h-3 w-3 flex-shrink-0 text-yellow-400" />
-                    {la}
-                  </li>
-                ))}
-              </ul>
+              <div className="space-y-3">
+                {match.lookAlikes.map((la, i) => {
+                  if (typeof la === "string") {
+                    return (
+                      <div key={i} className="flex items-start gap-1.5 text-sm text-foreground/80">
+                        <AlertTriangle className="mt-0.5 h-3 w-3 flex-shrink-0 text-yellow-400" />
+                        {la}
+                      </div>
+                    );
+                  }
+                  return (
+                    <div key={i} className="flex gap-3 rounded-lg border border-amber-500/20 bg-amber-500/5 p-3">
+                      {la.imageUrl && (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                          src={la.imageUrl}
+                          alt={la.name}
+                          className="h-16 w-16 flex-shrink-0 rounded-md object-cover"
+                        />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground">{la.name}</p>
+                        {la.distinction && (
+                          <p className="mt-0.5 text-xs text-muted-foreground">{la.distinction}</p>
+                        )}
+                        {la.slug && (
+                          <a
+                            href={`https://guide.orangutany.com/mushrooms/${la.slug}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-1 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                          >
+                            Read full guide <ExternalLink className="h-3 w-3" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </>
         )}
@@ -227,6 +259,19 @@ export function ProfilePanel({
               </a>
             </div>
           </>
+        )}
+
+        {/* Guide Link */}
+        {match.guideUrl && (
+          <a
+            href={match.guideUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+          >
+            Full species guide on Orangutany
+            <ExternalLink className="h-3 w-3" />
+          </a>
         )}
 
         {/* Wiki Link */}
