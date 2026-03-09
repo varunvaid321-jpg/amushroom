@@ -1,4 +1,8 @@
 {
+  "agaricus blazei": {
+    "commonName": "Almond Mushroom",
+    "story": "Also called Himematsutake in Japan, this mushroom smells strongly of almonds and is widely sold in Asian health food stores. Originally from Brazil, it became a sensation in Japan in the 1990s when studies suggested immune-boosting properties. It's now one of the most commercially cultivated medicinal mushrooms in the world."
+  },
   "agaricus arvensis": {
     "commonName": "Horse Mushroom",
     "story": "Named for its habit of growing in horse pastures, this large Agaricus smells distinctly of anise. It was a staple of Victorian-era mushroom hunters in England, who considered it superior to the common field mushroom."
@@ -66,6 +70,10 @@
   "auricularia auricula-judae": {
     "commonName": "Wood Ear",
     "story": "Named because it literally looks like a human ear growing on dead wood. In Chinese cuisine, it's a staple of hot and sour soup. The species name references Judas because it commonly grows on elder trees, from which Judas supposedly hanged himself."
+  },
+  "auricularia cornea": {
+    "commonName": "Black Jelly Ear",
+    "story": "The tropical cousin of the Wood Ear, widely cultivated in Southeast Asia and sold dried in Asian grocery stores. It's thicker and meatier than its temperate relative. In Vietnamese cuisine, it's essential in spring rolls and salads, prized for its satisfying crunch that holds up even after soaking."
   },
   "auricularia polytricha": {
     "commonName": "Cloud Ear",
@@ -163,6 +171,10 @@
     "commonName": "Pioppino",
     "story": "One of the oldest cultivated mushrooms — the ancient Romans grew it on poplar logs. It has a satisfying crunchy texture that holds up to long cooking, making it a favorite in Italian pasta dishes."
   },
+  "dictyophora indusiata": {
+    "commonName": "Bamboo Fungus",
+    "story": "One of the most visually stunning mushrooms you'll find in a Chinese grocery store — a delicate white lace skirt drapes from beneath its cap like a bridal veil. In Chinese banquet cuisine, it's a luxury ingredient stuffed with minced shrimp or floated in clear soups. Dried specimens sell for $30-50 per ounce in specialty shops."
+  },
   "daldinia concentrica": {
     "commonName": "King Alfred's Cakes",
     "story": "Named after the legend of King Alfred burning cakes while hiding from Vikings. The hard, round, charcoal-black fruiting bodies look exactly like burnt buns. When sliced, they reveal beautiful concentric rings like tree rings."
@@ -174,6 +186,10 @@
   "flammulina velutipes": {
     "commonName": "Enoki",
     "story": "Wild enoki looks nothing like the supermarket version — it's orange-brown with a velvety stem, not the pale spindly cultivated form. Wild specimens fruit in winter, even pushing through snow, earning it the name 'winter mushroom.'"
+  },
+  "flammulina filiformis": {
+    "commonName": "Cultivated Enoki",
+    "story": "Those long, thin, white noodle-like mushrooms in plastic packages at every Asian grocery? That's this species — grown in the dark in CO2-rich conditions to produce the elongated stems. Wild enoki looks completely different: short, brown, and velvety. The cultivated form was developed in Japan in the 1960s and is now eaten raw in salads, dropped into hot pot, or wrapped in bacon."
   },
   "fistulina hepatica": {
     "commonName": "Beefsteak Fungus",
@@ -218,6 +234,14 @@
   "hericium americanum": {
     "commonName": "Bear's Head Tooth",
     "story": "Like Lion's Mane but with branching arms — imagine a cauliflower made of tiny icicles. It's found across eastern North American hardwood forests and shares Lion's Mane's culinary and medicinal properties."
+  },
+  "hypsizygus marmoreus": {
+    "commonName": "White Beech Mushroom",
+    "story": "Sold as 'Bunapi' in Japanese markets — the white cultivar of the Beech Mushroom, developed through selective breeding. It has a mild, slightly sweet flavor with no bitterness when cooked. The clusters of small white caps on joined stems are instantly recognizable in any Asian grocery store's refrigerator section."
+  },
+  "hypsizygus tessellatus": {
+    "commonName": "Beech Mushroom",
+    "story": "Called 'Shimeji' in Japanese and one of the most popular mushrooms in East Asian cooking. The name means 'occupying the ground near beech trees.' Raw specimens taste bitter, but cooking transforms them into nutty, umami-rich morsels. The clusters of brown-capped mushrooms on white stems are a staple in hot pot, stir fries, and nabe."
   },
   "hydnum repandum": {
     "commonName": "Hedgehog Mushroom",
@@ -287,6 +311,10 @@
     "commonName": "Brown Birch Bolete",
     "story": "Always found near birch trees — the partnership is obligate. The grey-brown scaly stem gives it the species name 'scabrum' meaning 'rough.' It's a reliable edible though the stem is often too tough and spongy to enjoy."
   },
+  "lentinus squarrosulus": {
+    "commonName": "Tiger Milk Mushroom",
+    "story": "A tropical edible mushroom sold fresh in Southeast Asian markets, especially in Thailand and Malaysia. The thin, fan-shaped caps with fine scales are tough but flavorful, often shredded and added to soups. In Malaysian traditional medicine, the underground sclerotium (not the mushroom itself) is prized as 'cendawan susu rimau' — tiger's milk fungus."
+  },
   "lentinula edodes": {
     "commonName": "Shiitake",
     "story": "The second most cultivated mushroom in the world. The name comes from the shii tree (Castanopsis) it naturally grows on. In Japan, logs inoculated with shiitake spawn are called 'hodagi' and are laid out in forests for years."
@@ -310,6 +338,10 @@
   "lycoperdon pyriforme": {
     "commonName": "Pear-shaped Puffball",
     "story": "The only puffball that grows on wood rather than soil. Its pear shape and clustered growth habit on stumps make it easy to identify. Like all puffballs, only eat it when the interior is solid white."
+  },
+  "macrocybe gigantea": {
+    "commonName": "Giant Clitocybe",
+    "story": "A massive tropical mushroom that can grow caps over 50 cm across — sold fresh in markets across Southeast Asia and South America. In the Philippines it's called 'kabute' and is a prized edible, often appearing after the first heavy monsoon rains. A single specimen can feed a whole family."
   },
   "macrolepiota procera": {
     "commonName": "Parasol Mushroom",
@@ -374,6 +406,10 @@
   "phallus impudicus": {
     "commonName": "Common Stinkhorn",
     "story": "Emerges from an 'egg' and reaches full height in just a few hours — one of the fastest-growing organisms on Earth. The foul-smelling slime on its tip attracts flies, which carry the spores on their feet."
+  },
+  "pholiota adiposa": {
+    "commonName": "Chestnut Mushroom",
+    "story": "Sold as 'Nameko' in some Western stores (though it's a different species from true Nameko). The brown, slightly slimy caps grow in tight clusters and have a rich, nutty flavor that intensifies when roasted. It's become one of the trendiest gourmet mushrooms in North American specialty stores, often marketed as a premium alternative to cremini."
   },
   "pholiota squarrosa": {
     "commonName": "Shaggy Scalycap",
@@ -518,6 +554,14 @@
   "volvariella volvacea": {
     "commonName": "Paddy Straw Mushroom",
     "story": "Widely cultivated in Southeast Asia on rice straw — the third most consumed mushroom worldwide. Tragically, its button stage is nearly identical to the Death Cap, leading to fatal confusion among Asian immigrants foraging in new countries."
+  },
+  "wolfiporia extensa": {
+    "commonName": "Fu Ling",
+    "story": "You won't recognize this as a mushroom — it looks like a brown coconut growing underground near pine roots. Sliced into white blocks and sold dried in every Chinese herbal medicine shop, Fu Ling has been used in Traditional Chinese Medicine for over 2,000 years. It's an ingredient in 'Four Gentlemen Soup,' one of the most foundational herbal formulas in TCM."
+  },
+  "agrocybe chaxingu": {
+    "commonName": "Tea Tree Mushroom",
+    "story": "A hugely popular dried mushroom in Chinese cooking — the long, thin stems have a satisfying chewy texture that holds up in braises and hot pot. Called 'cha shu gu' in Mandarin because it was originally found growing on old tea oil trees. Now commercially cultivated on sawdust blocks, it's one of the most affordable specialty mushrooms at Asian grocery stores."
   },
   "xerocomellus chrysenteron": {
     "commonName": "Red Cracking Bolete",
