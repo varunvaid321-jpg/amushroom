@@ -997,12 +997,10 @@ test('frontend: scrollToId has fallback for browsers without scroll-margin-top',
 
 // ─── Admin: countryFlag safety ──────────────────────────────────────────────
 
-test('admin: countryFlag skips full country names (old data)', () => {
+test('admin: uses countryLabel helper instead of flag emojis', () => {
   const src = fs.readFileSync(path.join(root, 'frontend/app/admin/page.tsx'), 'utf8');
-  const fnStart = src.indexOf('function countryFlag');
-  const fnEnd = src.indexOf('\n}', fnStart);
-  const fnBody = src.slice(fnStart, fnEnd);
-  assert.ok(fnBody.includes('length > 3'), 'countryFlag must skip strings longer than 3 chars (full country names)');
+  assert.ok(src.includes('countryLabel'), 'admin page must use countryLabel helper for location display');
+  assert.ok(!src.includes('countryFlag'), 'admin page must not use countryFlag (replaced with text labels)');
 });
 
 test('admin/scans: countryFlag skips full country names (old data)', () => {
