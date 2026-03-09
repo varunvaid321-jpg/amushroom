@@ -31,7 +31,7 @@ export function PhotoSlots({
 }: PhotoSlotsProps) {
   return (
     <div>
-      <p className="mb-3 text-center text-xs text-muted-foreground">
+      <p className="mb-3 text-center text-sm text-muted-foreground">
         One photo is enough — more angles improve confidence.
       </p>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
