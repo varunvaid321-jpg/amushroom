@@ -14,6 +14,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { ApiError } from "@/lib/api";
 import { scrollToId } from "@/lib/scroll";
 import { Sparkles, X } from "lucide-react";
+import { AfterScanSection } from "@/components/hero/after-scan-section";
+import { ConfusionsSection } from "@/components/hero/confusions-section";
 import { LearnSection } from "@/components/hero/learn-section";
 
 export default function Home() {
@@ -147,6 +149,8 @@ export default function Home() {
           </div>
         </Container>
       </section>
+      <AfterScanSection />
+      <ConfusionsSection />
       <LearnSection />
       <div id="library" className="scroll-mt-[72px]">
         <HistoryTable onLoadUpload={handleLoadUpload} refreshKey={refreshKey} />
