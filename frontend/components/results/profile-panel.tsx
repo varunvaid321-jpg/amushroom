@@ -8,13 +8,11 @@ import {
   ExternalLink,
   ShieldAlert,
   Leaf,
-  Info,
 } from "lucide-react";
 import type { Match, UploadGuidance, ConsistencyCheck } from "@/lib/api";
 import {
   chipVariant,
   confidenceColor,
-  buildConfidenceGuidance,
   buildReferenceProfileSummary,
   friendlyConsistencyMessage,
   excerptSentences,
@@ -31,10 +29,6 @@ export function ProfilePanel({
   uploadGuidance,
   consistencyCheck,
 }: ProfilePanelProps) {
-  const guidance = buildConfidenceGuidance(
-    match.score,
-    uploadGuidance?.missingRecommendedRoles || [],
-  );
   const consistencyMsg = friendlyConsistencyMessage(consistencyCheck);
 
   return (
@@ -109,12 +103,6 @@ export function ProfilePanel({
             </div>
           </>
         )}
-
-        {/* Confidence Guidance */}
-        <div className="rounded-lg bg-muted/30 p-3 text-sm text-muted-foreground">
-          <Info className="mr-1 inline h-4 w-4 text-gold" />
-          {guidance}
-        </div>
 
         {/* Consistency Check */}
         {consistencyMsg && (
