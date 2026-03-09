@@ -21,7 +21,9 @@ interface ScanEntry {
 
 function countryFlag(country: string | null): string {
   if (!country) return "";
-  const code = country.trim().toUpperCase().slice(0, 2);
+  const trimmed = country.trim();
+  if (trimmed.length > 3) return "";
+  const code = trimmed.toUpperCase().slice(0, 2);
   if (code.length < 2) return "";
   return String.fromCodePoint(...[...code].map(c => 0x1F1E6 - 65 + c.charCodeAt(0)));
 }
