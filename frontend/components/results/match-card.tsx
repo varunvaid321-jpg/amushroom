@@ -68,16 +68,14 @@ export function MatchCard({ match, rank, isExpanded, onToggle }: MatchCardProps)
           {match.edible === "Unknown" ? "Edibility Unknown" : match.edible}
         </Badge>
 
-        {/* Story hint */}
-        {match.story && (
-          <p className="mt-3 text-xs text-primary/60 font-medium">
-            ✦ Tap for more
-          </p>
-        )}
-
-        {/* Expand indicator */}
-        <div className="mt-3 flex items-center justify-center">
-          <ChevronDown className={`h-4 w-4 text-muted-foreground/50 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+        {/* Expand indicator + story hint */}
+        <div className="mt-3 flex flex-col items-center gap-1">
+          <ChevronDown className={`h-5 w-5 text-muted-foreground/50 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+          {match.story && !isExpanded && (
+            <p className="text-sm text-primary/60 font-medium">
+              ✦ Tap for more
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>
