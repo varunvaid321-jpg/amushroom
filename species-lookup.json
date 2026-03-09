@@ -2,6 +2,7 @@
   "agaricus arvensis": {
     "slug": "agaricus-arvensis",
     "commonName": "Horse Mushroom",
+    "heroImage": "https://guide.orangutany.com/images/species/agaricus-arvensis/01-hero.jpg",
     "lookAlikes": [
       {
         "name": "Yellow Stainer (Agaricus xanthodermus)",
@@ -26,6 +27,7 @@
   "agaricus bisporus": {
     "slug": "agaricus-bisporus",
     "commonName": "Button Mushroom",
+    "heroImage": "https://guide.orangutany.com/images/species/agaricus-bisporus/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Death Cap (Amanita phalloides)",
@@ -50,6 +52,7 @@
   "agaricus campestris": {
     "slug": "agaricus-campestris",
     "commonName": "Field Mushroom",
+    "heroImage": "https://guide.orangutany.com/images/species/agaricus-campestris/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Death Cap (Amanita phalloides)",
@@ -74,6 +77,7 @@
   "agaricus xanthodermus": {
     "slug": "agaricus-xanthodermus",
     "commonName": "Yellow Stainer",
+    "heroImage": "https://guide.orangutany.com/images/species/agaricus-xanthodermus/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "Horse Mushroom (Agaricus arvensis)",
@@ -98,6 +102,7 @@
   "agrocybe praecox": {
     "slug": "agrocybe-praecox",
     "commonName": "Spring Fieldcap",
+    "heroImage": "https://guide.orangutany.com/images/species/agrocybe-praecox/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Conocybe filaris (Deadly Conocybe)",
@@ -122,6 +127,7 @@
   "amanita caesarea": {
     "slug": "amanita-caesarea",
     "commonName": "Caesar's Mushroom",
+    "heroImage": "https://guide.orangutany.com/images/species/amanita-caesarea/01-mature-cap.jpg",
     "lookAlikes": [
       {
         "name": "Fly Agaric (Amanita muscaria)",
@@ -146,6 +152,7 @@
   "amanita citrina": {
     "slug": "amanita-citrina",
     "commonName": "False Death Cap",
+    "heroImage": "https://guide.orangutany.com/images/species/amanita-citrina/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Death Cap (Amanita phalloides)",
@@ -170,6 +177,7 @@
   "amanita gemmata": {
     "slug": "amanita-gemmata",
     "commonName": "Jewelled Amanita",
+    "heroImage": "https://guide.orangutany.com/images/species/amanita-gemmata/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Caesar's Mushroom (Amanita caesarea)",
@@ -194,6 +202,7 @@
   "amanita jacksonii": {
     "slug": "amanita-jacksonii",
     "commonName": "American Caesar's Mushroom",
+    "heroImage": "https://guide.orangutany.com/images/species/amanita-jacksonii/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Amanita caesarea (Caesar's Mushroom)",
@@ -218,6 +227,7 @@
   "amanita muscaria": {
     "slug": "amanita-muscaria",
     "commonName": "Fly Agaric",
+    "heroImage": "https://guide.orangutany.com/images/species/amanita-muscaria/01-cap-top.jpg",
     "lookAlikes": [
       {
         "name": "Caesar's Mushroom (Amanita caesarea)",
@@ -242,6 +252,7 @@
   "amanita pantherina": {
     "slug": "amanita-pantherina",
     "commonName": "Panther Cap",
+    "heroImage": "https://guide.orangutany.com/images/species/amanita-pantherina/01-habitat.jpg",
     "lookAlikes": [
       {
         "name": "The Blusher (Amanita rubescens)",
@@ -266,6 +277,7 @@
   "amanita phalloides": {
     "slug": "amanita-phalloides",
     "commonName": "Death Cap",
+    "heroImage": "https://guide.orangutany.com/images/species/amanita-phalloides/01-cap-top.jpg",
     "lookAlikes": [
       {
         "name": "Paddy Straw Mushroom (Volvariella volvacea)",
@@ -290,6 +302,7 @@
   "amanita rubescens": {
     "slug": "amanita-rubescens",
     "commonName": "The Blusher",
+    "heroImage": "https://guide.orangutany.com/images/species/amanita-rubescens/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "Panther Cap (Amanita pantherina)",
@@ -314,6 +327,7 @@
   "amanita fulva": {
     "slug": "amanita-fulva",
     "commonName": "Tawny Grisette",
+    "heroImage": "https://guide.orangutany.com/images/species/amanita-fulva/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "Death Cap (Amanita phalloides)",
@@ -338,6 +352,7 @@
   "amanita virosa": {
     "slug": "amanita-virosa",
     "commonName": "Destroying Angel",
+    "heroImage": "https://guide.orangutany.com/images/species/amanita-virosa/01-white-cap.jpg",
     "lookAlikes": [
       {
         "name": "Field Mushroom (Agaricus campestris)",
@@ -362,6 +377,7 @@
   "armillaria mellea": {
     "slug": "armillaria-mellea",
     "commonName": "Honey Fungus",
+    "heroImage": "https://guide.orangutany.com/images/species/armillaria-mellea/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Deadly Galerina (Galerina marginata)",
@@ -386,6 +402,7 @@
   "auricularia auricula-judae": {
     "slug": "auricularia-auricula-judae",
     "commonName": "Wood Ear",
+    "heroImage": "https://guide.orangutany.com/images/species/auricularia-auricula-judae/01-habitat.jpg",
     "lookAlikes": [
       {
         "name": "Exidia glandulosa (Black Witches' Butter)",
@@ -404,6 +421,7 @@
   "boletus edulis": {
     "slug": "boletus-edulis",
     "commonName": "Porcini",
+    "heroImage": "https://guide.orangutany.com/images/species/boletus-edulis/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "Bitter Bolete (Tylopilus felleus)",
@@ -428,6 +446,7 @@
   "boletus pinophilus": {
     "slug": "boletus-pinophilus",
     "commonName": "Pine Bolete",
+    "heroImage": "https://guide.orangutany.com/images/species/boletus-pinophilus/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Boletus edulis (Porcini/Cep)",
@@ -452,6 +471,7 @@
   "boletus reticulatus": {
     "slug": "boletus-reticulatus",
     "commonName": "Summer Cep",
+    "heroImage": "https://guide.orangutany.com/images/species/boletus-reticulatus/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Boletus edulis (King Bolete / Porcini)",
@@ -476,6 +496,7 @@
   "calocybe gambosa": {
     "slug": "calocybe-gambosa",
     "commonName": "St. George's Mushroom",
+    "heroImage": "https://guide.orangutany.com/images/species/calocybe-gambosa/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Deadly Fibrecap (Inocybe erubescens)",
@@ -494,6 +515,7 @@
   "calvatia gigantea": {
     "slug": "calvatia-gigantea",
     "commonName": "Giant Puffball",
+    "heroImage": "https://guide.orangutany.com/images/species/calvatia-gigantea/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Common Earthball (Scleroderma citrinum)",
@@ -518,6 +540,7 @@
   "cantharellus cibarius": {
     "slug": "cantharellus-cibarius",
     "commonName": "Golden Chanterelle",
+    "heroImage": "https://guide.orangutany.com/images/species/cantharellus-cibarius/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Jack O'Lantern (Omphalotus olearius)",
@@ -542,6 +565,7 @@
   "cantharellus formosus": {
     "slug": "cantharellus-formosus",
     "commonName": "Pacific Golden Chanterelle",
+    "heroImage": "https://guide.orangutany.com/images/species/cantharellus-formosus/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "Jack O'Lantern (Omphalotus olearius)",
@@ -566,6 +590,7 @@
   "cantharellus cinnabarinus": {
     "slug": "cantharellus-cinnabarinus",
     "commonName": "Cinnabar Chanterelle",
+    "heroImage": "https://guide.orangutany.com/images/species/cantharellus-cinnabarinus/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Cantharellus cibarius (Golden Chanterelle)",
@@ -584,6 +609,7 @@
   "cantharellus tubaeformis": {
     "slug": "cantharellus-tubaeformis",
     "commonName": "Yellowfoot Chanterelle",
+    "heroImage": "https://guide.orangutany.com/images/species/cantharellus-tubaeformis/01-habitat.jpg",
     "lookAlikes": [
       {
         "name": "Craterellus tubaeformis (Trumpet Chanterelle)",
@@ -608,6 +634,7 @@
   "cerioporus squamosus": {
     "slug": "cerioporus-squamosus",
     "commonName": "Dryad's Saddle",
+    "heroImage": "https://guide.orangutany.com/images/species/cerioporus-squamosus/01-bracket-side.jpg",
     "lookAlikes": [
       {
         "name": "Chicken of the Woods (Laetiporus sulphureus)",
@@ -632,6 +659,7 @@
   "chlorociboria aeruginascens": {
     "slug": "chlorociboria-aeruginascens",
     "commonName": "Green Elfcup",
+    "heroImage": "https://guide.orangutany.com/images/species/chlorociboria-aeruginascens/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Chlorociboria aeruginosa",
@@ -650,6 +678,7 @@
   "chlorophyllum molybdites": {
     "slug": "chlorophyllum-molybdites",
     "commonName": "Green-spored Parasol / The Vomiter",
+    "heroImage": "https://guide.orangutany.com/images/species/chlorophyllum-molybdites/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Parasol Mushroom (Macrolepiota procera)",
@@ -674,6 +703,7 @@
   "chlorophyllum rhacodes": {
     "slug": "chlorophyllum-rhacodes",
     "commonName": "Shaggy Parasol",
+    "heroImage": "https://guide.orangutany.com/images/species/chlorophyllum-rhacodes/01-growth-stages.jpg",
     "lookAlikes": [
       {
         "name": "Green-spored Parasol (Chlorophyllum molybdites)",
@@ -698,6 +728,7 @@
   "clathrus ruber": {
     "slug": "clathrus-ruber",
     "commonName": "Red Cage Stinkhorn",
+    "heroImage": "https://guide.orangutany.com/images/species/clathrus-ruber/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Clathrus archeri (Devil's Fingers)",
@@ -716,6 +747,7 @@
   "clitocybe nebularis": {
     "slug": "clitocybe-nebularis",
     "commonName": "Clouded Funnel",
+    "heroImage": "https://guide.orangutany.com/images/species/clitocybe-nebularis/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "Livid Pinkgill (Entoloma sinuatum)",
@@ -740,6 +772,7 @@
   "clitocybe dealbata": {
     "slug": "clitocybe-dealbata",
     "commonName": "Ivory Funnel",
+    "heroImage": "https://guide.orangutany.com/images/species/clitocybe-dealbata/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Fairy Ring Champignon (Marasmius oreades)",
@@ -764,6 +797,7 @@
   "lepista nuda": {
     "slug": "clitocybe-nuda",
     "commonName": "Wood Blewit",
+    "heroImage": "https://guide.orangutany.com/images/species/clitocybe-nuda/01-habitat.jpg",
     "lookAlikes": [
       {
         "name": "Cortinarius species (violet Corts)",
@@ -788,6 +822,7 @@
   "conocybe filaris": {
     "slug": "conocybe-filaris",
     "commonName": "Deadly Conocybe",
+    "heroImage": "https://guide.orangutany.com/images/species/conocybe-filaris/01-habitat.jpg",
     "lookAlikes": [
       {
         "name": "Psilocybe cyanescens (Wavy Cap)",
@@ -812,6 +847,7 @@
   "coprinopsis atramentaria": {
     "slug": "coprinopsis-atramentaria",
     "commonName": "Common Ink Cap",
+    "heroImage": "https://guide.orangutany.com/images/species/coprinopsis-atramentaria/01-cluster.jpg",
     "lookAlikes": [
       {
         "name": "Shaggy Ink Cap (Coprinus comatus)",
@@ -836,6 +872,7 @@
   "coprinus comatus": {
     "slug": "coprinus-comatus",
     "commonName": "Shaggy Mane",
+    "heroImage": "https://guide.orangutany.com/images/species/coprinus-comatus/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Common Ink Cap (Coprinopsis atramentaria)",
@@ -860,6 +897,7 @@
   "coprinopsis picacea": {
     "slug": "coprinus-picaceus",
     "commonName": "Magpie Inkcap",
+    "heroImage": "https://guide.orangutany.com/images/species/coprinus-picaceus/01-cap-top.jpg",
     "lookAlikes": [
       {
         "name": "Coprinopsis atramentaria (Common Inkcap)",
@@ -884,6 +922,7 @@
   "cordyceps militaris": {
     "slug": "cordyceps-militaris",
     "commonName": "Scarlet Caterpillar Club",
+    "heroImage": "https://guide.orangutany.com/images/species/cordyceps-militaris/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Tolypocladium capitatum",
@@ -902,6 +941,7 @@
   "cortinarius orellanus": {
     "slug": "cortinarius-orellanus",
     "commonName": "Fool's Webcap",
+    "heroImage": "https://guide.orangutany.com/images/species/cortinarius-orellanus/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Deadly Webcap (Cortinarius rubellus)",
@@ -926,6 +966,7 @@
   "cortinarius rubellus": {
     "slug": "cortinarius-rubellus",
     "commonName": "Deadly Webcap",
+    "heroImage": "https://guide.orangutany.com/images/species/cortinarius-rubellus/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Chanterelle (Cantharellus cibarius)",
@@ -950,6 +991,7 @@
   "craterellus cornucopioides": {
     "slug": "craterellus-cornucopioides",
     "commonName": "Black Trumpet",
+    "heroImage": "https://guide.orangutany.com/images/species/craterellus-cornucopioides/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Yellowfoot Chanterelle (Craterellus tubaeformis)",
@@ -974,6 +1016,7 @@
   "craterellus tubaeformis": {
     "slug": "craterellus-tubaeformis",
     "commonName": "Trumpet Chanterelle",
+    "heroImage": "https://guide.orangutany.com/images/species/craterellus-tubaeformis/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Cantharellus tubaeformis (Yellowfoot Chanterelle)",
@@ -992,6 +1035,7 @@
   "cyclocybe aegerita": {
     "slug": "cyclocybe-aegerita",
     "commonName": "Pioppino",
+    "heroImage": "https://guide.orangutany.com/images/species/cyclocybe-aegerita/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Funeral Bell (Galerina marginata)",
@@ -1010,6 +1054,7 @@
   "daldinia concentrica": {
     "slug": "daldinia-concentrica",
     "commonName": "Cramp Balls",
+    "heroImage": "https://guide.orangutany.com/images/species/daldinia-concentrica/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "Beech Woodwart (Hypoxylon fragiforme)",
@@ -1034,6 +1079,7 @@
   "entoloma sinuatum": {
     "slug": "entoloma-sinuatum",
     "commonName": "Livid Pinkgill",
+    "heroImage": "https://guide.orangutany.com/images/species/entoloma-sinuatum/01-field.jpg",
     "lookAlikes": [
       {
         "name": "St. George's Mushroom (Calocybe gambosa)",
@@ -1058,6 +1104,7 @@
   "fistulina hepatica": {
     "slug": "fistulina-hepatica",
     "commonName": "Beefsteak Fungus",
+    "heroImage": "https://guide.orangutany.com/images/species/fistulina-hepatica/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Liver-colored Polypore (Ganoderma species)",
@@ -1076,6 +1123,7 @@
   "flammulina velutipes": {
     "slug": "flammulina-velutipes",
     "commonName": "Enoki",
+    "heroImage": "https://guide.orangutany.com/images/species/flammulina-velutipes/01-habitat.jpg",
     "lookAlikes": [
       {
         "name": "Galerina marginata (Deadly Galerina)",
@@ -1094,6 +1142,7 @@
   "fomitopsis betulina": {
     "slug": "fomitopsis-betulina",
     "commonName": "Birch Polypore",
+    "heroImage": "https://guide.orangutany.com/images/species/fomitopsis-betulina/01-bracket.jpg",
     "lookAlikes": [
       {
         "name": "Dryad's Saddle (Cerioporus squamosus)",
@@ -1118,6 +1167,7 @@
   "galerina marginata": {
     "slug": "galerina-marginata",
     "commonName": "Funeral Bell",
+    "heroImage": "https://guide.orangutany.com/images/species/galerina-marginata/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Sheathed Woodtuft (Kuehneromyces mutabilis)",
@@ -1142,6 +1192,7 @@
   "ganoderma lucidum": {
     "slug": "ganoderma-lucidum",
     "commonName": "Reishi",
+    "heroImage": "https://guide.orangutany.com/images/species/ganoderma-lucidum/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Artist's Conk (Ganoderma applanatum)",
@@ -1166,6 +1217,7 @@
   "grifola frondosa": {
     "slug": "grifola-frondosa",
     "commonName": "Hen of the Woods",
+    "heroImage": "https://guide.orangutany.com/images/species/grifola-frondosa/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Chicken of the Woods (Laetiporus sulphureus)",
@@ -1190,6 +1242,7 @@
   "gymnopilus junonius": {
     "slug": "gymnopilus-junonius",
     "commonName": "Spectacular Rustgill",
+    "heroImage": "https://guide.orangutany.com/images/species/gymnopilus-junonius/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Honey Mushroom (Armillaria mellea)",
@@ -1214,6 +1267,7 @@
   "gyromitra esculenta": {
     "slug": "gyromitra-esculenta",
     "commonName": "False Morel",
+    "heroImage": "https://guide.orangutany.com/images/species/gyromitra-esculenta/01-brain-cap.jpg",
     "lookAlikes": [
       {
         "name": "True Morel (Morchella esculenta)",
@@ -1238,6 +1292,7 @@
   "hericium coralloides": {
     "slug": "hericium-coralloides",
     "commonName": "Coral Tooth Fungus",
+    "heroImage": "https://guide.orangutany.com/images/species/hericium-coralloides/01-branching.jpg",
     "lookAlikes": [
       {
         "name": "Lion's Mane (Hericium erinaceus)",
@@ -1262,6 +1317,7 @@
   "hericium erinaceus": {
     "slug": "hericium-erinaceus",
     "commonName": "Lion's Mane",
+    "heroImage": "https://guide.orangutany.com/images/species/hericium-erinaceus/05-mature.jpg",
     "lookAlikes": [
       {
         "name": "Bear's Head Tooth (Hericium americanum)",
@@ -1286,6 +1342,7 @@
   "hydnum repandum": {
     "slug": "hydnum-repandum",
     "commonName": "Hedgehog Mushroom",
+    "heroImage": "https://guide.orangutany.com/images/species/hydnum-repandum/01-group-forest.jpg",
     "lookAlikes": [
       {
         "name": "Depressed Hedgehog (Hydnum umbilicatum)",
@@ -1310,6 +1367,7 @@
   "hygrocybe coccinea": {
     "slug": "hygrocybe-coccinea",
     "commonName": "Scarlet Waxcap",
+    "heroImage": "https://guide.orangutany.com/images/species/hygrocybe-coccinea/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Crimson Waxcap (Hygrocybe punicea)",
@@ -1328,6 +1386,7 @@
   "hygrophoropsis aurantiaca": {
     "slug": "hygrophoropsis-aurantiaca",
     "commonName": "False Chanterelle",
+    "heroImage": "https://guide.orangutany.com/images/species/hygrophoropsis-aurantiaca/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "Golden Chanterelle (Cantharellus cibarius)",
@@ -1352,6 +1411,7 @@
   "hypholoma lateritium": {
     "slug": "hypholoma-lateritium",
     "commonName": "Brick Cap",
+    "heroImage": "https://guide.orangutany.com/images/species/hypholoma-lateritium/02-cluster.jpg",
     "lookAlikes": [
       {
         "name": "Sulphur Tuft (Hypholoma fasciculare)",
@@ -1376,6 +1436,7 @@
   "hypholoma fasciculare": {
     "slug": "hypholoma-fasciculare",
     "commonName": "Sulphur Tuft",
+    "heroImage": "https://guide.orangutany.com/images/species/hypholoma-fasciculare/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Sheathed Woodtuft (Kuehneromyces mutabilis)",
@@ -1400,6 +1461,7 @@
   "inocybe aeruginascens": {
     "slug": "inocybe-aeruginascens",
     "commonName": "Green-Staining Inocybe",
+    "heroImage": "https://guide.orangutany.com/images/species/inocybe-aeruginascens/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Inocybe erubescens (Red-Staining Inocybe)",
@@ -1424,6 +1486,7 @@
   "inocybe erubescens": {
     "slug": "inocybe-erubescens",
     "commonName": "Deadly Fibrecap",
+    "heroImage": "https://guide.orangutany.com/images/species/inocybe-erubescens/01-mature-group.jpg",
     "lookAlikes": [
       {
         "name": "St. George's Mushroom (Calocybe gambosa)",
@@ -1448,6 +1511,7 @@
   "imleria badia": {
     "slug": "imleria-badia",
     "commonName": "Bay Bolete",
+    "heroImage": "https://guide.orangutany.com/images/species/imleria-badia/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "Porcini (Boletus edulis)",
@@ -1472,6 +1536,7 @@
   "inonotus obliquus": {
     "slug": "inonotus-obliquus",
     "commonName": "Chaga",
+    "heroImage": "https://guide.orangutany.com/images/species/inonotus-obliquus/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Birch Polypore (Fomitopsis betulina)",
@@ -1490,6 +1555,7 @@
   "laccaria amethystina": {
     "slug": "laccaria-amethystina",
     "commonName": "Amethyst Deceiver",
+    "heroImage": "https://guide.orangutany.com/images/species/laccaria-amethystina/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "The Deceiver (Laccaria laccata)",
@@ -1514,6 +1580,7 @@
   "laccaria laccata": {
     "slug": "laccaria-laccata",
     "commonName": "The Deceiver",
+    "heroImage": "https://guide.orangutany.com/images/species/laccaria-laccata/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "Amethyst Deceiver (Laccaria amethystina)",
@@ -1538,6 +1605,7 @@
   "lactarius deliciosus": {
     "slug": "lactarius-deliciosus",
     "commonName": "Saffron Milk Cap",
+    "heroImage": "https://guide.orangutany.com/images/species/lactarius-deliciosus/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Lactarius deterrimus (False Saffron Milk Cap)",
@@ -1562,6 +1630,7 @@
   "lactarius indigo": {
     "slug": "lactarius-indigo",
     "commonName": "Indigo Milk Cap",
+    "heroImage": "https://guide.orangutany.com/images/species/lactarius-indigo/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "Lactarius chelidonium",
@@ -1586,6 +1655,7 @@
   "lactarius torminosus": {
     "slug": "lactarius-torminosus",
     "commonName": "Woolly Milk Cap",
+    "heroImage": "https://guide.orangutany.com/images/species/lactarius-torminosus/01-woolly-cap.jpg",
     "lookAlikes": [
       {
         "name": "Saffron Milk Cap (Lactarius deliciosus)",
@@ -1610,6 +1680,7 @@
   "laetiporus sulphureus": {
     "slug": "laetiporus-sulphureus",
     "commonName": "Chicken of the Woods",
+    "heroImage": "https://guide.orangutany.com/images/species/laetiporus-sulphureus/01-shelf-orange.jpg",
     "lookAlikes": [
       {
         "name": "White-pored Chicken of the Woods (Laetiporus cincinnatus)",
@@ -1634,6 +1705,7 @@
   "leccinum aurantiacum": {
     "slug": "leccinum-aurantiacum",
     "commonName": "Orange Birch Bolete",
+    "heroImage": "https://guide.orangutany.com/images/species/leccinum-aurantiacum/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Brown Birch Bolete (Leccinum scabrum)",
@@ -1658,6 +1730,7 @@
   "leccinum scabrum": {
     "slug": "leccinum-scabrum",
     "commonName": "Brown Birch Bolete",
+    "heroImage": "https://guide.orangutany.com/images/species/leccinum-scabrum/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Orange Birch Bolete (Leccinum aurantiacum)",
@@ -1682,6 +1755,7 @@
   "lentinula edodes": {
     "slug": "lentinula-edodes",
     "commonName": "Shiitake",
+    "heroImage": "https://guide.orangutany.com/images/species/lentinula-edodes/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Train Wrecker (Neolentinus lepideus)",
@@ -1706,6 +1780,7 @@
   "lepiota brunneoincarnata": {
     "slug": "lepiota-brunneoincarnata",
     "commonName": "Deadly Dapperling",
+    "heroImage": "https://guide.orangutany.com/images/species/lepiota-brunneoincarnata/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Shaggy Parasol (Chlorophyllum rhacodes)",
@@ -1730,6 +1805,7 @@
   "lepista saeva": {
     "slug": "lepista-saeva",
     "commonName": "Field Blewit",
+    "heroImage": "https://guide.orangutany.com/images/species/lepista-saeva/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Wood Blewit (Lepista nuda)",
@@ -1754,6 +1830,7 @@
   "leucocoprinus birnbaumii": {
     "slug": "leucocoprinus-birnbaumii",
     "commonName": "Yellow Houseplant Mushroom",
+    "heroImage": "https://guide.orangutany.com/images/species/leucocoprinus-birnbaumii/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Leucocoprinus cretaceus (White Houseplant Mushroom)",
@@ -1778,6 +1855,7 @@
   "lycoperdon perlatum": {
     "slug": "lycoperdon-perlatum",
     "commonName": "Common Puffball",
+    "heroImage": "https://guide.orangutany.com/images/species/lycoperdon-perlatum/01-cluster-gems.jpg",
     "lookAlikes": [
       {
         "name": "Common Earthball (Scleroderma citrinum)",
@@ -1802,6 +1880,7 @@
   "lycoperdon pyriforme": {
     "slug": "lycoperdon-pyriforme",
     "commonName": "Pear-shaped Puffball",
+    "heroImage": "https://guide.orangutany.com/images/species/lycoperdon-pyriforme/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Lycoperdon perlatum (Gem-studded Puffball)",
@@ -1826,6 +1905,7 @@
   "macrolepiota procera": {
     "slug": "macrolepiota-procera",
     "commonName": "Parasol Mushroom",
+    "heroImage": "https://guide.orangutany.com/images/species/macrolepiota-procera/01-field-habitat.jpg",
     "lookAlikes": [
       {
         "name": "Shaggy Parasol (Chlorophyllum rhacodes)",
@@ -1850,6 +1930,7 @@
   "marasmius oreades": {
     "slug": "marasmius-oreades",
     "commonName": "Fairy Ring Mushroom",
+    "heroImage": "https://guide.orangutany.com/images/species/marasmius-oreades/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Fool's Funnel (Clitocybe rivulosa)",
@@ -1874,6 +1955,7 @@
   "morchella elata": {
     "slug": "morchella-elata",
     "commonName": "Black Morel",
+    "heroImage": "https://guide.orangutany.com/images/species/morchella-elata/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Gyromitra esculenta (False Morel)",
@@ -1898,6 +1980,7 @@
   "morchella esculenta": {
     "slug": "morchella-esculenta",
     "commonName": "Common Morel",
+    "heroImage": "https://guide.orangutany.com/images/species/morchella-esculenta/01-solo.jpg",
     "lookAlikes": [
       {
         "name": "Early Morel (Verpa bohemica)",
@@ -1922,6 +2005,7 @@
   "mutinus caninus": {
     "slug": "mutinus-caninus",
     "commonName": "Dog Stinkhorn",
+    "heroImage": "https://guide.orangutany.com/images/species/mutinus-caninus/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Mutinus elegans (Elegant Stinkhorn)",
@@ -1940,6 +2024,7 @@
   "mycena haematopus": {
     "slug": "mycena-haematopus",
     "commonName": "Bleeding Mycena",
+    "heroImage": "https://guide.orangutany.com/images/species/mycena-haematopus/01-cap-top.jpg",
     "lookAlikes": [
       {
         "name": "Mycena sanguinolenta (Bleeding Bonnet)",
@@ -1964,6 +2049,7 @@
   "omphalotus olearius": {
     "slug": "omphalotus-olearius",
     "commonName": "Jack O'Lantern Mushroom",
+    "heroImage": "https://guide.orangutany.com/images/species/omphalotus-olearius/01-cluster.jpg",
     "lookAlikes": [
       {
         "name": "Chanterelle (Cantharellus cibarius)",
@@ -1988,6 +2074,7 @@
   "ophiocordyceps sinensis": {
     "slug": "ophiocordyceps-sinensis",
     "commonName": "Caterpillar Fungus",
+    "heroImage": "https://guide.orangutany.com/images/species/ophiocordyceps-sinensis/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Cordyceps militaris",
@@ -2006,6 +2093,7 @@
   "panaeolus cyanescens": {
     "slug": "panaeolus-cyanescens",
     "commonName": "Blue Meanies",
+    "heroImage": "https://guide.orangutany.com/images/species/panaeolus-cyanescens/01-cyanescens-1.jpg",
     "lookAlikes": [
       {
         "name": "Psilocybe cubensis (Golden Teacher)",
@@ -2030,6 +2118,7 @@
   "paxillus involutus": {
     "slug": "paxillus-involutus",
     "commonName": "Brown Rollrim",
+    "heroImage": "https://guide.orangutany.com/images/species/paxillus-involutus/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Velvet Rollrim (Tapinella atrotomentosa)",
@@ -2054,6 +2143,7 @@
   "phallus hadriani": {
     "slug": "phallus-hadriani",
     "commonName": "Dune Stinkhorn",
+    "heroImage": "https://guide.orangutany.com/images/species/phallus-hadriani/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Phallus impudicus (Common Stinkhorn)",
@@ -2078,6 +2168,7 @@
   "phallus impudicus": {
     "slug": "phallus-impudicus",
     "commonName": "Common Stinkhorn",
+    "heroImage": "https://guide.orangutany.com/images/species/phallus-impudicus/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Dog Stinkhorn (Mutinus caninus)",
@@ -2102,6 +2193,7 @@
   "pleurotus ostreatus": {
     "slug": "pleurotus-ostreatus",
     "commonName": "Oyster Mushroom",
+    "heroImage": "https://guide.orangutany.com/images/species/pleurotus-ostreatus/01-cluster-log.jpg",
     "lookAlikes": [
       {
         "name": "Angel Wings (Pleurocybella porrigens)",
@@ -2126,6 +2218,7 @@
   "pleurotus pulmonarius": {
     "slug": "pleurotus-pulmonarius",
     "commonName": "Summer Oyster",
+    "heroImage": "https://guide.orangutany.com/images/species/pleurotus-pulmonarius/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "Oyster Mushroom (Pleurotus ostreatus)",
@@ -2150,6 +2243,7 @@
   "pluteus salicinus": {
     "slug": "pluteus-salicinus",
     "commonName": "Willow Shield",
+    "heroImage": "https://guide.orangutany.com/images/species/pluteus-salicinus/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Pluteus cervinus (Deer Shield)",
@@ -2174,6 +2268,7 @@
   "podostroma cornu-damae": {
     "slug": "podostroma-cornu-damae",
     "commonName": "Poison Fire Coral",
+    "heroImage": "https://guide.orangutany.com/images/species/podostroma-cornu-damae/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Clavulinopsis coral fungi",
@@ -2198,6 +2293,7 @@
   "psilocybe azurescens": {
     "slug": "psilocybe-azurescens",
     "commonName": "Flying Saucer",
+    "heroImage": "https://guide.orangutany.com/images/species/psilocybe-azurescens/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Psilocybe cyanescens (Wavy Cap)",
@@ -2222,6 +2318,7 @@
   "psilocybe caerulescens": {
     "slug": "psilocybe-caerulescens",
     "commonName": "Landslide Mushroom / Derrumbe",
+    "heroImage": "https://guide.orangutany.com/images/species/psilocybe-caerulescens/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Teonanácatl (Psilocybe mexicana)",
@@ -2246,6 +2343,7 @@
   "psilocybe cubensis": {
     "slug": "psilocybe-cubensis",
     "commonName": "Golden Teacher / Magic Mushroom",
+    "heroImage": "https://guide.orangutany.com/images/species/psilocybe-cubensis/01-cap-top.jpg",
     "lookAlikes": [
       {
         "name": "Liberty Cap (Psilocybe semilanceata)",
@@ -2270,6 +2368,7 @@
   "psilocybe cyanescens": {
     "slug": "psilocybe-cyanescens",
     "commonName": "Wavy Cap",
+    "heroImage": "https://guide.orangutany.com/images/species/psilocybe-cyanescens/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Galerina marginata (Funeral Bell)",
@@ -2294,6 +2393,7 @@
   "psilocybe mexicana": {
     "slug": "psilocybe-mexicana",
     "commonName": "Teonanácatl / Mexican Magic Mushroom",
+    "heroImage": "https://guide.orangutany.com/images/species/psilocybe-mexicana/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Golden Teacher (Psilocybe cubensis)",
@@ -2318,6 +2418,7 @@
   "psilocybe semilanceata": {
     "slug": "psilocybe-semilanceata",
     "commonName": "Liberty Cap",
+    "heroImage": "https://guide.orangutany.com/images/species/psilocybe-semilanceata/01-single.jpg",
     "lookAlikes": [
       {
         "name": "Protostropharia semiglobata (Dung Roundhead)",
@@ -2342,6 +2443,7 @@
   "psilocybe stuntzii": {
     "slug": "psilocybe-stuntzii",
     "commonName": "Blue Ringer / Stuntz's Blue Legs",
+    "heroImage": "https://guide.orangutany.com/images/species/psilocybe-stuntzii/03-field.jpg",
     "lookAlikes": [
       {
         "name": "Deadly Galerina (Galerina marginata)",
@@ -2366,6 +2468,7 @@
   "psilocybe tampanensis": {
     "slug": "psilocybe-tampanensis",
     "commonName": "Philosopher's Stone / Magic Truffle",
+    "heroImage": "https://guide.orangutany.com/images/species/psilocybe-tampanensis/02-field.jpg",
     "lookAlikes": [
       {
         "name": "Teonanácatl (Psilocybe mexicana)",
@@ -2390,6 +2493,7 @@
   "ramaria botrytis": {
     "slug": "ramaria-botrytis",
     "commonName": "Pink-tipped Coral",
+    "heroImage": "https://guide.orangutany.com/images/species/ramaria-botrytis/02-field.jpg",
     "lookAlikes": [
       {
         "name": "Ramaria formosa (Salmon Coral)",
@@ -2414,6 +2518,7 @@
   "rubroboletus satanas": {
     "slug": "rubroboletus-satanas",
     "commonName": "Satan's Bolete",
+    "heroImage": "https://guide.orangutany.com/images/species/rubroboletus-satanas/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Porcini / King Bolete (Boletus edulis)",
@@ -2438,6 +2543,7 @@
   "russula brevipes": {
     "slug": "russula-brevipes",
     "commonName": "Short-stemmed Russula",
+    "heroImage": "https://guide.orangutany.com/images/species/russula-brevipes/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "Peppery Milkcap (Lactarius piperatus)",
@@ -2462,6 +2568,7 @@
   "russula cyanoxantha": {
     "slug": "russula-cyanoxantha",
     "commonName": "Charcoal Burner",
+    "heroImage": "https://guide.orangutany.com/images/species/russula-cyanoxantha/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Russula virescens (Green-Cracked Russula)",
@@ -2486,6 +2593,7 @@
   "russula emetica": {
     "slug": "russula-emetica",
     "commonName": "The Sickener",
+    "heroImage": "https://guide.orangutany.com/images/species/russula-emetica/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Beechwood Sickener (Russula nobilis)",
@@ -2510,6 +2618,7 @@
   "russula virescens": {
     "slug": "russula-virescens",
     "commonName": "Green-cracking Russula",
+    "heroImage": "https://guide.orangutany.com/images/species/russula-virescens/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Russula crustosa",
@@ -2534,6 +2643,7 @@
   "scleroderma citrinum": {
     "slug": "scleroderma-citrinum",
     "commonName": "Common Earthball",
+    "heroImage": "https://guide.orangutany.com/images/species/scleroderma-citrinum/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Common Puffball (Lycoperdon perlatum)",
@@ -2558,6 +2668,7 @@
   "sparassis crispa": {
     "slug": "sparassis-crispa",
     "commonName": "Cauliflower Mushroom",
+    "heroImage": "https://guide.orangutany.com/images/species/sparassis-crispa/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Sparassis spathulata (Eastern Cauliflower Mushroom)",
@@ -2576,6 +2687,7 @@
   "stereum hirsutum": {
     "slug": "stereum-hirsutum",
     "commonName": "Hairy Curtain Crust",
+    "heroImage": "https://guide.orangutany.com/images/species/stereum-hirsutum/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Trametes versicolor (Turkey Tail)",
@@ -2600,6 +2712,7 @@
   "stropharia rugosoannulata": {
     "slug": "stropharia-rugosoannulata",
     "commonName": "Wine Cap / King Stropharia",
+    "heroImage": "https://guide.orangutany.com/images/species/stropharia-rugosoannulata/01-stem.jpg",
     "lookAlikes": [
       {
         "name": "Agaricus species (Field Mushrooms)",
@@ -2624,6 +2737,7 @@
   "suillus granulatus": {
     "slug": "suillus-granulatus",
     "commonName": "Weeping Bolete",
+    "heroImage": "https://guide.orangutany.com/images/species/suillus-granulatus/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Suillus luteus (Slippery Jack)",
@@ -2648,6 +2762,7 @@
   "suillus luteus": {
     "slug": "suillus-luteus",
     "commonName": "Slippery Jack",
+    "heroImage": "https://guide.orangutany.com/images/species/suillus-luteus/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Suillus granulatus (Weeping Bolete)",
@@ -2672,6 +2787,7 @@
   "trametes versicolor": {
     "slug": "trametes-versicolor",
     "commonName": "Turkey Tail",
+    "heroImage": "https://guide.orangutany.com/images/species/trametes-versicolor/01-top-view.jpg",
     "lookAlikes": [
       {
         "name": "False Turkey Tail (Stereum ostrea)",
@@ -2696,6 +2812,7 @@
   "tremella fuciformis": {
     "slug": "tremella-fuciformis",
     "commonName": "Snow Fungus",
+    "heroImage": "https://guide.orangutany.com/images/species/tremella-fuciformis/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "Cauliflower Mushroom (Sparassis crispa)",
@@ -2720,6 +2837,7 @@
   "tremella mesenterica": {
     "slug": "tremella-mesenterica",
     "commonName": "Witch's Butter",
+    "heroImage": "https://guide.orangutany.com/images/species/tremella-mesenterica/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "Orange Jelly (Dacrymyces chrysospermus)",
@@ -2744,6 +2862,7 @@
   "tricholoma equestre": {
     "slug": "tricholoma-equestre",
     "commonName": "Yellow Knight",
+    "heroImage": "https://guide.orangutany.com/images/species/tricholoma-equestre/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Sulphur Knight (Tricholoma sulphureum)",
@@ -2768,6 +2887,7 @@
   "tricholoma matsutake": {
     "slug": "tricholoma-matsutake",
     "commonName": "Matsutake",
+    "heroImage": "https://guide.orangutany.com/images/species/tricholoma-matsutake/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "Western Matsutake (Tricholoma murrillianum)",
@@ -2792,6 +2912,7 @@
   "tuber aestivum": {
     "slug": "tuber-aestivum",
     "commonName": "Summer Truffle",
+    "heroImage": "https://guide.orangutany.com/images/species/tuber-aestivum/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Perigord Black Truffle (Tuber melanosporum)",
@@ -2816,6 +2937,7 @@
   "tuber magnatum": {
     "slug": "tuber-magnatum",
     "commonName": "White Truffle",
+    "heroImage": "https://guide.orangutany.com/images/species/tuber-magnatum/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Bianchetto Truffle (Tuber borchii)",
@@ -2834,6 +2956,7 @@
   "tuber melanosporum": {
     "slug": "tuber-melanosporum",
     "commonName": "Black Truffle",
+    "heroImage": "https://guide.orangutany.com/images/species/tuber-melanosporum/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Summer Truffle (Tuber aestivum)",
@@ -2858,6 +2981,7 @@
   "tylopilus felleus": {
     "slug": "tylopilus-felleus",
     "commonName": "Bitter Bolete",
+    "heroImage": "https://guide.orangutany.com/images/species/tylopilus-felleus/01-full-specimen.jpg",
     "lookAlikes": [
       {
         "name": "Porcini (Boletus edulis)",
@@ -2882,6 +3006,7 @@
   "verpa bohemica": {
     "slug": "verpa-bohemica",
     "commonName": "Early Morel",
+    "heroImage": "https://guide.orangutany.com/images/species/verpa-bohemica/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Morchella esculenta (Yellow Morel)",
@@ -2906,6 +3031,7 @@
   "volvariella volvacea": {
     "slug": "volvariella-volvacea",
     "commonName": "Paddy Straw Mushroom",
+    "heroImage": "https://guide.orangutany.com/images/species/volvariella-volvacea/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Death Cap (Amanita phalloides)",
@@ -2930,6 +3056,7 @@
   "xerocomellus chrysenteron": {
     "slug": "xerocomellus-chrysenteron",
     "commonName": "Red-cracking Bolete",
+    "heroImage": "https://guide.orangutany.com/images/species/xerocomellus-chrysenteron/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Xerocomellus porosporus",
@@ -2954,6 +3081,7 @@
   "xeromphalina campanella": {
     "slug": "xeromphalina-campanella",
     "commonName": "Golden Trumpet",
+    "heroImage": "https://guide.orangutany.com/images/species/xeromphalina-campanella/01-field.jpg",
     "lookAlikes": [
       {
         "name": "Chrysomphalina chrysophylla",
@@ -2972,6 +3100,7 @@
   "xylaria polymorpha": {
     "slug": "xylaria-polymorpha",
     "commonName": "Dead Man's Fingers",
+    "heroImage": "https://guide.orangutany.com/images/species/xylaria-polymorpha/01-classic.jpg",
     "lookAlikes": [
       {
         "name": "Dead Moll's Fingers (Xylaria longipes)",

@@ -7,7 +7,7 @@
 set -e
 
 GUIDE_DIR="/Users/varunvaid/orangutany-seo"
-OUTPUT="$(dirname "$0")/../species-lookup.json"
+OUTPUT="$(cd "$(dirname "$0")/.." && pwd)/species-lookup.json"
 
 if [ ! -d "$GUIDE_DIR" ]; then
   echo "Error: Guide repo not found at $GUIDE_DIR"
@@ -20,9 +20,11 @@ npx tsx -e "
 import { allSpecies } from './data/species';
 const map: Record<string, any> = {};
 allSpecies.forEach(s => {
+  const heroFile = s.images?.[0]?.filename;
   map[s.scientificName.toLowerCase()] = {
     slug: s.slug,
     commonName: s.commonName,
+    heroImage: heroFile ? 'https://guide.orangutany.com/images/species/' + s.slug + '/' + heroFile : null,
     lookAlikes: (s.lookAlikes || []).slice(0, 3).map(la => ({
       name: la.name,
       slug: la.slug || null,
