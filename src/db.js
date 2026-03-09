@@ -206,7 +206,9 @@ const dbReady = (async () => {
     "ALTER TABLE users ADD COLUMN stripe_subscription_id TEXT",
     "ALTER TABLE users ADD COLUMN suspended INTEGER NOT NULL DEFAULT 0",
     "ALTER TABLE users ADD COLUMN membership_started_at TEXT",
-    "ALTER TABLE users ADD COLUMN membership_expires_at TEXT"
+    "ALTER TABLE users ADD COLUMN membership_expires_at TEXT",
+    "ALTER TABLE analytics_events ADD COLUMN lat REAL",
+    "ALTER TABLE analytics_events ADD COLUMN lon REAL"
   ];
   for (const sql of migrations) {
     try { await client.execute(sql); } catch { /* column already exists */ }
@@ -551,10 +553,10 @@ async function trackEvent({ event, userId, metadata, ip, userAgent }) {
   return Number(result.lastInsertRowid);
 }
 
-async function updateEventGeo(id, country, city) {
+async function updateEventGeo(id, country, city, lat, lon) {
   await client.execute({
-    sql: 'UPDATE analytics_events SET country = ?, city = ? WHERE id = ?',
-    args: [country || null, city || null, Number(id)]
+    sql: 'UPDATE analytics_events SET country = ?, city = ?, lat = ?, lon = ? WHERE id = ?',
+    args: [country || null, city || null, lat || null, lon || null, Number(id)]
   });
 }
 

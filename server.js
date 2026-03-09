@@ -189,9 +189,9 @@ if (STRIPE_SECRET_KEY) {
 async function lookupGeo(ip) {
   if (!ip || ip === 'unknown' || ip === '127.0.0.1' || ip === '::1') return null;
   try {
-    const resp = await fetch(`http://ip-api.com/json/${encodeURIComponent(ip)}?fields=status,countryCode,country,city`);
+    const resp = await fetch(`http://ip-api.com/json/${encodeURIComponent(ip)}?fields=status,countryCode,country,city,lat,lon`);
     const data = await resp.json();
-    if (data.status === 'success') return { country: data.countryCode || data.country, city: data.city };
+    if (data.status === 'success') return { country: data.countryCode || data.country, city: data.city, lat: data.lat || null, lon: data.lon || null };
   } catch { /* ignore */ }
   return null;
 }
@@ -199,7 +199,7 @@ async function lookupGeo(ip) {
 function trackAndGeo(event, userId, metadata, ip, userAgent) {
   trackEvent({ event, userId, metadata, ip, userAgent }).then(eventId => {
     lookupGeo(ip).then(geo => {
-      if (geo) updateEventGeo(eventId, geo.country, geo.city).catch(() => {});
+      if (geo) updateEventGeo(eventId, geo.country, geo.city, geo.lat, geo.lon).catch(() => {});
     }).catch(() => {});
   }).catch(() => {});
 }
