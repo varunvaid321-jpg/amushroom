@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -124,10 +125,10 @@ export function MatchCard({ match, rank, isExpanded, onToggle }: MatchCardProps)
         </CardContent>
       </Card>
 
-      {/* Lightbox — full uncropped image */}
-      {lightboxOpen && cardImage && (
+      {/* Lightbox — rendered via portal to escape stacking contexts */}
+      {lightboxOpen && cardImage && typeof document !== "undefined" && createPortal(
         <div
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/95"
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/95"
           onClick={() => setLightboxOpen(false)}
         >
           {/* X button — always visible, safe zone at top */}
@@ -157,7 +158,8 @@ export function MatchCard({ match, rank, isExpanded, onToggle }: MatchCardProps)
           <p className="pb-3 text-center text-xs text-white/40 flex-shrink-0">
             Tap anywhere to close
           </p>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
