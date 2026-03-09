@@ -64,12 +64,12 @@ export function buildConfidenceGuidance(
   missingRoles: string[],
 ): string {
   let msg = "";
-  if (score >= 90) {
+  if (score >= 80) {
     msg = "High confidence match. The AI is quite certain about this identification.";
-  } else if (score >= 70) {
+  } else if (score >= 60) {
     msg =
       "Moderate confidence. Consider uploading additional angles for a stronger match.";
-  } else if (score >= 50) {
+  } else if (score >= 40) {
     msg =
       "Low-moderate confidence. More photos from different angles would help improve accuracy.";
   } else {

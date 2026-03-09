@@ -142,11 +142,19 @@ Shows:
 - Membership type and badge
 - Member since date
 - Plan price
-- Monthly users: "Manage Subscription" (Stripe portal) + "Upgrade to Lifetime"
+- Monthly users: "Switch to Lifetime" + "Cancel Subscription" (in-app, no Stripe redirect)
 - Lifetime users: "View Receipts" (Stripe portal)
 - Free users: "Upgrade to Pro" link
 
-Portal return URL: `/account/billing`
+### Cancellation flow (in-app):
+1. Monthly user clicks "Cancel Subscription"
+2. Confirmation box appears with warning
+3. On confirm: `POST /api/stripe/cancel-subscription` cancels via Stripe API
+4. Server downgrades user to free, writes audit log
+5. Page refreshes to show free tier state + success message
+6. No Stripe portal involved — cancellation is instant and in-app
+
+Portal return URL: `/account/billing` (used only for lifetime receipts)
 
 ## 11. Audit Log
 

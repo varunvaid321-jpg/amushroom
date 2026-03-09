@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     "is this mushroom edible",
   ],
   metadataBase: new URL("https://orangutany.com"),
-  alternates: { canonical: "/" },
+  alternates: {},
   openGraph: {
     title: "Orangutany — Mushroom Identification for People Who Love Mushrooms",
     description:

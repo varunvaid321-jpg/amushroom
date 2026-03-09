@@ -1337,6 +1337,27 @@ async function handleStripePortal(req, res) {
   sendJson(req, res, 200, { url: session.url });
 }
 
+async function handleCancelSubscription(req, res) {
+  if (!stripe) { jsonError(req, res, 503, 'Stripe is not configured.'); return; }
+  const auth = await getAuthContext(req);
+  if (!auth?.user) { jsonError(req, res, 401, 'Authentication required.'); return; }
+  if (!auth.user.stripe_subscription_id) { jsonError(req, res, 400, 'No active subscription to cancel.'); return; }
+  if (auth.user.tier !== 'pro') { jsonError(req, res, 400, 'Only monthly subscriptions can be cancelled.'); return; }
+
+  try {
+    await stripe.subscriptions.cancel(auth.user.stripe_subscription_id);
+    await downgradeUser(auth.user.id);
+    writeAuditLog({ eventType: 'tier_change', userId: auth.user.id, userEmail: auth.user.email, details: { tier: 'free', reason: 'user_cancelled' }, ip: getClientIp(req) }).catch(() => {});
+    // eslint-disable-next-line no-console
+    console.log(`[stripe] User ${auth.user.id} cancelled subscription ${auth.user.stripe_subscription_id}`);
+    sendJson(req, res, 200, { success: true, tier: 'free' });
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('[cancel-subscription] Error:', err.message);
+    jsonError(req, res, 500, 'Failed to cancel subscription. Please try again.');
+  }
+}
+
 function parseRawBody(req, maxBytes = 1024 * 1024) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -1965,6 +1986,12 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'GET' && url.pathname === '/api/stripe/portal-session') {
     await handleStripePortal(req, res);
+    return;
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/stripe/cancel-subscription') {
+    if (!requireSameOrigin(req, res)) return;
+    await handleCancelSubscription(req, res);
     return;
   }
 
