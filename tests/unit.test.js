@@ -688,3 +688,336 @@ test('error boundary: global-error.tsx handles ChunkLoadError with guarded auto-
   assert.ok(src.includes('sessionStorage'), 'global-error.tsx must use sessionStorage to prevent infinite reload loop');
 
 });
+
+// ─── Species lookup & mushroom stories (scan result enrichment) ──────────────
+
+test('species-lookup.json: exists and has valid structure', () => {
+  const filePath = path.join(root, 'species-lookup.json');
+  assert.ok(fs.existsSync(filePath), 'species-lookup.json must exist');
+  const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  const keys = Object.keys(data);
+  assert.ok(keys.length >= 100, `Expected 100+ species in lookup, got ${keys.length}`);
+  // Every key should be lowercase (scientific name)
+  for (const key of keys) {
+    assert.equal(key, key.toLowerCase(), `Species key must be lowercase: ${key}`);
+  }
+});
+
+test('species-lookup.json: entries have required fields', () => {
+  const data = JSON.parse(fs.readFileSync(path.join(root, 'species-lookup.json'), 'utf8'));
+  const keys = Object.keys(data);
+  for (const key of keys.slice(0, 20)) { // sample first 20
+    const entry = data[key];
+    assert.ok(entry.slug, `${key} missing slug`);
+    assert.ok(entry.commonName, `${key} missing commonName`);
+    assert.ok(Array.isArray(entry.lookAlikes), `${key} lookAlikes must be an array`);
+    // Slug should be kebab-case
+    assert.ok(/^[a-z0-9-]+$/.test(entry.slug), `${key} slug must be kebab-case: ${entry.slug}`);
+  }
+});
+
+test('species-lookup.json: look-alike entries have name and distinction', () => {
+  const data = JSON.parse(fs.readFileSync(path.join(root, 'species-lookup.json'), 'utf8'));
+  for (const [key, entry] of Object.entries(data)) {
+    for (const la of entry.lookAlikes || []) {
+      assert.ok(la.name, `${key} look-alike missing name`);
+      assert.ok(la.distinction, `${key} look-alike "${la.name}" missing distinction`);
+    }
+  }
+});
+
+test('species-lookup.json: no duplicate slugs', () => {
+  const data = JSON.parse(fs.readFileSync(path.join(root, 'species-lookup.json'), 'utf8'));
+  const slugs = Object.values(data).map(e => e.slug);
+  const unique = new Set(slugs);
+  assert.equal(slugs.length, unique.size, `Duplicate slugs found: ${slugs.filter((s, i) => slugs.indexOf(s) !== i).join(', ')}`);
+});
+
+test('mushroom-stories.json: exists and has valid structure', () => {
+  const filePath = path.join(root, 'mushroom-stories.json');
+  assert.ok(fs.existsSync(filePath), 'mushroom-stories.json must exist');
+  const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  const keys = Object.keys(data);
+  assert.ok(keys.length >= 200, `Expected 200+ stories, got ${keys.length}`);
+  for (const key of keys) {
+    assert.equal(key, key.toLowerCase(), `Story key must be lowercase: ${key}`);
+  }
+});
+
+test('mushroom-stories.json: entries have commonName and story', () => {
+  const data = JSON.parse(fs.readFileSync(path.join(root, 'mushroom-stories.json'), 'utf8'));
+  for (const [key, entry] of Object.entries(data)) {
+    assert.ok(entry.commonName, `${key} missing commonName`);
+    assert.ok(entry.story, `${key} missing story`);
+    assert.ok(entry.story.length >= 50, `${key} story too short (${entry.story.length} chars)`);
+  }
+});
+
+test('mushroom-stories.json: no story mentions "unlimited scans" or leaks pro cap', () => {
+  const data = JSON.parse(fs.readFileSync(path.join(root, 'mushroom-stories.json'), 'utf8'));
+  for (const [key, entry] of Object.entries(data)) {
+    assert.ok(!entry.story.match(/unlimited scan/i), `${key} story must not mention unlimited scans`);
+    assert.ok(!entry.story.includes('50 scan'), `${key} story must not leak pro scan cap`);
+  }
+});
+
+test('mushroom-stories.json: covers common grocery store mushrooms', () => {
+  const data = JSON.parse(fs.readFileSync(path.join(root, 'mushroom-stories.json'), 'utf8'));
+  const grocery = [
+    'agaricus bisporus',       // button/cremini/portobello
+    'lentinula edodes',        // shiitake
+    'pleurotus ostreatus',     // oyster
+    'flammulina velutipes',    // enoki
+    'grifola frondosa',        // maitake
+    'hericium erinaceus',      // lion's mane
+  ];
+  for (const species of grocery) {
+    assert.ok(data[species], `Missing grocery mushroom story: ${species}`);
+  }
+});
+
+// ─── Scan enrichment logic in server.js ──────────────────────────────────────
+
+test('server: SPECIES_LOOKUP loaded from species-lookup.json', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  assert.ok(src.includes('species-lookup.json'), 'server.js must load species-lookup.json');
+  assert.ok(src.includes('SPECIES_LOOKUP'), 'server.js must define SPECIES_LOOKUP');
+});
+
+test('server: MUSHROOM_STORIES loaded from mushroom-stories.json', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  assert.ok(src.includes('mushroom-stories.json'), 'server.js must load mushroom-stories.json');
+  assert.ok(src.includes('MUSHROOM_STORIES'), 'server.js must define MUSHROOM_STORIES');
+});
+
+test('server: enrichment gracefully handles missing lookup files', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  // Both loaders must have try/catch with empty object fallback
+  const lookupLoader = src.slice(src.indexOf('SPECIES_LOOKUP'), src.indexOf('SPECIES_LOOKUP') + 200);
+  assert.ok(lookupLoader.includes('catch'), 'SPECIES_LOOKUP loader must have catch block');
+  assert.ok(lookupLoader.includes('{}'), 'SPECIES_LOOKUP must fall back to empty object');
+  const storyLoader = src.slice(src.indexOf('MUSHROOM_STORIES'), src.indexOf('MUSHROOM_STORIES') + 200);
+  assert.ok(storyLoader.includes('catch'), 'MUSHROOM_STORIES loader must have catch block');
+  assert.ok(storyLoader.includes('{}'), 'MUSHROOM_STORIES must fall back to empty object');
+});
+
+test('server: match response includes guideUrl and story fields', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  assert.ok(src.includes('guideUrl:'), 'Match response must include guideUrl');
+  assert.ok(src.includes('story:'), 'Match response must include story');
+});
+
+test('server: guideUrl uses guide.orangutany.com domain', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  assert.ok(src.includes('guide.orangutany.com/mushrooms/'), 'guideUrl must point to guide.orangutany.com');
+});
+
+test('server: look-alike enrichment prefers guide data over raw API data', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  // Guide look-alikes should be preferred when available
+  assert.ok(src.includes('guideLookAlikes.length > 0 ? guideLookAlikes : rawLookAlikes'),
+    'Must prefer guideLookAlikes over rawLookAlikes when available');
+});
+
+test('server: look-alikes capped at 5', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  const matches = src.match(/\.slice\(0,\s*5\)/g) || [];
+  assert.ok(matches.length >= 2, 'rawLookAlikes and final lookAlikes must be capped at 5');
+});
+
+test('server: story lookup is case-insensitive', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  assert.ok(src.includes("MUSHROOM_STORIES[scientificName.toLowerCase()]"),
+    'Story lookup must lowercase the scientific name for case-insensitive matching');
+});
+
+test('server: species lookup is case-insensitive', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  assert.ok(src.includes("SPECIES_LOOKUP[scientificName.toLowerCase()]"),
+    'Species lookup must lowercase the scientific name for case-insensitive matching');
+});
+
+// ─── Geo / lat-lon storage ──────────────────────────────────────────────────
+
+test('server: lookupGeo requests lat and lon from ip-api.com', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  const geoFn = src.slice(src.indexOf('async function lookupGeo'), src.indexOf('async function lookupGeo') + 500);
+  assert.ok(geoFn.includes('lat'), 'lookupGeo must request lat');
+  assert.ok(geoFn.includes('lon'), 'lookupGeo must request lon');
+});
+
+test('server: lookupGeo skips localhost and unknown IPs', () => {
+  const src = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  const geoFn = src.slice(src.indexOf('async function lookupGeo'), src.indexOf('async function lookupGeo') + 300);
+  assert.ok(geoFn.includes('127.0.0.1'), 'lookupGeo must skip localhost IPv4');
+  assert.ok(geoFn.includes('::1'), 'lookupGeo must skip localhost IPv6');
+  assert.ok(geoFn.includes("'unknown'"), 'lookupGeo must skip unknown');
+});
+
+test('server: updateEventGeo stores lat and lon', () => {
+  const dbSrc = fs.readFileSync(path.join(root, 'src/db.js'), 'utf8');
+  const fnStart = dbSrc.indexOf('async function updateEventGeo');
+  const fnEnd = dbSrc.indexOf('}', fnStart + 50);
+  const fnBody = dbSrc.slice(fnStart, fnEnd + 1);
+  assert.ok(fnBody.includes('lat'), 'updateEventGeo must store lat');
+  assert.ok(fnBody.includes('lon'), 'updateEventGeo must store lon');
+});
+
+test('db: analytics_events migration adds lat and lon columns', () => {
+  const src = fs.readFileSync(path.join(root, 'src/db.js'), 'utf8');
+  assert.ok(src.includes("analytics_events ADD COLUMN lat"), 'Migration must add lat column');
+  assert.ok(src.includes("analytics_events ADD COLUMN lon"), 'Migration must add lon column');
+});
+
+// ─── Frontend: Match interface ──────────────────────────────────────────────
+
+test('frontend: Match interface includes guideUrl and story', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/lib/api.ts'), 'utf8');
+  assert.ok(src.includes('guideUrl: string | null'), 'Match must have guideUrl: string | null');
+  assert.ok(src.includes('story: string | null'), 'Match must have story: string | null');
+});
+
+test('frontend: Match interface supports enriched look-alikes', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/lib/api.ts'), 'utf8');
+  // lookAlikes should accept both string and object format
+  assert.ok(src.includes('string | { name: string'), 'lookAlikes must support both string and enriched object format');
+});
+
+// ─── Frontend: format-utils.ts ──────────────────────────────────────────────
+
+test('format-utils: escapeHtml handles all OWASP dangerous chars', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/lib/format-utils.ts'), 'utf8');
+  assert.ok(src.includes('&amp;'), 'Must escape &');
+  assert.ok(src.includes('&lt;'), 'Must escape <');
+  assert.ok(src.includes('&gt;'), 'Must escape >');
+  assert.ok(src.includes('&quot;'), 'Must escape "');
+  assert.ok(src.includes('&#039;'), "Must escape '");
+});
+
+test('format-utils: ensureSentence handles empty string', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/lib/format-utils.ts'), 'utf8');
+  const fnStart = src.indexOf('export function ensureSentence');
+  const fnEnd = src.indexOf('}', src.indexOf('return', fnStart + 50));
+  const fnBody = src.slice(fnStart, fnEnd + 1);
+  assert.ok(fnBody.includes('!trimmed') || fnBody.includes('""'), 'ensureSentence must handle empty string');
+});
+
+test('format-utils: confidenceColor covers all ranges', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/lib/format-utils.ts'), 'utf8');
+  assert.ok(src.includes('score >= 80'), 'Must handle high confidence (>=80)');
+  assert.ok(src.includes('score >= 50'), 'Must handle medium confidence (>=50)');
+  assert.ok(src.includes('text-red-400'), 'Must handle low confidence with red');
+  assert.ok(src.includes('text-green-400'), 'Must handle high confidence with green');
+  assert.ok(src.includes('text-yellow-400'), 'Must handle medium confidence with yellow');
+});
+
+test('format-utils: chipVariant handles poisonous/toxic/deadly as destructive', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/lib/format-utils.ts'), 'utf8');
+  const fnStart = src.indexOf('export function chipVariant');
+  const fnEnd = src.indexOf('\n}', fnStart);
+  const fnBody = src.slice(fnStart, fnEnd);
+  assert.ok(fnBody.includes('poisonous') && fnBody.includes('toxic') && fnBody.includes('deadly'),
+    'chipVariant must handle poisonous, toxic, and deadly');
+  assert.ok(fnBody.includes('"destructive"'), 'Dangerous edibility must return destructive variant');
+});
+
+test('format-utils: buildConfidenceGuidance adds missing roles suggestion', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/lib/format-utils.ts'), 'utf8');
+  const fnStart = src.indexOf('export function buildConfidenceGuidance');
+  const fnEnd = src.indexOf('\n}', fnStart);
+  const fnBody = src.slice(fnStart, fnEnd);
+  assert.ok(fnBody.includes('missingRoles.length > 0'), 'Must check for missing roles');
+  assert.ok(fnBody.includes('formatNaturalList'), 'Must format missing roles as natural list');
+});
+
+test('format-utils: formatNaturalList handles 0, 1, 2, and 3+ items', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/lib/format-utils.ts'), 'utf8');
+  const fnStart = src.indexOf('export function formatNaturalList');
+  const fnEnd = src.indexOf('\n}', fnStart);
+  const fnBody = src.slice(fnStart, fnEnd);
+  assert.ok(fnBody.includes('length === 0'), 'Must handle empty array');
+  assert.ok(fnBody.includes('length === 1'), 'Must handle single item');
+  assert.ok(fnBody.includes('length === 2'), 'Must handle two items');
+  assert.ok(fnBody.includes(', and'), 'Must use Oxford comma for 3+ items');
+});
+
+// ─── Frontend: results components ───────────────────────────────────────────
+
+test('frontend: results-dock supports expandedIndex for card expand/collapse', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/components/results/results-dock.tsx'), 'utf8');
+  assert.ok(src.includes('expandedIndex'), 'results-dock must track expandedIndex state');
+});
+
+test('frontend: results-dock renders grid layout based on match count', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/components/results/results-dock.tsx'), 'utf8');
+  assert.ok(src.includes('grid-cols-1') && src.includes('sm:grid-cols-2') || src.includes('sm:grid-cols-3'),
+    'results-dock must use responsive grid columns');
+});
+
+test('frontend: match-card has isExpanded and onToggle props', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/components/results/match-card.tsx'), 'utf8');
+  assert.ok(src.includes('isExpanded'), 'match-card must accept isExpanded prop');
+  assert.ok(src.includes('onToggle'), 'match-card must accept onToggle prop');
+});
+
+test('frontend: profile-panel shows "Did You Know?" story', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/components/results/profile-panel.tsx'), 'utf8');
+  assert.ok(src.includes('Did You Know'), 'profile-panel must show "Did You Know?" section');
+  assert.ok(src.includes('match.story'), 'profile-panel must reference match.story');
+});
+
+test('frontend: profile-panel shows guide link when available', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/components/results/profile-panel.tsx'), 'utf8');
+  assert.ok(src.includes('guideUrl') || src.includes('guide.orangutany.com'),
+    'profile-panel must show guide link when guideUrl is available');
+});
+
+test('frontend: profile-panel renders enriched look-alikes with images', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/components/results/profile-panel.tsx'), 'utf8');
+  assert.ok(src.includes('imageUrl') || src.includes('look-alike'),
+    'profile-panel must render look-alike images when available');
+  assert.ok(src.includes('distinction'), 'profile-panel must show look-alike distinction text');
+});
+
+// ─── Frontend: scroll utility ───────────────────────────────────────────────
+
+test('frontend: scrollToId has safety correction timeout', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/lib/scroll.ts'), 'utf8');
+  assert.ok(src.includes('setTimeout'), 'scrollToId must have safety correction timeout');
+  assert.ok(src.includes('600'), 'Safety correction must fire after 600ms');
+  assert.ok(src.includes('HEADER_HEIGHT'), 'Must reference HEADER_HEIGHT constant');
+});
+
+test('frontend: scrollToId has fallback for browsers without scroll-margin-top', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/lib/scroll.ts'), 'utf8');
+  assert.ok(src.includes('CSS.supports'), 'Must check CSS.supports for scroll-margin-top');
+  assert.ok(src.includes('scrollIntoView'), 'Must use scrollIntoView when supported');
+  assert.ok(src.includes('window.scrollTo'), 'Must fall back to window.scrollTo');
+});
+
+// ─── Admin: countryFlag safety ──────────────────────────────────────────────
+
+test('admin: countryFlag skips full country names (old data)', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/app/admin/page.tsx'), 'utf8');
+  const fnStart = src.indexOf('function countryFlag');
+  const fnEnd = src.indexOf('\n}', fnStart);
+  const fnBody = src.slice(fnStart, fnEnd);
+  assert.ok(fnBody.includes('length > 3'), 'countryFlag must skip strings longer than 3 chars (full country names)');
+});
+
+test('admin/scans: countryFlag skips full country names (old data)', () => {
+  const src = fs.readFileSync(path.join(root, 'frontend/app/admin/scans/page.tsx'), 'utf8');
+  const fnStart = src.indexOf('function countryFlag');
+  const fnEnd = src.indexOf('\n}', fnStart);
+  const fnBody = src.slice(fnStart, fnEnd);
+  assert.ok(fnBody.includes('length > 3'), 'countryFlag must skip strings longer than 3 chars (full country names)');
+});
+
+// ─── Regeneration script ────────────────────────────────────────────────────
+
+test('scripts: regenerate-species-lookup.sh exists', () => {
+  const filePath = path.join(root, 'scripts/regenerate-species-lookup.sh');
+  assert.ok(fs.existsSync(filePath), 'regenerate-species-lookup.sh must exist');
+  const stat = fs.statSync(filePath);
+  assert.ok(stat.mode & 0o111, 'regenerate-species-lookup.sh must be executable');
+});
