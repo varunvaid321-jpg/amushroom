@@ -9,27 +9,22 @@ import {
   ShieldAlert,
   Leaf,
 } from "lucide-react";
-import type { Match, UploadGuidance, ConsistencyCheck } from "@/lib/api";
+import type { Match, UploadGuidance } from "@/lib/api";
 import {
   chipVariant,
   confidenceColor,
   buildReferenceProfileSummary,
-  friendlyConsistencyMessage,
   excerptSentences,
 } from "@/lib/format-utils";
 
 interface ProfilePanelProps {
   match: Match;
   uploadGuidance: UploadGuidance | null;
-  consistencyCheck: ConsistencyCheck | null;
 }
 
 export function ProfilePanel({
   match,
-  uploadGuidance,
-  consistencyCheck,
 }: ProfilePanelProps) {
-  const consistencyMsg = friendlyConsistencyMessage(consistencyCheck);
 
   return (
     <Card className="border-border/50 bg-card">
@@ -102,16 +97,6 @@ export function ProfilePanel({
               </div>
             </div>
           </>
-        )}
-
-        {/* Consistency Check */}
-        {consistencyMsg && (
-          <div className="rounded-lg bg-muted/30 p-3 text-sm text-muted-foreground">
-            {consistencyCheck?.likelyMixed && (
-              <AlertTriangle className="mr-1 inline h-4 w-4 text-yellow-400" />
-            )}
-            {consistencyMsg}
-          </div>
         )}
 
         {/* Taxonomy */}
