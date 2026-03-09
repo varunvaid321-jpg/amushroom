@@ -4,6 +4,7 @@ import { Container } from "@/components/layout/container";
 
 export const metadata: Metadata = {
   title: "Refund Policy",
+  description: "Refund policy for Orangutany Pro subscriptions.",
   alternates: { canonical: "/refund" },
 };
 
