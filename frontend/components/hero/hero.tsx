@@ -16,8 +16,8 @@ export function Hero() {
           100+ Species Covered
         </div>
         <h1 className="mb-4 max-w-2xl font-[family-name:var(--font-heading)] text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-          Identify wild mushrooms{" "}
-          <span className="text-primary">from photos</span>
+          Identify Wild Mushrooms{" "}
+          <span className="text-primary">From a Photo</span>
         </h1>
         <p className="mb-8 max-w-lg text-lg text-muted-foreground">
           Upload a photo and get instant identification with confidence scores,
