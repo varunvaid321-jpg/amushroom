@@ -46,9 +46,12 @@ export function MatchCard({ match, rank }: MatchCardProps) {
                   </p>
                 </div>
               </div>
-              <span className={`text-lg font-bold tabular-nums ${confidenceColor(match.score)}`}>
-                {match.score}%
-              </span>
+              <div className="text-right">
+                <span className={`text-lg font-bold tabular-nums ${confidenceColor(match.score)}`}>
+                  {match.score}%
+                </span>
+                <p className="text-[10px] text-muted-foreground">confident</p>
+              </div>
             </div>
 
             <div className="mt-2 flex flex-wrap gap-1.5">
