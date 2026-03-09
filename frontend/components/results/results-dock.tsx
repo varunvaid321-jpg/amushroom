@@ -43,6 +43,7 @@ export function ResultsDock({
   const [storySaved, setStorySaved] = useState(false);
   const [storySaving, setStorySaving] = useState(false);
   const [storyDismissed, setStoryDismissed] = useState(false);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   if (state === "idle") {
@@ -142,7 +143,6 @@ export function ResultsDock({
     );
   }
 
-  const secondaryMatches = viableMatches.slice(1);
   const topConfidence = viableMatches[0]?.score ?? 0;
   const showStoryPrompt = isLoggedIn && !isSavedScan && !storyDismissed && !storySaved && topConfidence >= 70 && !!onSaveStory;
 
@@ -156,6 +156,15 @@ export function ResultsDock({
       setStorySaving(false);
     }
   };
+
+  // Determine grid layout based on match count
+  const cardCount = Math.min(viableMatches.length, 3);
+  const gridClass =
+    cardCount === 1
+      ? "grid grid-cols-1 max-w-md mx-auto"
+      : cardCount === 2
+        ? "grid grid-cols-1 sm:grid-cols-2 gap-3"
+        : "grid grid-cols-1 sm:grid-cols-3 gap-3";
 
   return (
     <div className="space-y-4">
@@ -175,21 +184,26 @@ export function ResultsDock({
           {qualityNotice}
         </div>
       )}
-      <ProfilePanel
-        match={viableMatches[0]}
-        uploadGuidance={uploadGuidance}
-      />
-      {secondaryMatches.length > 0 && (
-        <div>
-          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-            Similar Matches
-          </h3>
-          <div className="space-y-3">
-            {secondaryMatches.map((m, i) => (
-              <MatchCard key={i} match={m} rank={i + 2} />
-            ))}
-          </div>
-        </div>
+
+      {/* Horizontal card grid */}
+      <div className={gridClass}>
+        {viableMatches.slice(0, 3).map((m, i) => (
+          <MatchCard
+            key={i}
+            match={m}
+            rank={i + 1}
+            isExpanded={expandedIndex === i}
+            onToggle={() => setExpandedIndex(expandedIndex === i ? null : i)}
+          />
+        ))}
+      </div>
+
+      {/* Expanded detail panel */}
+      {expandedIndex !== null && viableMatches[expandedIndex] && (
+        <ProfilePanel
+          match={viableMatches[expandedIndex]}
+          uploadGuidance={uploadGuidance}
+        />
       )}
 
       {/* Story prompt — shown after new high-confidence scans for logged-in users */}

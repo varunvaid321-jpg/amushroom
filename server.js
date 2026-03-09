@@ -115,6 +115,15 @@ const SPECIES_LOOKUP = (() => {
   }
 })();
 
+// Mushroom stories — curated fun facts for scan results
+const MUSHROOM_STORIES = (() => {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(__dirname, 'mushroom-stories.json'), 'utf8'));
+  } catch {
+    return {};
+  }
+})();
+
 const ROOT = __dirname;
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const TOKEN_FILE = path.join(ROOT, 'design', 'tokens', 'tokens.json');
@@ -752,6 +761,7 @@ function normalizeMatches(payload, uploadGuidance) {
       wikiUrl,
       lookAlikes,
       guideUrl: guideEntry ? `https://guide.orangutany.com/mushrooms/${guideEntry.slug}` : null,
+      story: MUSHROOM_STORIES[scientificName.toLowerCase()]?.story || null,
       representativeImage,
       rank: firstText(details.rank),
       gbifId: details.gbif_id ?? null,
@@ -1522,6 +1532,7 @@ function stripMatchToTeaser(match) {
     taxonomy: {},
     lookAlikes: [],
     guideUrl: null,
+    story: null,
     description: '',
     wikiUrl: '',
     representativeImage: '',

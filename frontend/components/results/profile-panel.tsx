@@ -62,6 +62,18 @@ export function ProfilePanel({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Did You Know? — curated story from our database */}
+        {match.story && (
+          <div className="rounded-lg bg-primary/5 border border-primary/10 p-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary/70 mb-1">
+              Did You Know?
+            </p>
+            <p className="text-sm leading-relaxed text-foreground/80">
+              {match.story}
+            </p>
+          </div>
+        )}
+
         {/* Profile Summary */}
         <div className="flex gap-4">
           {match.representativeImage && (

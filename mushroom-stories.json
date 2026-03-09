@@ -1,0 +1,1154 @@
+{
+  "agaricus arvensis": {
+    "commonName": "Horse Mushroom",
+    "story": "Named for its habit of growing in horse pastures, this large Agaricus smells distinctly of anise. It was a staple of Victorian-era mushroom hunters in England, who considered it superior to the common field mushroom."
+  },
+  "agaricus bisporus": {
+    "commonName": "Button Mushroom",
+    "story": "This single species accounts for about 90% of all mushrooms consumed in the United States. White buttons, cremini, and portobello are all the same species at different stages of maturity — portobello is simply a fully grown brown cremini."
+  },
+  "agaricus campestris": {
+    "commonName": "Field Mushroom",
+    "story": "The original 'mushroom' — this is what people meant by the word for centuries before cultivation. It fruits after warm rain in sheep and cattle pastures and was once so abundant that farmers would fill baskets without effort."
+  },
+  "agaricus augustus": {
+    "commonName": "The Prince",
+    "story": "Considered the king of Agaricus mushrooms, The Prince has a strong almond-anise aroma and a cap that can reach 30 cm across. Its regal common name reflects both its size and exceptional flavor."
+  },
+  "agaricus xanthodermus": {
+    "commonName": "Yellow Stainer",
+    "story": "The most commonly misidentified poisonous mushroom in urban areas. When you scratch the cap base, it turns bright chrome yellow and smells of ink or phenol — a warning sign many beginners miss."
+  },
+  "amanita caesarea": {
+    "commonName": "Caesar's Mushroom",
+    "story": "Roman emperors prized this mushroom so highly that it was reserved for their tables alone. It's one of the few Amanitas that is not only safe but genuinely delicious, with a flavor often compared to hazelnuts."
+  },
+  "amanita citrina": {
+    "commonName": "False Death Cap",
+    "story": "Despite its alarming name, this mushroom is not dangerously toxic — though it tastes terrible. It smells strongly of raw potatoes, which is actually useful for identification."
+  },
+  "amanita fulva": {
+    "commonName": "Tawny Grisette",
+    "story": "One of the edible Amanitas, the Tawny Grisette lacks a ring on its stem — an important field mark. Foragers in Scandinavia have eaten it for centuries, though it must always be cooked first."
+  },
+  "amanita muscaria": {
+    "commonName": "Fly Agaric",
+    "story": "The iconic red-and-white toadstool of fairy tales. Siberian shamans traditionally used it in spiritual rituals, and some historians believe it inspired the legend of Santa Claus — red and white, flying through the sky, entering through chimneys."
+  },
+  "amanita pantherina": {
+    "commonName": "Panther Cap",
+    "story": "More potent than its famous relative the Fly Agaric, the Panther Cap contains higher concentrations of ibotenic acid. Its name comes from its spotted brown cap resembling a panther's coat."
+  },
+  "amanita phalloides": {
+    "commonName": "Death Cap",
+    "story": "Responsible for more than 90% of all fatal mushroom poisonings worldwide. Just half a cap can kill an adult. Symptoms are delayed 6-12 hours, creating a dangerous false sense of security. It was likely used to assassinate Roman Emperor Claudius."
+  },
+  "amanita rubescens": {
+    "commonName": "Blusher",
+    "story": "Named for the way its flesh turns pink when damaged, the Blusher is edible when thoroughly cooked but contains a hemolytic toxin destroyed by heat. Raw consumption would break down red blood cells."
+  },
+  "amanita vaginata": {
+    "commonName": "Grisette",
+    "story": "A delicate, graceful mushroom with a deeply grooved cap margin. French foragers named it 'grisette' meaning 'little grey one.' It's edible but must be well cooked."
+  },
+  "amanita virosa": {
+    "commonName": "Destroying Angel",
+    "story": "Pure white and elegant, the Destroying Angel is as deadly as the Death Cap. A single mushroom contains enough amatoxin to cause fatal liver failure. There is no antidote, and symptoms appear too late for stomach pumping to help."
+  },
+  "armillaria mellea": {
+    "commonName": "Honey Mushroom",
+    "story": "One of the world's largest living organisms is a honey mushroom colony in Oregon's Blue Mountains — it covers 2,385 acres and is estimated to be 2,400 years old. The species is both a prized edible and a devastating forest pathogen."
+  },
+  "armillaria ostoyae": {
+    "commonName": "Dark Honey Mushroom",
+    "story": "The specific species behind the 'Humongous Fungus' of Oregon — it spreads underground through black shoestring-like rhizomorphs that can extend for miles, slowly digesting tree roots."
+  },
+  "auricularia auricula-judae": {
+    "commonName": "Wood Ear",
+    "story": "Named because it literally looks like a human ear growing on dead wood. In Chinese cuisine, it's a staple of hot and sour soup. The species name references Judas because it commonly grows on elder trees, from which Judas supposedly hanged himself."
+  },
+  "auricularia polytricha": {
+    "commonName": "Cloud Ear",
+    "story": "Thinner and more translucent than its cousin the Wood Ear, Cloud Ear is prized in Asian cooking for its crunchy-jelly texture. Traditional Chinese medicine considers it beneficial for blood circulation."
+  },
+  "boletus edulis": {
+    "commonName": "Porcini",
+    "story": "The king of edible mushrooms. In Italy, fresh porcini season is treated with the same reverence as truffle season. The name 'porcini' means 'little pigs' — possibly because pigs love eating them. A single large specimen can weigh over a kilogram."
+  },
+  "boletus reticulatus": {
+    "commonName": "Summer Cep",
+    "story": "The earliest fruiting of the porcini group, appearing in late spring when most boletes are still dormant. Its cap has a distinctive velvety, matte texture like fine suede."
+  },
+  "boletus pinophilus": {
+    "commonName": "Pine Cep",
+    "story": "Found exclusively under pine trees, this dark-capped cep is considered by some European foragers to have an even richer flavor than the common porcini. It's particularly prized in Scandinavian cuisine."
+  },
+  "bovista plumbea": {
+    "commonName": "Grey Puffball",
+    "story": "When mature, the outer skin peels away like an eggshell to reveal a papery inner ball. A single touch releases a cloud of billions of spores — a puffball can produce 7 trillion spores in its lifetime."
+  },
+  "calocybe gambosa": {
+    "commonName": "St. George's Mushroom",
+    "story": "Named because it traditionally appears around St. George's Day (April 23) in England. It's one of the first quality edible mushrooms of spring and was so valued that English villages would guard their patches."
+  },
+  "calvatia gigantea": {
+    "commonName": "Giant Puffball",
+    "story": "Can grow as large as a beach ball — specimens over 150 cm in diameter have been recorded. When sliced and fried, the interior has a texture like tofu. A mature giant puffball contains approximately 7 trillion spores."
+  },
+  "cantharellus cibarius": {
+    "commonName": "Golden Chanterelle",
+    "story": "Worth more than gold by weight in some European markets, chanterelles have a distinctive fruity aroma often compared to apricots. They form partnerships with tree roots and have never been successfully cultivated commercially — every chanterelle you eat was foraged wild."
+  },
+  "cantharellus cinnabarinus": {
+    "commonName": "Cinnabar Chanterelle",
+    "story": "A tiny, flame-red chanterelle found in eastern North American hardwood forests. Despite its small size, it packs intense flavor and often grows in such abundance that a small patch can fill a basket."
+  },
+  "cantharellus lateritius": {
+    "commonName": "Smooth Chanterelle",
+    "story": "Lacks the distinctive ridges of the golden chanterelle, having an almost completely smooth underside. Common in the southeastern United States, where it's the primary chanterelle species foraged."
+  },
+  "cantharellus tubaeformis": {
+    "commonName": "Yellowfoot Chanterelle",
+    "story": "Fruits late in the season when other chanterelles have finished — it's the winter chanterelle. In Scandinavia, people harvest them by the bucketful from mossy conifer forests, often drying them for year-round use."
+  },
+  "cerioporus squamosus": {
+    "commonName": "Dryad's Saddle",
+    "story": "Named from Greek mythology — a dryad could supposedly sit on its broad, saddle-shaped cap. When young and tender, it smells remarkably like watermelon rind and makes a decent edible when sliced thin."
+  },
+  "chlorophyllum molybdites": {
+    "commonName": "Green-spored Parasol",
+    "story": "The most frequently eaten poisonous mushroom in North America. It grows in lawns and parks, looks appetizing, and has a pleasant taste — but will cause violent vomiting within hours. The green spore print is the giveaway."
+  },
+  "chlorophyllum rhacodes": {
+    "commonName": "Shaggy Parasol",
+    "story": "A large, handsome mushroom whose cap breaks into shaggy brown scales as it expands. The flesh turns bright saffron-orange when cut — a dramatic color change that helps confirm identification."
+  },
+  "clitocybe nebularis": {
+    "commonName": "Clouded Funnel",
+    "story": "Forms dramatic fairy rings in leaf litter, sometimes with hundreds of mushrooms in a perfect circle. Though traditionally eaten in some European countries, it causes stomach upset in many people and is no longer recommended."
+  },
+  "clitocybe nuda": {
+    "commonName": "Wood Blewit",
+    "story": "One of the few truly purple mushrooms. The violet coloring fades with age but is striking when fresh. Blewits have been cultivated in France and the Netherlands, and their rich, perfumed flavor works beautifully in risotto."
+  },
+  "clitopilus prunulus": {
+    "commonName": "The Sweetbread Mushroom",
+    "story": "Named for its floury smell and taste reminiscent of fresh bread dough. Old-time foragers called it the 'herald of the cep' because it often fruits in the same locations where porcini will appear weeks later."
+  },
+  "coprinellus micaceus": {
+    "commonName": "Mica Cap",
+    "story": "The cap is dusted with tiny glistening crystals that sparkle like mica flakes in sunlight — hence the name. These crystals wash off in rain, making wet specimens much harder to identify."
+  },
+  "coprinopsis atramentaria": {
+    "commonName": "Common Ink Cap",
+    "story": "Edible on its own, but combining it with alcohol triggers a disulfiram-like reaction — flushing, nausea, and racing heart. This effect can occur even if you drink alcohol up to three days after eating the mushroom."
+  },
+  "coprinus comatus": {
+    "commonName": "Shaggy Mane",
+    "story": "One of the easiest mushrooms for beginners to identify — its distinctive shaggy, cylindrical cap is unmistakable. But it self-destructs within hours of picking, dissolving into black ink. You literally have to race home to cook it."
+  },
+  "cortinarius violaceus": {
+    "commonName": "Violet Webcap",
+    "story": "Perhaps the most dramatically colored mushroom in the northern hemisphere — entirely deep violet from cap to stem. Despite its beauty, the Cortinarius genus contains some of the most insidiously toxic mushrooms known."
+  },
+  "craterellus cornucopioides": {
+    "commonName": "Black Trumpet",
+    "story": "Called the 'truffle of the poor' in France because of its intense, complex flavor. Despite being hollow and thin-fleshed, it packs incredible umami. It's nearly impossible to spot on the dark forest floor — foragers say you have to 'unfocus your eyes' to find them."
+  },
+  "craterellus tubaeformis": {
+    "commonName": "Winter Chanterelle",
+    "story": "Fruits when temperatures drop below 10°C, often through the first snowfalls. In Finland, it's one of the most commercially important wild mushrooms, with annual harvests reaching hundreds of tonnes."
+  },
+  "cyclocybe aegerita": {
+    "commonName": "Pioppino",
+    "story": "One of the oldest cultivated mushrooms — the ancient Romans grew it on poplar logs. It has a satisfying crunchy texture that holds up to long cooking, making it a favorite in Italian pasta dishes."
+  },
+  "daldinia concentrica": {
+    "commonName": "King Alfred's Cakes",
+    "story": "Named after the legend of King Alfred burning cakes while hiding from Vikings. The hard, round, charcoal-black fruiting bodies look exactly like burnt buns. When sliced, they reveal beautiful concentric rings like tree rings."
+  },
+  "entoloma sinuatum": {
+    "commonName": "Livid Pinkgill",
+    "story": "One of Europe's most dangerous mushrooms — it's been responsible for numerous poisonings because it closely resembles several choice edibles like St. George's Mushroom. The pink spore print is the critical distinguishing feature."
+  },
+  "flammulina velutipes": {
+    "commonName": "Enoki",
+    "story": "Wild enoki looks nothing like the supermarket version — it's orange-brown with a velvety stem, not the pale spindly cultivated form. Wild specimens fruit in winter, even pushing through snow, earning it the name 'winter mushroom.'"
+  },
+  "fistulina hepatica": {
+    "commonName": "Beefsteak Fungus",
+    "story": "Cut it open and it genuinely looks like raw beef — it even 'bleeds' a red juice. It grows on living oak trees and has a slightly sour, lemony flavor. The stained wood beneath it is sold as 'brown oak' and commands premium prices in furniture making."
+  },
+  "fomitopsis betulina": {
+    "commonName": "Birch Polypore",
+    "story": "Found on Ötzi the Iceman's body, dating back 5,300 years — he carried it threaded on a leather strap, likely as medicine. It contains antibacterial compounds, and thin strips were historically used as bandages and razor strops."
+  },
+  "galerina marginata": {
+    "commonName": "Funeral Bell",
+    "story": "Contains the same deadly amatoxins as the Death Cap. Its name says it all. It's particularly dangerous because it can grow mixed in with edible species on the same log — especially a risk for Psilocybe foragers."
+  },
+  "ganoderma lingzhi": {
+    "commonName": "Reishi",
+    "story": "Called the 'mushroom of immortality' in Chinese medicine for over 2,000 years. Emperors sent expeditions to find it. Modern research has identified over 400 bioactive compounds in this single species."
+  },
+  "ganoderma applanatum": {
+    "commonName": "Artist's Conk",
+    "story": "The white underside permanently bruises brown when scratched, making it a natural canvas. Artists have been creating detailed drawings on these brackets for centuries — some museum specimens date to the 1800s."
+  },
+  "grifola frondosa": {
+    "commonName": "Hen of the Woods",
+    "story": "Japanese foragers who found a specimen would dance with joy — hence its Japanese name 'maitake' meaning 'dancing mushroom.' A single cluster can weigh over 20 kg. It's both a prized culinary mushroom and one of the most researched for immune support."
+  },
+  "gymnopilus junonius": {
+    "commonName": "Spectacular Rustgill",
+    "story": "Lives up to its name — massive golden-orange clusters erupting from stumps and buried wood. It tastes extremely bitter, which protects it from casual consumption. Some populations contain psilocybin, though this varies by region."
+  },
+  "gyromitra esculenta": {
+    "commonName": "False Morel",
+    "story": "The species name 'esculenta' means 'edible' — a dangerously misleading name. It contains gyromitrin, which metabolizes into monomethylhydrazine, the same compound used in rocket fuel. Yet in Finland, it's legally sold in markets after proper preparation."
+  },
+  "hericium erinaceus": {
+    "commonName": "Lion's Mane",
+    "story": "Looks like a white waterfall of icicles hanging from a tree. It's the only mushroom shown in clinical trials to stimulate nerve growth factor (NGF) production, which is why it's being studied for neurodegenerative conditions."
+  },
+  "hericium coralloides": {
+    "commonName": "Coral Tooth",
+    "story": "Branches like underwater coral, with tiny teeth dangling from each branch. It grows on dead hardwoods and is edible with a mild, sweet flavor similar to lobster when sautéed in butter."
+  },
+  "hericium americanum": {
+    "commonName": "Bear's Head Tooth",
+    "story": "Like Lion's Mane but with branching arms — imagine a cauliflower made of tiny icicles. It's found across eastern North American hardwood forests and shares Lion's Mane's culinary and medicinal properties."
+  },
+  "hydnum repandum": {
+    "commonName": "Hedgehog Mushroom",
+    "story": "Instead of gills or pores, it has tiny tooth-like spines underneath — hence 'hedgehog.' This makes it one of the safest mushrooms for beginners because nothing dangerous has teeth like this. It tastes similar to chanterelle."
+  },
+  "hydnum rufescens": {
+    "commonName": "Terracotta Hedgehog",
+    "story": "Smaller and more orange than its cousin, the Terracotta Hedgehog often grows in large troops through mossy conifer forests. Like all hedgehog mushrooms, the tooth-bearing underside makes it virtually foolproof to identify."
+  },
+  "hygrocybe coccinea": {
+    "commonName": "Scarlet Waxcap",
+    "story": "These brilliant red mushrooms are indicators of ancient, undisturbed grasslands — they only grow in meadows that haven't been ploughed or fertilized for decades. Finding a waxcap grassland is like finding a living fossil."
+  },
+  "hygrocybe psittacina": {
+    "commonName": "Parrot Waxcap",
+    "story": "Starts vivid green (like a parrot) and gradually fades through yellow to orange as it ages. It's slimy to the touch and found in the same unimproved grasslands as other waxcaps — a sign of ecological health."
+  },
+  "hygrophoropsis aurantiaca": {
+    "commonName": "False Chanterelle",
+    "story": "The most common chanterelle look-alike. Unlike true chanterelles, it has thin, crowded, forking gills rather than blunt ridges. It's not dangerously toxic but can cause digestive upset and tastes disappointing compared to the real thing."
+  },
+  "hypholoma fasciculare": {
+    "commonName": "Sulphur Tuft",
+    "story": "One of the most common woodland mushrooms in the world — you'll see bright yellow-green clusters on almost every dead stump. It's poisonous with an intensely bitter taste that should stop anyone from swallowing it."
+  },
+  "imleria badia": {
+    "commonName": "Bay Bolete",
+    "story": "A reliable edible bolete that turns blue when cut — which alarms beginners but is harmless. Polish and Czech foragers consider it an excellent substitute for porcini, with a slightly more acidic flavor."
+  },
+  "inonotus obliquus": {
+    "commonName": "Chaga",
+    "story": "Doesn't look like a mushroom at all — it resembles a charred lump of charcoal growing on birch trees. Used in Russian and Siberian folk medicine for centuries as a tea. The black exterior is one of the most concentrated sources of melanin in nature."
+  },
+  "kuehneromyces mutabilis": {
+    "commonName": "Sheathed Woodtuft",
+    "story": "A prized edible in Germany and Eastern Europe, but dangerously similar to the deadly Funeral Bell (Galerina marginata). The distinguishing feature — scaly vs smooth stem below the ring — requires careful examination."
+  },
+  "laccaria laccata": {
+    "commonName": "Deceiver",
+    "story": "Named 'Deceiver' because it changes appearance dramatically with moisture — brick red when wet, pale buff when dry. The same mushroom can look completely different on a rainy day versus a sunny one."
+  },
+  "laccaria amethystina": {
+    "commonName": "Amethyst Deceiver",
+    "story": "Entirely vivid purple when fresh — cap, gills, and stem. Like its relative the Deceiver, the color fades dramatically as it dries, making old specimens almost unrecognizable."
+  },
+  "lacrymaria lacrymabunda": {
+    "commonName": "Weeping Widow",
+    "story": "The gills 'weep' dark droplets that look like tears — giving it its melancholy name. These droplets are actually spore-laden liquid, a mechanism for spore dispersal in still air."
+  },
+  "laetiporus sulphureus": {
+    "commonName": "Chicken of the Woods",
+    "story": "Tastes remarkably like chicken when young and tender — so much so that it's been used as a poultry substitute in vegetarian restaurants. The orange-and-yellow shelves can produce 45 kg of flesh from a single tree in one season."
+  },
+  "laetiporus cincinnatus": {
+    "commonName": "White-pored Chicken of the Woods",
+    "story": "Unlike its bright-pored cousin, this species has white undersides and grows at the base of trees rather than high on trunks. Many foragers consider it even more tender and flavorful than the standard Chicken of the Woods."
+  },
+  "langermannia gigantea": {
+    "commonName": "Giant Puffball",
+    "story": "A single giant puffball can produce 7 trillion spores — if each spore grew into a new puffball, the combined mass would be 800 times the weight of Earth. Fortunately, almost none of them survive."
+  },
+  "leccinum aurantiacum": {
+    "commonName": "Orange Birch Bolete",
+    "story": "The stem is covered in rough dark scales that distinguish it from smooth-stemmed boletes. It turns dark grey-black when cooked, which can be off-putting but doesn't affect the excellent flavor."
+  },
+  "leccinum scabrum": {
+    "commonName": "Brown Birch Bolete",
+    "story": "Always found near birch trees — the partnership is obligate. The grey-brown scaly stem gives it the species name 'scabrum' meaning 'rough.' It's a reliable edible though the stem is often too tough and spongy to enjoy."
+  },
+  "lentinula edodes": {
+    "commonName": "Shiitake",
+    "story": "The second most cultivated mushroom in the world. The name comes from the shii tree (Castanopsis) it naturally grows on. In Japan, logs inoculated with shiitake spawn are called 'hodagi' and are laid out in forests for years."
+  },
+  "lepista nuda": {
+    "commonName": "Wood Blewit",
+    "story": "The lilac-purple coloring of a fresh Wood Blewit is one of autumn's visual treats in the forest. In England, it was commercially grown and sold in markets well into the 20th century."
+  },
+  "leucoagaricus leucothites": {
+    "commonName": "White Dapperling",
+    "story": "A common lawn mushroom that looks deceptively like a field mushroom. The problem is it also resembles the deadly Destroying Angel. Experts advise leaving all white lawn mushrooms alone unless you can definitively rule out Amanita."
+  },
+  "leucopaxillus giganteus": {
+    "commonName": "Giant Funnel",
+    "story": "Can grow to dinner-plate size — 30 cm or more across. It forms impressive fairy rings in grassland and has a mealy smell. Edible when young but develops a bitter taste with age."
+  },
+  "lycoperdon perlatum": {
+    "commonName": "Common Puffball",
+    "story": "Covered in tiny gem-like spines that leave a beautiful net pattern when they fall off. When mature, a poke releases a puff of olive-brown spore smoke. Edible when the interior is pure white — if there's any yellow or brown, it's too old."
+  },
+  "lycoperdon pyriforme": {
+    "commonName": "Pear-shaped Puffball",
+    "story": "The only puffball that grows on wood rather than soil. Its pear shape and clustered growth habit on stumps make it easy to identify. Like all puffballs, only eat it when the interior is solid white."
+  },
+  "macrolepiota procera": {
+    "commonName": "Parasol Mushroom",
+    "story": "One of the tallest mushrooms in Europe — it can stand 40 cm high with a cap 30 cm across. The cap has a movable ring that slides up and down the stem. Traditionally breaded and fried like a schnitzel."
+  },
+  "marasmius oreades": {
+    "commonName": "Fairy Ring Mushroom",
+    "story": "Creates the classic fairy rings in lawns that inspired centuries of folklore about dancing fairies and elves. The rings expand outward by about 15 cm per year — some rings are estimated to be over 700 years old."
+  },
+  "meripilus giganteus": {
+    "commonName": "Giant Polypore",
+    "story": "Can produce rosettes weighing over 25 kg at the base of beech trees. The flesh bruises black when touched — a field mark that's impossible to miss once you handle it."
+  },
+  "morchella esculenta": {
+    "commonName": "Common Morel",
+    "story": "Morel hunting is a serious spring tradition in the American Midwest — some states hold competitive morel festivals. They fruit prolifically in the spring following forest fires, and their honeycomb cap is unlike anything else in the mushroom world."
+  },
+  "morchella elata": {
+    "commonName": "Black Morel",
+    "story": "Darker and more elongated than the yellow morel, black morels are the first to appear in spring. In the Pacific Northwest, commercial pickers follow the previous year's burn sites, sometimes earning thousands of dollars in a good season."
+  },
+  "morchella semilibera": {
+    "commonName": "Half-free Morel",
+    "story": "The cap is attached to the stem only at the very top, hanging free like a skirt — hence 'half-free.' It's smaller and less flavorful than full morels but still a welcome find in early spring."
+  },
+  "mycena haematopus": {
+    "commonName": "Bleeding Mycena",
+    "story": "Break the stem and it bleeds dark reddish-purple juice — startling against the otherwise delicate, pale mushroom. The tiny bells grow in clusters on rotting hardwood logs."
+  },
+  "neoboletus luridiformis": {
+    "commonName": "Scarletina Bolete",
+    "story": "Turns instantly dark blue when cut — one of the fastest and most dramatic color changes in the mushroom world. Despite the alarming blue staining, it's a good edible when well cooked."
+  },
+  "omphalotus olearius": {
+    "commonName": "Jack O'Lantern",
+    "story": "One of the few bioluminescent mushrooms — the gills genuinely glow green in complete darkness. The light is faint and requires fully dark-adapted eyes to see. It's poisonous and often confused with chanterelles."
+  },
+  "omphalotus nidiformis": {
+    "commonName": "Ghost Fungus",
+    "story": "The Australian cousin of the Jack O'Lantern, and even more bioluminescent. Specimens photographed in total darkness produce an eerie greenish-white glow strong enough to read by."
+  },
+  "panaeolus semiovatus": {
+    "commonName": "Egghead Mottlegill",
+    "story": "Grows directly on horse and cattle dung — its sticky, egg-shaped cap helps it shed water. The mottled gills that give the group its name come from spores ripening at different rates."
+  },
+  "panellus stipticus": {
+    "commonName": "Bitter Oyster",
+    "story": "Bioluminescent in North American populations (but not European ones — a geographic mystery). The gills glow greenish-white in the dark. Its intensely bitter taste makes it inedible despite its oyster-like shape."
+  },
+  "paralepista flaccida": {
+    "commonName": "Tawny Funnel",
+    "story": "Forms dense fairy rings in conifer needle litter, sometimes hundreds of mushrooms in a single ring. The funnel-shaped cap acts like a tiny rain collector, channeling water down to its root system."
+  },
+  "paxillus involutus": {
+    "commonName": "Brown Rollrim",
+    "story": "Was eaten for centuries in Eastern Europe until a German mycologist died from eating it in 1944. It causes a cumulative immune reaction — you can eat it many times safely before the one meal that triggers fatal hemolytic anemia."
+  },
+  "phaeolus schweinitzii": {
+    "commonName": "Dyer's Polypore",
+    "story": "Produces vivid gold and green dyes that have been used by textile artists for centuries. The velvety, sponge-like fruiting body grows at the base of conifers and turns from golden to dark brown with age."
+  },
+  "phallus impudicus": {
+    "commonName": "Common Stinkhorn",
+    "story": "Emerges from an 'egg' and reaches full height in just a few hours — one of the fastest-growing organisms on Earth. The foul-smelling slime on its tip attracts flies, which carry the spores on their feet."
+  },
+  "pholiota squarrosa": {
+    "commonName": "Shaggy Scalycap",
+    "story": "Covered in upturned scales that give it a punk-rock appearance. It grows in dense clusters at the base of trees and smells of garlic when fresh. Though sometimes listed as edible, it can cause stomach upset, especially with alcohol."
+  },
+  "pisolithus arhizus": {
+    "commonName": "Dead Man's Foot",
+    "story": "Looks like a misshapen ball of dark, crumbling earth. Inside, it's packed with tiny pea-sized spore packets called peridioles. It's an important mycorrhizal partner used in forestry to help seedlings establish."
+  },
+  "pleurotus ostreatus": {
+    "commonName": "Oyster Mushroom",
+    "story": "One of the few carnivorous mushrooms — its mycelium paralyzes and digests tiny nematode worms in the soil for nitrogen. It's also one of the best mushrooms for mycoremediation, capable of breaking down petroleum products and pesticides."
+  },
+  "pleurotus pulmonarius": {
+    "commonName": "Summer Oyster",
+    "story": "Thinner and paler than the standard oyster mushroom, fruiting in warmer months. It's one of the easiest mushrooms to grow at home — it will fruit on straw, cardboard, coffee grounds, even old books."
+  },
+  "pleurotus citrinopileatus": {
+    "commonName": "Golden Oyster",
+    "story": "Bright yellow clusters that look like underwater coral. Native to East Asia, it's become a popular home-cultivation species worldwide. The color fades when cooked but the cashew-like flavor intensifies."
+  },
+  "pleurotus djamor": {
+    "commonName": "Pink Oyster",
+    "story": "Flamingo pink when fresh, this tropical oyster mushroom grows explosively fast in warm conditions. The pink color fades completely when cooked, turning the mushroom grey — a disappointment for Instagram but not for flavor."
+  },
+  "pluteus cervinus": {
+    "commonName": "Deer Shield",
+    "story": "One of the most common mushrooms on dead wood worldwide. Its pink spore print and free gills separate it from look-alikes. The name 'cervinus' means 'deer-colored,' referring to the brown cap."
+  },
+  "polyporus umbellatus": {
+    "commonName": "Umbrella Polypore",
+    "story": "Produces hundreds of tiny caps from a single underground tuber called a sclerotium. In traditional Chinese medicine, the sclerotium (called 'zhu ling') has been used for over 2,500 years."
+  },
+  "postia caesia": {
+    "commonName": "Blue Cheese Polypore",
+    "story": "Gets its name from the blue-grey bruising on its white pore surface. Found on dead conifer wood, it's too tough and bland to eat but its blue staining makes it a memorable find."
+  },
+  "psathyrella candolleana": {
+    "commonName": "Pale Brittlestem",
+    "story": "So fragile that the stems snap like dry twigs at the lightest touch. The cap starts pale lilac and fades to white as it dries — a rapid transformation that happens within hours."
+  },
+  "psilocybe cubensis": {
+    "commonName": "Golden Teacher",
+    "story": "The most widely cultivated psilocybin mushroom in the world. It naturally grows on cattle dung in tropical and subtropical regions. The blue bruising when handled is due to psilocin oxidation — a quick field test."
+  },
+  "psilocybe semilanceata": {
+    "commonName": "Liberty Cap",
+    "story": "The most potent psilocybin mushroom by weight in Europe. Its nippled cap is unmistakable. It grows in sheep pastures in autumn and has been used in Europe since at least the 18th century."
+  },
+  "ramaria botrytis": {
+    "commonName": "Clustered Coral",
+    "story": "Looks like pink-tipped cauliflower emerging from the forest floor. One of the few coral fungi considered a good edible, though the entire group is notoriously difficult to identify to species."
+  },
+  "russula emetica": {
+    "commonName": "The Sickener",
+    "story": "Bright red and beautiful but true to its name — it causes vomiting if eaten raw. The acrid, peppery taste on the tongue is actually a useful field test for identifying Russula species."
+  },
+  "russula cyanoxantha": {
+    "commonName": "Charcoal Burner",
+    "story": "The most popular edible Russula in France, where it's sold in markets. Unlike most Russulas, its gills are flexible rather than brittle — you can rub them with your thumb without breaking them."
+  },
+  "russula virescens": {
+    "commonName": "Green-cracked Russula",
+    "story": "The cracked, mosaic-like green pattern on its cap makes it one of the most distinctive mushrooms in the forest. It's considered the finest edible Russula — Chinese markets sell it as 'qing tou jun.'"
+  },
+  "russula nigricans": {
+    "commonName": "Blackening Russula",
+    "story": "Turns from white to red to black as it ages and decays — a slow-motion color show that takes days to unfold. Old blackened specimens persist for weeks and are often parasitized by other fungi."
+  },
+  "sarcodon imbricatus": {
+    "commonName": "Shingled Hedgehog",
+    "story": "The large brown cap covered in dark shingle-like scales makes it look like a miniature thatched roof. It has a bitter edge that improves with drying — in Scandinavia, it's dried and ground into a seasoning powder."
+  },
+  "sarcomyxa serotina": {
+    "commonName": "Late Oyster",
+    "story": "Fruits later than any other oyster-like mushroom — well into winter, even surviving light frosts. The olive-green to yellowish cap and stubby stem distinguish it from true oysters."
+  },
+  "sarcoscypha coccinea": {
+    "commonName": "Scarlet Elf Cup",
+    "story": "Tiny brilliant red cups that appear on mossy sticks in late winter — often the first splash of fungal color after months of grey. In folklore, elves and fairies drank dew from these cups."
+  },
+  "schizophyllum commune": {
+    "commonName": "Split Gill",
+    "story": "Has over 28,000 sexes — the most of any organism on Earth. It can mate with any individual that doesn't share the same mating type, giving it extraordinary genetic diversity. It grows on dead wood on every continent except Antarctica."
+  },
+  "sparassis crispa": {
+    "commonName": "Cauliflower Fungus",
+    "story": "Looks exactly like a head of cauliflower growing at the base of a pine tree. A single specimen can weigh over 10 kg and feed a family for days. Its ruffled, pasta-like fronds have a pleasant nutty flavor."
+  },
+  "stropharia aeruginosa": {
+    "commonName": "Verdigris Agaric",
+    "story": "Vivid blue-green like weathered copper — one of the most unusually colored mushrooms you'll find. The slimy cap catches bits of leaf litter, giving it a messy, decorated appearance."
+  },
+  "suillus luteus": {
+    "commonName": "Slippery Jack",
+    "story": "The slimy cap is so slippery that the mushroom literally slides out of your hand. Most experienced foragers peel off the slimy skin before cooking. It grows exclusively with pine trees and is one of the most common boletes worldwide."
+  },
+  "suillus granulatus": {
+    "commonName": "Weeping Bolete",
+    "story": "Young specimens ooze milky droplets from the pores — the 'granules' that give it its name. These droplets dry into tiny brown dots. Like all Suillus, it's glued to pine trees through mycorrhizal partnership."
+  },
+  "suillus grevillei": {
+    "commonName": "Larch Bolete",
+    "story": "Only grows with larch trees — if you find a larch, look nearby for this bright golden-capped bolete. It's one of the first mycorrhizal partnerships a young larch seedling forms."
+  },
+  "trametes versicolor": {
+    "commonName": "Turkey Tail",
+    "story": "The most studied medicinal mushroom in the world. PSK, a compound extracted from Turkey Tail, is an approved anti-cancer adjuvant therapy in Japan, prescribed alongside chemotherapy since the 1970s."
+  },
+  "tremella mesenterica": {
+    "commonName": "Yellow Brain Fungus",
+    "story": "This jelly-like golden blob isn't actually eating the dead wood it grows on — it's a parasite of another fungus (Peniophora) that is eating the wood. A parasite of a parasite."
+  },
+  "tremella fuciformis": {
+    "commonName": "Snow Fungus",
+    "story": "A translucent, frilly white jelly fungus prized in Chinese cuisine for desserts and soups. In imperial China, it was so valued that only the wealthy could afford it. Now it's widely cultivated and inexpensive."
+  },
+  "tricholoma equestre": {
+    "commonName": "Yellow Knight",
+    "story": "Was considered one of Europe's finest edible mushrooms until 2001, when a cluster of fatal poisonings in France revealed it can cause rhabdomyolysis (muscle breakdown) when eaten in large quantities over several days."
+  },
+  "tricholoma matsutake": {
+    "commonName": "Matsutake",
+    "story": "Japan's most prized mushroom — a single specimen can sell for over $100. Its spicy-cinnamon aroma is considered one of autumn's great fragrances. As Japanese red pine forests decline, so do matsutake harvests, pushing prices ever higher."
+  },
+  "tricholoma terreum": {
+    "commonName": "Grey Knight",
+    "story": "A common edible in pine forests across Europe, with a mild floury taste. It often grows in large troops, and experienced foragers can fill a basket quickly. Positive identification is important as some grey Tricholomas are toxic."
+  },
+  "tuber magnatum": {
+    "commonName": "White Truffle",
+    "story": "The most expensive food in the world by weight — a single truffle sold at auction for $330,000. It grows underground near oaks in Italy's Piedmont region and has never been successfully cultivated despite decades of attempts."
+  },
+  "tuber melanosporum": {
+    "commonName": "Black Truffle",
+    "story": "Called the 'black diamond' of cuisine. Unlike white truffles, black truffles can be cultivated — French truffle orchards now produce most of the world's supply. The intense aroma contains dimethyl sulfide, the same compound that gives the ocean its smell."
+  },
+  "tylopilus felleus": {
+    "commonName": "Bitter Bolete",
+    "story": "Looks almost identical to porcini but one tiny taste reveals the truth — it's overwhelmingly bitter. A single slice can ruin an entire pot of mushroom soup. The pink-tinged pores are the visual giveaway."
+  },
+  "volvariella volvacea": {
+    "commonName": "Paddy Straw Mushroom",
+    "story": "Widely cultivated in Southeast Asia on rice straw — the third most consumed mushroom worldwide. Tragically, its button stage is nearly identical to the Death Cap, leading to fatal confusion among Asian immigrants foraging in new countries."
+  },
+  "xerocomellus chrysenteron": {
+    "commonName": "Red Cracking Bolete",
+    "story": "The cap develops a distinctive cracked pattern revealing red flesh beneath — like drought-parched earth. It's edible but mediocre, and the flesh is often riddled with insect larvae by the time you find it."
+  },
+  "xerocomus subtomentosus": {
+    "commonName": "Suede Bolete",
+    "story": "Named for its cap texture — soft and velvety like suede leather. It's a common woodland bolete that's edible but not exciting. The olive-yellow color and lack of any blue staining help separate it from better species."
+  },
+  "aleuria aurantia": {
+    "commonName": "Orange Peel Fungus",
+    "story": "Looks exactly like discarded orange peel on the ground — bright orange cups scattered along paths and disturbed soil. It's actually edible and has been used as a garnish in Scandinavian restaurants."
+  },
+  "agarikon": {
+    "commonName": "Agarikon",
+    "story": "One of the longest-lived mushrooms — individual specimens on old-growth conifers can be over 75 years old. Ancient Greek physician Dioscorides prescribed it 2,000 years ago. Paul Stamets found it contains compounds active against several viruses."
+  },
+  "albatrellus ovinus": {
+    "commonName": "Sheep Polypore",
+    "story": "Grows on the ground in conifer forests looking like a pale, lumpy bracket. In Scandinavia, it's dried, ground, and used as a pepper substitute — the flavor is mildly peppery with an anise undertone."
+  },
+  "amanita bisporigera": {
+    "commonName": "Eastern Destroying Angel",
+    "story": "North America's version of the Destroying Angel. It produces only two spores per basidium instead of the usual four — hence 'bisporigera.' This makes each spore larger and potentially more resilient."
+  },
+  "amanita crocea": {
+    "commonName": "Orange Grisette",
+    "story": "A beautiful saffron-orange Amanita without a ring — the ringless stem is a key safety feature that separates edible grisettes from deadly Amanitas. It's popular in Italian cooking."
+  },
+  "amanita gemmata": {
+    "commonName": "Gemmed Amanita",
+    "story": "The pale yellow cap is dotted with white 'gems' — remnants of the universal veil. Its toxicity varies by region, making it a mushroom best left alone despite its attractive appearance."
+  },
+  "amanita jacksonii": {
+    "commonName": "American Caesar's Mushroom",
+    "story": "The New World counterpart of the European Caesar's Mushroom. It emerges from a white egg-like volva, and the bright red-orange cap with yellow gills makes it one of North America's most beautiful mushrooms."
+  },
+  "amanita regalis": {
+    "commonName": "Royal Fly Agaric",
+    "story": "A brown-capped version of the Fly Agaric found in Scandinavian birch forests. It contains the same psychoactive compounds but is much rarer. In some Nordic countries, it's considered a separate species worthy of protection."
+  },
+  "armillaria tabescens": {
+    "commonName": "Ringless Honey Mushroom",
+    "story": "Lacks the ring that other honey mushrooms have, fruiting in enormous clusters at the base of oaks in autumn. It's an aggressive tree pathogen that can kill mature oaks within a few years."
+  },
+  "artomyces pyxidatus": {
+    "commonName": "Crown-tipped Coral",
+    "story": "Each branch tip splits into a tiny crown shape — like a candelabra. It's one of the few coral fungi that's easy to identify with certainty, and it has a mild peppery taste."
+  },
+  "aureoboletus projectellus": {
+    "commonName": "Shaggy-stalked Bolete",
+    "story": "The stem is covered in a coarse, shaggy network — rougher than any other bolete. Found in eastern North American pine forests, it's edible with a mild, pleasant flavor."
+  },
+  "baorangia bicolor": {
+    "commonName": "Two-colored Bolete",
+    "story": "Red cap, yellow pores — a striking color combination. It stains blue when cut but is a perfectly good edible. It was recently moved from Boletus to the new genus Baorangia based on DNA evidence."
+  },
+  "boletus barrowsii": {
+    "commonName": "White King Bolete",
+    "story": "A pale, ghostly version of the porcini found in the American Southwest under ponderosa pine. Named after Chuck Barrows, the amateur mycologist who first described it. It's considered equal to European porcini in flavor."
+  },
+  "butyriboletus fechtneri": {
+    "commonName": "Pale Bolete",
+    "story": "The silvery-white cap makes this one of the palest boletes in European forests. It's an excellent edible that grows with oaks and beeches on chalky soil."
+  },
+  "calostoma cinnabarinum": {
+    "commonName": "Stalked Puffball-in-Aspic",
+    "story": "One of the strangest mushrooms in existence — a gelatinous stalk topped with a bright red mouth-like opening. It looks like an alien organism and is found in eastern North American forests."
+  },
+  "cantharellus formosus": {
+    "commonName": "Pacific Golden Chanterelle",
+    "story": "The primary chanterelle of the Pacific Northwest — commercially harvested by the ton each year. It differs from European chanterelles in subtle ways and was only recognized as a separate species in 1997."
+  },
+  "chroogomphus rutilus": {
+    "commonName": "Copper Spike",
+    "story": "An oddity among mushrooms — it parasitizes the mycorrhizal network of Suillus fungi, which are themselves connected to pine trees. A parasite of a symbiont."
+  },
+  "clavariadelphus truncatus": {
+    "commonName": "Truncated Club Coral",
+    "story": "Looks like a flat-topped baseball bat growing from the forest floor. Despite its odd appearance, it's sweet-tasting and edible. The flat top distinguishes it from the pointed species."
+  },
+  "clavulina coralloides": {
+    "commonName": "Crested Coral",
+    "story": "Delicate white branches with tiny crested tips that look like frozen lightning. It's one of the most common coral fungi in temperate forests and is edible though bland."
+  },
+  "clitocybe geotropa": {
+    "commonName": "Trooping Funnel",
+    "story": "Troops of these large funnel-shaped mushrooms march in lines and arcs through autumn grasslands. Some fairy rings are estimated to be over 600 years old, with the fungus spreading outward at about 15 cm per year."
+  },
+  "clitocybe odora": {
+    "commonName": "Anise Funnel",
+    "story": "Smells intensely of anise — you can detect it from several feet away. The blue-green cap color combined with the anise scent makes this one of the most pleasantly aromatic mushrooms in the forest."
+  },
+  "collybia tuberosa": {
+    "commonName": "Lentil Shanklet",
+    "story": "Grows on the decayed remains of other mushrooms, particularly old Russulas and Lactarius. At the stem base is a tiny reddish-brown 'lentil' — a sclerotium that can survive through winter."
+  },
+  "conocybe filaris": {
+    "commonName": "Deadly Conocybe",
+    "story": "A tiny, forgettable brown mushroom that grows in lawns and wood chips — yet it contains the same deadly amatoxins as the Death Cap. Its unassuming appearance is precisely what makes it dangerous."
+  },
+  "cortinarius caperatus": {
+    "commonName": "Gypsy Mushroom",
+    "story": "One of the few Cortinarius species considered safe and good to eat. The wrinkled, ochre cap with a silvery sheen is distinctive. In Finland, it's called 'kehnäsieni' and is commercially harvested."
+  },
+  "cortinarius orellanus": {
+    "commonName": "Fool's Webcap",
+    "story": "Contains orellanine — a toxin so slow-acting that symptoms don't appear for 2-3 weeks after eating, by which time irreversible kidney damage has occurred. It's responsible for the worst Cortinarius poisoning cases."
+  },
+  "cortinarius rubellus": {
+    "commonName": "Deadly Webcap",
+    "story": "Like the Fool's Webcap, it causes delayed kidney failure from orellanine. A 1972 mass poisoning in Poland involved 132 people who ate it mistaking it for Chanterelles — several needed kidney transplants."
+  },
+  "craterellus cinereus": {
+    "commonName": "Ashen Chanterelle",
+    "story": "The grey, funnel-shaped cousin of the Black Trumpet. Less well known but equally flavorful, it dries beautifully and concentrates its smoky, woodsy flavor."
+  },
+  "daedaleopsis confragosa": {
+    "commonName": "Blushing Bracket",
+    "story": "The pore surface turns reddish-brown when scratched — the 'blush.' Found on dead willow branches, its maze-like pore pattern (called daedaleoid after the mythical Daedalus) is a characteristic feature."
+  },
+  "entoloma abortivum": {
+    "commonName": "Aborted Entoloma",
+    "story": "Produces bizarre white lumpy masses that look like misshapen brains — these 'aborted' forms were long thought to be the Entoloma parasitized by honey mushrooms, but research suggests it may be the other way around."
+  },
+  "exidia glandulosa": {
+    "commonName": "Black Witches' Butter",
+    "story": "Dark jelly blobs on dead oak branches that swell in rain and shrivel in sun, seemingly coming back to life with each wet spell. In European folklore, if it appeared on your door, a witch had cast a spell on you."
+  },
+  "fomes fomentarius": {
+    "commonName": "Tinder Fungus",
+    "story": "Used to start fires for at least 5,300 years — Ötzi the Iceman carried it. The inner flesh, called amadou, catches a spark and smolders for hours. It was also used to make hats, bags, and even surgical dressings."
+  },
+  "ganoderma tsugae": {
+    "commonName": "Hemlock Reishi",
+    "story": "A glossy, lacquered bracket growing on Eastern Hemlock trees in North America. While it shares many compounds with Asian Reishi, some herbalists consider it a distinct medicinal species."
+  },
+  "gomphidius glutinosus": {
+    "commonName": "Slimy Spike",
+    "story": "So slimy that it practically squirts out of your hand. Beneath the purple-grey slime, the flesh is pure white and actually edible with a mild flavor. It grows with spruce trees and is common but overlooked."
+  },
+  "gomphus clavatus": {
+    "commonName": "Pig's Ear",
+    "story": "Purple, vase-shaped, and increasingly rare — it's listed as endangered in several European countries. Once common, it has declined dramatically, possibly due to acid rain affecting the spruce forests where it grows."
+  },
+  "geastrum triplex": {
+    "commonName": "Collared Earthstar",
+    "story": "Starts as an onion-shaped ball in the leaf litter, then splits open into a star shape, revealing a puffball at the center. The star arms bend back, lifting the spore sac above the ground for better dispersal."
+  },
+  "gymnopus dryophilus": {
+    "commonName": "Russet Toughshank",
+    "story": "One of the most common forest floor mushrooms worldwide — so abundant it's usually ignored. The thin, tough stem and ability to revive after drying make it a survivor among decomposers."
+  },
+  "gyroporus castaneus": {
+    "commonName": "Chestnut Bolete",
+    "story": "The hollow stem is unique among boletes — snap it and you'll see it's completely empty inside. It has a nutty, pleasant flavor and grows in oak woodlands."
+  },
+  "hapalopilus nidulans": {
+    "commonName": "Cinnamon Bracket",
+    "story": "Apply a drop of household ammonia and it turns instantly vivid purple — one of the most dramatic chemical reactions in mycology. Despite its pleasant cinnamon color, it's toxic."
+  },
+  "hebeloma crustuliniforme": {
+    "commonName": "Poison Pie",
+    "story": "Smells of radish and exudes droplets on the gill edges that look like tears. It's mildly poisonous, causing gastric upset. The pleasant pie-crust smell belies its toxicity."
+  },
+  "helvella crispa": {
+    "commonName": "White Saddle",
+    "story": "The stem is deeply furrowed like a twisted column, and the saddle-shaped cap perches on top like a crumpled handkerchief. Despite its odd shape, it's edible when well cooked."
+  },
+  "helvella lacunosa": {
+    "commonName": "Black Elfin Saddle",
+    "story": "Entirely grey-black with an irregularly lobed cap that never looks the same twice. It's a common autumn mushroom along forest paths and trails, often overlooked because of its dark color."
+  },
+  "heterobasidion annosum": {
+    "commonName": "Root Rot Fungus",
+    "story": "The most economically damaging forest pathogen in the Northern Hemisphere, causing billions of dollars in timber losses. It spreads through root contacts between neighboring trees."
+  },
+  "hygrocybe conica": {
+    "commonName": "Blackening Waxcap",
+    "story": "Starts bright red or yellow, then turns jet black as it ages — one of the most dramatic color changes in the fungal world. Like all waxcaps, it's an indicator of undisturbed grassland ecosystems."
+  },
+  "hygrophorus russula": {
+    "commonName": "Russula-like Waxy Cap",
+    "story": "A large, sturdy mushroom that looks like a Russula but is actually a waxy cap — feel the gills and they're waxy smooth. It's a choice edible in parts of Mexico and the American Southwest."
+  },
+  "hypomyces lactifluorum": {
+    "commonName": "Lobster Mushroom",
+    "story": "Not actually a mushroom but a parasitic mold that attacks Russula and Lactarius, transforming them into bright orange, lobster-flavored delicacies. The parasite improves both the texture and taste of its host — a rare case of parasitism producing a better product."
+  },
+  "infundibulicybe gibba": {
+    "commonName": "Common Funnel",
+    "story": "A classic funnel-shaped mushroom of deciduous woodlands, smelling faintly of bitter almonds. It's abundant in autumn leaf litter and edible but rather thin-fleshed."
+  },
+  "inocybe geophylla": {
+    "commonName": "White Fibrecap",
+    "story": "A small, silky white mushroom that contains muscarine — the same toxin originally identified in Fly Agaric. A handful could cause serious poisoning with profuse sweating, blurred vision, and slowed heart rate."
+  },
+  "ischnoderma resinosum": {
+    "commonName": "Resinous Polypore",
+    "story": "When young, it oozes reddish-brown droplets of resin from its surface — giving it a glistening, wet appearance. Found on dead hardwoods, the young brackets are soft enough to eat but become leathery with age."
+  },
+  "laccaria bicolor": {
+    "commonName": "Bicolored Deceiver",
+    "story": "Used extensively in forestry research because it forms mycorrhizal partnerships with most tree species. Scientists have sequenced its entire genome, making it one of the best-understood fungi genetically."
+  },
+  "lactarius deliciosus": {
+    "commonName": "Saffron Milk Cap",
+    "story": "Bleeds bright orange 'milk' when cut — no other mushroom group does this. In Spain, it's called 'níscalo' and grilled over charcoal as a tapa. The orange milk slowly turns green when exposed to air."
+  },
+  "lactarius deterrimus": {
+    "commonName": "False Saffron Milk Cap",
+    "story": "Very similar to the true Saffron Milk Cap but associated with spruce rather than pine. The milk turns wine-red then green. It's edible but slightly more bitter than its pine-loving cousin."
+  },
+  "lactarius indigo": {
+    "commonName": "Indigo Milk Cap",
+    "story": "One of the most visually striking mushrooms on Earth — entirely dark blue, bleeding indigo-blue milk when cut. Sold in rural markets in Mexico and Guatemala, where it's been eaten for centuries."
+  },
+  "lactarius torminosus": {
+    "commonName": "Woolly Milk Cap",
+    "story": "The cap edge is fringed with shaggy pink 'wool' — a beautiful feature that makes it unmistakable. Raw specimens cause severe gastric distress, but in Finland it's traditionally salt-pickled and considered a delicacy."
+  },
+  "lactarius volemus": {
+    "commonName": "Fishy Milk Cap",
+    "story": "Smells strongly of fish (specifically herring), which intensifies with age. Despite the off-putting odor, it's considered one of the best edible Lactarius species — cooking eliminates the fishy smell."
+  },
+  "laetiporeus gilbertsonii": {
+    "commonName": "Western Chicken of the Woods",
+    "story": "The Pacific Coast version of Chicken of the Woods, growing primarily on eucalyptus and oak. It was only recognized as distinct from the eastern species based on DNA analysis."
+  },
+  "laricifomes officinalis": {
+    "commonName": "Agarikon",
+    "story": "A massive bracket fungus on old-growth conifers that can live for decades. Ancient Greeks called it 'elixirium ad longam vitam' — the elixir of long life. Paul Stamets has found strains with antiviral properties."
+  },
+  "lentinus tigrinus": {
+    "commonName": "Tiger Sawgill",
+    "story": "The cap is covered in dark tiger-stripe scales on a pale background. It grows on dead hardwood and has serrated (saw-toothed) gill edges — a feature that gives the group its common name."
+  },
+  "lepiota cristata": {
+    "commonName": "Stinking Dapperling",
+    "story": "Smells of rubber or burnt hair — unpleasant enough to discourage eating, which is fortunate because it contains amatoxins that can cause liver damage. Its small size and evil smell are protection enough."
+  },
+  "lepista saeva": {
+    "commonName": "Field Blewit",
+    "story": "The cap is pale beige but the stem is vivid lilac-violet — a striking contrast. It grows in grasslands and old orchards in late autumn, often forming fairy rings. French markets sell it as 'pied bleu.'"
+  },
+  "leucocoprinus birnbaumii": {
+    "commonName": "Flowerpot Parasol",
+    "story": "The bright yellow mushroom that spontaneously appears in houseplant pots — it's a tropical species that thrives in the warm, humid environment of potting soil. It's mildly toxic but won't harm your plants."
+  },
+  "lycoperdon echinatum": {
+    "commonName": "Spiny Puffball",
+    "story": "Covered in long, pointed spines that eventually fall off, leaving a beautiful net pattern on the outer skin. Found in beech forests, it's edible when young and the interior is pure white."
+  },
+  "macrolepiota mastoidea": {
+    "commonName": "Slender Parasol",
+    "story": "A more delicate version of the Parasol Mushroom, with a distinctive nipple-like umbo at the cap center. It's edible and good, though less meaty than the true Parasol."
+  },
+  "megacollybia rodmanii": {
+    "commonName": "Platterful Mushroom",
+    "story": "Named because its broad, flat cap resembles a serving platter. The thick white rhizomorphs at the base look like white shoelaces — a helpful identification feature."
+  },
+  "mycena pura": {
+    "commonName": "Lilac Bonnet",
+    "story": "A small, delicate mushroom that comes in pink, lilac, and white forms, smelling of radish. It contains small amounts of muscarine, making it mildly toxic. The color variation makes it a tricky identification."
+  },
+  "mycetinis scorodonius": {
+    "commonName": "Garlic Parachute",
+    "story": "Tiny mushrooms on a wiry stem that smell powerfully of garlic. French cooks thread them on strings to dry and use them as a garlic substitute. The stems are too tough to eat but the caps infuse sauces beautifully."
+  },
+  "neolentinus lepideus": {
+    "commonName": "Train Wrecker",
+    "story": "Earned its dramatic name by growing on railroad ties treated with creosote — its wood-decay enzymes are so powerful they can weaken the ties enough to cause derailments."
+  },
+  "ophiocordyceps sinensis": {
+    "commonName": "Caterpillar Fungus",
+    "story": "Parasitizes moth caterpillars underground in Tibetan grasslands. The mummified caterpillar with a fungal stalk erupting from its head sells for more than gold by weight — up to $50,000 per pound."
+  },
+  "otidea onotica": {
+    "commonName": "Hare's Ear",
+    "story": "Named for its shape — an elongated cup that resembles a rabbit's ear. The bright orange interior contrasts with the paler exterior. It's typically found in woodland leaf litter."
+  },
+  "oudemansiella mucida": {
+    "commonName": "Porcelain Fungus",
+    "story": "Translucent, glistening white — it genuinely looks like fine porcelain. It produces strobilurin, a natural antifungal compound that became the basis for a major class of agricultural fungicides."
+  },
+  "panaeolus foenisecii": {
+    "commonName": "Mower's Mushroom",
+    "story": "The most common small brown mushroom in lawns — appears within hours of mowing on warm, damp days. Called 'mower's mushroom' because mowing stimulates it to fruit."
+  },
+  "panaeolus papilionaceus": {
+    "commonName": "Petticoat Mottlegill",
+    "story": "The cap margin has hanging tooth-like fragments of the veil — the 'petticoat.' It grows on horse dung and was once incorrectly thought to contain psilocybin."
+  },
+  "peziza vesiculosa": {
+    "commonName": "Bladder Cup",
+    "story": "Large brown cups that grow on compost heaps and manure piles. When ripe, touching the inner surface triggers an explosive puff of spores visible as a faint smoke — the fungal equivalent of a sneeze."
+  },
+  "phellinus igniarius": {
+    "commonName": "Willow Bracket",
+    "story": "So hard that Indigenous peoples of North America mixed its charred powder with tobacco. It can persist on living willows and birches for decades, slowly forming hoof-shaped brackets."
+  },
+  "pholiota nameko": {
+    "commonName": "Nameko",
+    "story": "Covered in a thick amber gelatin that gives it an extraordinary slippery texture. It's a staple of miso soup in Japan. The slime is actually a polysaccharide that may have immune-boosting properties."
+  },
+  "phylloporus rhodoxanthus": {
+    "commonName": "Gilled Bolete",
+    "story": "A bolete that has gills instead of pores — a genuine oddity. It bridges two major mushroom groups and confuses beginners who expect boletes to have spongy undersides."
+  },
+  "pleurocybella porrigens": {
+    "commonName": "Angel Wings",
+    "story": "Was considered a safe edible for decades until 2004, when 59 people in Japan were poisoned and 17 died — all had pre-existing kidney disease. The exact toxin remains unknown."
+  },
+  "pluteus salicinus": {
+    "commonName": "Willow Shield",
+    "story": "A grey-capped mushroom found on willow wood. Some specimens have been found to contain small amounts of psilocybin — one of the few non-deliberately-cultivated sources."
+  },
+  "polyporus brumalis": {
+    "commonName": "Winter Polypore",
+    "story": "Fruits in winter when most other mushrooms are dormant — you can find it pushing through snow. The stem is covered in tiny dark scales that give it a rough texture."
+  },
+  "pseudohydnum gelatinosum": {
+    "commonName": "Toothed Jelly",
+    "story": "A jelly fungus with tiny tooth-like spines underneath — it's like a hedgehog mushroom made of gelatin. Translucent grey-white and wobbling on the log, it's edible and can be candied as a sweet treat."
+  },
+  "ramaria stricta": {
+    "commonName": "Strict Coral",
+    "story": "Upright, parallel branches growing from dead wood — 'strict' means straight and unbranched. It smells of anise and tastes bitter, making it one of the easier coral fungi to identify."
+  },
+  "rhodocollybia maculata": {
+    "commonName": "Spotted Toughshank",
+    "story": "A white mushroom that develops rusty red spots as it ages — the 'spotted' in its name. The tough, cartilaginous stem is characteristic and the flesh is unpleasantly bitter."
+  },
+  "russula brevipes": {
+    "commonName": "Short-stemmed Russula",
+    "story": "A large white Russula that pushes up through soil and duff like a hidden boulder. It's the primary host for the Lobster Mushroom parasite, which transforms it from bland and crumbly into a firm, flavorful delicacy."
+  },
+  "russula xerampelina": {
+    "commonName": "Shrimp Russula",
+    "story": "Smells distinctly of cooked shrimp or crab — the fishy odor intensifies as it ages. Despite the name, it's a good edible. The stem bruises brown, another helpful identification feature."
+  },
+  "scleroderma citrinum": {
+    "commonName": "Common Earthball",
+    "story": "Looks like a puffball but is actually unrelated and mildly toxic. The interior is purple-black when mature, unlike the white interior of true puffballs. Unscrupulous dealers have been caught selling slices as fake truffle."
+  },
+  "stereum hirsutum": {
+    "commonName": "Hairy Curtain Crust",
+    "story": "One of the most common bracket fungi on dead wood worldwide — the layered, hairy, orange-banded crusts cover fallen branches like shaggy curtains. It produces the enzyme laccase, used industrially in bioremediation."
+  },
+  "strobilomyces strobilaceus": {
+    "commonName": "Old Man of the Woods",
+    "story": "Covered in shaggy, dark grey-black scales that make it look like a miniature pine cone on a stem. It turns jet black when cut and even the spore print is black — the goth of the bolete world."
+  },
+  "stropharia rugosoannulata": {
+    "commonName": "Wine Cap",
+    "story": "The easiest gourmet mushroom to grow outdoors — just mix spawn into wood chip beds and wait. The burgundy-red cap and purple-grey gills make it handsome, and the flavor is rich and earthy."
+  },
+  "suillus bovinus": {
+    "commonName": "Bovine Bolete",
+    "story": "Forms a remarkable three-way partnership: it connects to pine tree roots, and the parasitic mushroom Gomphidius roseus exclusively parasitizes its mycelium. Where you find Bovine Boletes, look for rosy spikes nearby."
+  },
+  "tricholomopsis rutilans": {
+    "commonName": "Plums and Custard",
+    "story": "Named for its color scheme — purple-red scales on a yellow background, exactly like plums and custard. It grows on conifer stumps and logs and has a cucumber-like taste, though it's not highly regarded as food."
+  },
+  "tuber aestivum": {
+    "commonName": "Summer Truffle",
+    "story": "The affordable truffle — less pungent than the winter black truffle but available from May to September. The warty black exterior and marbled cream-and-brown interior are unmistakable. Dogs and pigs are trained to sniff them out."
+  },
+  "tyromyces chioneus": {
+    "commonName": "White Cheese Polypore",
+    "story": "Soft, white, and cheese-like when fresh — you can dent it with your finger. It decays rapidly into a crumbling mess within days. Found on dead birch and other hardwoods."
+  },
+  "ustilago maydis": {
+    "commonName": "Corn Smut",
+    "story": "A plant pathogen that creates swollen, silvery-black galls on corn ears. In Mexico, it's called 'huitlacoche' and considered a delicacy — the 'Mexican truffle.' Canned huitlacoche sells for premium prices, making this the only crop disease that's intentionally cultivated."
+  },
+  "verpa bohemica": {
+    "commonName": "Early Morel",
+    "story": "Fruits weeks before true morels and looks similar, but the cap is attached only at the top of the stem — pull one apart and you'll see it hanging free. Eating large quantities can cause loss of muscle coordination."
+  },
+  "volvopluteus gloiocephalus": {
+    "commonName": "Stubble Rosegill",
+    "story": "A large, pale mushroom that springs up in fields, gardens, and compost heaps. The pink gills and sack-like volva at the base are key features. It's edible but not worth the risk due to similarity to some Amanitas."
+  },
+  "xylaria hypoxylon": {
+    "commonName": "Candlesnuff Fungus",
+    "story": "The branching black stalks with powdery white tips look exactly like candle wicks that have been snuffed out — the white 'smoke' is actually a coating of asexual spores. One of the most common and recognizable fungi on dead wood."
+  },
+  "xylaria polymorpha": {
+    "commonName": "Dead Man's Fingers",
+    "story": "Blackened, club-shaped structures that push up from buried wood like fingers reaching from a grave. They're hard and woody when mature. The name is apt — stumbling across them in dim woodland light can genuinely startle you."
+  },
+  "amanita parcivolvata": {
+    "commonName": "American Ringless Fly Agaric",
+    "story": "A ringless, red-and-white Amanita found in southeastern US pine forests. Unlike the classic Fly Agaric, it lacks a prominent ring and its warts are fewer and more widely spaced."
+  },
+  "ampulloclitocybe clavipes": {
+    "commonName": "Club-footed Funnel",
+    "story": "Has the same alcohol-interaction as the Ink Cap — eating it with wine or beer causes flushing and nausea. The swollen, club-shaped stem base is the key identification feature."
+  },
+  "boletopsis grisea": {
+    "commonName": "Grey Falsebolete",
+    "story": "Looks like a bolete from above but flip it over and there are pores of a polypore pattern. It grows under spruce trees and is increasingly rare in Europe, listed as vulnerable in several countries."
+  },
+  "bondarzewia berkeleyi": {
+    "commonName": "Berkeley's Polypore",
+    "story": "Can produce enormous rosettes weighing over 15 kg at the base of oaks. When young and tender, it's edible with a mild flavor, but it quickly becomes tough and leathery."
+  },
+  "catathelasma imperiale": {
+    "commonName": "Imperial Mushroom",
+    "story": "One of the largest gilled mushrooms — caps can exceed 40 cm. The double ring and massive stature give it a regal appearance. It's edible but so rare that finding one is an event."
+  },
+  "ceratiomyxa fruticulosa": {
+    "commonName": "Coral Slime",
+    "story": "Not actually a fungus but a slime mold — it's in a completely different kingdom. The tiny white branching fingers are beautiful under magnification, each one a column of spores."
+  },
+  "clathrus ruber": {
+    "commonName": "Red Cage Stinkhorn",
+    "story": "Emerges from an egg as an intricate lattice sphere — like a wiffle ball made of flesh. The olive-brown slime inside smells of rotting meat to attract flies for spore dispersal."
+  },
+  "coprinellus domesticus": {
+    "commonName": "Firerug Inkcap",
+    "story": "Grows on damp wood indoors — sometimes erupting from floorboards or plaster in water-damaged buildings. The orange-brown 'ozonium' mat at its base looks like fuzzy rust."
+  },
+  "cordyceps militaris": {
+    "commonName": "Scarlet Caterpillar Club",
+    "story": "A bright orange club erupting from a buried insect pupa. Unlike its famous cousin the Caterpillar Fungus, this species can be cultivated in laboratories and is used in supplements as a more sustainable alternative."
+  },
+  "crucibulum laeve": {
+    "commonName": "Common Bird's Nest Fungus",
+    "story": "Looks like a tiny bird's nest complete with 'eggs' — splash cups that are launched out by raindrops, carrying spores up to a meter away. Each 'nest' is only about 1 cm wide."
+  },
+  "cyathus striatus": {
+    "commonName": "Fluted Bird's Nest",
+    "story": "The interior walls are grooved like fluting on a column. When a raindrop hits the cup, it launches a tiny spore packet on a sticky thread that wraps around nearby vegetation."
+  },
+  "dacrymyces chrysospermus": {
+    "commonName": "Orange Jelly",
+    "story": "Bright orange blobs on dead conifer wood that swell in rain and shrivel in sun. It's technically edible but flavorless — some adventurous foragers add it to salads purely for its vibrant color."
+  },
+  "fuligo septica": {
+    "commonName": "Dog Vomit Slime Mold",
+    "story": "Not a fungus at all — it's a slime mold that can actually move, creeping across mulch at a rate of about 1 cm per hour. The bright yellow, foamy blob really does look like something a dog left behind."
+  },
+  "ganoderma lucidum": {
+    "commonName": "Lacquered Bracket",
+    "story": "The Western species previously confused with Asian Reishi. Its glossy, lacquered surface looks like it's been painted with shellac. Research continues into whether it shares the same medicinal compounds as its Asian relative."
+  },
+  "gymnopus fusipes": {
+    "commonName": "Spindle Toughshank",
+    "story": "The spindle-shaped, deeply rooting stem can extend 15 cm underground. It's a significant pathogen of oak trees, causing root rot that can topple mature trees in storms."
+  },
+  "helvella elastica": {
+    "commonName": "Elastic Saddle",
+    "story": "The most slender of the saddle fungi — a thin, elastic stem topped with a flapping saddle-shaped cap. It bounces back when bent, hence 'elastic.'"
+  },
+  "hydnellum peckii": {
+    "commonName": "Bleeding Tooth",
+    "story": "When young, it oozes blood-red droplets from its white surface — one of the most alien-looking mushrooms on Earth. The 'blood' is actually anticoagulant compounds being expelled by root pressure."
+  },
+  "hypholoma lateritium": {
+    "commonName": "Brick Cap",
+    "story": "Named for its brick-red cap color. In Japan and parts of Europe, it's eaten after thorough cooking, but in North America it's considered suspect. Different populations may actually be different species."
+  },
+  "inocybe rimosa": {
+    "commonName": "Torn Fibrecap",
+    "story": "The cap splits radially into fibrous cracks as it expands — looking like dried, cracked earth. It contains muscarine and has caused poisonings when confused with edible species."
+  },
+  "ischnoderma benzoinum": {
+    "commonName": "Benzoin Bracket",
+    "story": "Smells of benzoin resin — a sweet, vanilla-like fragrance unusual in fungi. Young specimens are soft and dark brown, oozing droplets, before hardening into a woody bracket."
+  },
+  "laccaria ochropurpurea": {
+    "commonName": "Purple-gilled Laccaria",
+    "story": "A large, robust Laccaria with striking purple gills on a buff-brown cap. It's one of the largest species in its genus and common in eastern North American hardwood forests."
+  },
+  "lactarius camphoratus": {
+    "commonName": "Curry Milk Cap",
+    "story": "When dried, it develops an intense curry-like aroma — foragers dry it and grind it into a seasoning. Fresh specimens smell of burnt sugar or maple syrup."
+  },
+  "lactarius rufus": {
+    "commonName": "Rufous Milk Cap",
+    "story": "Extremely common under pine and spruce but fiercely acrid raw. In Finland, it's traditionally salt-cured for months, transforming the burning taste into a mild, pleasant preserved mushroom."
+  },
+  "laetiporus conifericola": {
+    "commonName": "Conifer Chicken of the Woods",
+    "story": "Grows exclusively on conifer wood unlike the hardwood-associated species. Some people experience gastrointestinal upset from conifer-grown Chicken of the Woods that they don't get from hardwood specimens."
+  },
+  "lenzites betulina": {
+    "commonName": "Birch Mazegill",
+    "story": "Has gill-like structures on its underside but is actually a bracket fungus — the 'gills' are maze-like pores elongated to look like gills. Common on dead birch throughout the Northern Hemisphere."
+  },
+  "lepista sordida": {
+    "commonName": "Sordid Blewit",
+    "story": "A smaller, more intensely purple relative of the Wood Blewit. Despite the unflattering name (sordida means 'dirty'), it's perfectly edible and often found in gardens and compost."
+  },
+  "leucopholiota decorosa": {
+    "commonName": "Decorated Pholiota",
+    "story": "White cap covered in upturned brown scales — like a pinecone made into a mushroom. It grows on dead hardwood and is uncommon enough to be an exciting find."
+  },
+  "lycoperdon marginatum": {
+    "commonName": "Peeling Puffball",
+    "story": "Covered in pointed spines that fall off in patches, leaving smooth 'peeled' areas. This two-tone appearance of spiny and smooth patches makes it distinctively ornamental."
+  },
+  "marasmius rotula": {
+    "commonName": "Pinwheel Marasmius",
+    "story": "Tiny parasol-shaped mushrooms on thread-thin black stems — they look like miniature cocktail umbrellas scattered across dead twigs. Each cap is only 1-2 cm across."
+  },
+  "megacollybia platyphylla": {
+    "commonName": "Broadgill",
+    "story": "Has unusually broad, widely-spaced gills for its size. White cord-like rhizomorphs at the base connect it to buried wood. Common but often overlooked in mixed woodlands."
+  },
+  "mutinus ravenelii": {
+    "commonName": "Ravenel's Stinkhorn",
+    "story": "Named after Henry William Ravenel, a 19th-century South Carolina botanist. The bright red, finger-like stalk topped with foul-smelling slime is designed to attract flies for spore dispersal."
+  },
+  "mycena chlorophos": {
+    "commonName": "Green Glowing Mycena",
+    "story": "One of the brightest bioluminescent fungi — the caps glow vivid green in darkness, bright enough to photograph. Found in subtropical forests of Asia and Oceania."
+  },
+  "nidula niveotomentosa": {
+    "commonName": "White Bird's Nest Fungus",
+    "story": "Covered in white felt-like fuzz on the outside, with grey 'eggs' inside. Found on decomposing wood chips, it's one of the most charming miniature fungi in gardens."
+  },
+  "omphalina epichysium": {
+    "commonName": "Dingy Navel Cap",
+    "story": "A tiny funnel-shaped mushroom growing on very rotten wood. It's part of a group now known to form symbiotic partnerships with algae — essentially forming a lichen."
+  },
+  "panus neostrigosus": {
+    "commonName": "Hairy Panus",
+    "story": "Covered in dense purplish-red fur when young, fading to tan with age. It's extremely tough and was used by Indigenous peoples of the Americas as a seasoning — bits were added to cooking pots."
+  },
+  "phaeocalicium polyporaeum": {
+    "commonName": "Pin Mold",
+    "story": "A parasitic fungus that grows exclusively on the bracket fungus Trichaptum biforme — a fungus that feeds on a fungus. The tiny pin-like structures are barely 2 mm tall."
+  },
+  "piptoporus betulinus": {
+    "commonName": "Birch Polypore",
+    "story": "Grows exclusively on birch trees and was carried by Ötzi the Iceman 5,300 years ago. Strips were used as bandages, strop leather for sharpening blades, and even to make hats."
+  },
+  "pleurotus eryngii": {
+    "commonName": "King Oyster",
+    "story": "The largest species in the oyster mushroom family, with a thick, meaty stem that's the main attraction — unlike other oysters where the cap is prized. When sliced and seared, the stem resembles scallops in both texture and appearance."
+  },
+  "pluteus aurantiorugosus": {
+    "commonName": "Flame Shield",
+    "story": "Bright flame-orange with a wrinkled cap surface. It's quite rare and always a treat to find on dead hardwood logs. The vivid color fades in preserved specimens."
+  },
+  "polyporus tuberaster": {
+    "commonName": "Tuberous Polypore",
+    "story": "Grows from an underground sclerotium (stone-like mass) called a 'pietra fungaia' in Italy. Romans cultivated these stones — watering them to produce flush after flush of mushrooms."
+  },
+  "pycnoporus cinnabarinus": {
+    "commonName": "Cinnabar Polypore",
+    "story": "Brilliant cinnabar-red brackets on dead hardwood — the color is so intense it looks painted. The pigment cinnabarin has antibacterial properties."
+  },
+  "rhodotus palmatus": {
+    "commonName": "Wrinkled Peach",
+    "story": "One of the most photogenic mushrooms — the pink, veined, gelatinous cap looks like a piece of rose quartz. It grows on dead elm wood and has become rarer as elm trees have declined from Dutch elm disease."
+  },
+  "russula claroflava": {
+    "commonName": "Yellow Swamp Russula",
+    "story": "Bright chrome yellow, found in wet birch woodlands and sphagnum bogs. The flesh slowly turns grey then black — a process that takes hours and is diagnostic."
+  },
+  "russula foetens": {
+    "commonName": "Stinking Russula",
+    "story": "Lives up to its name with a powerful, rancid smell. The cap margin has deep grooves and the whole mushroom has an oily, unpleasant feel. Too foul-smelling and acrid to eat."
+  },
+  "russula integra": {
+    "commonName": "Entire Russula",
+    "story": "One of the better edible Russulas — mild-tasting with firm flesh. The deep brown cap and cream-yellow spore print help distinguish it from acrid species."
+  },
+  "russula paludosa": {
+    "commonName": "Tall Bog Russula",
+    "story": "One of the largest Russulas, with bright red caps up to 20 cm across. It grows in boggy pine forests and stands tall above the sphagnum moss."
+  },
+  "stemonitis splendens": {
+    "commonName": "Chocolate Tube Slime Mold",
+    "story": "Not a fungus but a slime mold — clusters of thin brown stalks that look like tiny chocolate fountains. Each stalk is topped with a lattice-like structure holding the spores."
+  },
+  "stereum sanguinolentum": {
+    "commonName": "Bleeding Conifer Crust",
+    "story": "Scratch the fresh surface and it 'bleeds' red — a startling reaction on an otherwise dull grey bracket. It grows exclusively on dead conifer wood."
+  },
+  "suillus americanus": {
+    "commonName": "American Slippery Jack",
+    "story": "The bright yellow, slimy cap and association with white pine make this a common find in eastern North America. The partial veil leaves cottony patches rather than a proper ring."
+  },
+  "suillus lakei": {
+    "commonName": "Lake's Bolete",
+    "story": "Named after mycologist Eretus Lake. Found exclusively under Douglas fir trees, its dry, scaly cap is unusual for the typically slimy Suillus genus."
+  },
+  "tapinella atrotomentosa": {
+    "commonName": "Velvet Rollrim",
+    "story": "The stem is covered in dense, dark brown velvet — one of the most tactile textures in the mushroom world. It grows on conifer stumps and produces purple dye when combined with ammonia."
+  },
+  "trametes betulina": {
+    "commonName": "Birch Trametes",
+    "story": "Previously called the Multicolor Gill Polypore due to its gill-like pore structure. It was recently shown to be a complex of several species — what was one mushroom became many."
+  },
+  "trametes gibbosa": {
+    "commonName": "Lumpy Bracket",
+    "story": "One of the few brackets where green algae colonize the upper surface, giving it a distinctly greenish tinge. The elongated pores run radially rather than being round."
+  },
+  "tremella aurantia": {
+    "commonName": "Golden Ear",
+    "story": "An orange jelly fungus that parasitizes Stereum crust fungi on dead oak branches. It looks like an orange brain or ear growing from the bark."
+  },
+  "tricholoma portentosum": {
+    "commonName": "Charbonnier",
+    "story": "One of the safest and most reliable late-autumn edible mushrooms under pine trees. The grey, streaky cap has a slightly sticky feel and the flesh smells of cucumber."
+  },
+  "tricholoma saponaceum": {
+    "commonName": "Soapy Knight",
+    "story": "Smells distinctly of soap — a strange, chemical-clean odor that's unique among mushrooms. It causes gastrointestinal upset and should be avoided despite its soap-clean appearance."
+  },
+  "tricholoma sulphureum": {
+    "commonName": "Sulphur Knight",
+    "story": "Smells powerfully of coal gas or sulphur — one of the worst-smelling mushrooms in temperate forests. The bright sulphur-yellow color combined with the stench makes it unforgettable."
+  },
+  "tubaria furfuracea": {
+    "commonName": "Scurfy Twiglet",
+    "story": "Tiny cinnamon-brown mushrooms on dead twigs and wood chips — so common they're usually the first mushroom you learn to ignore. The cap surface has a distinctive scurfy (flaky) texture."
+  },
+  "tylopilus plumbeoviolaceus": {
+    "commonName": "Violet-grey Bolete",
+    "story": "A stunning purple-grey bolete with a bitter taste. The color is so unusual for a bolete that it stops foragers in their tracks, but the intense bitterness makes it inedible."
+  },
+  "xerula radicata": {
+    "commonName": "Rooting Shank",
+    "story": "Has a long, tapering root extending deep into the ground — sometimes 15 cm or more — connecting to buried wood. Pull one up and you'll be surprised by how much mushroom is underground."
+  }
+}
