@@ -200,10 +200,18 @@ export function ResultsDock({
 
       {/* Expanded detail panel */}
       {expandedIndex !== null && viableMatches[expandedIndex] && (
-        <ProfilePanel
-          match={viableMatches[expandedIndex]}
-          uploadGuidance={uploadGuidance}
-        />
+        <div className="relative">
+          {cardCount > 1 && (
+            <div className="flex justify-center -mt-1 mb-0">
+              <span className="inline-block text-primary text-lg leading-none select-none">▼</span>
+            </div>
+          )}
+          <ProfilePanel
+            match={viableMatches[expandedIndex]}
+            rank={cardCount > 1 ? expandedIndex + 1 : undefined}
+            uploadGuidance={uploadGuidance}
+          />
+        </div>
       )}
 
       {/* Story prompt — shown after new high-confidence scans for logged-in users */}

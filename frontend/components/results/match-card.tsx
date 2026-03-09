@@ -24,7 +24,7 @@ export function MatchCard({ match, rank, isExpanded, onToggle }: MatchCardProps)
   return (
     <Card
       className={`border-border/50 bg-card cursor-pointer transition-all hover:border-primary/30 ${
-        isExpanded ? "ring-2 ring-primary/40 border-primary/50" : ""
+        isExpanded ? "ring-2 ring-primary/40 border-primary/50 shadow-lg shadow-primary/10" : ""
       }`}
       onClick={onToggle}
     >
@@ -68,10 +68,10 @@ export function MatchCard({ match, rank, isExpanded, onToggle }: MatchCardProps)
           {match.edible === "Unknown" ? "Edibility Unknown" : match.edible}
         </Badge>
 
-        {/* Story teaser */}
+        {/* Story hint */}
         {match.story && (
-          <p className="mt-3 text-xs text-muted-foreground line-clamp-2">
-            {match.story}
+          <p className="mt-3 text-xs text-primary/60 font-medium">
+            ✦ Tap for more
           </p>
         )}
 

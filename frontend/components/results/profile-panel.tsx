@@ -19,11 +19,13 @@ import {
 
 interface ProfilePanelProps {
   match: Match;
+  rank?: number;
   uploadGuidance: UploadGuidance | null;
 }
 
 export function ProfilePanel({
   match,
+  rank,
 }: ProfilePanelProps) {
 
   return (
@@ -31,7 +33,12 @@ export function ProfilePanel({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <CardTitle className="text-2xl font-bold text-foreground">
+            <CardTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
+              {rank && (
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                  #{rank}
+                </span>
+              )}
               {match.commonName}
             </CardTitle>
             <p className="text-sm italic text-muted-foreground">
@@ -64,11 +71,12 @@ export function ProfilePanel({
       <CardContent className="space-y-4">
         {/* Did You Know? — curated story from our database */}
         {match.story && (
-          <div className="rounded-lg bg-primary/5 border border-primary/10 p-3">
-            <p className="text-xs font-semibold uppercase tracking-wider text-primary/70 mb-1">
+          <div className="rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 p-4 shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2 flex items-center gap-1.5">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
               Did You Know?
             </p>
-            <p className="text-sm leading-relaxed text-foreground/80">
+            <p className="text-sm leading-relaxed text-foreground">
               {match.story}
             </p>
           </div>
@@ -94,14 +102,15 @@ export function ProfilePanel({
           <>
             <Separator className="bg-border/50" />
             <div>
-              <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <h4 className="mb-2 text-xs font-bold uppercase tracking-widest text-foreground/60 flex items-center gap-1.5">
+                <Leaf className="h-3 w-3 text-green-500" />
                 Key Traits
               </h4>
               <div className="flex flex-wrap gap-2">
                 {match.traits.map((trait, i) => (
                   <span
                     key={i}
-                    className="rounded-md bg-muted/50 px-2.5 py-1 text-xs text-foreground/80"
+                    className="rounded-full bg-green-500/10 border border-green-500/20 px-3 py-1 text-xs font-medium text-foreground/90"
                   >
                     {trait}
                   </span>
@@ -116,26 +125,26 @@ export function ProfilePanel({
           <>
             <Separator className="bg-border/50" />
             <div>
-              <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <h4 className="mb-2 text-xs font-bold uppercase tracking-widest text-foreground/60">
                 Taxonomy
               </h4>
               <div className="grid grid-cols-3 gap-2 text-xs">
                 {match.taxonomy.genus && (
-                  <div>
-                    <span className="text-muted-foreground">Genus</span>
-                    <p className="font-medium text-foreground">{match.taxonomy.genus}</p>
+                  <div className="rounded-lg bg-muted/30 border border-border/50 px-2.5 py-2 text-center">
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Genus</span>
+                    <p className="font-semibold text-foreground italic">{match.taxonomy.genus}</p>
                   </div>
                 )}
                 {match.taxonomy.family && (
-                  <div>
-                    <span className="text-muted-foreground">Family</span>
-                    <p className="font-medium text-foreground">{match.taxonomy.family}</p>
+                  <div className="rounded-lg bg-muted/30 border border-border/50 px-2.5 py-2 text-center">
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Family</span>
+                    <p className="font-semibold text-foreground">{match.taxonomy.family}</p>
                   </div>
                 )}
                 {match.taxonomy.order && (
-                  <div>
-                    <span className="text-muted-foreground">Order</span>
-                    <p className="font-medium text-foreground">{match.taxonomy.order}</p>
+                  <div className="rounded-lg bg-muted/30 border border-border/50 px-2.5 py-2 text-center">
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Order</span>
+                    <p className="font-semibold text-foreground">{match.taxonomy.order}</p>
                   </div>
                 )}
               </div>
@@ -200,14 +209,18 @@ export function ProfilePanel({
           <>
             <Separator className="bg-border/50" />
             <div>
-              <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <h4 className="mb-2 text-xs font-bold uppercase tracking-widest text-foreground/60 flex items-center gap-1.5">
+                <ShieldAlert className="h-3 w-3 text-blue-400" />
                 Technical Markers
               </h4>
-              <ul className="space-y-1 text-xs text-muted-foreground">
+              <div className="space-y-1.5">
                 {match.whyMatch.map((m, i) => (
-                  <li key={i}>• {m}</li>
+                  <div key={i} className="flex items-start gap-2 rounded-lg bg-blue-500/5 border border-blue-500/10 px-3 py-1.5 text-xs text-foreground/80">
+                    <span className="mt-0.5 inline-block h-1 w-1 rounded-full bg-blue-400 flex-shrink-0" />
+                    {m}
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           </>
         )}
