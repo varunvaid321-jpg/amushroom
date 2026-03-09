@@ -127,7 +127,7 @@ export function MatchCard({ match, rank, isExpanded, onToggle }: MatchCardProps)
       {/* Lightbox — full uncropped image */}
       {lightboxOpen && cardImage && (
         <div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90"
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/95"
           onClick={() => setLightboxOpen(false)}
         >
           {/* X button — always visible, safe zone at top */}
