@@ -53,6 +53,7 @@ export function ProfilePanel({
             className={`text-3xl font-bold tabular-nums ${confidenceColor(match.score)}`}
           >
             {match.score}%
+            <p className="text-xs font-normal text-muted-foreground">confident</p>
           </div>
         </div>
         <div className="flex flex-wrap gap-2 pt-2">
