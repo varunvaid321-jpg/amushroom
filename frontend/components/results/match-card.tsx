@@ -47,16 +47,18 @@ export function MatchCard({ match, rank, isExpanded, onToggle }: MatchCardProps)
               alt={match.commonName}
               className="absolute inset-0 w-full h-full object-cover"
             />
-            {/* Rank + confidence overlaid on image */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
-            <span className="absolute top-2 left-2 flex h-6 w-6 items-center justify-center rounded-full bg-black/50 text-xs font-bold text-white backdrop-blur-sm">
+            {/* Overlays on image */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            <span className="absolute top-2 left-2 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-xs font-bold text-white backdrop-blur-sm">
               #{rank}
             </span>
-            <div className="absolute top-2 right-2 text-right">
-              <span className={`text-lg font-bold tabular-nums drop-shadow-md ${confidenceColor(match.score)}`}>
+            {/* Confidence pill — solid bg, always readable */}
+            <div className={`absolute top-2 right-2 rounded-full px-2.5 py-1 backdrop-blur-sm ${
+              match.score >= 80 ? "bg-green-600/90" : match.score >= 50 ? "bg-yellow-600/90" : "bg-red-600/90"
+            }`}>
+              <span className="text-sm font-bold tabular-nums text-white">
                 {match.score}%
               </span>
-              <p className="text-[10px] text-white/70 drop-shadow-sm">confident</p>
             </div>
             {/* Expand hint */}
             <div className="absolute bottom-2 right-2 flex items-center gap-1 rounded bg-black/50 px-1.5 py-0.5 text-[10px] text-white/70 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
@@ -65,40 +67,53 @@ export function MatchCard({ match, rank, isExpanded, onToggle }: MatchCardProps)
             </div>
           </div>
         )}
-        <CardContent className={`p-4 ${!cardImage ? "pt-4" : ""}`}>
+        <CardContent className={`px-3 py-3 ${!cardImage ? "pt-4" : ""}`}>
           {/* Rank + confidence fallback when no image */}
           {!cardImage && (
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-2">
               <span className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground">
                 #{rank}
               </span>
-              <div className="text-right">
-                <span className={`text-xl font-bold tabular-nums ${confidenceColor(match.score)}`}>
-                  {match.score}%
-                </span>
-                <p className="text-[10px] text-muted-foreground">confident</p>
+              <div className={`rounded-full px-2.5 py-1 ${
+                match.score >= 80 ? "bg-green-600/90" : match.score >= 50 ? "bg-yellow-600/90" : "bg-red-600/90"
+              }`}>
+                <span className="text-sm font-bold tabular-nums text-white">{match.score}%</span>
               </div>
             </div>
           )}
 
           {/* Name */}
-          <h4 className="font-semibold text-foreground text-sm leading-tight">{match.commonName}</h4>
+          <h4 className="font-bold text-foreground text-base leading-tight">{match.commonName}</h4>
           <p className="text-xs italic text-muted-foreground mb-2">
             {match.scientificName}
           </p>
 
-          {/* Edibility badge */}
-          <Badge variant={chipVariant(match.edible)} className="text-xs">
-            {match.edible === "Edible" ? (
-              <Leaf className="mr-1 h-3 w-3" />
-            ) : match.edible === "Poisonous" ? (
-              <ShieldAlert className="mr-1 h-3 w-3" />
+          {/* Edibility — large, unmissable */}
+          <div className={`w-full rounded-lg py-2 px-3 flex items-center justify-center gap-2 ${
+            match.edible.toLowerCase().includes("poisonous") || match.edible.toLowerCase().includes("toxic") || match.edible.toLowerCase().includes("deadly")
+              ? "bg-red-600/15 border border-red-500/30"
+              : match.edible.toLowerCase().includes("edible")
+                ? "bg-green-600/15 border border-green-500/30"
+                : "bg-muted/50 border border-border/50"
+          }`}>
+            {match.edible.toLowerCase().includes("edible") && !match.edible.toLowerCase().includes("not") ? (
+              <Leaf className={`h-4 w-4 flex-shrink-0 ${match.edible.toLowerCase().includes("edible") ? "text-green-500" : "text-muted-foreground"}`} />
+            ) : match.edible.toLowerCase().includes("poisonous") || match.edible.toLowerCase().includes("toxic") || match.edible.toLowerCase().includes("deadly") ? (
+              <ShieldAlert className="h-4 w-4 flex-shrink-0 text-red-500" />
             ) : null}
-            {match.edible === "Unknown" ? "Edibility Unknown" : match.edible}
-          </Badge>
+            <span className={`text-sm font-bold ${
+              match.edible.toLowerCase().includes("poisonous") || match.edible.toLowerCase().includes("toxic") || match.edible.toLowerCase().includes("deadly")
+                ? "text-red-400"
+                : match.edible.toLowerCase().includes("edible")
+                  ? "text-green-400"
+                  : "text-muted-foreground"
+            }`}>
+              {match.edible === "Unknown" ? "Edibility Unknown" : match.edible}
+            </span>
+          </div>
 
           {/* Expand indicator + story hint */}
-          <div className="mt-3 flex flex-col items-center gap-1">
+          <div className="mt-2 flex flex-col items-center gap-0.5">
             <ChevronDown className={`h-5 w-5 text-muted-foreground/50 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
             {match.story && !isExpanded && (
               <p className="text-sm text-primary/60 font-medium">
