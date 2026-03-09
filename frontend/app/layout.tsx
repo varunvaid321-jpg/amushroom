@@ -109,7 +109,7 @@ export default function RootLayout({
                   },
                   description:
                     "Mushroom identification for people who love mushrooms. Species matches, edibility info, distribution maps, look-alike warnings, and foraging guides. Precision-engineered in Canada.",
-                  sameAs: [],
+                  sameAs: ["https://orangutany.com", "https://guide.orangutany.com"],
                   contactPoint: {
                     "@type": "ContactPoint",
                     email: "support@orangutany.com",
