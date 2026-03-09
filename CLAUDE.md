@@ -151,6 +151,17 @@ Before ending a session, on context compaction, or when user says "session closi
 - `src/google-oauth.js` — OAuth state and flow
 - `src/email.js` — Resend integration (welcome + password reset emails)
 
+### Local Databases (scan result enrichment)
+- `species-lookup.json` — 129 species from guide DB for look-alike images & guide links
+- `mushroom-stories.json` — 288 species with curated fun facts ("Did You Know?")
+- `scripts/regenerate-species-lookup.sh` — regenerate after adding species to guide
+
+### MANDATORY: After adding new species to guide.orangutany.com
+1. Run `scripts/regenerate-species-lookup.sh` to update species-lookup.json
+2. Optionally add a story entry in mushroom-stories.json
+3. Commit both files in amushroom repo via PR
+Skipping this means new species won't appear as guide links or show look-alike images in scan results.
+
 ### Frontend
 - `frontend/app/page.tsx` — Homepage (upload + identify flow)
 - `frontend/app/about/page.tsx` — About page
