@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,6 +27,14 @@ interface MatchCardProps {
 export function MatchCard({ match, rank, isExpanded, onToggle }: MatchCardProps) {
   const cardImage = match.guideHeroImage || match.representativeImage;
   const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  // Lock body scroll when lightbox is open
+  useEffect(() => {
+    if (lightboxOpen) {
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = ""; };
+    }
+  }, [lightboxOpen]);
 
   return (
     <>
