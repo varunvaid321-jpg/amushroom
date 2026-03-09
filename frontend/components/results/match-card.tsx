@@ -112,27 +112,36 @@ export function MatchCard({ match, rank, isExpanded, onToggle }: MatchCardProps)
       {/* Lightbox — full uncropped image */}
       {lightboxOpen && cardImage && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90"
           onClick={() => setLightboxOpen(false)}
         >
-          <button
-            className="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-sm"
-            onClick={() => setLightboxOpen(false)}
-            aria-label="Close"
-          >
-            <X className="h-5 w-5" />
-          </button>
-          <div className="relative max-h-[85vh] max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
+          {/* X button — always visible, safe zone at top */}
+          <div className="w-full flex justify-end px-4 py-3 flex-shrink-0">
+            <button
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/25 transition-colors backdrop-blur-sm"
+              onClick={() => setLightboxOpen(false)}
+              aria-label="Close"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          {/* Image — fits remaining space */}
+          <div className="flex-1 flex items-center justify-center px-4 pb-2 min-h-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={cardImage}
               alt={match.commonName}
-              className="max-h-[85vh] max-w-[90vw] rounded-lg object-contain"
+              className="max-h-full max-w-full rounded-lg object-contain"
             />
-            <p className="mt-2 text-center text-sm text-white/70">
-              {match.commonName} — <span className="italic">{match.scientificName}</span>
-            </p>
           </div>
+          {/* Caption */}
+          <p className="pb-4 text-center text-sm text-white/70 flex-shrink-0">
+            {match.commonName} — <span className="italic">{match.scientificName}</span>
+          </p>
+          {/* Tap anywhere hint */}
+          <p className="pb-3 text-center text-xs text-white/40 flex-shrink-0">
+            Tap anywhere to close
+          </p>
         </div>
       )}
     </>
