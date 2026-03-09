@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Loader2, Microscope, Lock, ArrowLeft, BookOpen, CheckCircle2 } from "lucide-react";
-import type { Match, UploadGuidance, ConsistencyCheck } from "@/lib/api";
+import type { Match, UploadGuidance } from "@/lib/api";
 import { ProfilePanel } from "./profile-panel";
 import { MatchCard } from "./match-card";
 import { useAuth } from "@/hooks/use-auth";
@@ -13,7 +13,6 @@ interface ResultsDockProps {
   state: "idle" | "loading" | "ready";
   matches: Match[];
   uploadGuidance: UploadGuidance | null;
-  consistencyCheck: ConsistencyCheck | null;
   qualityNotice?: string;
   quotaExceeded?: boolean;
   quotaTier?: string;
@@ -28,7 +27,6 @@ export function ResultsDock({
   state,
   matches,
   uploadGuidance,
-  consistencyCheck,
   qualityNotice,
   quotaExceeded,
   quotaTier,
@@ -180,7 +178,6 @@ export function ResultsDock({
       <ProfilePanel
         match={viableMatches[0]}
         uploadGuidance={uploadGuidance}
-        consistencyCheck={consistencyCheck}
       />
       {secondaryMatches.length > 0 && (
         <div>

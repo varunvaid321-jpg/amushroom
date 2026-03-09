@@ -135,7 +135,6 @@ export default function Home() {
                 state={resultsState}
                 matches={matches}
                 uploadGuidance={uploadGuidance}
-                consistencyCheck={consistencyCheck}
                 qualityNotice={qualityNotice}
                 quotaExceeded={quotaExceeded}
                 quotaTier={quotaInfo?.tier}
