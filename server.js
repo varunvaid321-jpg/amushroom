@@ -189,9 +189,9 @@ if (STRIPE_SECRET_KEY) {
 async function lookupGeo(ip) {
   if (!ip || ip === 'unknown' || ip === '127.0.0.1' || ip === '::1') return null;
   try {
-    const resp = await fetch(`http://ip-api.com/json/${encodeURIComponent(ip)}?fields=status,country,city`);
+    const resp = await fetch(`http://ip-api.com/json/${encodeURIComponent(ip)}?fields=status,countryCode,country,city`);
     const data = await resp.json();
-    if (data.status === 'success') return { country: data.country, city: data.city };
+    if (data.status === 'success') return { country: data.countryCode || data.country, city: data.city };
   } catch { /* ignore */ }
   return null;
 }
