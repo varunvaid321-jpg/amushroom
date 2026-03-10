@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
   AlertTriangle,
+  BookOpen,
   ExternalLink,
   ShieldAlert,
   Leaf,
@@ -80,6 +81,22 @@ export function ProfilePanel({
               {match.story}
             </p>
           </div>
+        )}
+
+        {/* Guide Link — prominent CTA when guide page exists */}
+        {match.guideUrl && (
+          <a
+            href={match.guideUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 transition-colors hover:bg-primary/10"
+          >
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-4 w-4 text-primary" />
+              <span className="text-sm font-semibold text-primary">Read Full Guide</span>
+            </div>
+            <span className="text-xs text-muted-foreground">Identification, look-alikes, stories &amp; more</span>
+          </a>
         )}
 
         {/* Profile Summary */}
@@ -284,19 +301,6 @@ export function ProfilePanel({
               </a>
             </div>
           </>
-        )}
-
-        {/* Guide Link */}
-        {match.guideUrl && (
-          <a
-            href={match.guideUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-          >
-            Full species guide on Orangutany
-            <ExternalLink className="h-3 w-3" />
-          </a>
         )}
 
         {/* Wiki Link */}
