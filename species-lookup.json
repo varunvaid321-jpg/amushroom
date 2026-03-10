@@ -2190,6 +2190,31 @@
       }
     ]
   },
+  "pisolithus arhizus": {
+    "slug": "pisolithus-arhizus",
+    "commonName": "Dyeball",
+    "heroImage": "https://guide.orangutany.com/images/species/pisolithus-arhizus/01-field.jpg",
+    "lookAlikes": [
+      {
+        "name": "Common Earthball (Scleroderma citrinum)",
+        "slug": "scleroderma-citrinum",
+        "imageUrl": "https://guide.orangutany.com/images/species/pisolithus-arhizus/lookalike-scleroderma.jpg",
+        "distinction": "Similar round shape and tough exterior, but Earthball has a smooth to warty yellowish surface and a solid, dark purple-black interior marbled with white veins."
+      },
+      {
+        "name": "Giant Puffball (Calvatia gigantea)",
+        "slug": "calvatia-gigantea",
+        "imageUrl": null,
+        "distinction": "Much larger (up to 50 cm or more), smooth white exterior when young, and a uniform white interior that resembles marshmallow."
+      },
+      {
+        "name": "Dead Man's Foot (Pisolithus tinctorius)",
+        "slug": null,
+        "imageUrl": null,
+        "distinction": "Pisolithus tinctorius was the old name for the same species."
+      }
+    ]
+  },
   "pleurotus ostreatus": {
     "slug": "pleurotus-ostreatus",
     "commonName": "Oyster Mushroom",
