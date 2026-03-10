@@ -235,7 +235,8 @@ const REQUESTED_DETAILS = [
   'images'
 ];
 
-const TRAIT_FALLBACK = 'Key visible markers were limited in this photo set. Add clear close-ups of cap, gills, and stalk.';
+// No longer used as a visible message — see buildFallbackTraits() instead
+const TRAIT_FALLBACK_SENTINEL = '__no_api_traits__';
 const SESSION_CLEANUP_INTERVAL_MS = 15 * 60 * 1000;
 
 const CONTENT_TYPES = {
@@ -671,6 +672,22 @@ function buildUploadGuidance(photoRoles, imageCount = 0) {
   };
 }
 
+function buildFallbackTraits({ edibility, taxonomy, description, scientificName }) {
+  const traits = [];
+  if (edibility) {
+    const labels = { edible: 'Edible species', poisonous: 'Poisonous — do not consume', toxic: 'Toxic — do not consume', inedible: 'Not considered edible', psychoactive: 'Psychoactive species' };
+    traits.push(labels[edibility] || `Edibility: ${edibility}`);
+  }
+  if (taxonomy?.family) traits.push(`Family: ${taxonomy.family}`);
+  if (taxonomy?.order) traits.push(`Order: ${taxonomy.order}`);
+  if (description && typeof description === 'string') {
+    const sentence = description.split(/[.!]/)[0];
+    if (sentence && sentence.length > 20 && sentence.length < 120) traits.push(sentence.trim());
+  }
+  if (!traits.length) traits.push(`Matched to ${scientificName}`);
+  return traits.slice(0, 4);
+}
+
 function buildWhyMatch({ score, traits, description, edibility, psychoactive, uploadGuidance }) {
   const reasons = [];
 
@@ -678,12 +695,10 @@ function buildWhyMatch({ score, traits, description, edibility, psychoactive, up
   else if (score >= 55) reasons.push(`Moderate confidence prediction (${score}%).`);
   else reasons.push(`Low confidence prediction (${score}%). Treat as a hint only.`);
 
-  if (traits.length && !traits[0].includes('Key visible markers were limited in this photo set.')) {
+  if (traits.length) {
     reasons.push(`Key visual traits align: ${traits.slice(0, 2).join('; ')}.`);
   } else if (description) {
     reasons.push('The species profile details align with what was visible in your photos.');
-  } else {
-    reasons.push('Limited species detail was available for this match.');
   }
 
   if (uploadGuidance.missingRecommendedRoles.length === 0) {
@@ -754,7 +769,7 @@ function normalizeMatches(payload, uploadGuidance) {
       edible: edibility,
       psychedelic: psychoactive,
       score,
-      traits: traits.length ? traits : [TRAIT_FALLBACK],
+      traits: traits.length ? traits : buildFallbackTraits({ edibility, taxonomy, description, scientificName }),
       caution,
       taxonomy,
       description,
@@ -769,7 +784,7 @@ function normalizeMatches(payload, uploadGuidance) {
       inaturalistId: details.inaturalist_id ?? null,
       whyMatch: buildWhyMatch({
         score,
-        traits: traits.length ? traits : [TRAIT_FALLBACK],
+        traits: traits.length ? traits : buildFallbackTraits({ edibility, taxonomy, description, scientificName }),
         description,
         edibility,
         psychoactive,

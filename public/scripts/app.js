@@ -892,7 +892,7 @@
     }
     topPanelItems.push(`<p class="profile-copy"><strong>Confidence:</strong> ${escapeHtml(`${score}%`)} <span aria-hidden="true">•</span> ${escapeHtml(buildConfidenceGuidance(score, missingRoles))}</p>`);
     topPanelItems.push(`<p class="profile-copy"><strong>Photo cross-check:</strong> ${escapeHtml(friendlyConsistencyMessage(consistencyCheck, { topScore: score, uploadedCount: uploadedRoles.length }))}</p>`);
-    topPanelItems.push(`<p class="profile-copy"><strong>Key traits:</strong> ${keyTraitsHtml || 'Technical field markers were limited for this result.'}</p>`);
+    topPanelItems.push(`<p class="profile-copy"><strong>Key traits:</strong> ${keyTraitsHtml || 'Species matched based on visual profile.'}</p>`);
     topPanelItems.push(`<p class="profile-copy"><strong>Labeled views:</strong> ${escapeHtml(summarizeUploadedViews(uploadedRoles))}</p>`);
     topPanelItems.push(`<p class="profile-copy"><strong>Recommended views still helpful:</strong> ${escapeHtml(summarizeMissingViews(missingRoles))}</p>`);
     topPanelItems.push('<p class="profile-copy"><strong>View labels:</strong> Based on the photo box you used.</p>');
@@ -978,7 +978,7 @@
           <span class="${chipClass(psychedelicRaw)}">Psychedelic: ${psychedelic}</span>
         </div>
 
-        <p class="meta"><strong>Key traits:</strong> ${traitsHtml || 'Technical field markers were limited for this result.'}</p>
+        <p class="meta"><strong>Key traits:</strong> ${traitsHtml || 'Species matched based on visual profile.'}</p>
         ${description ? `<p class="meta"><strong>About this species:</strong> ${description}</p>` : ''}
         ${lookAlikes.length ? `<p class="meta"><strong>Look-alikes:</strong> ${escapeHtml(ensureSentence(lookAlikes.join(', ')))}</p>` : ''}
         ${whyMatchMarkup ? `<p class="meta"><strong>Technical match markers:</strong></p>${whyMatchMarkup}` : ''}
