@@ -43,7 +43,7 @@ export function ResultsDock({
   const [storySaved, setStorySaved] = useState(false);
   const [storySaving, setStorySaving] = useState(false);
   const [storyDismissed, setStoryDismissed] = useState(false);
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [expandedSet, setExpandedSet] = useState<Set<number>>(new Set());
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   if (state === "idle") {
@@ -185,34 +185,40 @@ export function ResultsDock({
         </div>
       )}
 
-      {/* Horizontal card grid */}
-      <div className={gridClass}>
-        {viableMatches.slice(0, 3).map((m, i) => (
-          <MatchCard
-            key={i}
-            match={m}
-            rank={i + 1}
-            isExpanded={expandedIndex === i}
-            onToggle={() => setExpandedIndex(expandedIndex === i ? null : i)}
-          />
-        ))}
-      </div>
-
-      {/* Expanded detail panel */}
-      {expandedIndex !== null && viableMatches[expandedIndex] && (
-        <div className="relative">
-          {cardCount > 1 && (
-            <div className="flex justify-center -mt-1 mb-0">
-              <span className="inline-block text-primary text-lg leading-none select-none">▼</span>
+      {/* Card stack — each card expands inline, pushing others down */}
+      <div className={cardCount === 1 ? "max-w-md mx-auto space-y-3" : `grid grid-cols-1 ${cardCount === 2 ? "sm:grid-cols-2" : "sm:grid-cols-3"} gap-3`}>
+        {viableMatches.slice(0, 3).map((m, i) => {
+          const isExpanded = expandedSet.has(i);
+          return (
+            <div key={i} className={isExpanded && cardCount > 1 ? "sm:col-span-full" : ""}>
+              <div className={isExpanded && cardCount > 1 ? "max-w-md mx-auto sm:max-w-none" : ""}>
+                <MatchCard
+                  match={m}
+                  rank={i + 1}
+                  isExpanded={isExpanded}
+                  onToggle={() => {
+                    setExpandedSet(prev => {
+                      const next = new Set(prev);
+                      if (next.has(i)) next.delete(i);
+                      else next.add(i);
+                      return next;
+                    });
+                  }}
+                />
+              </div>
+              {isExpanded && (
+                <div className="mt-2">
+                  <ProfilePanel
+                    match={m}
+                    rank={cardCount > 1 ? i + 1 : undefined}
+                    uploadGuidance={uploadGuidance}
+                  />
+                </div>
+              )}
             </div>
-          )}
-          <ProfilePanel
-            match={viableMatches[expandedIndex]}
-            rank={cardCount > 1 ? expandedIndex + 1 : undefined}
-            uploadGuidance={uploadGuidance}
-          />
-        </div>
-      )}
+          );
+        })}
+      </div>
 
       {/* Story prompt — shown after new high-confidence scans for logged-in users */}
       {showStoryPrompt && (
