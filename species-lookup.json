@@ -302,25 +302,25 @@
   "amanita rubescens": {
     "slug": "amanita-rubescens",
     "commonName": "The Blusher",
-    "heroImage": "https://guide.orangutany.com/images/species/amanita-rubescens/01-classic.jpg",
+    "heroImage": "https://guide.orangutany.com/images/species/amanita-rubescens/01-full-mushroom.jpg",
     "lookAlikes": [
       {
         "name": "Panther Cap (Amanita pantherina)",
         "slug": "amanita-pantherina",
         "imageUrl": "https://guide.orangutany.com/images/species/amanita-rubescens/lookalike-pantherina.jpg",
-        "distinction": "The most dangerous confusion species."
+        "distinction": "The most dangerous confusion."
       },
       {
-        "name": "Death Cap (Amanita phalloides)",
-        "slug": "amanita-phalloides",
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-rubescens/lookalike-phalloides.jpg",
-        "distinction": "The world's deadliest mushroom."
+        "name": "Grey Spotted Amanita (Amanita excelsa)",
+        "slug": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-rubescens/lookalike-excelsa.jpg",
+        "distinction": "Very similar overall shape and size."
       },
       {
-        "name": "Jewelled Amanita (Amanita gemmata)",
-        "slug": "amanita-gemmata",
+        "name": "Gemmed Amanita (Amanita gemmata)",
+        "slug": null,
         "imageUrl": "https://guide.orangutany.com/images/species/amanita-rubescens/lookalike-gemmata.jpg",
-        "distinction": "Cap is bright yellow to pale yellow-orange, covered with white warts."
+        "distinction": "Smaller and paler, with a yellow to ochre cap and white warts."
       }
     ]
   },
@@ -2683,10 +2683,10 @@
         "distinction": "Much larger (often football-sized or bigger), with smooth white skin and pure white interior."
       },
       {
-        "name": "Leopard Earthball (Scleroderma areolatum)",
-        "slug": null,
+        "name": "Dyeball (Pisolithus arhizus)",
+        "slug": "pisolithus-arhizus",
         "imageUrl": null,
-        "distinction": "Smaller with a thinner skin and finer, more leopard-spot-like scales."
+        "distinction": "Similar round shape and tough exterior, but Dyeball is typically larger and more irregular, with an interior composed of small pea-sized compartments (peridioles) at different stages of maturity rather than the solid dark purple-black flesh of Earthball."
       }
     ]
   },
