@@ -1056,20 +1056,24 @@ test('email: all templates use baseTemplate wrapper', () => {
   assert.ok(templateCalls && templateCalls.length >= 7, `expected 7+ baseTemplate calls, got ${templateCalls?.length}`);
 });
 
-test('email: baseTemplate has brand orange color #f97316', () => {
-  assert.ok(emailSrc.includes('#f97316'), 'baseTemplate must use brand orange #f97316');
+test('email: baseTemplate has brand copper color #c8956c', () => {
+  assert.ok(emailSrc.includes('#c8956c'), 'baseTemplate must use brand copper #c8956c');
 });
 
-test('email: baseTemplate has dark background #0a0a0a', () => {
-  assert.ok(emailSrc.includes('#0a0a0a'), 'baseTemplate must use dark bg #0a0a0a');
+test('email: baseTemplate has forest dark background #0e1a0e', () => {
+  assert.ok(emailSrc.includes('#0e1a0e'), 'baseTemplate must use forest dark bg #0e1a0e');
 });
 
-test('email: baseTemplate has card background #161616', () => {
-  assert.ok(emailSrc.includes('#161616'), 'baseTemplate must use card bg #161616');
+test('email: baseTemplate has card background #1a2e1a', () => {
+  assert.ok(emailSrc.includes('#1a2e1a'), 'baseTemplate must use forest card bg #1a2e1a');
 });
 
 test('email: baseTemplate includes Orangutany brand name', () => {
   assert.ok(emailSrc.includes('Orangutany Mushrooms') || emailSrc.includes('Orangutany'), 'baseTemplate must include brand name');
+});
+
+test('email: baseTemplate includes logo image', () => {
+  assert.ok(emailSrc.includes('orangutany.com/images/logo.png'), 'baseTemplate must include logo image');
 });
 
 test('email: baseTemplate has responsive meta viewport', () => {
@@ -1080,9 +1084,9 @@ test('email: baseTemplate has max-width constraint for email clients', () => {
   assert.ok(emailSrc.includes('max-width:520px'), 'baseTemplate must constrain width');
 });
 
-test('email: all CTAs use orange button style', () => {
-  const ctaMatches = emailSrc.match(/background-color:#f97316/g);
-  assert.ok(ctaMatches && ctaMatches.length >= 4, 'all CTA buttons must be orange');
+test('email: all CTAs use copper button style', () => {
+  const ctaMatches = emailSrc.match(/background-color:#c8956c/g);
+  assert.ok(ctaMatches && ctaMatches.length >= 4, 'all CTA buttons must be copper #c8956c');
 });
 
 test('email: all CTA buttons link to orangutany.com', () => {
