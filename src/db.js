@@ -1099,11 +1099,11 @@ async function getAdminScanGallery(limit = 200) {
   const scans = [];
   for (const batch of batches.rows) {
     const imgs = await client.execute({
-      sql: 'SELECT id, mime_type, image_blob FROM upload_images WHERE batch_id = ? ORDER BY id ASC LIMIT 1',
+      sql: 'SELECT id FROM upload_images WHERE batch_id = ? ORDER BY id ASC LIMIT 1',
       args: [batch.id]
     });
     const thumb = imgs.rows.length > 0
-      ? `data:${imgs.rows[0].mime_type || 'image/jpeg'};base64,${Buffer.from(imgs.rows[0].image_blob).toString('base64')}`
+      ? `/api/uploads/${batch.id}/cover-image`
       : null;
 
     // Get country from the closest scan event
