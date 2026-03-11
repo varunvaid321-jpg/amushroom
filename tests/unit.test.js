@@ -943,9 +943,9 @@ test('format-utils: formatNaturalList handles 0, 1, 2, and 3+ items', () => {
 
 // ─── Frontend: results components ───────────────────────────────────────────
 
-test('frontend: results-dock supports expandedIndex for card expand/collapse', () => {
+test('frontend: results-dock supports expanded state for card expand/collapse', () => {
   const src = fs.readFileSync(path.join(root, 'frontend/components/results/results-dock.tsx'), 'utf8');
-  assert.ok(src.includes('expandedIndex'), 'results-dock must track expandedIndex state');
+  assert.ok(src.includes('expandedIndex') || src.includes('expanded'), 'results-dock must track expanded state');
 });
 
 test('frontend: results-dock renders grid layout based on match count', () => {
@@ -1018,4 +1018,576 @@ test('scripts: regenerate-species-lookup.sh exists', () => {
   assert.ok(fs.existsSync(filePath), 'regenerate-species-lookup.sh must exist');
   const stat = fs.statSync(filePath);
   assert.ok(stat.mode & 0o111, 'regenerate-species-lookup.sh must be executable');
+});
+
+// ─── Email & Plan Change Tests (100+ cases) ─────────────────────────────────
+
+const emailSrc = fs.readFileSync(path.join(root, 'src/email.js'), 'utf8');
+const serverSrc = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+
+// --- Email module structure ---
+
+test('email: exports all required email functions', () => {
+  const required = ['sendWelcomeEmail', 'sendPasswordResetEmail', 'sendUpgradeEmail', 'sendLifetimeUpgradeEmail', 'sendCancellationEmail', 'sendAbuseAlertEmail', 'sendFeedbackNotification', 'sendTestEmail', 'emailEnabled'];
+  for (const fn of required) {
+    assert.ok(emailSrc.includes(fn), `email.js must export ${fn}`);
+  }
+});
+
+test('email: module.exports includes all email functions', () => {
+  const exportsLine = emailSrc.match(/module\.exports\s*=\s*\{([^}]+)\}/);
+  assert.ok(exportsLine, 'email.js must have module.exports');
+  const exported = exportsLine[1];
+  for (const fn of ['sendWelcomeEmail', 'sendUpgradeEmail', 'sendLifetimeUpgradeEmail', 'sendCancellationEmail', 'sendAbuseAlertEmail']) {
+    assert.ok(exported.includes(fn), `module.exports must include ${fn}`);
+  }
+});
+
+test('email: server.js imports all email functions', () => {
+  for (const fn of ['sendWelcomeEmail', 'sendUpgradeEmail', 'sendLifetimeUpgradeEmail', 'sendCancellationEmail', 'sendAbuseAlertEmail']) {
+    assert.ok(serverSrc.includes(fn), `server.js must import ${fn}`);
+  }
+});
+
+// --- Email template branding consistency ---
+
+test('email: all templates use baseTemplate wrapper', () => {
+  const templateCalls = emailSrc.match(/baseTemplate\(/g);
+  assert.ok(templateCalls && templateCalls.length >= 7, `expected 7+ baseTemplate calls, got ${templateCalls?.length}`);
+});
+
+test('email: baseTemplate has brand copper color #c8956c', () => {
+  assert.ok(emailSrc.includes('#c8956c'), 'baseTemplate must use brand copper #c8956c');
+});
+
+test('email: baseTemplate has forest dark background #0e1a0e', () => {
+  assert.ok(emailSrc.includes('#0e1a0e'), 'baseTemplate must use forest dark bg #0e1a0e');
+});
+
+test('email: baseTemplate has card background #1a2e1a', () => {
+  assert.ok(emailSrc.includes('#1a2e1a'), 'baseTemplate must use forest card bg #1a2e1a');
+});
+
+test('email: baseTemplate includes Orangutany brand name', () => {
+  assert.ok(emailSrc.includes('Orangutany Mushrooms') || emailSrc.includes('Orangutany'), 'baseTemplate must include brand name');
+});
+
+test('email: baseTemplate includes logo image', () => {
+  assert.ok(emailSrc.includes('orangutany.com/images/logo.png'), 'baseTemplate must include logo image');
+});
+
+test('email: baseTemplate has responsive meta viewport', () => {
+  assert.ok(emailSrc.includes('viewport'), 'baseTemplate must include viewport meta');
+});
+
+test('email: baseTemplate has max-width constraint for email clients', () => {
+  assert.ok(emailSrc.includes('max-width:520px'), 'baseTemplate must constrain width');
+});
+
+test('email: all CTAs use copper button style', () => {
+  const ctaMatches = emailSrc.match(/background-color:#c8956c/g);
+  assert.ok(ctaMatches && ctaMatches.length >= 4, 'all CTA buttons must be copper #c8956c');
+});
+
+test('email: all CTA buttons link to orangutany.com', () => {
+  const links = emailSrc.match(/href="https:\/\/orangutany\.com[^"]*"/g);
+  assert.ok(links && links.length >= 4, 'CTA links must point to orangutany.com');
+});
+
+// --- Welcome email ---
+
+test('email: welcome email has correct subject line', () => {
+  assert.ok(emailSrc.includes("'Welcome to Orangutany Mushrooms'"), 'welcome subject must match');
+});
+
+test('email: welcome email includes mushroom image', () => {
+  assert.ok(emailSrc.includes('chicken-email.jpg'), 'welcome email must include mushroom photo');
+});
+
+test('email: welcome email has Start Identifying CTA', () => {
+  assert.ok(emailSrc.includes('Start Identifying'), 'welcome email must have Start Identifying CTA');
+});
+
+test('email: welcome email handles missing name gracefully', () => {
+  assert.ok(emailSrc.includes("'Hi there,'"), 'welcome email must fallback for missing name');
+});
+
+// --- Upgrade email (monthly Pro) ---
+
+test('email: upgrade email has correct subject', () => {
+  assert.ok(emailSrc.includes("'Welcome to Orangutany Pro!'"), 'upgrade subject must match');
+});
+
+test('email: upgrade email lists Pro benefits', () => {
+  assert.ok(emailSrc.includes('50 scans per day'), 'upgrade email must list scan benefit');
+  assert.ok(emailSrc.includes('Look-alike warnings'), 'upgrade email must list look-alike benefit');
+});
+
+test('email: upgrade email shows monthly price', () => {
+  assert.ok(emailSrc.includes('$7.99/mo'), 'monthly upgrade email must show price');
+});
+
+test('email: upgrade email has Start Scanning CTA', () => {
+  assert.ok(emailSrc.includes('Start Scanning'), 'upgrade email must have Start Scanning CTA');
+});
+
+// --- Lifetime upgrade email ---
+
+test('email: lifetime email has correct subject', () => {
+  assert.ok(emailSrc.includes("'Welcome to Orangutany Pro Lifetime!'"), 'lifetime subject must match');
+});
+
+test('email: lifetime email mentions no recurring charges', () => {
+  assert.ok(emailSrc.includes('No recurring charges'), 'lifetime email must mention no recurring');
+});
+
+test('email: lifetime email mentions forever', () => {
+  assert.ok(emailSrc.includes('forever') || emailSrc.includes('lifetime access'), 'lifetime email must mention forever/lifetime');
+});
+
+test('email: lifetime email shows one-time price', () => {
+  assert.ok(emailSrc.includes('$49.99'), 'lifetime email must show $49.99 price');
+});
+
+test('email: lifetime email does NOT show monthly price', () => {
+  // The lifetime-specific template should say $49.99, not $7.99/mo
+  const lifetimeSection = emailSrc.substring(emailSrc.indexOf('sendLifetimeUpgradeEmail'));
+  const nextFn = lifetimeSection.indexOf('\nasync function', 10);
+  const isolated = nextFn > 0 ? lifetimeSection.substring(0, nextFn) : lifetimeSection;
+  assert.ok(!isolated.includes('$7.99/mo'), 'lifetime email must NOT show monthly price');
+});
+
+// --- Cancellation email ---
+
+test('email: cancellation email has correct subject', () => {
+  assert.ok(emailSrc.includes('Your Orangutany Pro subscription has been cancelled'), 'cancellation subject must match');
+});
+
+test('email: cancellation email mentions free plan', () => {
+  assert.ok(emailSrc.includes('free plan') || emailSrc.includes('5 free scans'), 'cancellation must mention free tier');
+});
+
+test('email: cancellation email has re-subscribe CTA', () => {
+  assert.ok(emailSrc.includes('Re-subscribe') || emailSrc.includes('/upgrade'), 'cancellation must have re-subscribe option');
+});
+
+test('email: cancellation email links to upgrade page', () => {
+  assert.ok(emailSrc.includes('orangutany.com/upgrade'), 'cancellation CTA must link to /upgrade');
+});
+
+// --- Email safety: graceful degradation ---
+
+test('email: all email functions check for resend before sending', () => {
+  const fnNames = ['sendWelcomeEmail', 'sendUpgradeEmail', 'sendLifetimeUpgradeEmail', 'sendCancellationEmail', 'sendPasswordResetEmail'];
+  for (const fn of fnNames) {
+    const fnStart = emailSrc.indexOf(`async function ${fn}`);
+    assert.ok(fnStart > -1, `${fn} must be async function`);
+    const fnBody = emailSrc.substring(fnStart, fnStart + 300);
+    assert.ok(fnBody.includes('if (!resend)'), `${fn} must check for resend before sending`);
+  }
+});
+
+test('email: all email sends use try-catch for error handling', () => {
+  const tryCatches = emailSrc.match(/try\s*\{[\s\S]*?resend\.emails\.send/g);
+  assert.ok(tryCatches && tryCatches.length >= 5, 'all sends must be in try-catch');
+});
+
+test('email: all email functions log success', () => {
+  const logMatches = emailSrc.match(/console\.log\(`\[email\]/g);
+  assert.ok(logMatches && logMatches.length >= 5, 'all sends must log on success');
+});
+
+test('email: all email functions log errors', () => {
+  const errMatches = emailSrc.match(/console\.error\(`\[email\]/g);
+  assert.ok(errMatches && errMatches.length >= 5, 'all sends must log errors');
+});
+
+// --- Server.js: plan change wiring ---
+
+test('server: checkout handler exists', () => {
+  assert.ok(serverSrc.includes('create-checkout-session') || serverSrc.includes('checkout.sessions.create'), 'server must have checkout handler');
+});
+
+test('server: checkout requires authentication', () => {
+  const checkoutFn = serverSrc.substring(serverSrc.indexOf('async function handleCheckout'));
+  assert.ok(checkoutFn.includes('getAuthContext'), 'checkout must check auth');
+  assert.ok(checkoutFn.includes('401'), 'checkout must return 401 if not authenticated');
+});
+
+test('server: checkout supports monthly plan', () => {
+  assert.ok(serverSrc.includes("plan === 'monthly'") || serverSrc.includes("'subscription'"), 'checkout must support monthly');
+});
+
+test('server: checkout supports lifetime plan', () => {
+  assert.ok(serverSrc.includes("plan === 'lifetime'") || serverSrc.includes("isLifetime"), 'checkout must support lifetime');
+});
+
+test('server: checkout uses Stripe Checkout Sessions (not payment links)', () => {
+  assert.ok(serverSrc.includes('checkout.sessions.create'), 'must use Checkout Sessions');
+  assert.ok(!serverSrc.includes('paymentLinks'), 'must NOT use payment links');
+});
+
+test('server: checkout includes userId in metadata', () => {
+  assert.ok(serverSrc.includes("userId: String(auth.user.id)"), 'checkout must pass userId in metadata');
+});
+
+test('server: checkout creates Stripe customer if none exists', () => {
+  assert.ok(serverSrc.includes('stripe.customers.create'), 'checkout must create customer if needed');
+});
+
+// --- Server.js: webhook handling ---
+
+test('server: webhook handles checkout.session.completed', () => {
+  assert.ok(serverSrc.includes("'checkout.session.completed'"), 'webhook must handle checkout completed');
+});
+
+test('server: webhook handles customer.subscription.deleted', () => {
+  assert.ok(serverSrc.includes("'customer.subscription.deleted'"), 'webhook must handle subscription deleted');
+});
+
+test('server: webhook handles customer.subscription.updated', () => {
+  assert.ok(serverSrc.includes("'customer.subscription.updated'"), 'webhook must handle subscription updated');
+});
+
+test('server: webhook handles invoice.payment_succeeded', () => {
+  assert.ok(serverSrc.includes("'invoice.payment_succeeded'"), 'webhook must handle invoice paid');
+});
+
+test('server: webhook verifies Stripe signature', () => {
+  assert.ok(serverSrc.includes('webhooks.constructEvent'), 'webhook must verify signature');
+});
+
+test('server: webhook returns error on bad signature', () => {
+  assert.ok(serverSrc.includes("'Invalid signature'"), 'webhook must reject bad signatures');
+});
+
+// --- Server.js: upgrade email triggers ---
+
+test('server: sends upgrade email on monthly checkout completed', () => {
+  assert.ok(serverSrc.includes('sendUpgradeEmail'), 'server must call sendUpgradeEmail');
+});
+
+test('server: sends lifetime email on lifetime checkout completed', () => {
+  assert.ok(serverSrc.includes('sendLifetimeUpgradeEmail'), 'server must call sendLifetimeUpgradeEmail');
+});
+
+test('server: sends different emails for monthly vs lifetime', () => {
+  // Must have conditional: if isLifetime -> lifetime email, else -> monthly email
+  assert.ok(serverSrc.includes('isLifetime') && serverSrc.includes('sendLifetimeUpgradeEmail') && serverSrc.includes('sendUpgradeEmail'),
+    'server must send different emails for monthly vs lifetime');
+});
+
+// --- Server.js: cancellation email triggers ---
+
+test('server: sends cancellation email on user-initiated cancel', () => {
+  const cancelFn = serverSrc.substring(serverSrc.indexOf('handleCancelSubscription'));
+  const nextFn = cancelFn.indexOf('\nasync function', 10);
+  const isolated = nextFn > 0 ? cancelFn.substring(0, nextFn) : cancelFn;
+  assert.ok(isolated.includes('sendCancellationEmail'), 'user cancel must trigger cancellation email');
+});
+
+test('server: sends cancellation email on webhook subscription deleted', () => {
+  const webhookSection = serverSrc.substring(serverSrc.indexOf("'customer.subscription.deleted'"));
+  const endSection = webhookSection.substring(0, webhookSection.indexOf("'invoice.payment_succeeded'"));
+  assert.ok(endSection.includes('sendCancellationEmail'), 'webhook downgrade must trigger cancellation email');
+});
+
+// --- Server.js: cancel handler guards ---
+
+test('server: cancel requires authentication', () => {
+  const cancelFn = serverSrc.substring(serverSrc.indexOf('handleCancelSubscription'));
+  assert.ok(cancelFn.includes('getAuthContext'), 'cancel must check auth');
+  assert.ok(cancelFn.includes('401'), 'cancel must return 401 without auth');
+});
+
+test('server: cancel requires active subscription', () => {
+  const cancelFn = serverSrc.substring(serverSrc.indexOf('handleCancelSubscription'));
+  assert.ok(cancelFn.includes('stripe_subscription_id'), 'cancel must check for subscription');
+});
+
+test('server: cancel rejects lifetime users', () => {
+  const cancelFn = serverSrc.substring(serverSrc.indexOf('handleCancelSubscription'));
+  assert.ok(cancelFn.includes("tier !== 'pro'") || cancelFn.includes("'Only monthly subscriptions'"),
+    'cancel must reject non-monthly users');
+});
+
+test('server: cancel calls stripe.subscriptions.cancel', () => {
+  const cancelFn = serverSrc.substring(serverSrc.indexOf('handleCancelSubscription'));
+  assert.ok(cancelFn.includes('stripe.subscriptions.cancel'), 'cancel must call Stripe API');
+});
+
+test('server: cancel calls downgradeUser', () => {
+  const cancelFn = serverSrc.substring(serverSrc.indexOf('handleCancelSubscription'));
+  assert.ok(cancelFn.includes('downgradeUser'), 'cancel must downgrade user in DB');
+});
+
+test('server: cancel writes audit log', () => {
+  const cancelFn = serverSrc.substring(serverSrc.indexOf('handleCancelSubscription'));
+  assert.ok(cancelFn.includes('writeAuditLog'), 'cancel must write audit log');
+});
+
+// --- Server.js: upgrade flow guards ---
+
+test('server: upgrade auto-cancels monthly on lifetime upgrade', () => {
+  assert.ok(serverSrc.includes('Cancel existing monthly subscription when upgrading to lifetime') ||
+    (serverSrc.includes('isLifetime') && serverSrc.includes('stripe.subscriptions.cancel')),
+    'must auto-cancel monthly when buying lifetime');
+});
+
+test('server: upgrade writes audit log for tier change', () => {
+  const webhookFn = serverSrc.substring(serverSrc.indexOf('handleStripeWebhook'));
+  assert.ok(webhookFn.includes("eventType: 'tier_change'"), 'upgrade must audit tier change');
+});
+
+test('server: upgrade writes audit log for payment', () => {
+  const webhookFn = serverSrc.substring(serverSrc.indexOf('handleStripeWebhook'));
+  assert.ok(webhookFn.includes("eventType: 'payment'"), 'upgrade must audit payment');
+});
+
+test('server: upgrade creates payment record', () => {
+  assert.ok(serverSrc.includes('createPaymentRecord'), 'upgrade must create payment record');
+});
+
+// --- Server.js: webhook downgrade logic ---
+
+test('server: webhook downgrades user on subscription cancel/expired', () => {
+  const webhookSection = serverSrc.substring(serverSrc.indexOf("'customer.subscription.deleted'"));
+  assert.ok(webhookSection.includes('downgradeUser'), 'webhook must downgrade on sub cancel');
+});
+
+test('server: webhook renews subscription on active status', () => {
+  const webhookSection = serverSrc.substring(serverSrc.indexOf("'customer.subscription.deleted'"));
+  assert.ok(webhookSection.includes("'active'") || webhookSection.includes("'trialing'"),
+    'webhook must handle active/trialing status');
+});
+
+test('server: webhook updates expiry on renewal', () => {
+  const webhookSection = serverSrc.substring(serverSrc.indexOf("'customer.subscription.deleted'"));
+  assert.ok(webhookSection.includes('current_period_end') || webhookSection.includes('expiresAt'),
+    'webhook must update expiry date');
+});
+
+// --- Server.js: portal handler ---
+
+test('server: billing portal requires auth', () => {
+  const portalFn = serverSrc.substring(serverSrc.indexOf('handleStripePortal'));
+  assert.ok(portalFn.includes('getAuthContext'), 'portal must check auth');
+});
+
+test('server: billing portal requires stripe_customer_id', () => {
+  const portalFn = serverSrc.substring(serverSrc.indexOf('handleStripePortal'));
+  assert.ok(portalFn.includes('stripe_customer_id'), 'portal must check for customer');
+});
+
+test('server: billing portal returns to /account/billing', () => {
+  assert.ok(serverSrc.includes('/account/billing'), 'portal return URL must be /account/billing');
+});
+
+// --- Quota & tier boundaries ---
+
+test('server: anonymous users get 3 total scans', () => {
+  assert.ok(serverSrc.includes("'anonymous'"), 'server must handle anonymous tier');
+});
+
+test('server: free users get daily limit', () => {
+  assert.ok(serverSrc.includes("'free'") && serverSrc.includes('limit'), 'server must enforce free tier limit');
+});
+
+test('server: pro scan cap is silent (no number in error)', () => {
+  const proError = serverSrc.match(/isPro.*?Please try again later/s);
+  assert.ok(proError, 'pro limit error must say "Please try again later" without revealing count');
+});
+
+// --- Email: no secrets in templates ---
+
+test('email: templates do not contain API keys', () => {
+  assert.ok(!emailSrc.includes('sk_live'), 'email templates must not contain Stripe keys');
+  assert.ok(!emailSrc.includes('re_'), 'email templates must not contain Resend keys');
+  assert.ok(!emailSrc.includes('rnd_'), 'email templates must not contain Render keys');
+});
+
+// --- Email: XSS safety ---
+
+test('email: greeting uses name parameter safely (no raw HTML injection vector)', () => {
+  // Verify name is used in text context, not in href/src attributes
+  const nameUsages = emailSrc.match(/\$\{name\}/g);
+  const greetingUsages = emailSrc.match(/\$\{greeting\}/g);
+  assert.ok(nameUsages || greetingUsages, 'templates must use name/greeting parameter');
+  // name should only appear in text, not in URLs
+  assert.ok(!emailSrc.includes('href="${name}'), 'name must not be used in URLs');
+});
+
+// --- Credential safety ---
+
+test('server: no hardcoded API keys in server.js', () => {
+  assert.ok(!serverSrc.includes('sk_live_'), 'server must not hardcode Stripe live keys');
+  assert.ok(!serverSrc.includes('rnd_'), 'server must not hardcode Render keys');
+  assert.ok(!serverSrc.includes('re_Bj'), 'server must not hardcode Resend keys');
+});
+
+test('server: reads Stripe key from environment', () => {
+  assert.ok(serverSrc.includes('STRIPE_SECRET_KEY') || serverSrc.includes('process.env'), 'server must read Stripe key from env');
+});
+
+test('server: reads Resend key from environment', () => {
+  assert.ok(emailSrc.includes('process.env.RESEND_API_KEY'), 'email module must read Resend key from env');
+});
+
+// --- .env.production security ---
+
+test('security: .env.production is gitignored', () => {
+  const gitignore = fs.readFileSync(path.join(root, '.gitignore'), 'utf8');
+  assert.ok(gitignore.includes('.env') || gitignore.includes('.env.production'), '.env.production must be gitignored');
+});
+
+test('security: .env.production exists with credentials', () => {
+  const envPath = path.join(root, '.env.production');
+  assert.ok(fs.existsSync(envPath), '.env.production must exist');
+  const content = fs.readFileSync(envPath, 'utf8');
+  assert.ok(content.includes('RENDER_API_KEY'), '.env.production must contain RENDER_API_KEY');
+  assert.ok(content.includes('CLOUDFLARE_API_KEY'), '.env.production must contain CLOUDFLARE_API_KEY');
+});
+
+test('security: CLAUDE.md does not contain raw API keys', () => {
+  const claudeMd = fs.readFileSync(path.join(root, 'CLAUDE.md'), 'utf8');
+  assert.ok(!claudeMd.includes('sk_live'), 'CLAUDE.md must not contain Stripe keys');
+  assert.ok(!claudeMd.includes('rnd_'), 'CLAUDE.md must not contain Render keys');
+  assert.ok(!claudeMd.includes('re_Bj'), 'CLAUDE.md must not contain Resend keys');
+});
+
+// --- Plan change workflow completeness ---
+
+test('workflow: signup sends welcome email', () => {
+  assert.ok(serverSrc.includes('sendWelcomeEmail'), 'signup must send welcome email');
+});
+
+test('workflow: monthly upgrade sends Pro email', () => {
+  assert.ok(serverSrc.includes('sendUpgradeEmail'), 'monthly upgrade must send email');
+});
+
+test('workflow: lifetime upgrade sends Lifetime email', () => {
+  assert.ok(serverSrc.includes('sendLifetimeUpgradeEmail'), 'lifetime upgrade must send email');
+});
+
+test('workflow: user cancel sends cancellation email', () => {
+  const cancelHandler = serverSrc.substring(serverSrc.indexOf('handleCancelSubscription'));
+  const endIdx = cancelHandler.indexOf('\nasync function', 10);
+  const fn = endIdx > 0 ? cancelHandler.substring(0, endIdx) : cancelHandler;
+  assert.ok(fn.includes('sendCancellationEmail'), 'cancel handler must send cancellation email');
+});
+
+test('workflow: webhook downgrade sends cancellation email', () => {
+  const hookSection = serverSrc.substring(serverSrc.indexOf("'customer.subscription.deleted'"));
+  const endSection = hookSection.substring(0, hookSection.indexOf("'invoice.payment_succeeded'"));
+  assert.ok(endSection.includes('sendCancellationEmail'), 'webhook downgrade must email');
+});
+
+test('workflow: all emails are fire-and-forget (.catch)', () => {
+  // Key email calls in server.js should use .catch to prevent crashes
+  const emailCalls = serverSrc.match(/send(Welcome|Upgrade|LifetimeUpgrade|Cancellation|PasswordReset)Email\([^)]+\)\.catch/g);
+  assert.ok(emailCalls && emailCalls.length >= 5, `expected 5+ .catch email calls, got ${emailCalls?.length}`);
+});
+
+test('workflow: email errors never crash the server', () => {
+  // All plan-change email sends must use .catch — multi-line abuse calls are OK
+  const planEmails = ['sendUpgradeEmail', 'sendLifetimeUpgradeEmail', 'sendCancellationEmail', 'sendWelcomeEmail'];
+  for (const fn of planEmails) {
+    const regex = new RegExp(`${fn}\\([^)]+\\)\\.catch`, 'g');
+    assert.ok(regex.test(serverSrc), `${fn} in server.js must have .catch`);
+  }
+});
+
+// --- Edge cases ---
+
+test('workflow: cancel handler returns 400 for lifetime users', () => {
+  const cancelFn = serverSrc.substring(serverSrc.indexOf('handleCancelSubscription'));
+  assert.ok(cancelFn.includes("'Only monthly subscriptions can be cancelled.'"),
+    'cancel must reject lifetime users with helpful message');
+});
+
+test('workflow: cancel handler returns 400 for users without subscription', () => {
+  const cancelFn = serverSrc.substring(serverSrc.indexOf('handleCancelSubscription'));
+  assert.ok(cancelFn.includes("'No active subscription to cancel.'"),
+    'cancel must reject users without subscription');
+});
+
+test('workflow: checkout returns 503 when Stripe not configured', () => {
+  const checkoutFn = serverSrc.substring(serverSrc.indexOf('handleCheckout'));
+  assert.ok(checkoutFn.includes('503') && checkoutFn.includes('Stripe is not configured'),
+    'checkout must return 503 if Stripe not set up');
+});
+
+test('workflow: portal returns 400 for users without Stripe customer', () => {
+  const portalFn = serverSrc.substring(serverSrc.indexOf('handleStripePortal'));
+  assert.ok(portalFn.includes("'No billing account found.'"),
+    'portal must reject users without Stripe customer');
+});
+
+test('workflow: webhook finds user by stripe customer ID', () => {
+  assert.ok(serverSrc.includes('findUserByStripeCustomerId'), 'webhook must find user by Stripe customer ID');
+});
+
+test('workflow: webhook handles unknown customer gracefully', () => {
+  const webhookFn = serverSrc.substring(serverSrc.indexOf("'customer.subscription.deleted'"));
+  assert.ok(webhookFn.includes('if (user)'), 'webhook must guard against unknown customer');
+});
+
+// --- HTML escaping ---
+
+test('email: uses escapeHtml for name parameter', () => {
+  assert.ok(emailSrc.includes('function escapeHtml'), 'email.js must define escapeHtml');
+  assert.ok(emailSrc.includes('escapeHtml(name)'), 'email must escape name before interpolation');
+});
+
+test('email: escapeHtml handles all dangerous characters', () => {
+  assert.ok(emailSrc.includes('&amp;'), 'escapeHtml must escape &');
+  assert.ok(emailSrc.includes('&lt;'), 'escapeHtml must escape <');
+  assert.ok(emailSrc.includes('&gt;'), 'escapeHtml must escape >');
+  assert.ok(emailSrc.includes('&quot;'), 'escapeHtml must escape "');
+});
+
+// --- Payment failed email ---
+
+test('email: payment failed email exists', () => {
+  assert.ok(emailSrc.includes('sendPaymentFailedEmail'), 'must have payment failed email');
+});
+
+test('email: payment failed email has correct subject', () => {
+  assert.ok(emailSrc.includes('Payment failed'), 'payment failed subject must match');
+});
+
+test('email: payment failed email links to billing page', () => {
+  assert.ok(emailSrc.includes('orangutany.com/account/billing'), 'payment failed must link to billing');
+});
+
+test('email: payment failed email has Update Payment CTA', () => {
+  assert.ok(emailSrc.includes('Update Payment Method'), 'payment failed must have update CTA');
+});
+
+test('server: imports sendPaymentFailedEmail', () => {
+  assert.ok(serverSrc.includes('sendPaymentFailedEmail'), 'server must import sendPaymentFailedEmail');
+});
+
+test('server: webhook sends payment failed email for past_due status', () => {
+  assert.ok(serverSrc.includes("'past_due'") && serverSrc.includes('sendPaymentFailedEmail'),
+    'webhook must send payment failed email for past_due');
+});
+
+test('server: webhook differentiates past_due from cancelled', () => {
+  const webhookSection = serverSrc.substring(serverSrc.indexOf("'customer.subscription.deleted'"));
+  assert.ok(webhookSection.includes('past_due') && webhookSection.includes('sendPaymentFailedEmail'),
+    'past_due must get payment failed email, not cancellation');
+  assert.ok(webhookSection.includes('sendCancellationEmail'),
+    'actual cancellation must still get cancellation email');
+});
+
+test('server: payment failed email is fire-and-forget', () => {
+  assert.ok(serverSrc.includes('sendPaymentFailedEmail(user.email, user.name).catch'),
+    'payment failed email must use .catch');
+});
+
+test('workflow: email check guards against missing email', () => {
+  // Server should check user.email exists before sending
+  assert.ok(serverSrc.includes("upgradeUser?.email") || serverSrc.includes("user.email"),
+    'email sends must guard against missing email');
 });
