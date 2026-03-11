@@ -70,9 +70,9 @@ export interface UploadSummary {
   createdAt: string;
   imageCount: number;
   primaryMatch: string;
-  primaryConfidence: number;
+  primaryConfidence: number | null;
   mixedSpecies: boolean;
-  consistencyMessage: string;
+  consistencyMessage: string | null;
   userStory: string | null;
   coverImageUrl: string;
   coverFileName: string;

@@ -1999,7 +1999,7 @@ const server = http.createServer(async (req, res) => {
         email: auth?.user?.email || body.email || null,
         message,
         ip,
-      });
+      }).catch(() => {});
     }
     sendJson(req, res, 200, { ok: true });
     return;

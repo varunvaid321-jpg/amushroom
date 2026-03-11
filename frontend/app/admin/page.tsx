@@ -616,7 +616,7 @@ export default function AdminPage() {
                             {s.uploadId && (
                               <span className="shrink-0">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={`/api/uploads/${s.uploadId}/cover-image`} alt="" className="h-8 w-8 rounded object-cover border border-border/30" />
+                                <img src={`/api/uploads/${s.uploadId}/cover-image`} alt={s.species || "Scan"} className="h-8 w-8 rounded object-cover border border-border/30" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                               </span>
                             )}
                             <div className="min-w-0">

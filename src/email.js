@@ -70,9 +70,6 @@ async function sendWelcomeEmail(to, name) {
     <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#f0e4cc;">${greeting}</p>
     <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#f0e4cc;">Built by people who love mycology and technology. Orangutany gives you accurate, confident mushroom identifications from photos.</p>
 
-    <img src="https://orangutany.com/images/chicken-email.jpg" alt="Chicken of the Woods mushroom" width="100%" style="display:block;width:100%;border-radius:14px;border:0;margin:0 0 6px;" />
-    <p style="margin:0 0 20px;font-size:13px;font-style:italic;color:#c4b49a;text-align:center;">Laetiporus sulphureus — Chicken of the Woods</p>
-
     <p style="margin:0 0 32px;font-size:16px;line-height:1.7;color:#f0e4cc;">Upload photos from multiple angles for a full breakdown: species, edibility, look-alikes, and confidence score.</p>
     <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
     <tr><td style="background-color:#c8956c;border-radius:10px;">

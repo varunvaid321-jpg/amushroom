@@ -1100,8 +1100,8 @@ test('email: welcome email has correct subject line', () => {
   assert.ok(emailSrc.includes("'Welcome to Orangutany Mushrooms'"), 'welcome subject must match');
 });
 
-test('email: welcome email includes mushroom image', () => {
-  assert.ok(emailSrc.includes('chicken-email.jpg'), 'welcome email must include mushroom photo');
+test('email: welcome email has logo image', () => {
+  assert.ok(emailSrc.includes('logo.png'), 'welcome email must include logo');
 });
 
 test('email: welcome email has Start Identifying CTA', () => {
