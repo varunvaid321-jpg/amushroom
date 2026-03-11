@@ -1504,11 +1504,17 @@ async function handleStripeWebhook(req, res) {
             sendPaymentFailedEmail(user.email, user.name).catch(() => {});
           }
         } else {
-          await downgradeUser(user.id);
-          writeAuditLog({ eventType: 'tier_change', userId: user.id, userEmail: user.email, details: { tier: 'free', reason: 'subscription_' + sub.status } }).catch(() => {});
-          console.log(`[stripe] User ${user.id} downgraded — subscription ${sub.status}`);
-          if (user.email) {
-            sendCancellationEmail(user.email, user.name).catch(() => {});
+          // Check if user already has lifetime — this cancel is from the old monthly sub being replaced
+          const currentUser = await getPublicUser(user.id);
+          if (currentUser && currentUser.tier === 'pro_lifetime') {
+            console.log(`[stripe] User ${user.id} monthly sub cancelled as part of lifetime upgrade — skipping downgrade`);
+          } else {
+            await downgradeUser(user.id);
+            writeAuditLog({ eventType: 'tier_change', userId: user.id, userEmail: user.email, details: { tier: 'free', reason: 'subscription_' + sub.status } }).catch(() => {});
+            console.log(`[stripe] User ${user.id} downgraded — subscription ${sub.status}`);
+            if (user.email) {
+              sendCancellationEmail(user.email, user.name).catch(() => {});
+            }
           }
         }
       }
@@ -1524,6 +1530,7 @@ async function handleStripeWebhook(req, res) {
           currency: invoice.currency || 'usd',
           status: 'paid',
         });
+        writeAuditLog({ eventType: 'payment', userId: user.id, userEmail: user.email, details: { amountCents: invoice.amount_paid || 0, currency: invoice.currency || 'usd', type: 'renewal' } }).catch(() => {});
       }
     }
   } catch (err) {
@@ -1677,7 +1684,7 @@ async function handleIdentify(req, res) {
     quotaInfo = { tier, used: updated.used, limit: updated.limit, resetsAt: updated.resetsAt };
     // Log scan and fire-and-forget abuse detection
     logScan(auth.user.id, clientIp).catch(() => {});
-    runAbuseDetection(auth.user.id, auth.user.email, clientIp);
+    runAbuseDetection(auth.user.id, auth.user.email, clientIp).catch(() => {});
   } else {
     await recordAnonScan(clientIp);
     const updated = await checkAnonQuota(clientIp);

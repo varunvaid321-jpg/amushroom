@@ -94,7 +94,7 @@ export function UploadPanel({
           </button>
           <button
             onClick={openUpgrade}
-            className="mt-2 block mx-auto text-xs font-semibold text-primary hover:underline"
+            className="mt-2 inline-block text-xs font-semibold text-primary hover:underline"
           >
             or Upgrade to Pro
           </button>

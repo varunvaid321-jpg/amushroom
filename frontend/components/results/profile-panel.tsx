@@ -10,7 +10,7 @@ import {
   ShieldAlert,
   Leaf,
 } from "lucide-react";
-import type { Match, UploadGuidance } from "@/lib/api";
+import type { Match } from "@/lib/api";
 import {
   chipVariant,
   confidenceColor,
@@ -21,7 +21,6 @@ import {
 interface ProfilePanelProps {
   match: Match;
   rank?: number;
-  uploadGuidance: UploadGuidance | null;
 }
 
 export function ProfilePanel({
