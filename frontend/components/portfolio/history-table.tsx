@@ -33,7 +33,10 @@ export function HistoryTable({ onLoadUpload, refreshKey }: HistoryTableProps) {
   const [page, setPage] = useState(1);
 
   const fetchUploads = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const data = await listUploads(100);
