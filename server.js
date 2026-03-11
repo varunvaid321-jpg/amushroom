@@ -103,7 +103,7 @@ const {
   getNewsletterStats,
   getAdminScanGallery
 } = require('./src/db');
-const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendAbuseAlertEmail } = require('./src/email');
+const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendLifetimeUpgradeEmail, sendCancellationEmail, sendAbuseAlertEmail } = require('./src/email');
 const { runOnePost, listPosted } = require('./src/instagram');
 
 // Guide species lookup for enriching scan results with look-alike images & guide links
@@ -1392,6 +1392,9 @@ async function handleCancelSubscription(req, res) {
     writeAuditLog({ eventType: 'tier_change', userId: auth.user.id, userEmail: auth.user.email, details: { tier: 'free', reason: 'user_cancelled' }, ip: getClientIp(req) }).catch(() => {});
     // eslint-disable-next-line no-console
     console.log(`[stripe] User ${auth.user.id} cancelled subscription ${auth.user.stripe_subscription_id}`);
+    if (auth.user.email) {
+      sendCancellationEmail(auth.user.email, auth.user.name).catch(() => {});
+    }
     sendJson(req, res, 200, { success: true, tier: 'free' });
   } catch (err) {
     // eslint-disable-next-line no-console
@@ -1478,7 +1481,11 @@ async function handleStripeWebhook(req, res) {
         writeAuditLog({ eventType: 'payment', userId, details: { amountCents: session.amount_total || (isLifetime ? 4999 : 799), currency: session.currency || 'usd', plan, status: isLifetime ? 'lifetime' : 'active' } }).catch(() => {});
         const upgradeUser = await getPublicUser(userId);
         if (upgradeUser?.email) {
-          sendUpgradeEmail(upgradeUser.email, upgradeUser.name).catch(() => {});
+          if (isLifetime) {
+            sendLifetimeUpgradeEmail(upgradeUser.email, upgradeUser.name).catch(() => {});
+          } else {
+            sendUpgradeEmail(upgradeUser.email, upgradeUser.name).catch(() => {});
+          }
         }
       }
     } else if (event.type === 'customer.subscription.deleted' || event.type === 'customer.subscription.updated') {
@@ -1493,6 +1500,9 @@ async function handleStripeWebhook(req, res) {
           await downgradeUser(user.id);
           writeAuditLog({ eventType: 'tier_change', userId: user.id, userEmail: user.email, details: { tier: 'free', reason: 'subscription_' + sub.status } }).catch(() => {});
           console.log(`[stripe] User ${user.id} downgraded — subscription ${sub.status}`);
+          if (user.email) {
+            sendCancellationEmail(user.email, user.name).catch(() => {});
+          }
         }
       }
     } else if (event.type === 'invoice.payment_succeeded') {

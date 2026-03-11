@@ -212,4 +212,73 @@ async function sendAbuseAlertEmail(adminEmail, { userId, userEmail, ip, reason, 
   }
 }
 
-module.exports = { emailEnabled, sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendAbuseAlertEmail };
+async function sendCancellationEmail(to, name) {
+  if (!resend) {
+    console.warn('[email] RESEND_API_KEY not set — cancellation email skipped');
+    return;
+  }
+
+  const greeting = name ? `Hi ${name},` : 'Hi there,';
+  const html = baseTemplate(`
+    <h1 style="margin:0 0 20px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Your Pro subscription has been cancelled</h1>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">${greeting}</p>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">Your Orangutany Pro subscription has been cancelled and your account has been switched back to the free plan.</p>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">You can still use Orangutany with 5 free scans per day. If you ever want to come back to Pro, you can upgrade again anytime from your account.</p>
+
+    <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
+    <tr><td style="background-color:#f97316;border-radius:10px;">
+      <a href="https://orangutany.com/upgrade" style="display:inline-block;padding:14px 32px;font-size:16px;font-weight:600;color:#0a0a0a;text-decoration:none;letter-spacing:0.2px;">Re-subscribe</a>
+    </td></tr>
+    </table>
+
+    <p style="margin:24px 0 0;font-size:13px;line-height:1.5;color:#666;text-align:center;">Questions? Reply to this email.</p>
+  `);
+
+  try {
+    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Your Orangutany Pro subscription has been cancelled', html });
+    console.log(`[email] Cancellation email sent to ${to} — id: ${result?.data?.id || 'unknown'}`);
+  } catch (err) {
+    console.error(`[email] Failed to send cancellation email to ${to}:`, err.message);
+  }
+}
+
+async function sendLifetimeUpgradeEmail(to, name) {
+  if (!resend) {
+    console.warn('[email] RESEND_API_KEY not set — lifetime upgrade email skipped');
+    return;
+  }
+
+  const greeting = name ? `Hi ${name},` : 'Hi there,';
+  const html = baseTemplate(`
+    <h1 style="margin:0 0 20px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Welcome to Orangutany Pro Lifetime!</h1>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">${greeting}</p>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">You now have <strong>lifetime access</strong> to Orangutany Pro. No recurring charges, no expiration.</p>
+
+    <div style="background:#1a1a1a;border-radius:12px;padding:20px 24px;margin:0 0 24px;">
+      <table cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+        <tr><td style="padding:8px 0;font-size:15px;color:#e0e0e0;">&#10003; &nbsp;<strong>50 scans per day</strong> — forever</td></tr>
+        <tr><td style="padding:8px 0;font-size:15px;color:#e0e0e0;">&#10003; &nbsp;Full species breakdown &amp; confidence scores</td></tr>
+        <tr><td style="padding:8px 0;font-size:15px;color:#e0e0e0;">&#10003; &nbsp;Look-alike warnings &amp; edibility details</td></tr>
+        <tr><td style="padding:8px 0;font-size:15px;color:#e0e0e0;">&#10003; &nbsp;Priority support</td></tr>
+        <tr><td style="padding:8px 0;font-size:15px;color:#e0e0e0;">&#10003; &nbsp;<strong>No recurring charges</strong></td></tr>
+      </table>
+    </div>
+
+    <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
+    <tr><td style="background-color:#f97316;border-radius:10px;">
+      <a href="https://orangutany.com" style="display:inline-block;padding:14px 32px;font-size:16px;font-weight:600;color:#0a0a0a;text-decoration:none;letter-spacing:0.2px;">Start Scanning</a>
+    </td></tr>
+    </table>
+
+    <p style="margin:24px 0 0;font-size:13px;line-height:1.5;color:#666;text-align:center;">One-time payment of $49.99 &bull; Lifetime access &bull; Questions? Reply to this email.</p>
+  `);
+
+  try {
+    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Welcome to Orangutany Pro Lifetime!', html });
+    console.log(`[email] Lifetime upgrade email sent to ${to} — id: ${result?.data?.id || 'unknown'}`);
+  } catch (err) {
+    console.error(`[email] Failed to send lifetime upgrade email to ${to}:`, err.message);
+  }
+}
+
+module.exports = { emailEnabled, sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendLifetimeUpgradeEmail, sendCancellationEmail, sendAbuseAlertEmail };

@@ -43,6 +43,13 @@ Mushroom identification web app (orangutany.com). Users upload photos, get AI-po
 - If a feature would require a plan upgrade to work, flag it to the user instead of implementing
 - Only Varun can authorize cost increases — never assume or auto-upgrade
 
+## API Key Security (MANDATORY)
+- **NEVER store API keys, secrets, or tokens in memory files, CLAUDE.md, or any committed file**
+- All secrets live in `.env.production` (gitignored, local only) — this is the single source of truth for credentials
+- Reference keys by env var name (e.g., `$CLOUDFLARE_API_KEY`, `$RENDER_API_KEY`), never by value
+- When you need a key value, read it from `.env.production` at runtime
+- Production secrets also stored in Render env vars (16 vars — see Render Env Var Safety section)
+
 ## Code Quality Rules
 - Run `npm run check` before every commit — must pass
 - Run `npm test` before every commit — must pass
