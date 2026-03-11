@@ -133,6 +133,30 @@ If any layout change pushes these out of a single phone viewport (~667px minus 6
 - **NEVER push directly to main.** Every change — code, config, docs, CLAUDE.md, everything — must go through a PR. Create a branch, commit, push the branch, open a PR, merge. No exceptions, no shortcuts, no "it's just a doc update."
 - Commit messages: imperative mood, explain "why" not "what"
 
+## PR Report (MANDATORY — every PR must include this)
+Every PR description must contain a structured report. Format depends on the type of change:
+
+### For bug fixes — Issue/Root Cause/Fix table:
+```
+| Issue | Root Cause | Fix |
+|-------|-----------|-----|
+| Short description | Why it happened | What was changed |
+```
+
+### For new features — Code Change Summary:
+- What the feature does (1-2 sentences)
+- Files added/modified and why
+- Any new dependencies, env vars, or config changes
+
+### For all PRs — End-to-End Test Results:
+```
+| # | Test Case | Expected | Result |
+|---|-----------|----------|--------|
+| 1 | Description | Expected outcome | PASS/FAIL |
+```
+Include boundary conditions: invalid input, missing fields, special characters, error states.
+If a test fails, document the fix and re-test result.
+
 ## Session Closing Rule (MANDATORY)
 Before ending a session, on context compaction, or when user says "session closing":
 1. Update ALL applicable `docs/*.md` and `docs/**/*.md` files with work completed this session
