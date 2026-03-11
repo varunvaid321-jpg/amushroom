@@ -1992,7 +1992,7 @@ const server = http.createServer(async (req, res) => {
     let body;
     try { body = await parseBody(req, 4 * 1024); } catch { jsonError(req, res, 400, 'Bad request.'); return; }
     const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
-    if (!email || !validateEmail(email)) { jsonError(req, res, 400, 'Valid email is required.'); return; }
+    if (!email || !validateEmail(email).valid) { jsonError(req, res, 400, 'Valid email is required.'); return; }
     const name = typeof body.name === 'string' ? body.name.trim().slice(0, 100) : '';
     const country = typeof body.country === 'string' ? body.country.trim().slice(0, 100) : '';
     try {
