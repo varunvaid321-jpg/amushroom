@@ -1199,5 +1199,23 @@ module.exports = {
   addNewsletterSubscriber,
   listNewsletterSubscribers,
   getNewsletterStats,
-  getAdminScanGallery
+  getAdminScanGallery,
+  getUserUploadBatches
 };
+
+async function getUserUploadBatches(userIds) {
+  await dbReady;
+  if (!userIds.length) return new Map();
+  const placeholders = userIds.map(() => '?').join(',');
+  const result = await client.execute({
+    sql: `SELECT id, user_id, created_at FROM upload_batches WHERE user_id IN (${placeholders}) ORDER BY created_at DESC`,
+    args: userIds
+  });
+  const map = new Map();
+  for (const r of result.rows) {
+    const uid = Number(r.user_id);
+    if (!map.has(uid)) map.set(uid, []);
+    map.get(uid).push({ id: r.id, createdAt: r.created_at });
+  }
+  return map;
+}

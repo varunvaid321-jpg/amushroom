@@ -65,6 +65,7 @@ const {
   listFeedback,
   listAllUsers,
   getUserScanStats,
+  getUserUploadBatches,
   createPasswordResetToken,
   findValidResetToken,
   markResetTokenUsed,
@@ -2150,9 +2151,35 @@ const server = http.createServer(async (req, res) => {
       const limit = Math.min(Number(url.searchParams.get('limit') || 100), 500);
       const rows = await getRecentEvents(limit);
       const scanEvents = rows.filter(e => e.event === 'scan' || e.event === 'scan_quota_exceeded');
+      // Backfill uploadId for older scans that don't have it in metadata
+      const needsBackfill = scanEvents.filter(e => {
+        if (!e.user_id) return false;
+        let meta = {};
+        try { meta = e.metadata ? JSON.parse(e.metadata) : {}; } catch { /* ignore */ }
+        return !meta.uploadId;
+      });
+      const backfillMap = new Map();
+      if (needsBackfill.length > 0) {
+        const userIds = [...new Set(needsBackfill.map(e => e.user_id))];
+        const batchMap = await getUserUploadBatches(userIds);
+        for (const [uid, batches] of batchMap) backfillMap.set(uid, batches);
+      }
       const scans = scanEvents.map(e => {
         let meta = {};
         try { meta = e.metadata ? JSON.parse(e.metadata) : {}; } catch { /* ignore */ }
+        let uploadId = meta.uploadId || null;
+        if (!uploadId && e.user_id && backfillMap.has(e.user_id)) {
+          const batches = backfillMap.get(e.user_id);
+          // Find closest batch by timestamp (within 60 seconds)
+          const eventTime = new Date(e.created_at).getTime();
+          let best = null;
+          let bestDiff = Infinity;
+          for (const b of batches) {
+            const diff = Math.abs(new Date(b.createdAt).getTime() - eventTime);
+            if (diff < bestDiff) { bestDiff = diff; best = b; }
+          }
+          if (best && bestDiff < 60000) uploadId = best.id;
+        }
         return {
           id: e.id,
           userId: e.user_id,
@@ -2162,7 +2189,7 @@ const server = http.createServer(async (req, res) => {
           species: meta.species || null,
           confidence: meta.confidence || null,
           imageCount: meta.imageCount || null,
-          uploadId: meta.uploadId || null,
+          uploadId,
           quotaExceeded: e.event === 'scan_quota_exceeded',
           country: e.country || null,
           city: e.city || null,
