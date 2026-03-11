@@ -1808,7 +1808,8 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && url.pathname.startsWith('/api/uploads/') && url.pathname.endsWith('/cover-image')) {
     const batchId = decodeURIComponent(url.pathname.slice('/api/uploads/'.length, -'/cover-image'.length)).trim();
     const row = await getCoverImageBlob(batchId);
-    if (!row) { res.writeHead(404); res.end('Not found'); return; }
+    if (!row) { console.log(`[cover-image] 404 for batchId="${batchId}"`); res.writeHead(404); res.end('Not found'); return; }
+    console.log(`[cover-image] 200 for batchId="${batchId}" mime=${row.mime_type} blobType=${typeof row.image_blob} blobLen=${row.image_blob?.length || 'N/A'}`);
     res.writeHead(200, { 'Content-Type': row.mime_type || 'image/jpeg', 'Cache-Control': 'public, max-age=86400' });
     res.end(row.image_blob);
     return;
