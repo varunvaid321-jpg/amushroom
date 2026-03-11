@@ -46,6 +46,16 @@ interface FeedbackRow {
   message: string; also_email: number; ip: string | null; created_at: string;
 }
 
+interface ScanLogEntry {
+  id: number; userId: number | null;
+  userName: string | null; userEmail: string | null;
+  isAnonymous: boolean; species: string | null;
+  confidence: number | null; imageCount: number | null;
+  uploadId: string | null; quotaExceeded: boolean;
+  country: string | null; city: string | null;
+  createdAt: string;
+}
+
 interface AbuseFlag {
   id: number; user_id: number | null; user_email: string | null;
   ip: string | null; reason: string; metadata: string | null;
@@ -371,6 +381,7 @@ export default function AdminPage() {
   const [feedback, setFeedback] = useState<FeedbackRow[]>([]);
   const [newsletterSubs, setNewsletterSubs] = useState<NewsletterSub[]>([]);
   const [newsletterCount, setNewsletterCount] = useState(0);
+  const [scanLog, setScanLog] = useState<ScanLogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeKpi, setActiveKpi] = useState<string | null>(null);
 
@@ -385,6 +396,7 @@ export default function AdminPage() {
       adminFetch<{ data: GeoRow[] }>("geo?days=30").then((r) => setGeoData(r.data)).catch(() => {}),
       adminFetch<{ feedback: FeedbackRow[] }>("feedback").then((r) => setFeedback(r.feedback)).catch(() => {}),
       adminFetch<{ subscribers: NewsletterSub[]; activeSubscribers: number }>("newsletter").then((r) => { setNewsletterSubs(r.subscribers); setNewsletterCount(r.activeSubscribers); }).catch(() => {}),
+      adminFetch<{ scans: ScanLogEntry[] }>("scan-log?limit=200").then((r) => setScanLog(r.scans)).catch(() => {}),
       adminFetch<{ flags: AbuseFlag[]; unresolvedCount: number }>("abuse-flags").then((r) => {
         setAbuseFlags(r.flags);
         setUnresolvedAbuseCount(r.unresolvedCount);
@@ -561,24 +573,57 @@ export default function AdminPage() {
         )}
 
         {activeKpi === "scans" && (
-          <Section title="Recent Scans" subtitle="Last 20 scan events">
-            {(() => {
-              const scanEvents = events.filter((e) => e.event === "scan").slice(0, 20);
-              return scanEvents.length > 0 ? (
-                <div className="space-y-1.5">
-                  {scanEvents.map((e) => (
-                    <div key={e.id} className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-muted/10">
-                      <span className="shrink-0 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium text-primary">scan</span>
-                      <span className="min-w-0 truncate text-sm text-foreground">{e.user_name || e.user_email || "anonymous"}</span>
-                      <span className="hidden sm:block shrink-0 text-xs text-foreground/50">{countryLabel(e.country, e.city)}</span>
-                      <span className="ml-auto shrink-0 text-xs text-muted-foreground tabular-nums">{timeAgo(e.created_at)}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="py-4 text-center text-sm text-muted-foreground">No scans yet</p>
-              );
-            })()}
+          <Section title="Scan Log" subtitle={`${scanLog.length} scans (logged-in + anonymous)`}>
+            {scanLog.length > 0 ? (
+              <div className="max-h-[500px] overflow-y-auto">
+                <table className="w-full text-sm">
+                  <thead className="sticky top-0" style={{ background: CARD_BG }}>
+                    <tr className="border-b border-border/50 text-left text-muted-foreground text-xs">
+                      <th className="px-2 py-2">Who</th>
+                      <th className="hidden sm:table-cell px-2 py-2">Location</th>
+                      <th className="px-2 py-2">Result</th>
+                      <th className="px-2 py-2 text-right">When</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {scanLog.map((s) => (
+                      <tr key={s.id} className="border-b border-border/20 hover:bg-muted/10">
+                        <td className="px-2 py-2">
+                          <div className="flex items-center gap-2">
+                            {s.uploadId && (
+                              <a href={`/api/uploads/${s.uploadId}/cover-image`} target="_blank" rel="noopener noreferrer" className="shrink-0">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={`/api/uploads/${s.uploadId}/cover-image`} alt="" className="h-8 w-8 rounded object-cover border border-border/30" />
+                              </a>
+                            )}
+                            <div className="min-w-0">
+                              <span className="text-sm text-foreground truncate block">{s.isAnonymous ? "anonymous" : (s.userName || s.userEmail || "unknown")}</span>
+                              <span className={`text-[10px] font-medium ${s.isAnonymous ? "text-zinc-400" : "text-green-400"}`}>{s.isAnonymous ? "not logged in" : "logged in"}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="hidden sm:table-cell px-2 py-2 text-xs text-foreground/50">{countryLabel(s.country, s.city) || "\u2014"}</td>
+                        <td className="px-2 py-2">
+                          {s.quotaExceeded ? (
+                            <span className="text-xs text-red-400">quota exceeded</span>
+                          ) : s.species ? (
+                            <div>
+                              <span className="text-sm text-foreground italic">{s.species}</span>
+                              {s.confidence != null && <span className="ml-1.5 text-[10px] font-bold tabular-nums text-primary">{s.confidence}%</span>}
+                            </div>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">no result</span>
+                          )}
+                        </td>
+                        <td className="px-2 py-2 text-right text-xs text-muted-foreground tabular-nums">{timeAgo(s.createdAt)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="py-4 text-center text-sm text-muted-foreground">No scans yet</p>
+            )}
           </Section>
         )}
 

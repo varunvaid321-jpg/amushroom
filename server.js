@@ -1715,7 +1715,8 @@ async function handleIdentify(req, res) {
   trackAndGeo('scan', auth?.user?.id || null, {
     imageCount: images.length,
     species: topMatch?.scientificName,
-    confidence: topMatch?.score
+    confidence: topMatch?.score,
+    uploadId: uploadId || null
   }, clientIp, req.headers['user-agent'] || null);
 
   sendJson(req, res, 200, { matches, uploadGuidance, consistencyCheck, uploadId, quota: quotaInfo });
@@ -2145,6 +2146,30 @@ const server = http.createServer(async (req, res) => {
       } catch (err) {
         sendJson(req, res, 500, { ok: false, error: err.message });
       }
+    } else if (route === 'scan-log') {
+      const limit = Math.min(Number(url.searchParams.get('limit') || 100), 500);
+      const rows = await getRecentEvents(limit);
+      const scanEvents = rows.filter(e => e.event === 'scan' || e.event === 'scan_quota_exceeded');
+      const scans = scanEvents.map(e => {
+        let meta = {};
+        try { meta = e.metadata ? JSON.parse(e.metadata) : {}; } catch { /* ignore */ }
+        return {
+          id: e.id,
+          userId: e.user_id,
+          userName: e.user_name || null,
+          userEmail: e.user_email || null,
+          isAnonymous: !e.user_id,
+          species: meta.species || null,
+          confidence: meta.confidence || null,
+          imageCount: meta.imageCount || null,
+          uploadId: meta.uploadId || null,
+          quotaExceeded: e.event === 'scan_quota_exceeded',
+          country: e.country || null,
+          city: e.city || null,
+          createdAt: e.created_at,
+        };
+      });
+      sendJson(req, res, 200, { scans });
     } else if (route === 'users') {
       sendJson(req, res, 200, { users: await listAllUsers(Number(url.searchParams.get('limit') || 100)) });
     } else if (route === 'user-scan-stats') {
