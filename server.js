@@ -2174,7 +2174,8 @@ const server = http.createServer(async (req, res) => {
         if (!e.user_id) return false;
         let meta = {};
         try { meta = e.metadata ? JSON.parse(e.metadata) : {}; } catch { /* ignore */ }
-        return !meta.uploadId;
+        const uid = meta.uploadId;
+        return !uid || uid === 'NONE' || uid === 'null';
       });
       const backfillMap = new Map();
       if (needsBackfill.length > 0) {
@@ -2185,7 +2186,7 @@ const server = http.createServer(async (req, res) => {
       const scans = scanEvents.map(e => {
         let meta = {};
         try { meta = e.metadata ? JSON.parse(e.metadata) : {}; } catch { /* ignore */ }
-        let uploadId = meta.uploadId || null;
+        let uploadId = (meta.uploadId && meta.uploadId !== 'NONE' && meta.uploadId !== 'null') ? meta.uploadId : null;
         if (!uploadId && e.user_id && backfillMap.has(e.user_id)) {
           const batches = backfillMap.get(e.user_id);
           // Find closest batch by timestamp (within 60 seconds)
