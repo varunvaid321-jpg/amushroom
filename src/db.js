@@ -442,7 +442,7 @@ async function listUserUploads(userId, limit = 20) {
   const uploads = [];
   for (const batch of batchResult.rows) {
     const previewResult = await client.execute({
-      sql: 'SELECT id, role, filename, mime_type, image_blob FROM upload_images WHERE batch_id = ? ORDER BY id ASC LIMIT 4',
+      sql: 'SELECT id, role, filename, mime_type FROM upload_images WHERE batch_id = ? ORDER BY id ASC LIMIT 4',
       args: [batch.id]
     });
 
@@ -451,9 +451,9 @@ async function listUserUploads(userId, limit = 20) {
       role: row.role || 'extra',
       filename: row.filename || '',
       mimeType: row.mime_type || 'image/jpeg',
-      previewUrl: `data:${row.mime_type || 'image/jpeg'};base64,${Buffer.from(row.image_blob).toString('base64')}`
+      previewUrl: `/api/uploads/${batch.id}/cover-image`
     }));
-    const cover = previewImages[0] || null;
+    const hasCover = previewImages.length > 0;
 
     const matchResult = await client.execute({
       sql: 'SELECT rank, scientific_name, common_name, confidence FROM identification_matches WHERE batch_id = ? ORDER BY rank ASC',
@@ -469,8 +469,8 @@ async function listUserUploads(userId, limit = 20) {
       mixedSpecies: Boolean(batch.mixed_species),
       consistencyMessage: batch.consistency_message,
       userStory: batch.user_story || null,
-      coverImageUrl: cover?.previewUrl || '',
-      coverFileName: cover?.filename || '',
+      coverImageUrl: hasCover ? `/api/uploads/${batch.id}/cover-image` : '',
+      coverFileName: previewImages[0]?.filename || '',
       previewImages,
       topMatches: matchResult.rows.map((m) => ({
         rank: Number(m.rank),
