@@ -614,14 +614,14 @@ export default function AdminPage() {
                         <td className="px-2 py-2">
                           <div className="flex items-center gap-2">
                             {s.uploadId && (
-                              <span className="shrink-0">
+                              <button className="shrink-0" onClick={() => window.open(`/api/uploads/${s.uploadId}/cover-image`, '_blank')}>
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={`/api/uploads/${s.uploadId}/cover-image`} alt={s.species || "Scan"} className="h-8 w-8 rounded object-cover border border-border/30" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                              </span>
+                                <img src={`/api/uploads/${s.uploadId}/cover-image`} alt={s.species || "Scan"} className="h-8 w-8 rounded object-cover border border-border/30 cursor-pointer hover:ring-2 hover:ring-primary/50" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                              </button>
                             )}
                             <div className="min-w-0">
                               <span className="text-sm text-foreground truncate block">{s.isAnonymous ? "anonymous" : (s.userName || s.userEmail || "unknown")}</span>
-                              <span className={`text-[10px] font-medium ${s.isAnonymous ? "text-zinc-400" : "text-green-400"}`}>{s.isAnonymous ? "not logged in" : "logged in"}{s.uploadId ? ` · ${s.uploadId.slice(0,8)}` : " · no-uid"}</span>
+                              <span className={`text-[10px] font-medium ${s.isAnonymous ? "text-zinc-400" : "text-green-400"}`}>{s.isAnonymous ? "not logged in" : "logged in"}</span>
                             </div>
                           </div>
                         </td>
