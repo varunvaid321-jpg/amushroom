@@ -47,7 +47,7 @@ function baseTemplate(content) {
 </td></tr>
 
 <tr><td style="padding:28px 44px 32px;text-align:center;">
-  <p style="margin:0;font-size:13px;line-height:1.5;color:#c4b49a;">Orangutany &mdash; AI Mushroom Identification</p>
+  <p style="margin:0;font-size:13px;line-height:1.5;color:#c4b49a;">Orangutany &mdash; Mushroom ID built by mycology &amp; tech enthusiasts</p>
   <p style="margin:6px 0 0;font-size:12px;line-height:1.5;color:#7a6f5f;">You received this because you have an account at orangutany.com</p>
 </td></tr>
 
@@ -68,7 +68,7 @@ async function sendWelcomeEmail(to, name) {
   const html = baseTemplate(`
     <h1 style="margin:0 0 20px;font-size:24px;font-weight:700;color:#f0e4cc;line-height:1.3;">Welcome to Orangutany!</h1>
     <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#f0e4cc;">${greeting}</p>
-    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#f0e4cc;">We use AI trained on millions of real mushroom specimens to give you accurate, confident identifications.</p>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#f0e4cc;">Built by people who love mycology and technology, Orangutany gives you accurate, confident mushroom identifications from photos.</p>
 
     <img src="https://orangutany.com/images/chicken-email.jpg" alt="Chicken of the Woods mushroom" width="100%" style="display:block;width:100%;border-radius:14px;border:0;margin:0 0 6px;" />
     <p style="margin:0 0 20px;font-size:13px;font-style:italic;color:#c4b49a;text-align:center;">Laetiporus sulphureus — Chicken of the Woods</p>
