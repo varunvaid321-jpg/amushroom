@@ -50,6 +50,11 @@ Mushroom identification web app (orangutany.com). Users upload photos, get AI-po
 - No console.log unless intentional server logging
 - Security-first: validate inputs server-side, never trust client MIME types
 
+## Turso/libsql SQL Safety (CRITICAL — caused production outage March 10 2026)
+- **NEVER use `IN (?,?,?)` with array args** — Turso doesn't support spreading arrays into positional placeholders. Use individual queries per value instead.
+- **Always test new DB queries against Turso via the running dev server** — `npm run check` only validates syntax, not runtime SQL. Start the dev server and hit the actual endpoint before pushing.
+- **Unhandled DB errors crash the entire Node process** — one broken endpoint takes down ALL APIs including auth. Always wrap new DB queries in try/catch or ensure they're tested.
+
 ## Async/Await Safety (CRITICAL after Turso migration)
 - **Every DB function in `src/db.js` is async** — ALL calls must use `await`
 - **Every handler that touches the DB is async** — route dispatcher must `await` them
