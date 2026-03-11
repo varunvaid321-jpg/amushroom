@@ -44,8 +44,8 @@ export function PortfolioCard({ upload, onClick }: PortfolioCardProps) {
           {upload.primaryMatch}
         </p>
         <div className="mt-2 flex items-center justify-between">
-          <span className={`text-sm font-bold tabular-nums ${confidenceColor(upload.primaryConfidence)}`}>
-            {upload.primaryConfidence}%
+          <span className={`text-sm font-bold tabular-nums ${confidenceColor(upload.primaryConfidence ?? 0)}`}>
+            {upload.primaryConfidence ?? 0}%
           </span>
           <span className="text-xs text-muted-foreground">{date}</span>
         </div>

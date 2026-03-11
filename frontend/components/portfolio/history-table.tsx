@@ -258,7 +258,7 @@ function HistoryRow({
       </td>
       <td className="px-4 py-3">
         <span
-          className={`font-bold tabular-nums ${confidenceColor(upload.primaryConfidence)}`}
+          className={`font-bold tabular-nums ${confidenceColor(upload.primaryConfidence ?? 0)}`}
         >
           {upload.primaryConfidence ?? 0}%
         </span>

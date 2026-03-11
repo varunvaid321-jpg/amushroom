@@ -76,6 +76,7 @@ export default function AdminScansPage() {
                   src={s.thumbnail}
                   alt={s.primaryMatch || "Scan"}
                   className="aspect-square w-full object-cover"
+                  onError={(e) => { (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="aspect-square w-full bg-muted/20 flex items-center justify-center text-muted-foreground text-xs">No image</div>'; }}
                 />
               ) : (
                 <div className="aspect-square w-full bg-muted/20 flex items-center justify-center text-muted-foreground text-xs">

@@ -11,10 +11,11 @@ interface StatsCardsProps {
 export function StatsCards({ uploads }: StatsCardsProps) {
   const totalScans = uploads.length;
   const totalPhotos = uploads.reduce((s, u) => s + u.imageCount, 0);
+  const withConf = uploads.filter((u) => u.primaryConfidence != null);
   const avgConfidence =
-    totalScans > 0
+    withConf.length > 0
       ? Math.round(
-          uploads.reduce((s, u) => s + u.primaryConfidence, 0) / totalScans,
+          withConf.reduce((s, u) => s + (u.primaryConfidence ?? 0), 0) / withConf.length,
         )
       : 0;
   const uniqueSpecies = new Set(uploads.map((u) => u.primaryMatch)).size;
