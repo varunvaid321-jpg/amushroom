@@ -103,7 +103,7 @@ const {
   getNewsletterStats,
   getAdminScanGallery
 } = require('./src/db');
-const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendLifetimeUpgradeEmail, sendCancellationEmail, sendPaymentFailedEmail, sendAbuseAlertEmail } = require('./src/email');
+const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendLifetimeUpgradeEmail, sendCancellationEmail, sendPaymentFailedEmail, sendAbuseAlertEmail, sendNewsletterWelcomeEmail } = require('./src/email');
 const { runOnePost, listPosted } = require('./src/instagram');
 
 // Guide species lookup for enriching scan results with look-alike images & guide links
@@ -2014,6 +2014,7 @@ const server = http.createServer(async (req, res) => {
     const country = typeof body.country === 'string' ? body.country.trim().slice(0, 100) : '';
     try {
       await addNewsletterSubscriber(email, name, country);
+      sendNewsletterWelcomeEmail(email, name).catch(() => {});
       sendJson(req, res, 200, { ok: true });
     } catch (err) {
       // eslint-disable-next-line no-console
