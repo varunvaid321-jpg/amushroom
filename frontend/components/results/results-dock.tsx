@@ -211,7 +211,6 @@ export function ResultsDock({
                   <ProfilePanel
                     match={m}
                     rank={cardCount > 1 ? i + 1 : undefined}
-                    uploadGuidance={uploadGuidance}
                   />
                 </div>
               )}
