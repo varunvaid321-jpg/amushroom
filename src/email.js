@@ -320,4 +320,41 @@ async function sendPaymentFailedEmail(to, name) {
   }
 }
 
-module.exports = { emailEnabled, sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendLifetimeUpgradeEmail, sendCancellationEmail, sendPaymentFailedEmail, sendAbuseAlertEmail };
+async function sendNewsletterWelcomeEmail(to, name) {
+  if (!resend) {
+    console.warn('[email] RESEND_API_KEY not set — newsletter welcome email skipped');
+    return;
+  }
+
+  const greeting = name ? `Hi ${escapeHtml(name)},` : 'Hi there,';
+  const html = baseTemplate(`
+    <h1 style="margin:0 0 20px;font-size:24px;font-weight:700;color:#f0e4cc;line-height:1.3;">You're on the list!</h1>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#f0e4cc;">${greeting}</p>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#f0e4cc;">Thanks for subscribing to the Orangutany newsletter. We'll send you foraging tips, species spotlights, and seasonal updates — packed with real knowledge from mycologists and field foragers. No spam, ever.</p>
+
+    <div style="background:#0e1a0e;border-radius:12px;padding:20px 24px;margin:0 0 24px;">
+      <table cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
+        <tr><td style="padding:8px 0;font-size:15px;color:#f0e4cc;">&#127812; &nbsp;Seasonal foraging guides</td></tr>
+        <tr><td style="padding:8px 0;font-size:15px;color:#f0e4cc;">&#128270; &nbsp;Species deep-dives &amp; look-alike alerts</td></tr>
+        <tr><td style="padding:8px 0;font-size:15px;color:#f0e4cc;">&#127891; &nbsp;Identification tips from mycologists</td></tr>
+      </table>
+    </div>
+
+    <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
+    <tr><td style="background-color:#c8956c;border-radius:10px;">
+      <a href="https://orangutany.com" style="display:inline-block;padding:14px 32px;font-size:16px;font-weight:600;color:#0e1a0e;text-decoration:none;letter-spacing:0.2px;">Start Identifying</a>
+    </td></tr>
+    </table>
+
+    <p style="margin:24px 0 0;font-size:13px;line-height:1.5;color:#c4b49a;text-align:center;">You can unsubscribe anytime. Questions? Reply to this email.</p>
+  `);
+
+  try {
+    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Welcome to the Orangutany Newsletter!', html });
+    console.log(`[email] Newsletter welcome sent to ${to} — id: ${result?.data?.id || 'unknown'}`);
+  } catch (err) {
+    console.error(`[email] Failed to send newsletter welcome to ${to}:`, err.message);
+  }
+}
+
+module.exports = { emailEnabled, sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendLifetimeUpgradeEmail, sendCancellationEmail, sendPaymentFailedEmail, sendAbuseAlertEmail, sendNewsletterWelcomeEmail };
