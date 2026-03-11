@@ -60,6 +60,7 @@ const {
   getEventFunnel,
   updateUploadStory,
   getCoverImageBlob,
+  getImageBlob,
   insertFeedback,
   listFeedback,
   listAllUsers,
@@ -1813,7 +1814,18 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Global rate limit — 120 req/min per IP (excludes health checks and cover images above)
+  // Per-image endpoint — exempt from rate limit (loaded as <img src> in saved-scan detail view)
+  if (req.method === 'GET' && url.pathname.startsWith('/api/images/')) {
+    const imageId = decodeURIComponent(url.pathname.slice('/api/images/'.length)).trim();
+    if (!imageId || isNaN(Number(imageId))) { res.writeHead(400); res.end('Bad request'); return; }
+    const row = await getImageBlob(imageId);
+    if (!row) { res.writeHead(404); res.end('Not found'); return; }
+    res.writeHead(200, { 'Content-Type': row.mime_type || 'image/jpeg', 'Cache-Control': 'public, max-age=86400' });
+    res.end(row.image_blob);
+    return;
+  }
+
+  // Global rate limit — 120 req/min per IP (excludes health checks and images above)
   if (!enforceRouteRateLimit(req, res, globalRateLimitStore, GLOBAL_RATE_LIMIT_WINDOW_MS, GLOBAL_RATE_LIMIT_MAX, 'Too many requests. Please slow down.')) {
     return;
   }
