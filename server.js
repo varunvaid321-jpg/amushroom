@@ -1711,21 +1711,23 @@ async function handleIdentify(req, res) {
   }
 
   let uploadId = null;
-  if (auth?.user?.id) {
-    try {
-      uploadId = await createUploadRecord({
-        userId: auth.user.id,
-        sessionId: auth.sessionId || null,
-        images,
-        imageMeta,
-        photoRoles,
-        matches,
-        consistencyCheck
-      });
-    } catch {
+  try {
+    uploadId = await createUploadRecord({
+      userId: auth?.user?.id || null,
+      sessionId: auth?.sessionId || null,
+      images,
+      imageMeta,
+      photoRoles,
+      matches,
+      consistencyCheck
+    });
+  } catch {
+    // For logged-in users, fail hard — they expect saved scans
+    if (auth?.user?.id) {
       sendJson(req, res, 500, { error: 'Failed to persist upload record.' });
       return;
     }
+    // For anonymous, continue without saving — scan still works
   }
 
   const topMatch = matches[0];
