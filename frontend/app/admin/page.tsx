@@ -614,10 +614,10 @@ export default function AdminPage() {
                         <td className="px-2 py-2">
                           <div className="flex items-center gap-2">
                             {s.uploadId && (
-                              <a href={`/api/uploads/${s.uploadId}/cover-image`} target="_blank" rel="noopener noreferrer" className="shrink-0">
+                              <span className="shrink-0">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={`/api/uploads/${s.uploadId}/cover-image`} alt="" className="h-8 w-8 rounded object-cover border border-border/30" />
-                              </a>
+                              </span>
                             )}
                             <div className="min-w-0">
                               <span className="text-sm text-foreground truncate block">{s.isAnonymous ? "anonymous" : (s.userName || s.userEmail || "unknown")}</span>
