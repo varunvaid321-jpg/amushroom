@@ -713,7 +713,8 @@ async function getUserScanStats() {
     SELECT u.id, u.email, u.name, u.tier,
            COUNT(ub.id) AS total_scans,
            MAX(ub.created_at) AS last_scan_at,
-           u.created_at AS signed_up_at
+           u.created_at AS signed_up_at,
+           (SELECT ae.country FROM analytics_events ae WHERE ae.user_id = u.id AND ae.country IS NOT NULL ORDER BY ae.created_at DESC LIMIT 1) AS country
     FROM users u
     LEFT JOIN upload_batches ub ON ub.user_id = u.id
     GROUP BY u.id
@@ -727,6 +728,7 @@ async function getUserScanStats() {
     totalScans: Number(r.total_scans),
     lastScanAt: r.last_scan_at || null,
     signedUpAt: r.signed_up_at,
+    country: r.country || null,
   }));
 }
 

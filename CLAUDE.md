@@ -91,7 +91,7 @@ Before modifying ANY payment, billing, upgrade, membership, or Stripe code, read
 ## Sitemap Architecture (orangutany.com + guide.orangutany.com)
 - Two sitemaps — Google requires sitemap URLs to match host (subdomains are separate sites)
 - orangutany.com/sitemap.xml — 16 pages (app, learn articles, legal) via `frontend/app/sitemap.ts`
-- guide.orangutany.com/sitemap.xml — 106 species + articles + guides via `app/sitemap.ts` in orangutany-seo repo
+- guide.orangutany.com/sitemap.xml — 131 species + 27 articles + guides via `app/sitemap.ts` in orangutany-seo repo
 - Both robots.txt files list BOTH sitemaps for cross-discovery
 - Stale `public/sitemap.xml` and `public/robots.txt` (old orangutanyID.com refs) have been deleted — dynamic `app/sitemap.ts` and `app/robots.ts` are the source of truth
 - If adding pages to either site, update the corresponding sitemap.ts
@@ -168,9 +168,11 @@ The Kindwise API returns species matches with confidence scores. Two local datab
 - Curated per-species trivia/story
 
 **What the user sees in scan results:**
-- 1-3 horizontal result cards (full-bleed hero image, confidence pill, name, edibility banner, "Tap for more" hint)
+- 1-3 cards in responsive grid (accordion-style — each expands independently inline, Set<number> state)
 - Tap card image for full uncropped photo lightbox (portal-rendered, scroll-locked)
-- Click card to expand: full story, traits, look-alikes with images, taxonomy, distribution map
+- Click card to expand ProfilePanel directly below it (multiple can be open simultaneously, pushing others down)
+- Expanded view: "Read Full Guide" CTA banner, story, traits, look-alikes with images, taxonomy, distribution map
+- Key traits fallback: `buildFallbackTraits()` in server.js generates useful info from edibility/taxonomy/description — never shows complaint text
 - Link to our guide page (if species exists in our 130-species DB)
 - Look-alike entries also link to guide pages when the look-alike has a slug in our DB
 

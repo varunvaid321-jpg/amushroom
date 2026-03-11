@@ -16,6 +16,7 @@ interface GeoRow { country: string; city: string | null; count: number }
 interface UserScanStat {
   id: number; email: string; name: string; tier: string;
   totalScans: number; lastScanAt: string | null; signedUpAt: string;
+  country: string | null;
 }
 
 interface EventRow {
@@ -239,7 +240,7 @@ function TrafficChart({ data }: { data: DailyPageView[] }) {
 
   const filled: DailyPageView[] = [];
   const today = new Date();
-  for (let i = 89; i >= 0; i--) {
+  for (let i = 29; i >= 0; i--) {
     const d = new Date(today);
     d.setDate(d.getDate() - i);
     const day = d.toISOString().slice(0, 10);
@@ -284,7 +285,7 @@ function TrafficChart({ data }: { data: DailyPageView[] }) {
         <span className="ml-auto text-xs text-muted-foreground tabular-nums">Last 7d: <span className="font-medium text-foreground">{last7}</span></span>
       </div>
       <div className="overflow-x-auto">
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full min-w-[400px]" preserveAspectRatio="xMidYMid meet">
+        <svg viewBox={`0 0 ${W} ${H}`} className="w-full" preserveAspectRatio="xMidYMid meet">
           {yTicks.map((t) => {
             const y = padT + chartH - (t / max) * chartH;
             return (
@@ -299,7 +300,7 @@ function TrafficChart({ data }: { data: DailyPageView[] }) {
           {points.filter((p) => p.count > 0).map((p) => (
             <circle key={p.day} cx={p.x} cy={p.y} r="2.5" className="fill-primary" />
           ))}
-          {points.filter((_, i) => i % 30 === 0 || i === points.length - 1).map((p) => (
+          {points.filter((_, i) => i % 7 === 0 || i === points.length - 1).map((p) => (
             <text key={p.day} x={p.x} y={H - 2} textAnchor="middle" className="fill-muted-foreground text-[9px]">
               {new Date(p.day + "T12:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric" })}
             </text>
@@ -594,6 +595,7 @@ export default function AdminPage() {
                       <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${u.tier === "pro" ? "bg-primary/15 text-primary" : u.tier === "lifetime" ? "bg-purple-500/15 text-purple-300" : "bg-zinc-500/15 text-zinc-300"}`}>{u.tier}</span>
                       <span className="text-sm font-medium text-foreground">{u.name || "\u2014"}</span>
                       <span className="min-w-0 truncate text-xs text-foreground/60">{u.email}</span>
+                      {u.country && <span className="hidden sm:block shrink-0 text-xs text-foreground/40">{u.country}</span>}
                       <span className="ml-auto shrink-0 text-sm font-bold tabular-nums text-foreground">{u.totalScans}</span>
                       <span className="shrink-0 text-xs text-muted-foreground">scans</span>
                     </div>
@@ -636,7 +638,7 @@ export default function AdminPage() {
         )}
 
         {/* Traffic trend */}
-        <Section title="Traffic Trend" subtitle="90-day page views with weekly comparison">
+        <Section title="Traffic Trend" subtitle="30-day page views with weekly comparison">
           <TrafficChart data={dailyViews} />
         </Section>
 
@@ -762,6 +764,7 @@ export default function AdminPage() {
                     <th className="px-3 py-2">Name</th>
                     <th className="px-3 py-2">Email</th>
                     <th className="px-3 py-2">Tier</th>
+                    <th className="hidden sm:table-cell px-3 py-2">Country</th>
                     <th className="px-3 py-2 text-right">Scans</th>
                     <th className="px-3 py-2 text-right">Signed Up</th>
                   </tr>
@@ -776,6 +779,7 @@ export default function AdminPage() {
                           {u.tier}
                         </span>
                       </td>
+                      <td className="hidden sm:table-cell px-3 py-2 text-xs text-foreground/50">{u.country || "\u2014"}</td>
                       <td className="px-3 py-2 text-right tabular-nums font-medium text-foreground">{u.totalScans}</td>
                       <td className="px-3 py-2 text-right text-xs text-muted-foreground">
                         {new Date(u.signedUpAt).toLocaleDateString()}
