@@ -129,8 +129,8 @@ If any layout change pushes these out of a single phone viewport (~667px minus 6
 - PR #69: Switched to `scrollIntoView` + `scroll-mt-*` Tailwind class — worked on desktop, inconsistent on phone
 - PR #73: Added manual fallback + 600ms safety correction — most robust approach
 
-## Git Workflow
-- Push directly to main (solo dev, Render auto-deploys)
+## Git Workflow (MANDATORY — no exceptions)
+- **NEVER push directly to main.** Every change — code, config, docs, CLAUDE.md, everything — must go through a PR. Create a branch, commit, push the branch, open a PR, merge. No exceptions, no shortcuts, no "it's just a doc update."
 - Commit messages: imperative mood, explain "why" not "what"
 
 ## Session Closing Rule (MANDATORY)
