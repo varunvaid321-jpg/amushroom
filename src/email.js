@@ -12,6 +12,11 @@ function emailEnabled() {
   return resend !== null;
 }
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 function baseTemplate(content) {
   return `<!DOCTYPE html>
 <html>
@@ -55,7 +60,7 @@ async function sendWelcomeEmail(to, name) {
     return;
   }
 
-  const greeting = name ? `Hi ${name},` : 'Hi there,';
+  const greeting = name ? `Hi ${escapeHtml(name)},` : 'Hi there,';
   const html = baseTemplate(`
     <h1 style="margin:0 0 20px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Welcome to Orangutany!</h1>
     <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">${greeting}</p>
@@ -86,7 +91,7 @@ async function sendPasswordResetEmail(to, name, resetUrl) {
     return;
   }
 
-  const greeting = name ? `Hi ${name},` : 'Hi there,';
+  const greeting = name ? `Hi ${escapeHtml(name)},` : 'Hi there,';
   const html = baseTemplate(`
     <h1 style="margin:0 0 24px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Reset Your Password</h1>
     <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">${greeting}</p>
@@ -147,7 +152,7 @@ async function sendUpgradeEmail(to, name) {
     return;
   }
 
-  const greeting = name ? `Hi ${name},` : 'Hi there,';
+  const greeting = name ? `Hi ${escapeHtml(name)},` : 'Hi there,';
   const html = baseTemplate(`
     <h1 style="margin:0 0 20px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">You're now on Orangutany Pro!</h1>
     <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">${greeting}</p>
@@ -218,7 +223,7 @@ async function sendCancellationEmail(to, name) {
     return;
   }
 
-  const greeting = name ? `Hi ${name},` : 'Hi there,';
+  const greeting = name ? `Hi ${escapeHtml(name)},` : 'Hi there,';
   const html = baseTemplate(`
     <h1 style="margin:0 0 20px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Your Pro subscription has been cancelled</h1>
     <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">${greeting}</p>
@@ -248,7 +253,7 @@ async function sendLifetimeUpgradeEmail(to, name) {
     return;
   }
 
-  const greeting = name ? `Hi ${name},` : 'Hi there,';
+  const greeting = name ? `Hi ${escapeHtml(name)},` : 'Hi there,';
   const html = baseTemplate(`
     <h1 style="margin:0 0 20px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Welcome to Orangutany Pro Lifetime!</h1>
     <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">${greeting}</p>
@@ -281,4 +286,34 @@ async function sendLifetimeUpgradeEmail(to, name) {
   }
 }
 
-module.exports = { emailEnabled, sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendLifetimeUpgradeEmail, sendCancellationEmail, sendAbuseAlertEmail };
+async function sendPaymentFailedEmail(to, name) {
+  if (!resend) {
+    console.warn('[email] RESEND_API_KEY not set — payment failed email skipped');
+    return;
+  }
+
+  const greeting = name ? `Hi ${escapeHtml(name)},` : 'Hi there,';
+  const html = baseTemplate(`
+    <h1 style="margin:0 0 20px;font-size:24px;font-weight:700;color:#ff6666;line-height:1.3;">Payment failed</h1>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">${greeting}</p>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">We were unable to process your latest Orangutany Pro payment. Please update your payment method to keep your Pro access.</p>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#e0e0e0;">If we can't collect payment, your account will be switched to the free plan automatically.</p>
+
+    <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
+    <tr><td style="background-color:#f97316;border-radius:10px;">
+      <a href="https://orangutany.com/account/billing" style="display:inline-block;padding:14px 32px;font-size:16px;font-weight:600;color:#0a0a0a;text-decoration:none;letter-spacing:0.2px;">Update Payment Method</a>
+    </td></tr>
+    </table>
+
+    <p style="margin:24px 0 0;font-size:13px;line-height:1.5;color:#666;text-align:center;">Questions? Reply to this email.</p>
+  `);
+
+  try {
+    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Orangutany Pro — Payment failed', html });
+    console.log(`[email] Payment failed email sent to ${to} — id: ${result?.data?.id || 'unknown'}`);
+  } catch (err) {
+    console.error(`[email] Failed to send payment failed email to ${to}:`, err.message);
+  }
+}
+
+module.exports = { emailEnabled, sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendLifetimeUpgradeEmail, sendCancellationEmail, sendPaymentFailedEmail, sendAbuseAlertEmail };

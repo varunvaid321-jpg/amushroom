@@ -1528,6 +1528,60 @@ test('workflow: webhook handles unknown customer gracefully', () => {
   assert.ok(webhookFn.includes('if (user)'), 'webhook must guard against unknown customer');
 });
 
+// --- HTML escaping ---
+
+test('email: uses escapeHtml for name parameter', () => {
+  assert.ok(emailSrc.includes('function escapeHtml'), 'email.js must define escapeHtml');
+  assert.ok(emailSrc.includes('escapeHtml(name)'), 'email must escape name before interpolation');
+});
+
+test('email: escapeHtml handles all dangerous characters', () => {
+  assert.ok(emailSrc.includes('&amp;'), 'escapeHtml must escape &');
+  assert.ok(emailSrc.includes('&lt;'), 'escapeHtml must escape <');
+  assert.ok(emailSrc.includes('&gt;'), 'escapeHtml must escape >');
+  assert.ok(emailSrc.includes('&quot;'), 'escapeHtml must escape "');
+});
+
+// --- Payment failed email ---
+
+test('email: payment failed email exists', () => {
+  assert.ok(emailSrc.includes('sendPaymentFailedEmail'), 'must have payment failed email');
+});
+
+test('email: payment failed email has correct subject', () => {
+  assert.ok(emailSrc.includes('Payment failed'), 'payment failed subject must match');
+});
+
+test('email: payment failed email links to billing page', () => {
+  assert.ok(emailSrc.includes('orangutany.com/account/billing'), 'payment failed must link to billing');
+});
+
+test('email: payment failed email has Update Payment CTA', () => {
+  assert.ok(emailSrc.includes('Update Payment Method'), 'payment failed must have update CTA');
+});
+
+test('server: imports sendPaymentFailedEmail', () => {
+  assert.ok(serverSrc.includes('sendPaymentFailedEmail'), 'server must import sendPaymentFailedEmail');
+});
+
+test('server: webhook sends payment failed email for past_due status', () => {
+  assert.ok(serverSrc.includes("'past_due'") && serverSrc.includes('sendPaymentFailedEmail'),
+    'webhook must send payment failed email for past_due');
+});
+
+test('server: webhook differentiates past_due from cancelled', () => {
+  const webhookSection = serverSrc.substring(serverSrc.indexOf("'customer.subscription.deleted'"));
+  assert.ok(webhookSection.includes('past_due') && webhookSection.includes('sendPaymentFailedEmail'),
+    'past_due must get payment failed email, not cancellation');
+  assert.ok(webhookSection.includes('sendCancellationEmail'),
+    'actual cancellation must still get cancellation email');
+});
+
+test('server: payment failed email is fire-and-forget', () => {
+  assert.ok(serverSrc.includes('sendPaymentFailedEmail(user.email, user.name).catch'),
+    'payment failed email must use .catch');
+});
+
 test('workflow: email check guards against missing email', () => {
   // Server should check user.email exists before sending
   assert.ok(serverSrc.includes("upgradeUser?.email") || serverSrc.includes("user.email"),

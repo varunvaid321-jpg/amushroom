@@ -103,7 +103,7 @@ const {
   getNewsletterStats,
   getAdminScanGallery
 } = require('./src/db');
-const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendLifetimeUpgradeEmail, sendCancellationEmail, sendAbuseAlertEmail } = require('./src/email');
+const { sendWelcomeEmail, sendPasswordResetEmail, sendTestEmail, sendFeedbackNotification, sendUpgradeEmail, sendLifetimeUpgradeEmail, sendCancellationEmail, sendPaymentFailedEmail, sendAbuseAlertEmail } = require('./src/email');
 const { runOnePost, listPosted } = require('./src/instagram');
 
 // Guide species lookup for enriching scan results with look-alike images & guide links
@@ -1496,6 +1496,13 @@ async function handleStripeWebhook(req, res) {
         if (sub.status === 'active' || sub.status === 'trialing') {
           const expiresAt = sub.current_period_end ? new Date(sub.current_period_end * 1000).toISOString() : null;
           await setUserSubscription(user.id, sub.id, 'pro', expiresAt);
+        } else if (sub.status === 'past_due' || sub.status === 'unpaid') {
+          // Payment failed but subscription not yet cancelled — notify user to update card
+          writeAuditLog({ eventType: 'tier_change', userId: user.id, userEmail: user.email, details: { tier: 'pro', reason: 'payment_failed_' + sub.status } }).catch(() => {});
+          console.log(`[stripe] User ${user.id} payment failed — subscription ${sub.status}`);
+          if (user.email) {
+            sendPaymentFailedEmail(user.email, user.name).catch(() => {});
+          }
         } else {
           await downgradeUser(user.id);
           writeAuditLog({ eventType: 'tier_change', userId: user.id, userEmail: user.email, details: { tier: 'free', reason: 'subscription_' + sub.status } }).catch(() => {});
