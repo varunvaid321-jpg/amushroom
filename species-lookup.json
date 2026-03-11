@@ -1,4 +1,23 @@
 {
+  "chlorociboria aeruginascens": {
+    "slug": "chlorociboria-aeruginascens",
+    "commonName": "Green Elfcup",
+    "heroImage": "https://guide.orangutany.com/images/species/chlorociboria-aeruginascens/01-field.jpg",
+    "lookAlikes": [
+      {
+        "name": "Chlorociboria aeruginosa",
+        "slug": null,
+        "imageUrl": null,
+        "distinction": "An extremely similar sister species that can only be reliably distinguished by microscopic spore measurements."
+      },
+      {
+        "name": "Ophiostoma (Blue Stain Fungi)",
+        "slug": null,
+        "imageUrl": null,
+        "distinction": "Various blue-stain fungi can discolor wood blue-gray, but the color is duller and grayish rather than the vivid turquoise of Chlorociboria."
+      }
+    ]
+  },
   "agaricus arvensis": {
     "slug": "agaricus-arvensis",
     "commonName": "Horse Mushroom",
@@ -299,6 +318,31 @@
       }
     ]
   },
+  "amanita novinupta": {
+    "slug": "amanita-novinupta",
+    "commonName": "Blushing Bride",
+    "heroImage": "https://guide.orangutany.com/images/species/amanita-novinupta/01-field.jpg",
+    "lookAlikes": [
+      {
+        "name": "Western Destroying Angel (Amanita ocreata)",
+        "slug": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-novinupta/lookalike-ocreata.jpg",
+        "distinction": "The most dangerous confusion and the reason most experts advise against eating the Blushing Bride."
+      },
+      {
+        "name": "The Blusher (Amanita rubescens)",
+        "slug": "amanita-rubescens",
+        "imageUrl": null,
+        "distinction": "The European and eastern North American counterpart."
+      },
+      {
+        "name": "Panther Cap (Amanita pantherina)",
+        "slug": "amanita-pantherina",
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-novinupta/lookalike-pantherina.jpg",
+        "distinction": "Brown cap with pure white, evenly spaced warts."
+      }
+    ]
+  },
   "amanita rubescens": {
     "slug": "amanita-rubescens",
     "commonName": "The Blusher",
@@ -318,7 +362,7 @@
       },
       {
         "name": "Gemmed Amanita (Amanita gemmata)",
-        "slug": null,
+        "slug": "amanita-gemmata",
         "imageUrl": "https://guide.orangutany.com/images/species/amanita-rubescens/lookalike-gemmata.jpg",
         "distinction": "Smaller and paler, with a yellow to ochre cap and white warts."
       }
@@ -653,25 +697,6 @@
         "slug": "fomitopsis-betulina",
         "imageUrl": "https://guide.orangutany.com/images/species/cerioporus-squamosus/lookalike-fomitopsis.jpg",
         "distinction": "Smooth, white to gray-brown brackets exclusively on birch trees."
-      }
-    ]
-  },
-  "chlorociboria aeruginascens": {
-    "slug": "chlorociboria-aeruginascens",
-    "commonName": "Green Elfcup",
-    "heroImage": "https://guide.orangutany.com/images/species/chlorociboria-aeruginascens/01-field.jpg",
-    "lookAlikes": [
-      {
-        "name": "Chlorociboria aeruginosa",
-        "slug": null,
-        "imageUrl": null,
-        "distinction": "An extremely similar sister species that can only be reliably distinguished by microscopic spore measurements."
-      },
-      {
-        "name": "Ophiostoma (Blue Stain Fungi)",
-        "slug": null,
-        "imageUrl": null,
-        "distinction": "Various blue-stain fungi can discolor wood blue-gray, but the color is duller and grayish rather than the vivid turquoise of Chlorociboria."
       }
     ]
   },
