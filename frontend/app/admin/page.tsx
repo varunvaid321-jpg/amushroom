@@ -621,7 +621,7 @@ export default function AdminPage() {
                             )}
                             <div className="min-w-0">
                               <span className="text-sm text-foreground truncate block">{s.isAnonymous ? "anonymous" : (s.userName || s.userEmail || "unknown")}</span>
-                              <span className={`text-[10px] font-medium ${s.isAnonymous ? "text-zinc-400" : "text-green-400"}`}>{s.isAnonymous ? "not logged in" : "logged in"}</span>
+                              <span className={`text-[10px] font-medium ${s.isAnonymous ? "text-zinc-400" : "text-green-400"}`}>{s.isAnonymous ? "not logged in" : "logged in"}{s.uploadId ? ` · ${s.uploadId.slice(0,8)}` : " · no-uid"}</span>
                             </div>
                           </div>
                         </td>
