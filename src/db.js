@@ -494,7 +494,7 @@ async function getUserUploadDetail(userId, uploadId) {
   if (!batch) return null;
 
   const imgResult = await client.execute({
-    sql: 'SELECT id, role, filename, mime_type, bytes, image_blob, created_at FROM upload_images WHERE batch_id = ? ORDER BY id ASC',
+    sql: 'SELECT id, role, filename, mime_type, bytes, created_at FROM upload_images WHERE batch_id = ? ORDER BY id ASC',
     args: [uploadId]
   });
 
@@ -505,7 +505,7 @@ async function getUserUploadDetail(userId, uploadId) {
     mimeType: row.mime_type || 'image/jpeg',
     bytes: Number(row.bytes),
     createdAt: row.created_at,
-    previewUrl: `data:${row.mime_type || 'image/jpeg'};base64,${Buffer.from(row.image_blob).toString('base64')}`
+    previewUrl: `/api/images/${Number(row.id)}`
   }));
 
   const matchResult = await client.execute({
@@ -881,6 +881,14 @@ async function getCoverImageBlob(batchId) {
   return result.rows[0] || null;
 }
 
+async function getImageBlob(imageId) {
+  const result = await client.execute({
+    sql: 'SELECT image_blob, mime_type FROM upload_images WHERE id = ? LIMIT 1',
+    args: [Number(imageId)]
+  });
+  return result.rows[0] || null;
+}
+
 // ─── Stripe / Payment ────────────────────────────────────────────────────────
 
 async function setUserStripeCustomer(userId, stripeCustomerId) {
@@ -1171,6 +1179,7 @@ module.exports = {
   recordUserScan,
   cleanExpiredAnonQuotas,
   getCoverImageBlob,
+  getImageBlob,
   insertFeedback,
   listFeedback,
   ANON_SCAN_LIMIT,
