@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Container } from "@/components/layout/container";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, AlertTriangle, CheckCheck, Ban, MessageSquare, TrendingUp, Users, Scan, Eye, Camera, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Loader2, AlertTriangle, CheckCheck, Ban, MessageSquare, TrendingUp, Users, Scan, Eye, Camera, ArrowUpRight, ArrowDownRight, Mail } from "lucide-react";
 import Link from "next/link";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -519,6 +519,7 @@ export default function AdminPage() {
               <Camera className="h-3.5 w-3.5" />
               Scan Gallery
             </Link>
+            <TestEmailButton />
           </div>
           <p className="text-sm text-muted-foreground">
             {totalUsers} user{totalUsers !== 1 ? "s" : ""}
@@ -984,4 +985,35 @@ function timeAgo(dateStr: string): string {
   const days = Math.floor(hrs / 24);
   if (days < 7) return `${days}d ago`;
   return new Date(dateStr).toLocaleDateString();
+}
+
+function TestEmailButton() {
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  const send = async () => {
+    setStatus("sending");
+    try {
+      const res = await fetch("/api/admin/test-email", { credentials: "include" });
+      if (!res.ok) throw new Error();
+      setStatus("sent");
+      setTimeout(() => setStatus("idle"), 3000);
+    } catch {
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 3000);
+    }
+  };
+
+  return (
+    <button
+      onClick={send}
+      disabled={status === "sending"}
+      className="inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-muted/30 px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors disabled:opacity-50"
+    >
+      {status === "sending" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Mail className="h-3.5 w-3.5" />}
+      {status === "idle" && "Send Test Email"}
+      {status === "sending" && "Sending…"}
+      {status === "sent" && "Sent ✓"}
+      {status === "error" && "Failed"}
+    </button>
+  );
 }
