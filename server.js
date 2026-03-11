@@ -1794,7 +1794,17 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Global rate limit — 120 req/min per IP (excludes health checks above)
+  // Cover image endpoint — exempt from rate limit (loaded as <img src> for every history row)
+  if (req.method === 'GET' && url.pathname.startsWith('/api/uploads/') && url.pathname.endsWith('/cover-image')) {
+    const batchId = decodeURIComponent(url.pathname.slice('/api/uploads/'.length, -'/cover-image'.length)).trim();
+    const row = await getCoverImageBlob(batchId);
+    if (!row) { res.writeHead(404); res.end('Not found'); return; }
+    res.writeHead(200, { 'Content-Type': row.mime_type || 'image/jpeg', 'Cache-Control': 'public, max-age=86400' });
+    res.end(row.image_blob);
+    return;
+  }
+
+  // Global rate limit — 120 req/min per IP (excludes health checks and cover images above)
   if (!enforceRouteRateLimit(req, res, globalRateLimitStore, GLOBAL_RATE_LIMIT_WINDOW_MS, GLOBAL_RATE_LIMIT_MAX, 'Too many requests. Please slow down.')) {
     return;
   }
@@ -2021,16 +2031,6 @@ const server = http.createServer(async (req, res) => {
       console.error('[newsletter] subscription error:', err);
       jsonError(req, res, 500, 'Something went wrong.');
     }
-    return;
-  }
-
-  // Public cover image endpoint — used by Instagram pipeline for public image URL
-  if (req.method === 'GET' && url.pathname.startsWith('/api/uploads/') && url.pathname.endsWith('/cover-image')) {
-    const batchId = decodeURIComponent(url.pathname.slice('/api/uploads/'.length, -'/cover-image'.length)).trim();
-    const row = await getCoverImageBlob(batchId);
-    if (!row) { res.writeHead(404); res.end('Not found'); return; }
-    res.writeHead(200, { 'Content-Type': row.mime_type || 'image/jpeg', 'Cache-Control': 'public, max-age=86400' });
-    res.end(row.image_blob);
     return;
   }
 
