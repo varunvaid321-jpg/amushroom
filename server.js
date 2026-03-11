@@ -1,13 +1,12 @@
-// Catch any unhandled crash so it shows up in Render logs
+// Log unhandled errors but keep the server running — process.exit(1) was killing
+// the server on any unhandled error, causing full outages on Render Starter plan.
 process.on('uncaughtException', (err) => {
   // eslint-disable-next-line no-console
-  console.error('[crash] uncaughtException:', err);
-  process.exit(1);
+  console.error('[crash] uncaughtException (server stays up):', err);
 });
 process.on('unhandledRejection', (reason) => {
   // eslint-disable-next-line no-console
-  console.error('[crash] unhandledRejection:', reason);
-  process.exit(1);
+  console.error('[crash] unhandledRejection (server stays up):', reason);
 });
 
 const http = require('node:http');
@@ -1752,6 +1751,7 @@ const server = http.createServer(async (req, res) => {
   res.setHeader('X-Request-Id', requestId);
   // eslint-disable-next-line no-console
   console.log(`[${new Date().toISOString()}] ${requestId} ${req.method} ${url.pathname}`);
+  try {
 
   if (req.method === 'GET' && url.pathname === '/healthz') {
     sendJson(req, res, 200, {
@@ -2266,6 +2266,13 @@ const server = http.createServer(async (req, res) => {
   }
 
   sendJson(req, res, 404, { error: 'Not found' });
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error(`[${new Date().toISOString()}] ${requestId} UNHANDLED ERROR in ${req.method} ${url.pathname}:`, err);
+    if (!res.headersSent) {
+      try { sendJson(req, res, 500, { error: 'Internal server error.' }); } catch { /* headers already sent */ }
+    }
+  }
 });
 
 // Always start listening — even if DB failed, /api/ping will report the error

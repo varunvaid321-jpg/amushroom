@@ -2139,8 +2139,12 @@
     "commonName": "Shaggy Parasol",
     "story": "Once placed in Macrolepiota alongside the true Parasol Mushroom, DNA studies moved this species to Chlorophyllum. It is edible for most people but causes gastrointestinal upset in a significant minority, making it one of the most polarizing \"edible\" mushrooms among foragers."
   },
-  "Amanita rubescens": {
+  "amanita rubescens": {
     "commonName": "The Blusher",
     "story": "Cut this mushroom and watch it blush pink, like it has a secret. That color change is your lifeline: the deadly Panther Cap looks almost identical but stays stubbornly white when cut. Central European foragers have relied on this one test for centuries."
+  },
+  "amanita novinupta": {
+    "commonName": "Blushing Bride",
+    "story": "Named 'new bride' in Latin because its white cap slowly blushes pink, like a bride at the altar. Until 1994, every field guide on the Pacific Coast called it by the wrong name. It shares its California oak woodland habitat with one of the deadliest mushrooms in North America."
   }
 }
