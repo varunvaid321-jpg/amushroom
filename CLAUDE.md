@@ -97,6 +97,11 @@ Before modifying ANY payment, billing, upgrade, membership, or Stripe code, read
 - Pending upgrade plan stored in `sessionStorage` (survives OAuth redirect).
 - `useUpgrade` hook is the single entry point for all upgrade flows.
 
+### Known payment edge cases (CAUTION — from March 11 2026 audit)
+- **Lifetime upgrade sends wrong cancellation email**: When monthly→lifetime upgrade happens, Stripe fires `customer.subscription.deleted` for the old monthly sub. The webhook sends a "Your Pro was cancelled" email — but the user actually upgraded. Must check if user is now `pro_lifetime` before sending cancellation email.
+- **Cancel endpoint has no rollback**: If `stripe.subscriptions.cancel()` succeeds but `downgradeUser()` fails, user keeps Pro access with a cancelled Stripe sub. No automatic recovery — must be fixed manually.
+- **No audit log for renewal payments**: `invoice.payment_succeeded` creates a payment record but doesn't write to audit_log.
+
 ### Audit log (immutable)
 - `audit_log` table: INSERT-only, no DELETE/UPDATE. 3-year minimum retention.
 - Events: signup, login, tier_change, payment.
