@@ -243,6 +243,7 @@ function HistoryRow({
               src={upload.coverImageUrl}
               alt=""
               className="h-8 w-8 rounded object-cover"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
             />
           ) : (
             <ImageIcon className="h-4 w-4 text-muted-foreground" />
