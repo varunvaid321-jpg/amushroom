@@ -1809,9 +1809,10 @@ const server = http.createServer(async (req, res) => {
     const batchId = decodeURIComponent(url.pathname.slice('/api/uploads/'.length, -'/cover-image'.length)).trim();
     const row = await getCoverImageBlob(batchId);
     if (!row) { console.log(`[cover-image] 404 for batchId="${batchId}"`); res.writeHead(404); res.end('Not found'); return; }
-    console.log(`[cover-image] 200 for batchId="${batchId}" mime=${row.mime_type} blobType=${typeof row.image_blob} blobLen=${row.image_blob?.length || 'N/A'}`);
+    const blob = row.image_blob instanceof ArrayBuffer ? Buffer.from(row.image_blob) : Buffer.isBuffer(row.image_blob) ? row.image_blob : Buffer.from(row.image_blob);
+    console.log(`[cover-image] 200 for batchId="${batchId}" mime=${row.mime_type} blobType=${Object.prototype.toString.call(row.image_blob)} blobLen=${blob.length}`);
     res.writeHead(200, { 'Content-Type': row.mime_type || 'image/jpeg', 'Cache-Control': 'public, max-age=86400' });
-    res.end(row.image_blob);
+    res.end(blob);
     return;
   }
 
@@ -1821,8 +1822,9 @@ const server = http.createServer(async (req, res) => {
     if (!imageId || isNaN(Number(imageId))) { res.writeHead(400); res.end('Bad request'); return; }
     const row = await getImageBlob(imageId);
     if (!row) { res.writeHead(404); res.end('Not found'); return; }
+    const imgBlob = row.image_blob instanceof ArrayBuffer ? Buffer.from(row.image_blob) : Buffer.isBuffer(row.image_blob) ? row.image_blob : Buffer.from(row.image_blob);
     res.writeHead(200, { 'Content-Type': row.mime_type || 'image/jpeg', 'Cache-Control': 'public, max-age=86400' });
-    res.end(row.image_blob);
+    res.end(imgBlob);
     return;
   }
 
