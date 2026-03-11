@@ -57,6 +57,13 @@ Mushroom identification web app (orangutany.com). Users upload photos, get AI-po
 - No console.log unless intentional server logging
 - Security-first: validate inputs server-side, never trust client MIME types
 
+## Image Serving Rules (CRITICAL — caused regression chain March 11 2026)
+- **NEVER embed base64 image blobs in JSON API responses** — use URL references to `/api/uploads/{id}/cover-image` instead. Inline blobs cause massive payloads, slow responses, and spinners.
+- **Image-serving endpoints MUST be above the global rate limiter** in server.js — thumbnail `<img src>` tags fire many parallel requests that hit the rate limit otherwise.
+- **Every `<img>` tag with an API-served `src` MUST have an `onError` handler** — URL-based images can fail (404, network). Show a fallback or hide the image. Never show a broken image icon.
+- **Frontend types must match backend nullability** — if the DB can return `null` (e.g. `primaryConfidence`), the TypeScript interface must say `number | null`, not `number`. Otherwise arithmetic produces `NaN`.
+- **All email sends must be fire-and-forget** (`.catch(() => {})`) unless the caller needs to know about failure (e.g. password reset). A failed email must never block a user-facing response.
+
 ## Turso/libsql SQL Safety (CRITICAL — caused production outage March 10 2026)
 - **NEVER use `IN (?,?,?)` with array args** — Turso doesn't support spreading arrays into positional placeholders. Use individual queries per value instead.
 - **Always test new DB queries against Turso via the running dev server** — `npm run check` only validates syntax, not runtime SQL. Start the dev server and hit the actual endpoint before pushing.
