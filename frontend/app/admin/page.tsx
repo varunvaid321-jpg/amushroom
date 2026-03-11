@@ -384,6 +384,8 @@ export default function AdminPage() {
   const [scanLog, setScanLog] = useState<ScanLogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeKpi, setActiveKpi] = useState<string | null>(null);
+  const [healthBanner, setHealthBanner] = useState<{ uptime: number; dbReady: boolean; dbError: string | null } | null>(null);
+  const [healthDismissed, setHealthDismissed] = useState(false);
 
   useEffect(() => {
     if (authLoading || !isAdmin) return;
@@ -397,6 +399,9 @@ export default function AdminPage() {
       adminFetch<{ feedback: FeedbackRow[] }>("feedback").then((r) => setFeedback(r.feedback)).catch(() => {}),
       adminFetch<{ subscribers: NewsletterSub[]; activeSubscribers: number }>("newsletter").then((r) => { setNewsletterSubs(r.subscribers); setNewsletterCount(r.activeSubscribers); }).catch(() => {}),
       adminFetch<{ scans: ScanLogEntry[] }>("scan-log?limit=200").then((r) => setScanLog(r.scans)).catch(() => {}),
+      fetch("/api/ping").then(r => r.json()).then((d: { ok: boolean; dbReady: boolean; dbError: string | null; uptime: number }) => {
+        if (!d.ok || !d.dbReady || d.uptime < 3600) setHealthBanner({ uptime: d.uptime, dbReady: d.dbReady, dbError: d.dbError });
+      }).catch(() => setHealthBanner({ uptime: 0, dbReady: false, dbError: "Backend unreachable" })),
       adminFetch<{ flags: AbuseFlag[]; unresolvedCount: number }>("abuse-flags").then((r) => {
         setAbuseFlags(r.flags);
         setUnresolvedAbuseCount(r.unresolvedCount);
@@ -526,6 +531,23 @@ export default function AdminPage() {
             ))}
           </p>
         </div>
+
+        {/* Health banner */}
+        {healthBanner && !healthDismissed && (
+          <div className={`flex items-center justify-between rounded-lg border px-4 py-3 ${healthBanner.dbReady ? "border-yellow-500/40 bg-yellow-500/10" : "border-red-500/40 bg-red-500/10"}`}>
+            <div className="flex items-center gap-3">
+              <AlertTriangle className={`h-5 w-5 shrink-0 ${healthBanner.dbReady ? "text-yellow-400" : "text-red-400"}`} />
+              <p className={`text-sm font-medium ${healthBanner.dbReady ? "text-yellow-300" : "text-red-300"}`}>
+                {!healthBanner.dbReady
+                  ? `Backend database error: ${healthBanner.dbError || "unreachable"}`
+                  : `Backend restarted ${Math.round(healthBanner.uptime / 60)} min ago (uptime: ${Math.round(healthBanner.uptime / 60)}m)`}
+              </p>
+            </div>
+            <button onClick={() => setHealthDismissed(true)} className="text-xs text-muted-foreground hover:text-foreground ml-4 shrink-0">
+              Dismiss
+            </button>
+          </div>
+        )}
 
         {/* Abuse alert */}
         {unresolvedAbuseCount > 0 && (
