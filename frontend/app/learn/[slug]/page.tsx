@@ -238,11 +238,18 @@ function SectionImage({ src, alt, caption }: { src: string; alt: string; caption
 const sectionImages: Record<string, Record<string, ReactNode>> = {
   "types-of-mushrooms": {
     "Gilled Mushrooms": (
-      <SectionImage
-        src="/images/learn/gilled.jpg"
-        alt="Oyster mushrooms (Pleurotus ostreatus) growing on tree bark showing gills clearly visible underneath the caps"
-        caption="Oyster Mushroom (Pleurotus ostreatus) — the thin blade-like gills underneath the cap are clearly visible. Gills are the defining feature of this group. Photo: Famberhorst, Wikimedia Commons, CC BY-SA 4.0"
-      />
+      <>
+        <SectionImage
+          src="/images/learn/gilled.jpg"
+          alt="Oyster mushrooms (Pleurotus ostreatus) growing on tree bark showing gills clearly visible underneath the caps"
+          caption="Oyster Mushroom (Pleurotus ostreatus) — the thin blade-like gills underneath the cap are clearly visible. Gills are the defining feature of this group. Photo: Famberhorst, Wikimedia Commons, CC BY-SA 4.0"
+        />
+        <SectionImage
+          src="/images/learn/gilled-underside.jpg"
+          alt="Common Bonnet mushroom (Mycena galericulata) viewed from below showing delicate radiating gills"
+          caption="Common Bonnet (Mycena galericulata) — gill underside view showing the delicate radiating lamellae that produce spores. Photo: Famberhorst, Wikimedia Commons, CC BY-SA 4.0"
+        />
+      </>
     ),
     "Boletes": (
       <SectionImage
