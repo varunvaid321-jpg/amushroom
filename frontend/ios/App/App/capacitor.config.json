@@ -1,0 +1,35 @@
+{
+	"appId": "com.orangutany.app",
+	"appName": "Orangutany",
+	"server": {
+		"url": "https://orangutany.com",
+		"cleartext": false
+	},
+	"ios": {
+		"contentInset": "automatic",
+		"backgroundColor": "#0e1a0e",
+		"preferredContentMode": "mobile"
+	},
+	"plugins": {
+		"SplashScreen": {
+			"launchAutoHide": true,
+			"backgroundColor": "#0e1a0e",
+			"androidSplashResourceName": "splash",
+			"showSpinner": false,
+			"launchFadeOutDuration": 300
+		},
+		"StatusBar": {
+			"style": "DARK",
+			"backgroundColor": "#0e1a0e"
+		},
+		"Camera": {
+			"presentationStyle": "fullscreen"
+		}
+	},
+	"packageClassList": [
+		"CAPCameraPlugin",
+		"HapticsPlugin",
+		"SplashScreenPlugin",
+		"StatusBarPlugin"
+	]
+}
