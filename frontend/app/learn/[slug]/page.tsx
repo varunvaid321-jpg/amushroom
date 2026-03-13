@@ -287,6 +287,36 @@ const sectionImages: Record<string, Record<string, ReactNode>> = {
       />
     ),
   },
+  "mushroom-anatomy": {
+    "Parts of a Gilled Mushroom": (
+      <>
+        <SectionImage
+          src="/images/learn/anatomy-fullmushroom.jpg"
+          alt="Two Amanita phalloides mushrooms showing all key anatomy: cap, gills, ring (annulus) on the stalk, and volva (cup) at the base, alongside a young egg-stage specimen"
+          caption="Death Cap (Amanita phalloides) — a textbook example of mushroom anatomy. The mature specimen shows cap, gills, ring (annulus), and volva (cup at base). The young specimen on the left is still enclosed in its universal veil. Photo: Archenzo, Wikimedia Commons, CC BY-SA 3.0"
+        />
+        <SectionImage
+          src="/images/learn/anatomy-parts.jpg"
+          alt="Dissected Amanita muscaria mushroom showing cap surface with white warts, gill cross-section, and hollow stalk interior"
+          caption="Fly Agaric (Amanita muscaria) dissection — cap surface with white warts (left), gills radiating from the stalk (right), and the stalk cross-section showing hollow interior (bottom). Photo: Madjack74, Wikimedia Commons, CC BY 3.0"
+        />
+      </>
+    ),
+    "Making a Spore Print": (
+      <SectionImage
+        src="/images/learn/anatomy-sporeprint.jpg"
+        alt="Mushroom spore print showing radiating gill pattern in pink-brown on white paper"
+        caption="A spore print reveals the colour of a mushroom's spores — here a pink-brown print from Entoloma conferendum. The radiating lines mirror the gill pattern. Spore colour is one of the most reliable identification features. Photo: Wikimedia Commons, CC BY-SA 2.0"
+      />
+    ),
+    "Field Identification Tips": (
+      <SectionImage
+        src="/images/learn/anatomy-gills.jpg"
+        alt="Underside of Omphalotus mushroom showing decurrent gills clearly running down the stalk"
+        caption="Decurrent gills running down the stalk — one of several gill attachment types to note when identifying mushrooms. How gills meet the stalk is a key diagnostic feature. Photo: Mushroom Observer, Wikimedia Commons, CC BY-SA 3.0"
+      />
+    ),
+  },
 };
 
 /* Mapping of slug → section heading → diagram to render after that section */
