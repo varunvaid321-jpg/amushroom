@@ -217,6 +217,78 @@ const articleFAQs: Record<string, { question: string; answer: string }[]> = {
   ],
 };
 
+/* Section images — photo shown above the section text */
+function SectionImage({ src, alt, caption }: { src: string; alt: string; caption: string }) {
+  return (
+    <figure className="my-4 overflow-hidden rounded-lg border border-border/30">
+      <img
+        src={src}
+        alt={alt}
+        className="w-full object-cover"
+        style={{ maxHeight: "360px" }}
+        loading="lazy"
+      />
+      <figcaption className="px-3 py-2 text-xs text-muted-foreground/60">
+        {caption}
+      </figcaption>
+    </figure>
+  );
+}
+
+const sectionImages: Record<string, Record<string, ReactNode>> = {
+  "types-of-mushrooms": {
+    "Gilled Mushrooms": (
+      <>
+        <SectionImage
+          src="/images/learn/gilled.jpg"
+          alt="Oyster mushrooms (Pleurotus ostreatus) growing on tree bark showing gills clearly visible underneath the caps"
+          caption="Oyster Mushroom (Pleurotus ostreatus) — the thin blade-like gills underneath the cap are clearly visible. Gills are the defining feature of this group. Photo: Famberhorst, Wikimedia Commons, CC BY-SA 4.0"
+        />
+        <SectionImage
+          src="/images/learn/gilled-underside.jpg"
+          alt="Common Bonnet mushroom (Mycena galericulata) viewed from below showing delicate radiating gills"
+          caption="Common Bonnet (Mycena galericulata) — gill underside view showing the delicate radiating lamellae that produce spores. Photo: Famberhorst, Wikimedia Commons, CC BY-SA 4.0"
+        />
+      </>
+    ),
+    "Boletes": (
+      <SectionImage
+        src="/images/learn/boletes.jpg"
+        alt="Two porcini mushrooms (Boletus edulis) growing among ferns on forest floor"
+        caption="Porcini (Boletus edulis) — boletes have a spongy pore surface instead of gills. Photo: Wikimedia Commons, CC BY-SA 3.0"
+      />
+    ),
+    "Polypores (Bracket Fungi)": (
+      <SectionImage
+        src="/images/learn/polypores.jpg"
+        alt="Turkey Tail bracket fungus with concentric color bands growing on a mossy log"
+        caption="Turkey Tail (Trametes versicolor) — a polypore showing shelf-like growth with colorful concentric bands. Photo: Wikimedia Commons, CC BY-SA 3.0"
+      />
+    ),
+    "Puffballs": (
+      <SectionImage
+        src="/images/learn/puffballs.jpg"
+        alt="Two white giant puffball mushrooms sitting in green grass"
+        caption="Giant Puffball (Calvatia gigantea) — round fungi that release clouds of spores when mature. Photo: Wikimedia Commons, CC BY-SA 3.0"
+      />
+    ),
+    "Morels": (
+      <SectionImage
+        src="/images/learn/morels.jpg"
+        alt="Single morel mushroom with honeycomb-patterned cap growing on forest floor"
+        caption="Morel (Morchella conica) — distinctive honeycomb cap, hollow from top to bottom. Wikimedia Commons Featured Picture. Photo: Beentree, CC BY-SA 4.0"
+      />
+    ),
+    "Other Types": (
+      <SectionImage
+        src="/images/learn/other-types.jpg"
+        alt="Pink-tipped coral fungus (Ramaria botrytis) branching upward like underwater coral"
+        caption="Coral Fungus (Ramaria botrytis) — fungi come in extraordinary forms beyond the classic cap-and-stalk shape. Photo: Wikimedia Commons, CC BY-SA 3.0"
+      />
+    ),
+  },
+};
+
 /* Mapping of slug → section heading → diagram to render after that section */
 const sectionDiagrams: Record<string, Record<string, ReactNode>> = {
   "mushroom-anatomy": {
@@ -683,6 +755,7 @@ export default async function ArticlePage({
               <h2 className="text-xl font-semibold text-foreground">
                 {section.heading}
               </h2>
+              {sectionImages[slug]?.[section.heading]}
               {section.body.map((paragraph, i) => (
                 <p
                   key={i}
