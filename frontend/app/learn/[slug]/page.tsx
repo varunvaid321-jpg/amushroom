@@ -240,8 +240,8 @@ const sectionImages: Record<string, Record<string, ReactNode>> = {
     "Gilled Mushrooms": (
       <SectionImage
         src="/images/learn/gilled.jpg"
-        alt="Fly Agaric (Amanita muscaria) showing classic cap and gills in grass"
-        caption="Fly Agaric (Amanita muscaria) — the classic gilled mushroom shape with cap, stalk, and gills underneath. Photo: Wikimedia Commons, CC BY-SA 3.0"
+        alt="Oyster mushrooms (Pleurotus ostreatus) growing on tree bark showing gills clearly visible underneath the caps"
+        caption="Oyster Mushroom (Pleurotus ostreatus) — the thin blade-like gills underneath the cap are clearly visible. Gills are the defining feature of this group. Photo: Famberhorst, Wikimedia Commons, CC BY-SA 4.0"
       />
     ),
     "Boletes": (
