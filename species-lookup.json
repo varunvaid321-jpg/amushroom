@@ -462,6 +462,31 @@
       }
     ]
   },
+  "bolbitius titubans": {
+    "slug": "bolbitius-titubans",
+    "commonName": "Yellow Fieldcap",
+    "heroImage": "https://guide.orangutany.com/images/species/bolbitius-titubans/01-hero.jpg",
+    "lookAlikes": [
+      {
+        "name": "Conocybe apala (White Dunce Cap)",
+        "slug": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/bolbitius-titubans/lookalike-conocybe-apala.jpg",
+        "distinction": "A similarly fragile, lawn-dwelling mushroom with a conical cap on a thin stem."
+      },
+      {
+        "name": "Deadly Conocybe (Conocybe filaris)",
+        "slug": "conocybe-filaris",
+        "imageUrl": null,
+        "distinction": "A dangerously toxic small brown mushroom found in lawns and wood chips."
+      },
+      {
+        "name": "Plantpot Dapperling (Leucocoprinus birnbaumii)",
+        "slug": "leucocoprinus-birnbaumii",
+        "imageUrl": null,
+        "distinction": "Another bright yellow mushroom, but found exclusively in potted plants and greenhouses — not in outdoor pastures."
+      }
+    ]
+  },
   "boletus edulis": {
     "slug": "boletus-edulis",
     "commonName": "Porcini",
@@ -869,6 +894,31 @@
       }
     ]
   },
+  "coprinellus micaceus": {
+    "slug": "coprinellus-micaceus",
+    "commonName": "Mica Cap",
+    "heroImage": "https://guide.orangutany.com/images/species/coprinellus-micaceus/05-close-up.jpg",
+    "lookAlikes": [
+      {
+        "name": "Common Inkcap (Coprinopsis atramentaria)",
+        "slug": "coprinopsis-atramentaria",
+        "imageUrl": null,
+        "distinction": "Larger (cap 3–8 cm), smoother, grey to grey-brown without mica-like granules."
+      },
+      {
+        "name": "Shaggy Mane (Coprinus comatus)",
+        "slug": "coprinus-comatus",
+        "imageUrl": null,
+        "distinction": "Much larger (cap 5–15 cm tall), white with shaggy recurved scales."
+      },
+      {
+        "name": "Firerug Inkcap (Coprinellus domesticus)",
+        "slug": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/coprinellus-micaceus/lookalike-domesticus.jpg",
+        "distinction": "Very similar in size and habit, also growing in clusters on dead wood."
+      }
+    ]
+  },
   "coprinopsis atramentaria": {
     "slug": "coprinopsis-atramentaria",
     "commonName": "Common Ink Cap",
@@ -963,6 +1013,31 @@
       }
     ]
   },
+  "cortinarius vanduzerensis": {
+    "slug": "cortinarius-vanduzerensis",
+    "commonName": "Van Duzer's Cortinarius",
+    "heroImage": "https://guide.orangutany.com/images/species/cortinarius-vanduzerensis/01-field.jpg",
+    "lookAlikes": [
+      {
+        "name": "Deadly Webcap (Cortinarius rubellus)",
+        "slug": "cortinarius-rubellus",
+        "imageUrl": null,
+        "distinction": "DEADLY."
+      },
+      {
+        "name": "Fool's Webcap (Cortinarius orellanus)",
+        "slug": "cortinarius-orellanus",
+        "imageUrl": null,
+        "distinction": "DEADLY."
+      },
+      {
+        "name": "Cortinarius clandestinus",
+        "slug": null,
+        "imageUrl": null,
+        "distinction": "A similar slimy-capped Pacific Northwest Cortinarius that also has violet tones on the stem."
+      }
+    ]
+  },
   "cortinarius orellanus": {
     "slug": "cortinarius-orellanus",
     "commonName": "Fool's Webcap",
@@ -1016,7 +1091,7 @@
   "craterellus cornucopioides": {
     "slug": "craterellus-cornucopioides",
     "commonName": "Black Trumpet",
-    "heroImage": "https://guide.orangutany.com/images/species/craterellus-cornucopioides/01-field.jpg",
+    "heroImage": "https://guide.orangutany.com/images/species/craterellus-cornucopioides/03-fresh.jpg",
     "lookAlikes": [
       {
         "name": "Yellowfoot Chanterelle (Craterellus tubaeformis)",
@@ -1242,7 +1317,7 @@
   "grifola frondosa": {
     "slug": "grifola-frondosa",
     "commonName": "Hen of the Woods",
-    "heroImage": "https://guide.orangutany.com/images/species/grifola-frondosa/01-field.jpg",
+    "heroImage": "https://guide.orangutany.com/images/species/grifola-frondosa/05-fresh.jpg",
     "lookAlikes": [
       {
         "name": "Chicken of the Woods (Laetiporus sulphureus)",
@@ -1264,6 +1339,31 @@
       }
     ]
   },
+  "gliophorus chromolimoneus": {
+    "slug": "gliophorus-chromolimoneus",
+    "commonName": "Lemon Waxcap",
+    "heroImage": "https://guide.orangutany.com/images/species/gliophorus-chromolimoneus/01-field.jpg",
+    "lookAlikes": [
+      {
+        "name": "Scarlet Waxcap (Hygrocybe coccinea)",
+        "slug": "hygrocybe-coccinea",
+        "imageUrl": null,
+        "distinction": "The Scarlet Waxcap is bright red to scarlet rather than lemon-yellow, making color the most obvious difference."
+      },
+      {
+        "name": "Parrot Waxcap (Gliophorus psittacinus)",
+        "slug": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/gliophorus-chromolimoneus/lookalike-gliophorus-psittacinus.jpg",
+        "distinction": "Another slimy Gliophorus species, but the Parrot Waxcap starts green and transitions to yellow or orange as it ages."
+      },
+      {
+        "name": "Golden Waxcap (Hygrocybe chlorophana)",
+        "slug": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/gliophorus-chromolimoneus/lookalike-hygrocybe-chlorophana.jpg",
+        "distinction": "Hygrocybe chlorophana is a similar bright yellow but has a dry to slightly sticky cap — far less slimy than the profusely glutinous Gliophorus chromolimoneus."
+      }
+    ]
+  },
   "gymnopilus junonius": {
     "slug": "gymnopilus-junonius",
     "commonName": "Spectacular Rustgill",
@@ -1282,10 +1382,35 @@
         "distinction": "Toxic."
       },
       {
-        "name": "Gymnopilus luteofolius (Yellow-gilled Gymnopilus)",
+        "name": "Green-Staining Gymnopilus (Gymnopilus viridans)",
+        "slug": "gymnopilus-viridans",
+        "imageUrl": null,
+        "distinction": "A rare Pacific Northwest species that develops greenish stains on the cap and stem with handling or age."
+      }
+    ]
+  },
+  "gymnopilus viridans": {
+    "slug": "gymnopilus-viridans",
+    "commonName": "Green-Staining Gymnopilus",
+    "heroImage": "https://guide.orangutany.com/images/species/gymnopilus-viridans/01-hero.jpg",
+    "lookAlikes": [
+      {
+        "name": "Spectacular Rustgill (Gymnopilus junonius)",
+        "slug": "gymnopilus-junonius",
+        "imageUrl": null,
+        "distinction": "Larger (caps up to 18 cm), grows primarily on hardwood rather than conifers, has a prominent membranous ring, and lacks the green staining reaction."
+      },
+      {
+        "name": "Gymnopilus aeruginosus (Magic Blue Gym)",
         "slug": null,
         "imageUrl": null,
-        "distinction": "Also in the genus Gymnopilus and also found on wood."
+        "distinction": "Also develops blue-green coloring, but the blue-green tones in G."
+      },
+      {
+        "name": "Deadly Galerina (Galerina marginata)",
+        "slug": "galerina-marginata",
+        "imageUrl": null,
+        "distinction": "A critically dangerous look-alike that also grows in clusters on dead wood."
       }
     ]
   },
@@ -2046,6 +2171,31 @@
       }
     ]
   },
+  "mycena galericulata": {
+    "slug": "mycena-galericulata",
+    "commonName": "Common Bonnet",
+    "heroImage": "https://guide.orangutany.com/images/species/mycena-galericulata/01-classic.jpg",
+    "lookAlikes": [
+      {
+        "name": "Bleeding Mycena (Mycena haematopus)",
+        "slug": "mycena-haematopus",
+        "imageUrl": "https://guide.orangutany.com/images/species/mycena-galericulata/lookalike-haematopus.jpg",
+        "distinction": "Similar size and habitat on decaying wood."
+      },
+      {
+        "name": "Clustered Bonnet (Mycena inclinata)",
+        "slug": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/mycena-galericulata/lookalike-inclinata.jpg",
+        "distinction": "Also grows in dense clusters on wood, especially oak."
+      },
+      {
+        "name": "Grooved Bonnet (Mycena polygramma)",
+        "slug": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/mycena-galericulata/lookalike-polygramma.jpg",
+        "distinction": "Can look very similar from above, but the stem is the giveaway: M."
+      }
+    ]
+  },
   "mycena haematopus": {
     "slug": "mycena-haematopus",
     "commonName": "Bleeding Mycena",
@@ -2059,7 +2209,7 @@
       },
       {
         "name": "Mycena galericulata (Common Bonnet)",
-        "slug": null,
+        "slug": "mycena-galericulata",
         "imageUrl": null,
         "distinction": "Similar size and habitat on wood."
       },
@@ -2243,7 +2393,7 @@
   "pleurotus ostreatus": {
     "slug": "pleurotus-ostreatus",
     "commonName": "Oyster Mushroom",
-    "heroImage": "https://guide.orangutany.com/images/species/pleurotus-ostreatus/01-cluster-log.jpg",
+    "heroImage": "https://guide.orangutany.com/images/species/pleurotus-ostreatus/03-winter.jpg",
     "lookAlikes": [
       {
         "name": "Angel Wings (Pleurocybella porrigens)",
