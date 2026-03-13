@@ -242,7 +242,7 @@ const sectionImages: Record<string, Record<string, ReactNode>> = {
         <SectionImage
           src="/images/learn/gilled.jpg"
           alt="Oyster mushrooms (Pleurotus ostreatus) growing on tree bark showing gills clearly visible underneath the caps"
-          caption="Oyster Mushroom (Pleurotus ostreatus) — the thin blade-like gills underneath the cap are clearly visible. Gills are the defining feature of this group. Photo: Famberhorst, Wikimedia Commons, CC BY-SA 4.0"
+          caption="Oyster Mushroom (Pleurotus ostreatus) — showing decurrent gills that run down the stem, a hallmark of this species. Gills are the defining feature of this group. Photo: Famberhorst, Wikimedia Commons, CC BY-SA 4.0"
         />
         <SectionImage
           src="/images/learn/gilled-underside.jpg"
