@@ -37,8 +37,38 @@ export function UpgradeModal() {
 
   if (!upgradeOpen) return null;
 
-  // Already Pro — show confirmation
-  if (isPro) {
+  const isMonthly = user?.tier === "pro";
+  const isLifetime = user?.tier === "pro_lifetime";
+
+  // Lifetime — fully confirmed
+  if (isLifetime) {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeUpgrade} />
+        <div className="relative mx-4 w-full max-w-sm rounded-2xl border border-border bg-background p-6 shadow-xl text-center">
+          <button onClick={closeUpgrade} className="absolute right-4 top-4 text-muted-foreground hover:text-foreground" aria-label="Close">
+            <X className="h-5 w-5" />
+          </button>
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-purple-500/15">
+            <Crown className="h-6 w-6 text-purple-400" />
+          </div>
+          <h2 className="text-lg font-bold text-foreground">You have Lifetime access!</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            You&apos;re set for life. No charges, no renewals — just scan away.
+          </p>
+          <button
+            onClick={closeUpgrade}
+            className="mt-5 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+          >
+            Got it
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Monthly Pro — offer lifetime upgrade
+  if (isMonthly) {
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center">
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeUpgrade} />
@@ -49,16 +79,20 @@ export function UpgradeModal() {
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/15">
             <Crown className="h-6 w-6 text-primary" />
           </div>
-          <h2 className="text-lg font-bold text-foreground">You&apos;re already a Pro member!</h2>
+          <h2 className="text-lg font-bold text-foreground">You&apos;re on Pro Monthly</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Enjoy the full Pro experience. Keep identifying mushrooms to your heart&apos;s content.
+            Switch to Lifetime for a one-time payment of $49.99 — no more monthly charges.
           </p>
           <button
-            onClick={closeUpgrade}
-            className="mt-5 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+            onClick={() => { closeUpgrade(); startCheckout("lifetime"); }}
+            disabled={checkoutLoading}
+            className="mt-5 w-full rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
           >
-            Got it
+            {checkoutLoading ? <Loader2 className="mx-auto h-4 w-4 animate-spin" /> : "Switch to Lifetime ($49.99)"}
           </button>
+          <a href="/account/billing" className="mt-3 inline-block text-xs text-muted-foreground hover:text-foreground">
+            Manage billing &rarr;
+          </a>
         </div>
       </div>
     );

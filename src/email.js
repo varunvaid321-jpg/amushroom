@@ -343,7 +343,9 @@ async function sendNewsletterWelcomeEmail(to, name) {
     </td></tr>
     </table>
 
-    <p style="margin:24px 0 0;font-size:13px;line-height:1.5;color:#c4b49a;text-align:center;">You can unsubscribe anytime. Questions? Reply to this email.</p>
+    <p style="margin:24px 0 0;font-size:13px;line-height:1.5;color:#c4b49a;text-align:center;">
+      <a href="https://orangutany.com/api/newsletter/unsubscribe?email=${encodeURIComponent(to)}" style="color:#c4b49a;text-decoration:underline;">Unsubscribe</a> &bull; Questions? Reply to this email.
+    </p>
   `);
 
   try {
