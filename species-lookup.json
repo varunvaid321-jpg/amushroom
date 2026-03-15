@@ -1145,7 +1145,7 @@
       },
       {
         "name": "Sheathed Woodtuft (Kuehneromyces mutabilis)",
-        "slug": null,
+        "slug": "kuehneromyces-mutabilis",
         "imageUrl": null,
         "distinction": "Edible but could cause confusion."
       }
@@ -1271,8 +1271,8 @@
     "lookAlikes": [
       {
         "name": "Sheathed Woodtuft (Kuehneromyces mutabilis)",
-        "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/lookalike-kuehneromyces.jpg",
+        "slug": "kuehneromyces-mutabilis",
+        "imageUrl": null,
         "distinction": "Popular edible in Europe."
       },
       {
@@ -1615,7 +1615,7 @@
     "lookAlikes": [
       {
         "name": "Sheathed Woodtuft (Kuehneromyces mutabilis)",
-        "slug": null,
+        "slug": "kuehneromyces-mutabilis",
         "imageUrl": null,
         "distinction": "An edible species that also grows in clusters on dead wood."
       },
@@ -1724,6 +1724,31 @@
         "slug": null,
         "imageUrl": null,
         "distinction": "The most common 'false Chaga' is simply a tree burl (abnormal woody growth) or a patch of fire-damaged bark."
+      }
+    ]
+  },
+  "kuehneromyces mutabilis": {
+    "slug": "kuehneromyces-mutabilis",
+    "commonName": "Sheathed Woodtuft",
+    "heroImage": "https://guide.orangutany.com/images/species/kuehneromyces-mutabilis/01-field.jpg",
+    "lookAlikes": [
+      {
+        "name": "Funeral Bell (Galerina marginata)",
+        "slug": "galerina-marginata",
+        "imageUrl": null,
+        "distinction": "DEADLY."
+      },
+      {
+        "name": "Sulphur Tuft (Hypholoma fasciculare)",
+        "slug": "hypholoma-fasciculare",
+        "imageUrl": null,
+        "distinction": "Bright sulfur-yellow to greenish-yellow cap and flesh (never brown/cinnamon)."
+      },
+      {
+        "name": "Conifer Tuft (Hypholoma capnoides)",
+        "slug": null,
+        "imageUrl": null,
+        "distinction": "Grows almost exclusively on conifer stumps (not hardwood)."
       }
     ]
   },
