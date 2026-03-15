@@ -185,37 +185,53 @@ export function ResultsDock({
         </div>
       )}
 
-      {/* Card grid — cards stay in place, ProfilePanel renders below the grid */}
-      <div className={cardCount === 1 ? "max-w-md mx-auto space-y-3" : "space-y-3"}>
-        <div className={cardCount === 1 ? "space-y-3" : `grid grid-cols-1 ${cardCount === 2 ? "sm:grid-cols-2" : "sm:grid-cols-3"} gap-3`}>
-          {viableMatches.slice(0, 3).map((m, i) => (
-            <MatchCard
-              key={i}
-              match={m}
-              rank={i + 1}
-              isExpanded={expandedSet.has(i)}
-              onToggle={() => {
-                setExpandedSet(prev => {
-                  const next = new Set(prev);
-                  if (next.has(i)) next.delete(i);
-                  else next.add(i);
-                  return next;
-                });
-              }}
-            />
-          ))}
+      {/* Cards + expand panels */}
+      {cardCount === 1 ? (
+        /* Single card — panel directly below */
+        <div className="max-w-md mx-auto space-y-3">
+          {viableMatches.slice(0, 1).map((m, i) => {
+            const isExpanded = expandedSet.has(i);
+            return (
+              <div key={i}>
+                <MatchCard match={m} rank={1} isExpanded={isExpanded} onToggle={() => {
+                  setExpandedSet(prev => { const next = new Set(prev); if (next.has(i)) next.delete(i); else next.add(i); return next; });
+                }} />
+                {isExpanded && <div className="mt-2"><ProfilePanel match={m} /></div>}
+              </div>
+            );
+          })}
         </div>
-        {/* Expanded panels render below the grid, in order */}
-        {viableMatches.slice(0, 3).map((m, i) =>
-          expandedSet.has(i) ? (
-            <ProfilePanel
-              key={`panel-${i}`}
-              match={m}
-              rank={cardCount > 1 ? i + 1 : undefined}
-            />
-          ) : null
-        )}
-      </div>
+      ) : (
+        <div className="space-y-3">
+          {/* Mobile: cards stack, panel below each card */}
+          <div className="sm:hidden space-y-3">
+            {viableMatches.slice(0, 3).map((m, i) => {
+              const isExpanded = expandedSet.has(i);
+              return (
+                <div key={i}>
+                  <MatchCard match={m} rank={i + 1} isExpanded={isExpanded} onToggle={() => {
+                    setExpandedSet(prev => { const next = new Set(prev); if (next.has(i)) next.delete(i); else next.add(i); return next; });
+                  }} />
+                  {isExpanded && <div className="mt-2"><ProfilePanel match={m} rank={i + 1} /></div>}
+                </div>
+              );
+            })}
+          </div>
+          {/* Desktop: grid, panels below grid */}
+          <div className="hidden sm:block space-y-3">
+            <div className={`grid ${cardCount === 2 ? "grid-cols-2" : "grid-cols-3"} gap-3`}>
+              {viableMatches.slice(0, 3).map((m, i) => (
+                <MatchCard key={i} match={m} rank={i + 1} isExpanded={expandedSet.has(i)} onToggle={() => {
+                  setExpandedSet(prev => { const next = new Set(prev); if (next.has(i)) next.delete(i); else next.add(i); return next; });
+                }} />
+              ))}
+            </div>
+            {viableMatches.slice(0, 3).map((m, i) =>
+              expandedSet.has(i) ? <ProfilePanel key={`panel-${i}`} match={m} rank={i + 1} /> : null
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Story prompt — shown after new high-confidence scans for logged-in users */}
       {showStoryPrompt && (
