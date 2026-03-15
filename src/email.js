@@ -161,7 +161,7 @@ async function sendUpgradeEmail(to, name) {
 
     <div style="background:#0e1a0e;border-radius:12px;padding:20px 24px;margin:0 0 24px;">
       <table cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
-        <tr><td style="padding:8px 0;font-size:15px;color:#f0e4cc;">&#10003; &nbsp;<strong>50 scans per day</strong> (up from 5)</td></tr>
+        <tr><td style="padding:8px 0;font-size:15px;color:#f0e4cc;">&#10003; &nbsp;<strong>Unlimited scanning</strong></td></tr>
         <tr><td style="padding:8px 0;font-size:15px;color:#f0e4cc;">&#10003; &nbsp;Full species breakdown &amp; confidence scores</td></tr>
         <tr><td style="padding:8px 0;font-size:15px;color:#f0e4cc;">&#10003; &nbsp;Look-alike warnings &amp; edibility details</td></tr>
         <tr><td style="padding:8px 0;font-size:15px;color:#f0e4cc;">&#10003; &nbsp;Priority support</td></tr>
@@ -262,7 +262,7 @@ async function sendLifetimeUpgradeEmail(to, name) {
 
     <div style="background:#0e1a0e;border-radius:12px;padding:20px 24px;margin:0 0 24px;">
       <table cellpadding="0" cellspacing="0" role="presentation" style="width:100%;">
-        <tr><td style="padding:8px 0;font-size:15px;color:#f0e4cc;">&#10003; &nbsp;<strong>50 scans per day</strong> — forever</td></tr>
+        <tr><td style="padding:8px 0;font-size:15px;color:#f0e4cc;">&#10003; &nbsp;<strong>Scan as much as you want</strong> — forever</td></tr>
         <tr><td style="padding:8px 0;font-size:15px;color:#f0e4cc;">&#10003; &nbsp;Full species breakdown &amp; confidence scores</td></tr>
         <tr><td style="padding:8px 0;font-size:15px;color:#f0e4cc;">&#10003; &nbsp;Look-alike warnings &amp; edibility details</td></tr>
         <tr><td style="padding:8px 0;font-size:15px;color:#f0e4cc;">&#10003; &nbsp;Priority support</td></tr>

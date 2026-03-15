@@ -1119,7 +1119,7 @@ test('email: upgrade email has correct subject', () => {
 });
 
 test('email: upgrade email lists Pro benefits', () => {
-  assert.ok(emailSrc.includes('50 scans per day'), 'upgrade email must list scan benefit');
+  assert.ok(emailSrc.includes('Unlimited scanning') || emailSrc.includes('Scan as much as you want'), 'upgrade email must list scan benefit');
   assert.ok(emailSrc.includes('Look-alike warnings'), 'upgrade email must list look-alike benefit');
 });
 
