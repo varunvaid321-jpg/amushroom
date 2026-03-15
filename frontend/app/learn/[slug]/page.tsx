@@ -287,6 +287,36 @@ const sectionImages: Record<string, Record<string, ReactNode>> = {
       />
     ),
   },
+  "seasonal-foraging-guide": {
+    "Spring (March–May)": (
+      <SectionImage
+        src="/images/learn/seasonal-spring.jpg"
+        alt="Wild morel mushroom (Morchella esculenta) growing among green vegetation on the forest floor"
+        caption="Morel (Morchella esculenta) — the most celebrated spring mushroom, found in disturbed soil and old orchards. Photo: U.S. Fish and Wildlife Service, Public Domain"
+      />
+    ),
+    "Summer (June–August)": (
+      <SectionImage
+        src="/images/learn/seasonal-summer.jpg"
+        alt="Golden chanterelle mushrooms (Cantharellus cibarius) growing in moss and grass on the forest floor"
+        caption="Chanterelle (Cantharellus cibarius) — golden, funnel-shaped with blunt forking ridges, appearing mid-summer after warm rains. Photo: Mars 2002, Wikimedia Commons, CC BY-SA 3.0"
+      />
+    ),
+    "Autumn (September–November)": (
+      <SectionImage
+        src="/images/learn/seasonal-autumn.jpg"
+        alt="Large Hen of the Woods mushroom (Grifola frondosa) with overlapping grey-brown fronds growing at the base of a tree"
+        caption="Hen of the Woods / Maitake (Grifola frondosa) — a prized autumn find at the base of old oaks, sometimes weighing over 20 kg. Photo: Henk Monster, Wikimedia Commons, CC BY 3.0"
+      />
+    ),
+    "Winter (December–February)": (
+      <SectionImage
+        src="/images/learn/seasonal-winter.jpg"
+        alt="Cluster of Velvet Shank mushrooms (Flammulina velutipes) growing on a mossy dead log"
+        caption="Velvet Shank (Flammulina velutipes) — the wild relative of enoki, fruiting on dead hardwood even in freezing weather. Photo: Scott Darbey, Wikimedia Commons, CC BY 2.0"
+      />
+    ),
+  },
   "mushroom-anatomy": {
     "Parts of a Gilled Mushroom": (
       <>
