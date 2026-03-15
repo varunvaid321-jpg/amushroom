@@ -124,7 +124,7 @@ export function MatchCard({ match, rank, isExpanded, onToggle }: MatchCardProps)
           {/* Expand indicator + story hint */}
           <div className="mt-2 flex flex-col items-center gap-0.5">
             <ChevronDown className={`h-5 w-5 text-muted-foreground/50 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
-            {match.story && !isExpanded && (
+            {!isExpanded && (
               <p className="text-sm text-primary/60 font-medium">
                 ✦ Tap for more
               </p>

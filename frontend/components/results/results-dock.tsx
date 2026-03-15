@@ -185,38 +185,36 @@ export function ResultsDock({
         </div>
       )}
 
-      {/* Card stack — each card expands inline, pushing others down */}
-      <div className={cardCount === 1 ? "max-w-md mx-auto space-y-3" : `grid grid-cols-1 ${cardCount === 2 ? "sm:grid-cols-2" : "sm:grid-cols-3"} gap-3`}>
-        {viableMatches.slice(0, 3).map((m, i) => {
-          const isExpanded = expandedSet.has(i);
-          return (
-            <div key={i} className={isExpanded && cardCount > 1 ? "sm:col-span-full" : ""}>
-              <div className={isExpanded && cardCount > 1 ? "max-w-md mx-auto sm:max-w-none" : ""}>
-                <MatchCard
-                  match={m}
-                  rank={i + 1}
-                  isExpanded={isExpanded}
-                  onToggle={() => {
-                    setExpandedSet(prev => {
-                      const next = new Set(prev);
-                      if (next.has(i)) next.delete(i);
-                      else next.add(i);
-                      return next;
-                    });
-                  }}
-                />
-              </div>
-              {isExpanded && (
-                <div className="mt-2">
-                  <ProfilePanel
-                    match={m}
-                    rank={cardCount > 1 ? i + 1 : undefined}
-                  />
-                </div>
-              )}
-            </div>
-          );
-        })}
+      {/* Card grid — cards stay in place, ProfilePanel renders below the grid */}
+      <div className={cardCount === 1 ? "max-w-md mx-auto space-y-3" : "space-y-3"}>
+        <div className={cardCount === 1 ? "space-y-3" : `grid grid-cols-1 ${cardCount === 2 ? "sm:grid-cols-2" : "sm:grid-cols-3"} gap-3`}>
+          {viableMatches.slice(0, 3).map((m, i) => (
+            <MatchCard
+              key={i}
+              match={m}
+              rank={i + 1}
+              isExpanded={expandedSet.has(i)}
+              onToggle={() => {
+                setExpandedSet(prev => {
+                  const next = new Set(prev);
+                  if (next.has(i)) next.delete(i);
+                  else next.add(i);
+                  return next;
+                });
+              }}
+            />
+          ))}
+        </div>
+        {/* Expanded panels render below the grid, in order */}
+        {viableMatches.slice(0, 3).map((m, i) =>
+          expandedSet.has(i) ? (
+            <ProfilePanel
+              key={`panel-${i}`}
+              match={m}
+              rank={cardCount > 1 ? i + 1 : undefined}
+            />
+          ) : null
+        )}
       </div>
 
       {/* Story prompt — shown after new high-confidence scans for logged-in users */}
