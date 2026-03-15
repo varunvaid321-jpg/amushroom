@@ -2074,7 +2074,11 @@ const server = http.createServer(async (req, res) => {
     if (name && (/https?:\/\//.test(name) || /[<>{}]/.test(name))) { sendJson(req, res, 200, { ok: true }); return; }
     const country = typeof body.country === 'string' ? body.country.trim().slice(0, 100) : '';
     try {
-      await addNewsletterSubscriber(email, name, country);
+      const result = await addNewsletterSubscriber(email, name, country);
+      if (result.alreadySubscribed) {
+        sendJson(req, res, 200, { ok: true, alreadySubscribed: true });
+        return;
+      }
       sendNewsletterWelcomeEmail(email, name).catch(() => {});
       sendJson(req, res, 200, { ok: true });
     } catch (err) {
