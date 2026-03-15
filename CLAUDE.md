@@ -253,6 +253,13 @@ The Kindwise API returns species matches with confidence scores. Two local datab
 3. Commit both files in amushroom repo via PR
 Skipping this means new species won't appear as guide links, show look-alike images, or display fun facts in scan results.
 
+### Look-Alike Image Rules (MANDATORY)
+- **"Don't Confuse With" images come ONLY from the look-alike species' own page hero** — never from separate `lookalike-*.jpg` files.
+- If the look-alike species has a page in our guide → its hero image shows automatically via `species-lookup.json`.
+- If the look-alike species is NOT in our guide → text-only card, no image.
+- **When you add a new species page, regenerate `species-lookup.json` immediately** — this makes the new species' hero image appear as a look-alike image on every other species that references it. Old saved scans also pick it up automatically (server re-enriches on load).
+- Never create or reference `lookalike-*.jpg` files in the amushroom repo. The regeneration script is the single source of truth.
+
 ### Frontend
 - `frontend/app/page.tsx` — Homepage (upload + identify flow)
 - `frontend/app/about/page.tsx` — About page
