@@ -161,7 +161,7 @@ const RATE_LIMIT_MAX = Number(process.env.RATE_LIMIT_MAX || 20);
 const AUTH_RATE_LIMIT_ENABLED = process.env.AUTH_RATE_LIMIT_ENABLED !== 'false';
 const AUTH_RATE_LIMIT_WINDOW_MS = Number(process.env.AUTH_RATE_LIMIT_WINDOW_MS || 15 * 60_000);
 const AUTH_RATE_LIMIT_MAX = Number(process.env.AUTH_RATE_LIMIT_MAX || 40);
-const APP_BASE_URL = process.env.APP_BASE_URL || 'https://amushroom.com';
+const APP_BASE_URL = process.env.APP_BASE_URL || 'https://orangutany.com';
 const TRUST_PROXY = process.env.TRUST_PROXY === 'true';
 const SESSION_TTL_DAYS = Number(process.env.SESSION_TTL_DAYS || 30);
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
@@ -1440,6 +1440,9 @@ async function handleStripeWebhook(req, res) {
       const session = event.data.object;
       const userId = Number(session.metadata?.userId);
       const plan = session.metadata?.plan || 'monthly';
+      if (!userId) {
+        console.log(`[stripe] WARNING: webhook missing userId in metadata, sessionId=${session.id}`);
+      }
       if (userId) {
         const isLifetime = plan === 'lifetime' || session.mode === 'payment';
         const tier = isLifetime ? 'pro_lifetime' : 'pro';
@@ -1476,6 +1479,7 @@ async function handleStripeWebhook(req, res) {
           amountCents: session.amount_total || (isLifetime ? 4999 : 799),
           currency: session.currency || 'usd',
           status: isLifetime ? 'lifetime' : 'active',
+          stripeSessionId: session.id,
         });
         console.log(`[stripe] User ${userId} upgraded to ${tier}`);
         writeAuditLog({ eventType: 'tier_change', userId, details: { tier, plan, mode: session.mode, amountCents: session.amount_total } }).catch(() => {});
@@ -1531,6 +1535,19 @@ async function handleStripeWebhook(req, res) {
           currency: invoice.currency || 'usd',
           status: 'paid',
         });
+        // Update membership_expires_at on renewal
+        if (invoice.subscription && stripe) {
+          try {
+            const sub = await stripe.subscriptions.retrieve(String(invoice.subscription));
+            if (sub.current_period_end) {
+              const expiresAt = new Date(sub.current_period_end * 1000).toISOString();
+              await setUserSubscription(user.id, sub.id, user.tier || 'pro', expiresAt);
+              console.log(`[stripe] Updated membership_expires_at for user ${user.id} to ${expiresAt}`);
+            }
+          } catch (subErr) {
+            console.error(`[stripe] Failed to update membership expiry for user ${user.id}:`, subErr.message);
+          }
+        }
         writeAuditLog({ eventType: 'payment', userId: user.id, userEmail: user.email, details: { amountCents: invoice.amount_paid || 0, currency: invoice.currency || 'usd', type: 'renewal' } }).catch(() => {});
       }
     }
@@ -2175,7 +2192,8 @@ const server = http.createServer(async (req, res) => {
           sendJson(req, res, 200, { ok: true, posted: true, ...result });
         }
       } catch (err) {
-        sendJson(req, res, 500, { ok: false, error: err.message });
+        console.error('[admin] instagram-post failed:', err.message);
+        sendJson(req, res, 500, { ok: false, error: 'Operation failed' });
       }
     } else if (route === 'instagram-posts') {
       // GET /api/admin/instagram-posts — list recent posts
@@ -2186,7 +2204,8 @@ const server = http.createServer(async (req, res) => {
         const id = await sendTestEmail(to);
         sendJson(req, res, 200, { ok: true, to, id });
       } catch (err) {
-        sendJson(req, res, 500, { ok: false, error: err.message });
+        console.error('[admin] test-email failed:', err.message);
+        sendJson(req, res, 500, { ok: false, error: 'Operation failed' });
       }
     } else if (route === 'scan-log') {
       const limit = Math.min(Number(url.searchParams.get('limit') || 100), 500);

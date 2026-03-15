@@ -138,9 +138,15 @@ const dbReady = (async () => {
     amount_cents INTEGER NOT NULL,
     currency TEXT NOT NULL DEFAULT 'usd',
     status TEXT NOT NULL,
+    stripe_session_id TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     FOREIGN KEY(user_id) REFERENCES users(id)
   )`);
+
+  // Migration: add stripe_session_id column if missing
+  try {
+    await client.execute("ALTER TABLE payments ADD COLUMN stripe_session_id TEXT");
+  } catch { /* column already exists */ }
 
   await client.execute(`CREATE TABLE IF NOT EXISTS abuse_flags (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -920,10 +926,21 @@ async function findUserByStripeCustomerId(stripeCustomerId) {
   return result.rows[0] ? rowToUser(result.rows[0]) : null;
 }
 
-async function createPaymentRecord({ userId, stripeSubscriptionId, amountCents, currency, status }) {
+async function createPaymentRecord({ userId, stripeSubscriptionId, amountCents, currency, status, stripeSessionId }) {
+  // Idempotency: skip if a payment with this Stripe session ID already exists
+  if (stripeSessionId) {
+    const existing = await client.execute({
+      sql: 'SELECT id FROM payments WHERE stripe_session_id = ?',
+      args: [stripeSessionId]
+    });
+    if (existing.rows.length > 0) {
+      console.log(`[payments] Skipping duplicate payment record for session ${stripeSessionId}`);
+      return;
+    }
+  }
   await client.execute({
-    sql: 'INSERT INTO payments (user_id, stripe_subscription_id, amount_cents, currency, status) VALUES (?, ?, ?, ?, ?)',
-    args: [Number(userId), stripeSubscriptionId || null, amountCents, currency || 'usd', status]
+    sql: 'INSERT INTO payments (user_id, stripe_subscription_id, amount_cents, currency, status, stripe_session_id) VALUES (?, ?, ?, ?, ?, ?)',
+    args: [Number(userId), stripeSubscriptionId || null, amountCents, currency || 'usd', status, stripeSessionId || null]
   });
 }
 
