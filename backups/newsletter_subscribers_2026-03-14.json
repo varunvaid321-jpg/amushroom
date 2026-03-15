@@ -1,0 +1,88 @@
+{
+  "table": "newsletter_subscribers",
+  "backed_up_at": "2026-03-14T02:05:00Z",
+  "reason": "Clearing test data before production launch — all 10 rows are test entries",
+  "row_count": 10,
+  "rows": [
+    {
+      "id": 1,
+      "email": "test@test.com",
+      "name": "test",
+      "country": "Canada",
+      "subscribed_at": "2026-03-08T00:54:27.060Z",
+      "unsubscribed_at": null
+    },
+    {
+      "id": 2,
+      "email": "varun.vaid@gm.com",
+      "name": "varun vaid",
+      "country": "Canada",
+      "subscribed_at": "2026-03-08T00:54:37.430Z",
+      "unsubscribed_at": null
+    },
+    {
+      "id": 3,
+      "email": "test-debug@example.com",
+      "name": "Test",
+      "country": "Canada",
+      "subscribed_at": "2026-03-09T16:57:57.157Z",
+      "unsubscribed_at": null
+    },
+    {
+      "id": 4,
+      "email": "puja.vaid@aol.com",
+      "name": "Puja",
+      "country": "Canada",
+      "subscribed_at": "2026-03-09T16:58:33.426Z",
+      "unsubscribed_at": null
+    },
+    {
+      "id": 5,
+      "email": "newsletter-test-123@example.com",
+      "name": "Test",
+      "country": "United States",
+      "subscribed_at": "2026-03-09T16:59:10.688Z",
+      "unsubscribed_at": null
+    },
+    {
+      "id": 6,
+      "email": "prod-test-newsletter@example.com",
+      "name": "Production Test",
+      "country": "Canada",
+      "subscribed_at": "2026-03-11T14:51:16.636Z",
+      "unsubscribed_at": null
+    },
+    {
+      "id": 7,
+      "email": "not-valid",
+      "name": "Test",
+      "country": "Canada",
+      "subscribed_at": "2026-03-11T14:51:18.329Z",
+      "unsubscribed_at": null
+    },
+    {
+      "id": 8,
+      "email": "final-prod-test@example.com",
+      "name": "Final Test",
+      "country": "Canada",
+      "subscribed_at": "2026-03-11T14:54:01.572Z",
+      "unsubscribed_at": null
+    },
+    {
+      "id": 9,
+      "email": "hello@exsmple.om",
+      "name": "Varun",
+      "country": "Germany",
+      "subscribed_at": "2026-03-11T14:59:38.820Z",
+      "unsubscribed_at": null
+    },
+    {
+      "id": 10,
+      "email": "hi@test.com",
+      "name": "test@test.com",
+      "country": "India",
+      "subscribed_at": "2026-03-12T01:29:15.000Z",
+      "unsubscribed_at": null
+    }
+  ]
+}

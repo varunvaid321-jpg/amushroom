@@ -184,6 +184,14 @@ Before ending a session, on context compaction, or when user says "session closi
 4. Update memory files (`~/.claude/projects/*/memory/`) with any new learnings
 5. This is non-negotiable — no session ends without docs being current
 
+## Database Change Rules (MANDATORY)
+- **Before ANY destructive DB operation** (DELETE, DROP, UPDATE on production data), save a backup of the affected data to `backups/` as a dated JSON file (e.g., `backups/newsletter_subscribers_2026-03-14.json`)
+- Backup file must include: table name, timestamp, reason, row count, and full row data
+- Commit the backup file in the same PR that performs the change
+- PR description must reference the backup file path (e.g., "Backup: `backups/newsletter_subscribers_2026-03-14.json`")
+- Never delete or modify backup files after creation — they are permanent records
+- Backups with real user PII (emails, names) must NOT be committed to git — keep them local in `backups/` only. Test data backups can be committed.
+
 ## Guardrails (before every push)
 - `npm run check` must pass
 - `npm test` must pass
