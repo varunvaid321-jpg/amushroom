@@ -100,6 +100,7 @@ const {
   writeAuditLog,
   getAuditLogs,
   addNewsletterSubscriber,
+  unsubscribeNewsletter,
   listNewsletterSubscribers,
   getNewsletterStats,
   getAdminScanGallery
@@ -491,6 +492,7 @@ function toPublicUser(userRow) {
     tier: userRow.tier || 'free',
     membershipStartedAt: userRow.membership_started_at || null,
     membershipExpiresAt: userRow.membership_expires_at || null,
+    // Internal only — used by checkout/cancel handlers, never sent to client
     stripe_customer_id: userRow.stripe_customer_id || null,
     stripe_subscription_id: userRow.stripe_subscription_id || null,
     hasStripeCustomer: !!(userRow.stripe_customer_id),
@@ -1165,7 +1167,13 @@ async function handleResetPassword(req, res) {
 async function handleAuthMe(req, res) {
   const auth = await getAuthContext(req);
   const user = auth?.user || null;
-  sendJson(req, res, 200, { user, isAdmin: user ? isAdmin(user) : false });
+  // Strip internal Stripe IDs before sending to client
+  let safeUser = null;
+  if (user) {
+    const { stripe_customer_id, stripe_subscription_id, ...rest } = user;
+    safeUser = rest;
+  }
+  sendJson(req, res, 200, { user: safeUser, isAdmin: user ? isAdmin(user) : false });
 }
 
 function handleGoogleStart(req, res, url) {
@@ -1387,6 +1395,7 @@ async function handleStripePortal(req, res) {
   const auth = await getAuthContext(req);
   if (!auth?.user) { jsonError(req, res, 401, 'Authentication required.'); return; }
   if (!auth.user.stripe_customer_id) { jsonError(req, res, 400, 'No billing account found.'); return; }
+  if (auth.user.tier !== 'pro' && auth.user.tier !== 'pro_lifetime') { jsonError(req, res, 400, 'No active membership.'); return; }
 
   const session = await stripe.billingPortal.sessions.create({
     customer: auth.user.stripe_customer_id,
@@ -1404,16 +1413,23 @@ async function handleCancelSubscription(req, res) {
 
   try {
     await stripe.subscriptions.cancel(auth.user.stripe_subscription_id);
-    await downgradeUser(auth.user.id);
+    try {
+      await downgradeUser(auth.user.id);
+    } catch (downgradeErr) {
+      // CRITICAL: Stripe sub is cancelled but DB still shows Pro — log for manual fix
+      console.error(`[cancel-subscription] CRITICAL: Stripe cancelled but downgradeUser failed for user ${auth.user.id}:`, downgradeErr.message);
+      writeAuditLog({ eventType: 'tier_change', userId: auth.user.id, userEmail: auth.user.email, details: { tier: 'pro', reason: 'cancel_downgrade_failed', error: downgradeErr.message }, ip: getClientIp(req) }).catch(() => {});
+      // The subscription.deleted webhook will eventually fix this
+      jsonError(req, res, 500, 'Your subscription was cancelled but there was an issue updating your account. It will be resolved automatically.');
+      return;
+    }
     writeAuditLog({ eventType: 'tier_change', userId: auth.user.id, userEmail: auth.user.email, details: { tier: 'free', reason: 'user_cancelled' }, ip: getClientIp(req) }).catch(() => {});
-    // eslint-disable-next-line no-console
     console.log(`[stripe] User ${auth.user.id} cancelled subscription ${auth.user.stripe_subscription_id}`);
     if (auth.user.email) {
       sendCancellationEmail(auth.user.email, auth.user.name).catch(() => {});
     }
     sendJson(req, res, 200, { success: true, tier: 'free' });
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error('[cancel-subscription] Error:', err.message);
     jsonError(req, res, 500, 'Failed to cancel subscription. Please try again.');
   }
@@ -1540,6 +1556,13 @@ async function handleStripeWebhook(req, res) {
       }
     } else if (event.type === 'invoice.payment_succeeded') {
       const invoice = event.data.object;
+      // Skip initial subscription invoice — already recorded by checkout.session.completed
+      if (invoice.billing_reason === 'subscription_create') {
+        console.log(`[stripe] Skipping initial invoice ${invoice.id} — payment already recorded by checkout webhook`);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end('{"received":true}');
+        return;
+      }
       const customerId = invoice.customer;
       const user = await findUserByStripeCustomerId(String(customerId));
       if (user) {
@@ -2099,6 +2122,26 @@ const server = http.createServer(async (req, res) => {
       // eslint-disable-next-line no-console
       console.error('[newsletter] subscription error:', err);
       jsonError(req, res, 500, 'Something went wrong.');
+    }
+    return;
+  }
+
+  // Newsletter unsubscribe — simple GET with email param (for email link clicks)
+  if (req.method === 'GET' && url.pathname === '/api/newsletter/unsubscribe') {
+    const email = url.searchParams.get('email');
+    if (!email) {
+      res.writeHead(400, { 'Content-Type': 'text/html' });
+      res.end('<html><body style="background:#0e1a0e;color:#f0e4cc;font-family:sans-serif;text-align:center;padding:60px"><h2>Invalid unsubscribe link.</h2></body></html>');
+      return;
+    }
+    try {
+      await unsubscribeNewsletter(email);
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end('<html><body style="background:#0e1a0e;color:#f0e4cc;font-family:sans-serif;text-align:center;padding:60px"><h2>You have been unsubscribed.</h2><p style="color:#c4b49a">You will no longer receive the Orangutany Quarterly. We\'re sorry to see you go.</p></body></html>');
+    } catch (err) {
+      console.error('[newsletter] unsubscribe error:', err);
+      res.writeHead(500, { 'Content-Type': 'text/html' });
+      res.end('<html><body style="background:#0e1a0e;color:#f0e4cc;font-family:sans-serif;text-align:center;padding:60px"><h2>Something went wrong.</h2><p style="color:#c4b49a">Please try again or reply to any newsletter email to unsubscribe.</p></body></html>');
     }
     return;
   }

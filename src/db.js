@@ -945,12 +945,15 @@ async function createPaymentRecord({ userId, stripeSubscriptionId, amountCents, 
 }
 
 async function getRevenueStats() {
-  const subs = await client.execute("SELECT COUNT(*) as count FROM users WHERE tier = 'pro'");
+  const monthlySubs = await client.execute("SELECT COUNT(*) as count FROM users WHERE tier = 'pro'");
+  const lifetimeSubs = await client.execute("SELECT COUNT(*) as count FROM users WHERE tier = 'pro_lifetime'");
   const rev = await client.execute("SELECT COALESCE(SUM(amount_cents), 0) as total FROM payments");
-  const proCount = Number(subs.rows[0]?.count || 0);
+  const monthlyCount = Number(monthlySubs.rows[0]?.count || 0);
+  const lifetimeCount = Number(lifetimeSubs.rows[0]?.count || 0);
   return {
-    proSubscriptions: proCount,
-    mrr: proCount * 799,
+    proSubscriptions: monthlyCount,
+    lifetimeMembers: lifetimeCount,
+    mrr: monthlyCount * 799,
     totalRevenue: Number(rev.rows[0]?.total || 0),
   };
 }
@@ -1099,6 +1102,15 @@ async function listNewsletterSubscribers() {
   return result.rows;
 }
 
+async function unsubscribeNewsletter(email) {
+  await dbReady;
+  const result = await client.execute({
+    sql: `UPDATE newsletter_subscribers SET unsubscribed_at = ? WHERE email = ? AND unsubscribed_at IS NULL`,
+    args: [nowIso(), email.toLowerCase().trim()]
+  });
+  return { success: result.rowsAffected > 0 };
+}
+
 async function getNewsletterStats() {
   await dbReady;
   const total = await client.execute(`SELECT COUNT(*) as count FROM newsletter_subscribers WHERE unsubscribed_at IS NULL`);
@@ -1218,6 +1230,7 @@ module.exports = {
   writeAuditLog,
   getAuditLogs,
   addNewsletterSubscriber,
+  unsubscribeNewsletter,
   listNewsletterSubscribers,
   getNewsletterStats,
   getAdminScanGallery,
