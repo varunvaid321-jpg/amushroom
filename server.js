@@ -988,8 +988,12 @@ async function handleAuthRegister(req, res) {
     return;
   }
 
-  if (await findUserAuthByEmail(email)) {
-    jsonError(req, res, 409, 'An account with this email already exists.');
+  const existingUser = await findUserAuthByEmail(email);
+  if (existingUser) {
+    const msg = existingUser.google_sub
+      ? 'An account with this email already exists. Try signing in with Google.'
+      : 'An account with this email already exists. Try logging in instead.';
+    jsonError(req, res, 409, msg);
     return;
   }
 
@@ -1338,6 +1342,16 @@ async function handleStripeCheckout(req, res) {
   const plan = body.plan || 'monthly';
   const isLifetime = plan === 'lifetime' && STRIPE_LIFETIME_PRICE_ID;
   const priceId = isLifetime ? STRIPE_LIFETIME_PRICE_ID : STRIPE_PRICE_ID;
+
+  // Prevent duplicate purchases
+  if (auth.user.tier === 'pro_lifetime') {
+    jsonError(req, res, 400, 'You already have lifetime access.');
+    return;
+  }
+  if (auth.user.tier === 'pro' && !isLifetime) {
+    jsonError(req, res, 400, 'You already have an active Pro subscription.');
+    return;
+  }
 
   let customerId = auth.user.stripe_customer_id;
   if (!customerId) {
