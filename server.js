@@ -257,6 +257,7 @@ const CONTENT_TYPES = {
 const identifyRateLimitStore = new Map();
 const authRateLimitStore = new Map();
 const globalRateLimitStore = new Map();
+const newsletterRateLimitStore = new Map();
 const loginFailStore = new Map(); // track failed login attempts per email
 
 const GLOBAL_RATE_LIMIT_WINDOW_MS = 60_000;
@@ -2056,11 +2057,21 @@ const server = http.createServer(async (req, res) => {
   }
   if (req.method === 'POST' && url.pathname === '/api/newsletter') {
     res.setHeader('Access-Control-Allow-Origin', 'https://guide.orangutany.com');
+    // Newsletter-specific rate limit: 5 submissions per 15 minutes per IP
+    if (!enforceRouteRateLimit(req, res, newsletterRateLimitStore, 15 * 60 * 1000, 5, 'Too many signup attempts. Please try again later.')) return;
     let body;
     try { body = await parseBody(req, 4 * 1024); } catch { jsonError(req, res, 400, 'Bad request.'); return; }
+    // Honeypot: if the hidden "website" field is filled, silently accept (bot trap)
+    if (body.website) { sendJson(req, res, 200, { ok: true }); return; }
     const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
     if (!email || !validateEmail(email).valid) { jsonError(req, res, 400, 'Valid email is required.'); return; }
+    // Reject disposable/suspicious email patterns
+    const emailDomain = email.split('@')[1] || '';
+    const disposableDomains = ['mailinator.com', 'guerrillamail.com', 'tempmail.com', 'throwaway.email', 'yopmail.com', 'sharklasers.com', 'guerrillamailblock.com', 'grr.la', 'dispostable.com', 'trashmail.com'];
+    if (disposableDomains.includes(emailDomain)) { jsonError(req, res, 400, 'Please use a real email address.'); return; }
     const name = typeof body.name === 'string' ? body.name.trim().slice(0, 100) : '';
+    // Reject names that look like bot spam (URLs, excessive special chars)
+    if (name && (/https?:\/\//.test(name) || /[<>{}]/.test(name))) { sendJson(req, res, 200, { ok: true }); return; }
     const country = typeof body.country === 'string' ? body.country.trim().slice(0, 100) : '';
     try {
       await addNewsletterSubscriber(email, name, country);
