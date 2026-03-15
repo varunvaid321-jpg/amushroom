@@ -257,7 +257,12 @@ async function getPublicUser(id) {
     email: row.email,
     name: row.name || '',
     emailVerified: Boolean(row.email_verified),
+    tier: row.tier || 'free',
+    stripe_customer_id: row.stripe_customer_id || null,
     stripe_subscription_id: row.stripe_subscription_id || null,
+    hasStripeCustomer: !!(row.stripe_customer_id),
+    membershipStartedAt: row.membership_started_at || null,
+    membershipExpiresAt: row.membership_expires_at || null,
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };
