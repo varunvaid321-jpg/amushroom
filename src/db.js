@@ -1087,12 +1087,7 @@ async function addNewsletterSubscriber(email, name, country) {
     return { success: true };
   } catch (err) {
     if (err.message && err.message.includes('UNIQUE')) {
-      // Already subscribed — update name/country silently
-      await client.execute({
-        sql: `UPDATE newsletter_subscribers SET name = ?, country = ?, unsubscribed_at = NULL WHERE email = ?`,
-        args: [name || null, country || null, email.toLowerCase().trim()]
-      });
-      return { success: true };
+      return { success: true, alreadySubscribed: true };
     }
     throw err;
   }
