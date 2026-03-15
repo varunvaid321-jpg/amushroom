@@ -1324,6 +1324,20 @@ async function handleUserUploadDetail(req, res, url) {
     return;
   }
 
+  // Re-enrich look-alikes from current species-lookup.json (stored raw_json may have stale imageUrls)
+  if (Array.isArray(upload.matches)) {
+    for (const match of upload.matches) {
+      const guideEntry = SPECIES_LOOKUP[match.scientificName?.toLowerCase()];
+      if (guideEntry?.lookAlikes?.length > 0) {
+        match.lookAlikes = guideEntry.lookAlikes.slice(0, 5);
+      }
+      if (guideEntry) {
+        match.guideUrl = `https://guide.orangutany.com/mushrooms/${guideEntry.slug}`;
+        match.guideHeroImage = guideEntry.heroImage || null;
+      }
+    }
+  }
+
   const photoRoles = Array.isArray(upload.images) ? upload.images.map((image) => image.role || 'extra') : [];
   const uploadGuidance = buildUploadGuidance(photoRoles, photoRoles.length);
   const consistencyCheck = {
