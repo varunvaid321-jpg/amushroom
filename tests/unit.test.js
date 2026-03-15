@@ -948,10 +948,10 @@ test('frontend: results-dock supports expanded state for card expand/collapse', 
   assert.ok(src.includes('expandedIndex') || src.includes('expanded'), 'results-dock must track expanded state');
 });
 
-test('frontend: results-dock renders grid layout based on match count', () => {
+test('frontend: results-dock renders single-column card layout', () => {
   const src = fs.readFileSync(path.join(root, 'frontend/components/results/results-dock.tsx'), 'utf8');
-  assert.ok(src.includes('grid-cols-1') && src.includes('sm:grid-cols-2') || src.includes('sm:grid-cols-3'),
-    'results-dock must use responsive grid columns');
+  assert.ok(src.includes('max-w-lg') && src.includes('space-y-3'),
+    'results-dock must use single-column centered layout');
 });
 
 test('frontend: match-card has isExpanded and onToggle props', () => {
