@@ -826,7 +826,7 @@
     "lookAlikes": [
       {
         "name": "Fairy Ring Champignon (Marasmius oreades)",
-        "slug": null,
+        "slug": "marasmius-oreades",
         "imageUrl": null,
         "distinction": "The most dangerous confusion."
       },
@@ -1183,7 +1183,7 @@
     "lookAlikes": [
       {
         "name": "St. George's Mushroom (Calocybe gambosa)",
-        "slug": null,
+        "slug": "calocybe-gambosa",
         "imageUrl": null,
         "distinction": "Fruits in spring (April-May), not autumn."
       },
@@ -1511,6 +1511,31 @@
         "slug": null,
         "imageUrl": "https://guide.orangutany.com/images/species/hydnum-repandum/lookalike-chanterelle.jpg",
         "distinction": "Similar color but has ridges (false gills) running down the stem — NOT spines."
+      }
+    ]
+  },
+  "hydnellum peckii": {
+    "slug": "hydnellum-peckii",
+    "commonName": "Bleeding Tooth Fungus",
+    "heroImage": "https://guide.orangutany.com/images/species/hydnellum-peckii/01-field.jpg",
+    "lookAlikes": [
+      {
+        "name": "Mealy Tooth (Hydnellum ferrugineum)",
+        "slug": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/hydnellum-peckii//images/species/hydnellum-peckii/lookalike-hydnellum-ferrugineum.jpg",
+        "distinction": "Most similar species."
+      },
+      {
+        "name": "Ridged Tooth (Hydnellum scrobiculatum)",
+        "slug": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/hydnellum-peckii//images/species/hydnellum-peckii/lookalike-hydnellum-scrobiculatum.jpg",
+        "distinction": "Cap 2-6 cm, fibrillose to pitted-scaly, brown to reddish-brown with a distinctly zonate (ringed) margin."
+      },
+      {
+        "name": "Shingled Hedgehog (Sarcodon imbricatus)",
+        "slug": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/hydnellum-peckii//images/species/hydnellum-peckii/lookalike-sarcodon-imbricatus.jpg",
+        "distinction": "Much larger (cap up to 15 cm) with coarse, upturned brown scales on the cap surface."
       }
     ]
   },
@@ -1996,7 +2021,7 @@
       },
       {
         "name": "Bolbitius titubans (Yellow Fieldcap)",
-        "slug": null,
+        "slug": "bolbitius-titubans",
         "imageUrl": null,
         "distinction": "Also bright yellow, but found outdoors on grass, dung, or straw, not in houseplants."
       }
@@ -2046,7 +2071,7 @@
       },
       {
         "name": "Scleroderma citrinum (Common Earthball)",
-        "slug": null,
+        "slug": "scleroderma-citrinum",
         "imageUrl": null,
         "distinction": "Toxic."
       }
@@ -2322,7 +2347,7 @@
     "lookAlikes": [
       {
         "name": "Phallus impudicus (Common Stinkhorn)",
-        "slug": null,
+        "slug": "phallus-impudicus",
         "imageUrl": null,
         "distinction": "Very similar in shape and ecology, but has a white volva (not pinkish-purple)."
       },
@@ -2334,7 +2359,7 @@
       },
       {
         "name": "Clathrus ruber (Lattice Stinkhorn)",
-        "slug": null,
+        "slug": "clathrus-ruber",
         "imageUrl": null,
         "distinction": "Also a stinkhorn with foul-smelling gleba, but forms a distinctive red lattice or cage structure rather than a phallic stalk."
       }
@@ -2478,7 +2503,7 @@
       },
       {
         "name": "Ramaria botrytis (Cauliflower Coral)",
-        "slug": null,
+        "slug": "ramaria-botrytis",
         "imageUrl": null,
         "distinction": "A large, much-branched coral fungus with white to pinkish branches and purple-pink tips."
       },
@@ -2584,7 +2609,7 @@
       },
       {
         "name": "Hypholoma fasciculare (Sulphur Tuft)",
-        "slug": null,
+        "slug": "hypholoma-fasciculare",
         "imageUrl": null,
         "distinction": "Bitter and mildly toxic."
       }
@@ -2921,8 +2946,8 @@
         "distinction": "Some Agaricus species have similar cap shapes and dark spore prints."
       },
       {
-        "name": "Hypholoma sublateritium (Brick Cap)",
-        "slug": null,
+        "name": "Brick Cap (Hypholoma lateritium)",
+        "slug": "hypholoma-lateritium",
         "imageUrl": null,
         "distinction": "Also reddish-capped and found on wood."
       },
@@ -3078,7 +3103,7 @@
       },
       {
         "name": "Greencracked Brittlegill (Russula virescens)",
-        "slug": null,
+        "slug": "russula-virescens",
         "imageUrl": null,
         "distinction": "Has a green-cracked cap surface (like dried mud) and brittle white gills."
       }
