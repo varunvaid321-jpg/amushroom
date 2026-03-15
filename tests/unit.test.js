@@ -1171,8 +1171,8 @@ test('email: cancellation email has re-subscribe CTA', () => {
   assert.ok(emailSrc.includes('Re-subscribe') || emailSrc.includes('/upgrade'), 'cancellation must have re-subscribe option');
 });
 
-test('email: cancellation email links to upgrade page', () => {
-  assert.ok(emailSrc.includes('orangutany.com/upgrade'), 'cancellation CTA must link to /upgrade');
+test('email: cancellation email links to homepage for re-subscribe', () => {
+  assert.ok(emailSrc.includes('href="https://orangutany.com"'), 'cancellation CTA must link to homepage');
 });
 
 // --- Email safety: graceful degradation ---

@@ -2,6 +2,7 @@ const { Resend } = require('resend');
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const FROM_EMAIL = process.env.FROM_EMAIL || 'Orangutany <noreply@orangutany.com>';
+const REPLY_TO = process.env.REPLY_TO_EMAIL || null;
 
 let resend = null;
 if (RESEND_API_KEY) {
@@ -79,7 +80,7 @@ async function sendWelcomeEmail(to, name) {
   `);
 
   try {
-    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Welcome to Orangutany Mushrooms', html });
+    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Welcome to Orangutany Mushrooms', html, ...(REPLY_TO && { replyTo: REPLY_TO }) });
     console.log(`[email] Welcome sent to ${to} — id: ${result?.data?.id || 'unknown'}`);
   } catch (err) {
     console.error(`[email] Failed to send welcome to ${to}:`, err.message, err.statusCode || '');
@@ -108,7 +109,7 @@ async function sendPasswordResetEmail(to, name, resetUrl) {
   `);
 
   try {
-    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Reset your Orangutany password', html });
+    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Reset your Orangutany password', html, ...(REPLY_TO && { replyTo: REPLY_TO }) });
     console.log(`[email] Password reset sent to ${to} — id: ${result?.data?.id || 'unknown'}`);
   } catch (err) {
     console.error(`[email] Failed to send password reset to ${to}:`, err.message, err.statusCode || '');
@@ -180,7 +181,7 @@ async function sendUpgradeEmail(to, name) {
   `);
 
   try {
-    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Welcome to Orangutany Pro!', html });
+    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Welcome to Orangutany Pro!', html, ...(REPLY_TO && { replyTo: REPLY_TO }) });
     console.log(`[email] Upgrade email sent to ${to} — id: ${result?.data?.id || 'unknown'}`);
   } catch (err) {
     console.error(`[email] Failed to send upgrade email to ${to}:`, err.message);
@@ -233,7 +234,7 @@ async function sendCancellationEmail(to, name) {
 
     <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
     <tr><td style="background-color:#c8956c;border-radius:10px;">
-      <a href="https://orangutany.com/upgrade" style="display:inline-block;padding:14px 32px;font-size:16px;font-weight:600;color:#0e1a0e;text-decoration:none;letter-spacing:0.2px;">Re-subscribe</a>
+      <a href="https://orangutany.com" style="display:inline-block;padding:14px 32px;font-size:16px;font-weight:600;color:#0e1a0e;text-decoration:none;letter-spacing:0.2px;">Re-subscribe</a>
     </td></tr>
     </table>
 
@@ -241,7 +242,7 @@ async function sendCancellationEmail(to, name) {
   `);
 
   try {
-    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Your Orangutany Pro subscription has been cancelled', html });
+    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Your Orangutany Pro subscription has been cancelled', html, ...(REPLY_TO && { replyTo: REPLY_TO }) });
     console.log(`[email] Cancellation email sent to ${to} — id: ${result?.data?.id || 'unknown'}`);
   } catch (err) {
     console.error(`[email] Failed to send cancellation email to ${to}:`, err.message);
@@ -280,7 +281,7 @@ async function sendLifetimeUpgradeEmail(to, name) {
   `);
 
   try {
-    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Welcome to Orangutany Pro Lifetime!', html });
+    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Welcome to Orangutany Pro Lifetime!', html, ...(REPLY_TO && { replyTo: REPLY_TO }) });
     console.log(`[email] Lifetime upgrade email sent to ${to} — id: ${result?.data?.id || 'unknown'}`);
   } catch (err) {
     console.error(`[email] Failed to send lifetime upgrade email to ${to}:`, err.message);
@@ -310,7 +311,7 @@ async function sendPaymentFailedEmail(to, name) {
   `);
 
   try {
-    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Orangutany Pro — Payment failed', html });
+    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Orangutany Pro — Payment failed', html, ...(REPLY_TO && { replyTo: REPLY_TO }) });
     console.log(`[email] Payment failed email sent to ${to} — id: ${result?.data?.id || 'unknown'}`);
   } catch (err) {
     console.error(`[email] Failed to send payment failed email to ${to}:`, err.message);
@@ -349,7 +350,12 @@ async function sendNewsletterWelcomeEmail(to, name) {
   `);
 
   try {
-    const result = await resend.emails.send({ from: FROM_EMAIL, to, subject: 'Welcome to the Orangutany Newsletter!', html });
+    const unsubUrl = `https://orangutany.com/api/newsletter/unsubscribe?email=${encodeURIComponent(to)}`;
+    const result = await resend.emails.send({
+      from: FROM_EMAIL, to, subject: 'Welcome to the Orangutany Newsletter!', html,
+      ...(REPLY_TO && { replyTo: REPLY_TO }),
+      headers: { 'List-Unsubscribe': `<${unsubUrl}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' }
+    });
     console.log(`[email] Newsletter welcome sent to ${to} — id: ${result?.data?.id || 'unknown'}`);
   } catch (err) {
     console.error(`[email] Failed to send newsletter welcome to ${to}:`, err.message);
