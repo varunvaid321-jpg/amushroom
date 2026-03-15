@@ -57,6 +57,15 @@ Mushroom identification web app (orangutany.com). Users upload photos, get AI-po
 - No console.log unless intentional server logging
 - Security-first: validate inputs server-side, never trust client MIME types
 
+## MANDATORY: Agent Prompts Must Include Critical Rules
+When spawning sub-agents (research, image download, etc.), they do NOT read CLAUDE.md automatically. You MUST include these rules directly in the agent prompt:
+1. **Verify EVERY iNaturalist taxon ID via API**: `https://api.inaturalist.org/v1/taxa?q=NAME&rank=species` — AI-generated IDs are wrong >80% of the time. Never guess.
+2. **Look-alike `image` field must be FILENAME ONLY** (e.g., `"lookalike-species-name.jpg"`), never a full path.
+3. **Tell the agent which look-alike species already exist in our DB** (provide slugs) so it knows which need external links vs internal slugs.
+4. **No illustrations, diagrams, or microscopy images** — only real field photographs.
+5. **Verify all Wikipedia/MushroomExpert/external links resolve** — no 404s.
+6. **GBIF key must be verified via API**: `https://api.gbif.org/v1/species/match?name=NAME&kingdom=Fungi`
+
 ## Image Serving Rules (CRITICAL — caused regression chain March 11 2026)
 - **NEVER embed base64 image blobs in JSON API responses** — use URL references to `/api/uploads/{id}/cover-image` instead. Inline blobs cause massive payloads, slow responses, and spinners.
 - **Image-serving endpoints MUST be above the global rate limiter** in server.js — thumbnail `<img src>` tags fire many parallel requests that hit the rate limit otherwise.
