@@ -1389,6 +1389,31 @@
       }
     ]
   },
+  "gymnopilus luteofolius": {
+    "slug": "gymnopilus-luteofolius",
+    "commonName": "Yellow-gilled Gymnopilus",
+    "heroImage": "https://guide.orangutany.com/images/species/gymnopilus-luteofolius/01-field.jpg",
+    "lookAlikes": [
+      {
+        "name": "Spectacular Rustgill (Gymnopilus junonius)",
+        "slug": "gymnopilus-junonius",
+        "imageUrl": null,
+        "distinction": "Larger (caps to 20+ cm), golden-orange without purplish tones, grows at base of living hardwoods, extremely bitter."
+      },
+      {
+        "name": "Green-Staining Gymnopilus (Gymnopilus viridans)",
+        "slug": "gymnopilus-viridans",
+        "imageUrl": null,
+        "distinction": "Develops greenish-blue staining on cap and flesh when bruised."
+      },
+      {
+        "name": "Funeral Bell (Galerina marginata)",
+        "slug": "galerina-marginata",
+        "imageUrl": null,
+        "distinction": "DEADLY — contains amatoxins."
+      }
+    ]
+  },
   "gymnopilus viridans": {
     "slug": "gymnopilus-viridans",
     "commonName": "Green-Staining Gymnopilus",
@@ -1995,10 +2020,35 @@
         "distinction": "Much larger (cap 15-30 cm), with a tall stem marked by a snakeskin pattern and a movable double ring."
       },
       {
-        "name": "Lepiota cristata (Stinking Dapperling)",
-        "slug": null,
+        "name": "Stinking Dapperling (Lepiota cristata)",
+        "slug": "lepiota-cristata",
         "imageUrl": null,
         "distinction": "A small Lepiota with reddish-brown concentric scales and a strong, unpleasant rubber or chemical smell."
+      }
+    ]
+  },
+  "lepiota cristata": {
+    "slug": "lepiota-cristata",
+    "commonName": "Stinking Dapperling",
+    "heroImage": "https://guide.orangutany.com/images/species/lepiota-cristata/01-field.jpg",
+    "lookAlikes": [
+      {
+        "name": "Deadly Dapperling (Lepiota brunneoincarnata)",
+        "slug": "lepiota-brunneoincarnata",
+        "imageUrl": null,
+        "distinction": "Also small with scaled cap, but scales are pinkish-brown to wine-brown rather than chestnut."
+      },
+      {
+        "name": "Parasol Mushroom (Macrolepiota procera)",
+        "slug": "macrolepiota-procera",
+        "imageUrl": null,
+        "distinction": "Much larger (cap 10-30 cm) with a snakeskin-patterned stem and movable double ring."
+      },
+      {
+        "name": "White Dapperling (Leucocoprinus leucothites)",
+        "slug": null,
+        "imageUrl": null,
+        "distinction": "Similar size range (5-10 cm) but cap is smooth, white to off-white without concentric scales."
       }
     ]
   },
@@ -2039,8 +2089,8 @@
         "distinction": "Very similar in size, shape, and habitat (also appears in potted plants), but entirely white rather than yellow."
       },
       {
-        "name": "Lepiota cristata (Stinking Dapperling)",
-        "slug": null,
+        "name": "Stinking Dapperling (Lepiota cristata)",
+        "slug": "lepiota-cristata",
         "imageUrl": null,
         "distinction": "Much more dangerous (potentially deadly)."
       },
@@ -2540,6 +2590,31 @@
       }
     ]
   },
+  "psilocybe allenii": {
+    "slug": "psilocybe-allenii",
+    "commonName": "Allen's Psilocybe",
+    "heroImage": "https://guide.orangutany.com/images/species/psilocybe-allenii/01-field.jpg",
+    "lookAlikes": [
+      {
+        "name": "Wavy Cap (Psilocybe cyanescens)",
+        "slug": "psilocybe-cyanescens",
+        "imageUrl": null,
+        "distinction": "The most similar species."
+      },
+      {
+        "name": "Funeral Bell (Galerina marginata)",
+        "slug": "galerina-marginata",
+        "imageUrl": null,
+        "distinction": "DEADLY."
+      },
+      {
+        "name": "Blue-ringed Webcap (Psilocybe stuntzii)",
+        "slug": "psilocybe-stuntzii",
+        "imageUrl": null,
+        "distinction": "Another Pacific Northwest wood-chip Psilocybe."
+      }
+    ]
+  },
   "psilocybe azurescens": {
     "slug": "psilocybe-azurescens",
     "commonName": "Flying Saucer",
@@ -2627,8 +2702,8 @@
         "distinction": "DEADLY."
       },
       {
-        "name": "Psilocybe allenii",
-        "slug": null,
+        "name": "Allen's Psilocybe (Psilocybe allenii)",
+        "slug": "psilocybe-allenii",
         "imageUrl": null,
         "distinction": "Also psychoactive, also on wood chips in the Pacific Northwest."
       },
