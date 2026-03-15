@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 
 export default function BillingPage() {
   const { user, loading, openAuthModal, refresh } = useAuth();
-  const { startCheckout } = useUpgrade();
+  const { startCheckout, openUpgrade } = useUpgrade();
   const [portalLoading, setPortalLoading] = useState(false);
   const [portalError, setPortalError] = useState<string | null>(null);
   const [cancelConfirming, setCancelConfirming] = useState(false);
@@ -170,12 +170,12 @@ export default function BillingPage() {
       <div className="space-y-3">
         {/* Free user - upgrade */}
         {!isPro && !cancelSuccess && (
-          <a
-            href="/upgrade"
-            className="flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition"
+          <button
+            onClick={openUpgrade}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition"
           >
             Upgrade to Pro
-          </a>
+          </button>
         )}
 
         {/* Monthly user - cancel or upgrade to lifetime */}
