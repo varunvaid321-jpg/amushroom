@@ -26,19 +26,19 @@
       {
         "name": "Yellow Stainer (Agaricus xanthodermus)",
         "slug": "agaricus-xanthodermus",
-        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-arvensis/lookalike-xanthodermus.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-xanthodermus/01-classic.jpg",
         "distinction": "The critical look-alike to learn."
       },
       {
         "name": "Death Cap (Amanita phalloides)",
         "slug": "amanita-phalloides",
-        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-arvensis/lookalike-phalloides.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-phalloides/01-cap-top.jpg",
         "distinction": "The most dangerous possible confusion."
       },
       {
         "name": "Field Mushroom (Agaricus campestris)",
         "slug": "agaricus-campestris",
-        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-arvensis/lookalike-campestris.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-campestris/05-field.jpg",
         "distinction": "The classic 'button mushroom' of fields and pastures."
       }
     ]
@@ -51,19 +51,19 @@
       {
         "name": "Death Cap (Amanita phalloides)",
         "slug": "amanita-phalloides",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-phalloides/01-cap-top.jpg",
         "distinction": "Young white buttons of A."
       },
       {
         "name": "Field Mushroom (Agaricus campestris)",
         "slug": "agaricus-campestris",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-campestris/05-field.jpg",
         "distinction": "Very closely related and nearly identical in the field."
       },
       {
         "name": "Yellow-staining Mushroom (Agaricus xanthodermus)",
         "slug": "agaricus-xanthodermus",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-xanthodermus/01-classic.jpg",
         "distinction": "Looks similar in the button stage."
       }
     ]
@@ -71,24 +71,24 @@
   "agaricus campestris": {
     "slug": "agaricus-campestris",
     "commonName": "Field Mushroom",
-    "heroImage": "https://guide.orangutany.com/images/species/agaricus-campestris/01-field.jpg",
+    "heroImage": "https://guide.orangutany.com/images/species/agaricus-campestris/05-field.jpg",
     "lookAlikes": [
       {
         "name": "Death Cap (Amanita phalloides)",
         "slug": "amanita-phalloides",
-        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-campestris/lookalike-phalloides.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-phalloides/01-cap-top.jpg",
         "distinction": "The critical confusion."
       },
       {
         "name": "Yellow-staining Mushroom (Agaricus xanthodermus)",
         "slug": "agaricus-xanthodermus",
-        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-campestris/lookalike-xanthodermus.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-xanthodermus/01-classic.jpg",
         "distinction": "Looks very similar — same white cap, same habitat."
       },
       {
         "name": "White Dapperling (Leucoagaricus leucothites)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-campestris/lookalike-leucothites.jpg",
+        "imageUrl": null,
         "distinction": "Grows in similar grassy habitats and looks like a white Field Mushroom at first glance."
       }
     ]
@@ -101,19 +101,19 @@
       {
         "name": "Horse Mushroom (Agaricus arvensis)",
         "slug": "agaricus-arvensis",
-        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-xanthodermus/lookalike-arvensis.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-arvensis/01-hero.jpg",
         "distinction": "Also stains slightly yellowish, but the color is a dull ochre-yellow, not the intense chrome-yellow of the Yellow Stainer."
       },
       {
         "name": "Field Mushroom (Agaricus campestris)",
         "slug": "agaricus-campestris",
-        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-xanthodermus/lookalike-campestris.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-campestris/05-field.jpg",
         "distinction": "No yellow staining whatsoever — flesh stays white when cut or scratched."
       },
       {
         "name": "Button Mushroom (Agaricus bisporus)",
         "slug": "agaricus-bisporus",
-        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-xanthodermus/lookalike-bisporus.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-bisporus/01-field.jpg",
         "distinction": "The cultivated supermarket mushroom."
       }
     ]
@@ -126,7 +126,7 @@
       {
         "name": "Conocybe filaris (Deadly Conocybe)",
         "slug": "conocybe-filaris",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/conocybe-filaris/01-habitat.jpg",
         "distinction": "DEADLY."
       },
       {
@@ -151,19 +151,19 @@
       {
         "name": "Fly Agaric (Amanita muscaria)",
         "slug": "amanita-muscaria",
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-caesarea/lookalike-muscaria.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-muscaria/01-cap-top.jpg",
         "distinction": "This is the critical confusion."
       },
       {
         "name": "American Caesar's (Amanita jacksonii)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-caesarea/lookalike-jacksonii.jpg",
+        "imageUrl": null,
         "distinction": "The North American counterpart."
       },
       {
         "name": "Death Cap (Amanita phalloides)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-caesarea/lookalike-phalloides.jpg",
+        "imageUrl": null,
         "distinction": "The egg stage of Caesar's Mushroom can be confused with the egg stage of the Death Cap — both emerge from a white universal veil."
       }
     ]
@@ -176,19 +176,19 @@
       {
         "name": "Death Cap (Amanita phalloides)",
         "slug": "amanita-phalloides",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-phalloides/01-cap-top.jpg",
         "distinction": "The critical confusion."
       },
       {
         "name": "Destroying Angel (Amanita virosa)",
         "slug": "amanita-virosa",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-virosa/01-white-cap.jpg",
         "distinction": "Pure white all over, with a shaggy stem, sack-like volva, and no potato smell."
       },
       {
         "name": "The Blusher (Amanita rubescens)",
         "slug": "amanita-rubescens",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-rubescens/01-full-mushroom.jpg",
         "distinction": "Pinkish-brown cap with grayish veil patches."
       }
     ]
@@ -201,19 +201,19 @@
       {
         "name": "Caesar's Mushroom (Amanita caesarea)",
         "slug": "amanita-caesarea",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-caesarea/01-mature-cap.jpg",
         "distinction": "The prized edible."
       },
       {
         "name": "Fly Agaric (Amanita muscaria)",
         "slug": "amanita-muscaria",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-muscaria/01-cap-top.jpg",
         "distinction": "The classic red-and-white toadstool."
       },
       {
         "name": "Panther Cap (Amanita pantherina)",
         "slug": "amanita-pantherina",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-pantherina/01-habitat.jpg",
         "distinction": "Brown to tan cap rather than yellow."
       }
     ]
@@ -226,19 +226,19 @@
       {
         "name": "Amanita caesarea (Caesar's Mushroom)",
         "slug": "amanita-caesarea",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-caesarea/01-mature-cap.jpg",
         "distinction": "The European counterpart."
       },
       {
         "name": "Amanita muscaria (Fly Agaric)",
         "slug": "amanita-muscaria",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-muscaria/01-cap-top.jpg",
         "distinction": "Also has a red cap but is covered in white wart-like patches (remnants of universal veil)."
       },
       {
         "name": "Amanita phalloides (Death Cap)",
         "slug": "amanita-phalloides",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-phalloides/01-cap-top.jpg",
         "distinction": "Greenish to yellowish cap (not red)."
       }
     ]
@@ -251,13 +251,13 @@
       {
         "name": "Caesar's Mushroom (Amanita caesarea)",
         "slug": "amanita-caesarea",
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-muscaria/lookalike-caesarea.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-caesarea/01-mature-cap.jpg",
         "distinction": "Actually edible and delicious — prized since Roman times."
       },
       {
         "name": "Panther Cap (Amanita pantherina)",
         "slug": "amanita-pantherina",
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-muscaria/lookalike-pantherina.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-pantherina/01-habitat.jpg",
         "distinction": "More dangerous than the Fly Agaric."
       },
       {
@@ -276,7 +276,7 @@
       {
         "name": "The Blusher (Amanita rubescens)",
         "slug": "amanita-rubescens",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-rubescens/01-full-mushroom.jpg",
         "distinction": "The most dangerous confusion."
       },
       {
@@ -288,7 +288,7 @@
       {
         "name": "Fly Agaric (Amanita muscaria)",
         "slug": "amanita-muscaria",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-muscaria/01-cap-top.jpg",
         "distinction": "Classic red cap with white warts is usually obvious, but faded or rain-washed Fly Agaric specimens can appear orange-brown and overlap with Panther Cap."
       }
     ]
@@ -301,19 +301,19 @@
       {
         "name": "Paddy Straw Mushroom (Volvariella volvacea)",
         "slug": "volvariella-volvacea",
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-phalloides/lookalike-volvacea.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/volvariella-volvacea/01-field.jpg",
         "distinction": "A popular edible mushroom in Southeast Asian cuisine."
       },
       {
         "name": "Green-spored Parasol (Chlorophyllum molybdites)",
         "slug": "chlorophyllum-molybdites",
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-phalloides/lookalike-molybdites.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/chlorophyllum-molybdites/01-field.jpg",
         "distinction": "The most commonly eaten poisonous mushroom in North America (causes severe GI distress but is rarely fatal)."
       },
       {
         "name": "Field Mushroom (Agaricus campestris)",
         "slug": "agaricus-campestris",
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-phalloides/lookalike-campestris.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-campestris/05-field.jpg",
         "distinction": "A common edible mushroom."
       }
     ]
@@ -326,19 +326,19 @@
       {
         "name": "Western Destroying Angel (Amanita ocreata)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-novinupta/lookalike-ocreata.jpg",
+        "imageUrl": null,
         "distinction": "The most dangerous confusion and the reason most experts advise against eating the Blushing Bride."
       },
       {
         "name": "The Blusher (Amanita rubescens)",
         "slug": "amanita-rubescens",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-rubescens/01-full-mushroom.jpg",
         "distinction": "The European and eastern North American counterpart."
       },
       {
         "name": "Panther Cap (Amanita pantherina)",
         "slug": "amanita-pantherina",
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-novinupta/lookalike-pantherina.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-pantherina/01-habitat.jpg",
         "distinction": "Brown cap with pure white, evenly spaced warts."
       }
     ]
@@ -351,19 +351,19 @@
       {
         "name": "Panther Cap (Amanita pantherina)",
         "slug": "amanita-pantherina",
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-rubescens/lookalike-pantherina.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-pantherina/01-habitat.jpg",
         "distinction": "The most dangerous confusion."
       },
       {
         "name": "Grey Spotted Amanita (Amanita excelsa)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-rubescens/lookalike-excelsa.jpg",
+        "imageUrl": null,
         "distinction": "Very similar overall shape and size."
       },
       {
         "name": "Gemmed Amanita (Amanita gemmata)",
         "slug": "amanita-gemmata",
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-rubescens/lookalike-gemmata.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-gemmata/01-field.jpg",
         "distinction": "Smaller and paler, with a yellow to ochre cap and white warts."
       }
     ]
@@ -376,19 +376,19 @@
       {
         "name": "Death Cap (Amanita phalloides)",
         "slug": "amanita-phalloides",
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-fulva/lookalike-phalloides.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-phalloides/01-cap-top.jpg",
         "distinction": "THE critical look-alike."
       },
       {
         "name": "Orange Grisette (Amanita crocea)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-fulva/lookalike-crocea.jpg",
+        "imageUrl": null,
         "distinction": "Very similar to A."
       },
       {
         "name": "Grisette (Amanita vaginata)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-fulva/lookalike-vaginata.jpg",
+        "imageUrl": null,
         "distinction": "The gray version of the grisette group."
       }
     ]
@@ -401,19 +401,19 @@
       {
         "name": "Field Mushroom (Agaricus campestris)",
         "slug": "agaricus-campestris",
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-virosa/lookalike-campestris.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-campestris/05-field.jpg",
         "distinction": "The most dangerous confusion."
       },
       {
         "name": "Eastern North American Destroying Angel (Amanita bisporigera)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-virosa/lookalike-bisporigera.jpg",
+        "imageUrl": null,
         "distinction": "Essentially the American counterpart of Amanita virosa — equally deadly."
       },
       {
         "name": "White Dapperling (Leucocoprinus leucothites)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-virosa/lookalike-leucothites.jpg",
+        "imageUrl": null,
         "distinction": "A white mushroom that grows in grass and gardens, sometimes confused with both Field Mushrooms and Destroying Angels."
       }
     ]
@@ -426,19 +426,19 @@
       {
         "name": "Deadly Galerina (Galerina marginata)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/armillaria-mellea/lookalike-galerina.jpg",
+        "imageUrl": null,
         "distinction": "This is the dangerous one."
       },
       {
         "name": "Shaggy Scalycap (Pholiota squarrosa)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/armillaria-mellea/lookalike-pholiota.jpg",
+        "imageUrl": null,
         "distinction": "Grows in similar clusters on wood and can overlap in season and habitat."
       },
       {
         "name": "Ringless Honey Mushroom (Desarmillaria tabescens)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/armillaria-mellea/lookalike-tabescens.jpg",
+        "imageUrl": null,
         "distinction": "Very similar to the honey fungus and also edible when cooked."
       }
     ]
@@ -457,7 +457,7 @@
       {
         "name": "Tremella mesenterica (Yellow Brain Fungus)",
         "slug": "tremella-mesenterica",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/tremella-mesenterica/01-classic.jpg",
         "distinction": "A bright yellow to orange gelatinous fungus on dead hardwood."
       }
     ]
@@ -470,19 +470,19 @@
       {
         "name": "Conocybe apala (White Dunce Cap)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/bolbitius-titubans/lookalike-conocybe-apala.jpg",
+        "imageUrl": null,
         "distinction": "A similarly fragile, lawn-dwelling mushroom with a conical cap on a thin stem."
       },
       {
         "name": "Deadly Conocybe (Conocybe filaris)",
         "slug": "conocybe-filaris",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/conocybe-filaris/01-habitat.jpg",
         "distinction": "A dangerously toxic small brown mushroom found in lawns and wood chips."
       },
       {
         "name": "Plantpot Dapperling (Leucocoprinus birnbaumii)",
         "slug": "leucocoprinus-birnbaumii",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/leucocoprinus-birnbaumii/01-field.jpg",
         "distinction": "Another bright yellow mushroom, but found exclusively in potted plants and greenhouses — not in outdoor pastures."
       }
     ]
@@ -495,19 +495,19 @@
       {
         "name": "Bitter Bolete (Tylopilus felleus)",
         "slug": "tylopilus-felleus",
-        "imageUrl": "https://guide.orangutany.com/images/species/boletus-edulis/lookalike-felleus.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/tylopilus-felleus/01-full-specimen.jpg",
         "distinction": "The classic porcini impostor."
       },
       {
         "name": "White King Bolete (Boletus barrowsii)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/boletus-edulis/lookalike-barrowsii.jpg",
+        "imageUrl": null,
         "distinction": "Actually edible and delicious — just paler."
       },
       {
         "name": "Bay Bolete (Imleria badia)",
         "slug": "imleria-badia",
-        "imageUrl": "https://guide.orangutany.com/images/species/boletus-edulis/lookalike-badia.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/imleria-badia/01-classic.jpg",
         "distinction": "Another edible look-alike, common in European pine forests."
       }
     ]
@@ -520,7 +520,7 @@
       {
         "name": "Boletus edulis (Porcini/Cep)",
         "slug": "boletus-edulis",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/boletus-edulis/01-classic.jpg",
         "distinction": "Very closely related and culinarily equivalent."
       },
       {
@@ -532,7 +532,7 @@
       {
         "name": "Rubroboletus satanas (Satan's Bolete)",
         "slug": "rubroboletus-satanas",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/rubroboletus-satanas/01-field.jpg",
         "distinction": "A toxic bolete with a pale grayish-white cap (not dark reddish-brown), blood-red pore surface, and red reticulation on the stem."
       }
     ]
@@ -545,7 +545,7 @@
       {
         "name": "Boletus edulis (King Bolete / Porcini)",
         "slug": "boletus-edulis",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/boletus-edulis/01-classic.jpg",
         "distinction": "Very similar and equally edible."
       },
       {
@@ -557,7 +557,7 @@
       {
         "name": "Rubroboletus satanas (Satan's Bolete)",
         "slug": "rubroboletus-satanas",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/rubroboletus-satanas/01-field.jpg",
         "distinction": "Pale whitish cap but with vivid red pores and a red-orange reticulation on a swollen yellow and red stem."
       }
     ]
@@ -570,7 +570,7 @@
       {
         "name": "Deadly Fibrecap (Inocybe erubescens)",
         "slug": "inocybe-erubescens",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/inocybe-erubescens/01-mature-group.jpg",
         "distinction": "TOXIC."
       },
       {
@@ -589,19 +589,19 @@
       {
         "name": "Common Earthball (Scleroderma citrinum)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/calvatia-gigantea/lookalike-scleroderma.jpg",
+        "imageUrl": null,
         "distinction": "The dangerous one to watch for."
       },
       {
         "name": "Common Puffball (Lycoperdon perlatum)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/calvatia-gigantea/lookalike-lycoperdon.jpg",
+        "imageUrl": null,
         "distinction": "Much smaller — golf ball to tennis ball sized."
       },
       {
         "name": "Purple-Spored Puffball (Calvatia cyathiformis)",
         "slug": "calvatia-cyathiformis",
-        "imageUrl": "https://guide.orangutany.com/images/species/calvatia-gigantea/lookalike-cyathiformis.jpg",
+        "imageUrl": null,
         "distinction": "A close relative that's also edible when young."
       }
     ]
@@ -614,19 +614,19 @@
       {
         "name": "Jack O'Lantern (Omphalotus olearius)",
         "slug": "omphalotus-olearius",
-        "imageUrl": "https://guide.orangutany.com/images/species/cantharellus-cibarius/lookalike-olearius.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/omphalotus-olearius/01-cluster.jpg",
         "distinction": "The dangerous one."
       },
       {
         "name": "False Chanterelle (Hygrophoropsis aurantiaca)",
         "slug": "hygrophoropsis-aurantiaca",
-        "imageUrl": "https://guide.orangutany.com/images/species/cantharellus-cibarius/lookalike-aurantiaca.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/hygrophoropsis-aurantiaca/01-classic.jpg",
         "distinction": "Much more common mix-up than Jack O'Lantern."
       },
       {
         "name": "Scaly Vase Chanterelle (Turbinellus floccosus)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/cantharellus-cibarius/lookalike-floccosus.jpg",
+        "imageUrl": null,
         "distinction": "Vase-shaped like a chanterelle but covered in coarse, shaggy scales on the cap surface."
       }
     ]
@@ -639,19 +639,19 @@
       {
         "name": "Jack O'Lantern (Omphalotus olearius)",
         "slug": "omphalotus-olearius",
-        "imageUrl": "https://guide.orangutany.com/images/species/cantharellus-formosus/lookalike-omphalotus.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/omphalotus-olearius/01-cluster.jpg",
         "distinction": "The most dangerous chanterelle look-alike."
       },
       {
         "name": "False Chanterelle (Hygrophoropsis aurantiaca)",
         "slug": "hygrophoropsis-aurantiaca",
-        "imageUrl": "https://guide.orangutany.com/images/species/cantharellus-formosus/lookalike-hygrophoropsis.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/hygrophoropsis-aurantiaca/01-classic.jpg",
         "distinction": "Thinner-fleshed and more orange than golden."
       },
       {
         "name": "Golden Chanterelle (Cantharellus cibarius)",
         "slug": "cantharellus-cibarius",
-        "imageUrl": "https://guide.orangutany.com/images/species/cantharellus-formosus/lookalike-cibarius.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/cantharellus-cibarius/01-field.jpg",
         "distinction": "The European counterpart — extremely similar and historically confused with C."
       }
     ]
@@ -664,7 +664,7 @@
       {
         "name": "Cantharellus cibarius (Golden Chanterelle)",
         "slug": "cantharellus-cibarius",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/cantharellus-cibarius/01-field.jpg",
         "distinction": "Much larger (up to 12 cm), golden yellow rather than red-pink."
       },
       {
@@ -683,19 +683,19 @@
       {
         "name": "Craterellus tubaeformis (Trumpet Chanterelle)",
         "slug": "craterellus-tubaeformis",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/craterellus-tubaeformis/01-field.jpg",
         "distinction": "Taxonomists have moved some populations into Craterellus."
       },
       {
         "name": "Hygrophoropsis aurantiaca (False Chanterelle)",
         "slug": "hygrophoropsis-aurantiaca",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/hygrophoropsis-aurantiaca/01-classic.jpg",
         "distinction": "Has true, thin, blade-like gills rather than blunt ridges."
       },
       {
         "name": "Omphalotus olearius (Jack O'Lantern)",
         "slug": "omphalotus-olearius",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/omphalotus-olearius/01-cluster.jpg",
         "distinction": "Much larger, deeper orange, and grows in dense clusters on wood or buried roots."
       }
     ]
@@ -708,19 +708,19 @@
       {
         "name": "Chicken of the Woods (Laetiporus sulphureus)",
         "slug": "laetiporus-sulphureus",
-        "imageUrl": "https://guide.orangutany.com/images/species/cerioporus-squamosus/lookalike-laetiporus.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/laetiporus-sulphureus/01-shelf-orange.jpg",
         "distinction": "Bright orange-yellow shelves with no scales — impossible to confuse once you know both."
       },
       {
         "name": "Hen of the Woods (Grifola frondosa)",
         "slug": "grifola-frondosa",
-        "imageUrl": "https://guide.orangutany.com/images/species/cerioporus-squamosus/lookalike-grifola.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/grifola-frondosa/05-fresh.jpg",
         "distinction": "Grows as a large rosette of many small, overlapping gray-brown caps at the base of oaks."
       },
       {
         "name": "Birch Polypore (Fomitopsis betulina)",
         "slug": "fomitopsis-betulina",
-        "imageUrl": "https://guide.orangutany.com/images/species/cerioporus-squamosus/lookalike-fomitopsis.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/fomitopsis-betulina/01-bracket.jpg",
         "distinction": "Smooth, white to gray-brown brackets exclusively on birch trees."
       }
     ]
@@ -733,19 +733,19 @@
       {
         "name": "Parasol Mushroom (Macrolepiota procera)",
         "slug": "macrolepiota-procera",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/macrolepiota-procera/01-field-habitat.jpg",
         "distinction": "Excellent edible."
       },
       {
         "name": "Shaggy Parasol (Chlorophyllum rhacodes)",
         "slug": "chlorophyllum-rhacodes",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/chlorophyllum-rhacodes/01-growth-stages.jpg",
         "distinction": "Edible with caution (causes GI upset in some)."
       },
       {
         "name": "Agaricus campestris (Meadow Mushroom)",
         "slug": "agaricus-campestris",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-campestris/05-field.jpg",
         "distinction": "Edible."
       }
     ]
@@ -758,19 +758,19 @@
       {
         "name": "Green-spored Parasol (Chlorophyllum molybdites)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/chlorophyllum-rhacodes/lookalike-molybdites.jpg",
+        "imageUrl": null,
         "distinction": "The most dangerous look-alike and the #1 cause of mushroom poisonings in North America."
       },
       {
         "name": "Parasol Mushroom (Macrolepiota procera)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/chlorophyllum-rhacodes/lookalike-procera.jpg",
+        "imageUrl": null,
         "distinction": "A prized edible that's taller and more slender."
       },
       {
         "name": "Yellow-staining Mushroom (Agaricus xanthodermus)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/chlorophyllum-rhacodes/lookalike-xanthodermus.jpg",
+        "imageUrl": null,
         "distinction": "Toxic Agaricus species that causes GI upset."
       }
     ]
@@ -797,24 +797,24 @@
   "clitocybe nebularis": {
     "slug": "clitocybe-nebularis",
     "commonName": "Clouded Funnel",
-    "heroImage": "https://guide.orangutany.com/images/species/clitocybe-nebularis/01-classic.jpg",
+    "heroImage": "https://guide.orangutany.com/images/species/clitocybe-nebularis/02-group.jpg",
     "lookAlikes": [
       {
         "name": "Livid Pinkgill (Entoloma sinuatum)",
         "slug": "entoloma-sinuatum",
-        "imageUrl": "https://guide.orangutany.com/images/species/clitocybe-nebularis/lookalike-sinuatum.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/entoloma-sinuatum/01-field.jpg",
         "distinction": "A dangerous look-alike."
       },
       {
         "name": "Ivory Funnel (Clitocybe dealbata)",
         "slug": "clitocybe-dealbata",
-        "imageUrl": "https://guide.orangutany.com/images/species/clitocybe-nebularis/lookalike-dealbata.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/clitocybe-dealbata/01-field.jpg",
         "distinction": "Much smaller (cap 2–6 cm vs."
       },
       {
         "name": "Wood Blewit (Lepista nuda)",
         "slug": "clitocybe-nuda",
-        "imageUrl": "https://guide.orangutany.com/images/species/clitocybe-nebularis/lookalike-nuda.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/clitocybe-nuda/02-detail.jpg",
         "distinction": "Similar size and woodland habitat, and also grows in leaf litter."
       }
     ]
@@ -827,7 +827,7 @@
       {
         "name": "Fairy Ring Champignon (Marasmius oreades)",
         "slug": "marasmius-oreades",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/marasmius-oreades/01-field.jpg",
         "distinction": "The most dangerous confusion."
       },
       {
@@ -847,7 +847,7 @@
   "lepista nuda": {
     "slug": "clitocybe-nuda",
     "commonName": "Wood Blewit",
-    "heroImage": "https://guide.orangutany.com/images/species/clitocybe-nuda/01-habitat.jpg",
+    "heroImage": "https://guide.orangutany.com/images/species/clitocybe-nuda/02-detail.jpg",
     "lookAlikes": [
       {
         "name": "Cortinarius species (violet Corts)",
@@ -877,19 +877,19 @@
       {
         "name": "Psilocybe cyanescens (Wavy Cap)",
         "slug": "psilocybe-cyanescens",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-cyanescens/01-field.jpg",
         "distinction": "Also small and brown, also found on wood chips."
       },
       {
         "name": "Agrocybe praecox (Spring Fieldcap)",
         "slug": "agrocybe-praecox",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/agrocybe-praecox/01-field.jpg",
         "distinction": "Larger (3-8 cm cap), sturdier build, with a more persistent ring and a pale buff to yellowish cap."
       },
       {
         "name": "Galerina marginata (Funeral Bell)",
         "slug": "galerina-marginata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/01-field.jpg",
         "distinction": "Also deadly, also has amatoxins and a rusty brown spore print."
       }
     ]
@@ -902,19 +902,19 @@
       {
         "name": "Common Inkcap (Coprinopsis atramentaria)",
         "slug": "coprinopsis-atramentaria",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/coprinopsis-atramentaria/01-cluster.jpg",
         "distinction": "Larger (cap 3–8 cm), smoother, grey to grey-brown without mica-like granules."
       },
       {
         "name": "Shaggy Mane (Coprinus comatus)",
         "slug": "coprinus-comatus",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/coprinus-comatus/01-field.jpg",
         "distinction": "Much larger (cap 5–15 cm tall), white with shaggy recurved scales."
       },
       {
         "name": "Firerug Inkcap (Coprinellus domesticus)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/coprinellus-micaceus/lookalike-domesticus.jpg",
+        "imageUrl": null,
         "distinction": "Very similar in size and habit, also growing in clusters on dead wood."
       }
     ]
@@ -927,19 +927,19 @@
       {
         "name": "Shaggy Ink Cap (Coprinus comatus)",
         "slug": "coprinus-comatus",
-        "imageUrl": "https://guide.orangutany.com/images/species/coprinopsis-atramentaria/lookalike-comatus.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/coprinus-comatus/01-field.jpg",
         "distinction": "Taller and more cylindrical with shaggy, upturned white scales covering the cap — looks like a lawyer's wig."
       },
       {
         "name": "Mica Cap (Coprinellus micaceus)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/coprinopsis-atramentaria/lookalike-micaceus.jpg",
+        "imageUrl": null,
         "distinction": "Smaller and more delicate with a tawny-brown cap covered in tiny glistening granules (like mica flakes) when young."
       },
       {
         "name": "Hare's Foot Ink Cap (Coprinopsis lagopus)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/coprinopsis-atramentaria/lookalike-lagopus.jpg",
+        "imageUrl": null,
         "distinction": "Much more fragile and covered in dense white woolly fibers when young, giving it a fuzzy appearance."
       }
     ]
@@ -952,19 +952,19 @@
       {
         "name": "Common Ink Cap (Coprinopsis atramentaria)",
         "slug": "coprinopsis-atramentaria",
-        "imageUrl": "https://guide.orangutany.com/images/species/coprinus-comatus/lookalike-atramentaria.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/coprinopsis-atramentaria/01-cluster.jpg",
         "distinction": "Also deliquesces into ink, but the cap is smooth and gray-brown — no shaggy scales."
       },
       {
         "name": "Green-Spored Parasol (Chlorophyllum molybdites)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/coprinus-comatus/lookalike-molybdites.jpg",
+        "imageUrl": null,
         "distinction": "The most commonly eaten poisonous mushroom in North America."
       },
       {
         "name": "Magpie Fungus (Coprinopsis picacea)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/coprinus-comatus/lookalike-picacea.jpg",
+        "imageUrl": null,
         "distinction": "Has a similar tall, elongated shape with patches on the cap, but the patches are white on a dark brown-black background (the inverse of Shaggy Mane's pattern)."
       }
     ]
@@ -972,18 +972,18 @@
   "coprinopsis picacea": {
     "slug": "coprinus-picaceus",
     "commonName": "Magpie Inkcap",
-    "heroImage": "https://guide.orangutany.com/images/species/coprinus-picaceus/01-cap-top.jpg",
+    "heroImage": "https://guide.orangutany.com/images/species/coprinus-picaceus/02-cap-top.jpg",
     "lookAlikes": [
       {
         "name": "Coprinopsis atramentaria (Common Inkcap)",
         "slug": "coprinopsis-atramentaria",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/coprinopsis-atramentaria/01-cluster.jpg",
         "distinction": "Much more common, lacks the white patches."
       },
       {
         "name": "Coprinus comatus (Shaggy Mane)",
         "slug": "coprinus-comatus",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/coprinus-comatus/01-field.jpg",
         "distinction": "Edible (before deliquescence)."
       },
       {
@@ -997,7 +997,7 @@
   "cordyceps militaris": {
     "slug": "cordyceps-militaris",
     "commonName": "Scarlet Caterpillar Club",
-    "heroImage": "https://guide.orangutany.com/images/species/cordyceps-militaris/01-field.jpg",
+    "heroImage": "https://guide.orangutany.com/images/species/cordyceps-militaris/05-field.jpg",
     "lookAlikes": [
       {
         "name": "Tolypocladium capitatum",
@@ -1021,13 +1021,13 @@
       {
         "name": "Deadly Webcap (Cortinarius rubellus)",
         "slug": "cortinarius-rubellus",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/cortinarius-rubellus/01-field.jpg",
         "distinction": "DEADLY."
       },
       {
         "name": "Fool's Webcap (Cortinarius orellanus)",
         "slug": "cortinarius-orellanus",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/cortinarius-orellanus/01-field.jpg",
         "distinction": "DEADLY."
       },
       {
@@ -1046,13 +1046,13 @@
       {
         "name": "Deadly Webcap (Cortinarius rubellus)",
         "slug": "cortinarius-rubellus",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/cortinarius-rubellus/01-field.jpg",
         "distinction": "Equally deadly cousin."
       },
       {
         "name": "Chanterelle (Cantharellus cibarius)",
         "slug": "cantharellus-cibarius",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/cantharellus-cibarius/01-field.jpg",
         "distinction": "Similar warm orange-brown color, but chanterelles have thick forking ridges instead of true gills, a funnel shape, and a fruity apricot aroma."
       },
       {
@@ -1071,19 +1071,19 @@
       {
         "name": "Chanterelle (Cantharellus cibarius)",
         "slug": "cantharellus-cibarius",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/cantharellus-cibarius/01-field.jpg",
         "distinction": "The confusion that nearly killed Nicholas Evans."
       },
       {
         "name": "Fool's Webcap (Cortinarius orellanus)",
         "slug": "cortinarius-orellanus",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/cortinarius-orellanus/01-field.jpg",
         "distinction": "An equally deadly relative."
       },
       {
         "name": "Honey Fungus (Armillaria mellea)",
         "slug": "armillaria-mellea",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/armillaria-mellea/01-field.jpg",
         "distinction": "Grows in clusters on wood (not from soil), has a white spore print, and a prominent ring on the stem."
       }
     ]
@@ -1096,19 +1096,19 @@
       {
         "name": "Yellowfoot Chanterelle (Craterellus tubaeformis)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/craterellus-cornucopioides/lookalike-yellowfoot.jpg",
+        "imageUrl": null,
         "distinction": "Similar trumpet shape but yellowish-brown cap and distinctive yellow-orange stem."
       },
       {
         "name": "Devil's Urn (Urnula craterium)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/craterellus-cornucopioides/lookalike-urnula.jpg",
+        "imageUrl": null,
         "distinction": "Cup-shaped rather than trumpet-shaped, with a leathery, dark brown to black exterior."
       },
       {
         "name": "Sinuous Chanterelle (Craterellus cinereus)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/craterellus-cornucopioides/lookalike-devil.jpg",
+        "imageUrl": null,
         "distinction": "Very similar dark gray-brown color but has well-defined gill-like ridges on the outer surface rather than a smooth or slightly wrinkled exterior."
       }
     ]
@@ -1121,13 +1121,13 @@
       {
         "name": "Cantharellus tubaeformis (Yellowfoot Chanterelle)",
         "slug": "cantharellus-tubaeformis",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/cantharellus-tubaeformis/01-habitat.jpg",
         "distinction": "Essentially the same species under the old classification."
       },
       {
         "name": "Hygrophoropsis aurantiaca (False Chanterelle)",
         "slug": "hygrophoropsis-aurantiaca",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/hygrophoropsis-aurantiaca/01-classic.jpg",
         "distinction": "Has true, thin, blade-like gills rather than blunt ridges."
       }
     ]
@@ -1140,13 +1140,13 @@
       {
         "name": "Funeral Bell (Galerina marginata)",
         "slug": "galerina-marginata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/01-field.jpg",
         "distinction": "DEADLY."
       },
       {
         "name": "Sheathed Woodtuft (Kuehneromyces mutabilis)",
         "slug": "kuehneromyces-mutabilis",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/kuehneromyces-mutabilis/01-field.jpg",
         "distinction": "Edible but could cause confusion."
       }
     ]
@@ -1159,19 +1159,19 @@
       {
         "name": "Beech Woodwart (Hypoxylon fragiforme)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/daldinia-concentrica/lookalike-hypoxylon.jpg",
+        "imageUrl": null,
         "distinction": "Much smaller (typically under 1 cm across), brick-red to reddish-brown rather than black, and found specifically on dead beech bark."
       },
       {
         "name": "Cramp Ball Lookalike (Annulohypoxylon thouarsianum)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/daldinia-concentrica/lookalike-annulohypoxylon.jpg",
+        "imageUrl": null,
         "distinction": "Similar dark, rounded fruiting bodies found primarily on oak rather than ash."
       },
       {
         "name": "Black Bulgar (Bulgaria inquinans)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/daldinia-concentrica/lookalike-bulgaria.jpg",
+        "imageUrl": null,
         "distinction": "Superficially similar dark, rounded growths on dead wood, but Bulgaria inquinans is soft and gelatinous — rubbery to the touch, not rock-hard like Daldinia."
       }
     ]
@@ -1184,19 +1184,19 @@
       {
         "name": "St. George's Mushroom (Calocybe gambosa)",
         "slug": "calocybe-gambosa",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/calocybe-gambosa/01-field.jpg",
         "distinction": "Fruits in spring (April-May), not autumn."
       },
       {
         "name": "Field Mushroom (Agaricus campestris)",
         "slug": "agaricus-campestris",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-campestris/05-field.jpg",
         "distinction": "Field Mushrooms have chocolate-brown to dark brown spore prints and gills that start pink and darken to brown-black."
       },
       {
         "name": "Clouded Funnel (Clitocybe nebularis)",
         "slug": "clitocybe-nebularis",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/clitocybe-nebularis/02-group.jpg",
         "distinction": "Similar size and grayish-white color, but the Clouded Funnel has decurrent gills (running down the stem), a white spore print, and a distinctly funnel-shaped mature cap."
       }
     ]
@@ -1215,7 +1215,7 @@
       {
         "name": "Chicken of the Woods (Laetiporus sulphureus)",
         "slug": "laetiporus-sulphureus",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/laetiporus-sulphureus/01-shelf-orange.jpg",
         "distinction": "Also a bracket fungus on oaks, but bright orange-yellow rather than blood-red."
       }
     ]
@@ -1223,12 +1223,12 @@
   "flammulina velutipes": {
     "slug": "flammulina-velutipes",
     "commonName": "Enoki",
-    "heroImage": "https://guide.orangutany.com/images/species/flammulina-velutipes/01-habitat.jpg",
+    "heroImage": "https://guide.orangutany.com/images/species/flammulina-velutipes/03-field.jpg",
     "lookAlikes": [
       {
         "name": "Galerina marginata (Deadly Galerina)",
         "slug": "galerina-marginata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/01-field.jpg",
         "distinction": "A critically dangerous look-alike that also grows on wood and has a similar tawny-brown cap."
       },
       {
@@ -1247,19 +1247,19 @@
       {
         "name": "Dryad's Saddle (Cerioporus squamosus)",
         "slug": "cerioporus-squamosus",
-        "imageUrl": "https://guide.orangutany.com/images/species/fomitopsis-betulina/lookalike-cerioporus.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/cerioporus-squamosus/01-bracket-side.jpg",
         "distinction": "Has prominent dark brown scales on the upper surface in a concentric pattern — Birch Polypore is completely smooth."
       },
       {
         "name": "Artist's Bracket (Ganoderma applanatum)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/fomitopsis-betulina/lookalike-ganoderma.jpg",
+        "imageUrl": null,
         "distinction": "Much harder and woodier, with a rough, concentrically zoned upper surface that is gray-brown to dark brown."
       },
       {
         "name": "Piptoporus (synonym)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/fomitopsis-betulina/lookalike-piptoporus.jpg",
+        "imageUrl": null,
         "distinction": "Not actually a different species — Piptoporus betulinus is the old name for Fomitopsis betulina."
       }
     ]
@@ -1272,19 +1272,19 @@
       {
         "name": "Sheathed Woodtuft (Kuehneromyces mutabilis)",
         "slug": "kuehneromyces-mutabilis",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/kuehneromyces-mutabilis/01-field.jpg",
         "distinction": "Popular edible in Europe."
       },
       {
         "name": "Honey Mushroom (Armillaria mellea)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/lookalike-armillaria.jpg",
+        "imageUrl": null,
         "distinction": "Edible when cooked."
       },
       {
         "name": "Wavy Cap (Psilocybe cyanescens)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/lookalike-psilocybe.jpg",
+        "imageUrl": null,
         "distinction": "Psychoactive, grows on wood chips."
       }
     ]
@@ -1297,19 +1297,19 @@
       {
         "name": "Artist's Conk (Ganoderma applanatum)",
         "slug": "ganoderma-applanatum",
-        "imageUrl": "https://guide.orangutany.com/images/species/ganoderma-lucidum/lookalike-applanatum.jpg",
+        "imageUrl": null,
         "distinction": "Flatter, harder, and lacks the glossy lacquered surface of Reishi."
       },
       {
         "name": "Hemlock Varnish Shelf (Ganoderma tsugae)",
         "slug": "ganoderma-tsugae",
-        "imageUrl": "https://guide.orangutany.com/images/species/ganoderma-lucidum/lookalike-tsugae.jpg",
+        "imageUrl": null,
         "distinction": "Extremely similar to Reishi — glossy, reddish, same shape."
       },
       {
         "name": "Sessile Reishi (Ganoderma sessile)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/ganoderma-lucidum/lookalike-sessile.jpg",
+        "imageUrl": null,
         "distinction": "The North American species most often confused with G."
       }
     ]
@@ -1322,19 +1322,19 @@
       {
         "name": "Chicken of the Woods (Laetiporus sulphureus)",
         "slug": "laetiporus-sulphureus",
-        "imageUrl": "https://guide.orangutany.com/images/species/grifola-frondosa/lookalike-chicken.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/laetiporus-sulphureus/01-shelf-orange.jpg",
         "distinction": "Bright orange and yellow shelves — impossible to miss the color difference."
       },
       {
         "name": "Berkeley's Polypore (Bondarzewia berkeleyi)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/grifola-frondosa/lookalike-berkeley.jpg",
+        "imageUrl": null,
         "distinction": "Much larger individual caps (up to 25 cm each) with a pale cream to tan color."
       },
       {
         "name": "Black-staining Polypore (Meripilus sumstinei)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/grifola-frondosa/lookalike-blackstaining.jpg",
+        "imageUrl": null,
         "distinction": "The giveaway is in the name — the pore surface and flesh stain black when bruised or cut."
       }
     ]
@@ -1347,19 +1347,19 @@
       {
         "name": "Scarlet Waxcap (Hygrocybe coccinea)",
         "slug": "hygrocybe-coccinea",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/hygrocybe-coccinea/01-field.jpg",
         "distinction": "The Scarlet Waxcap is bright red to scarlet rather than lemon-yellow, making color the most obvious difference."
       },
       {
         "name": "Parrot Waxcap (Gliophorus psittacinus)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/gliophorus-chromolimoneus/lookalike-gliophorus-psittacinus.jpg",
+        "imageUrl": null,
         "distinction": "Another slimy Gliophorus species, but the Parrot Waxcap starts green and transitions to yellow or orange as it ages."
       },
       {
         "name": "Golden Waxcap (Hygrocybe chlorophana)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/gliophorus-chromolimoneus/lookalike-hygrocybe-chlorophana.jpg",
+        "imageUrl": null,
         "distinction": "Hygrocybe chlorophana is a similar bright yellow but has a dry to slightly sticky cap — far less slimy than the profusely glutinous Gliophorus chromolimoneus."
       }
     ]
@@ -1372,19 +1372,19 @@
       {
         "name": "Honey Mushroom (Armillaria mellea)",
         "slug": "armillaria-mellea",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/armillaria-mellea/01-field.jpg",
         "distinction": "Edible when cooked."
       },
       {
         "name": "Jack O'Lantern (Omphalotus olearius)",
         "slug": "omphalotus-olearius",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/omphalotus-olearius/01-cluster.jpg",
         "distinction": "Toxic."
       },
       {
         "name": "Green-Staining Gymnopilus (Gymnopilus viridans)",
         "slug": "gymnopilus-viridans",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/gymnopilus-viridans/01-hero.jpg",
         "distinction": "A rare Pacific Northwest species that develops greenish stains on the cap and stem with handling or age."
       }
     ]
@@ -1397,19 +1397,19 @@
       {
         "name": "Spectacular Rustgill (Gymnopilus junonius)",
         "slug": "gymnopilus-junonius",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/gymnopilus-junonius/01-field.jpg",
         "distinction": "Larger (caps to 20+ cm), golden-orange without purplish tones, grows at base of living hardwoods, extremely bitter."
       },
       {
         "name": "Green-Staining Gymnopilus (Gymnopilus viridans)",
         "slug": "gymnopilus-viridans",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/gymnopilus-viridans/01-hero.jpg",
         "distinction": "Develops greenish-blue staining on cap and flesh when bruised."
       },
       {
         "name": "Funeral Bell (Galerina marginata)",
         "slug": "galerina-marginata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/01-field.jpg",
         "distinction": "DEADLY — contains amatoxins."
       }
     ]
@@ -1422,7 +1422,7 @@
       {
         "name": "Spectacular Rustgill (Gymnopilus junonius)",
         "slug": "gymnopilus-junonius",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/gymnopilus-junonius/01-field.jpg",
         "distinction": "Larger (caps up to 18 cm), grows primarily on hardwood rather than conifers, has a prominent membranous ring, and lacks the green staining reaction."
       },
       {
@@ -1434,7 +1434,7 @@
       {
         "name": "Deadly Galerina (Galerina marginata)",
         "slug": "galerina-marginata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/01-field.jpg",
         "distinction": "A critically dangerous look-alike that also grows in clusters on dead wood."
       }
     ]
@@ -1447,19 +1447,19 @@
       {
         "name": "True Morel (Morchella esculenta)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/gyromitra-esculenta/lookalike-morchella.jpg",
+        "imageUrl": null,
         "distinction": "This is THE critical confusion."
       },
       {
         "name": "Wrinkled Thimble-Cap (Verpa bohemica)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/gyromitra-esculenta/lookalike-verpa.jpg",
+        "imageUrl": null,
         "distinction": "Verpa bohemica has a cap that hangs freely from the stem like a thimble — attached only at the very top."
       },
       {
         "name": "Snow Morel (Discina gigas)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/gyromitra-esculenta/lookalike-gigas.jpg",
+        "imageUrl": null,
         "distinction": "A close relative that's generally larger and lighter in color — tan to yellowish-brown rather than dark reddish-brown."
       }
     ]
@@ -1472,19 +1472,19 @@
       {
         "name": "Lion's Mane (Hericium erinaceus)",
         "slug": "hericium-erinaceus",
-        "imageUrl": "https://guide.orangutany.com/images/species/hericium-coralloides/lookalike-erinaceus.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/hericium-erinaceus/05-mature.jpg",
         "distinction": "Forms a single, unbranched, globose clump of long cascading spines (often 2–5 cm long) rather than a branching coral-like structure."
       },
       {
         "name": "Bear's Head Tooth (Hericium americanum)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/hericium-coralloides/lookalike-americanum.jpg",
+        "imageUrl": null,
         "distinction": "Intermediate between Coral Tooth and Lion's Mane — it branches, but less extensively than H."
       },
       {
         "name": "Ochre Spreading Tooth (Steccherinum ochraceum)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/hericium-coralloides/lookalike-steccherinum.jpg",
+        "imageUrl": null,
         "distinction": "Completely different in size and habit."
       }
     ]
@@ -1497,19 +1497,19 @@
       {
         "name": "Bear's Head Tooth (Hericium americanum)",
         "slug": "hericium-americanum",
-        "imageUrl": "https://guide.orangutany.com/images/species/hericium-erinaceus/lookalike-americanum.jpg",
+        "imageUrl": null,
         "distinction": "Very similar but has branching structure — spines hang from multiple short branches rather than a single compact mass."
       },
       {
         "name": "Coral Tooth (Hericium coralloides)",
         "slug": "hericium-coralloides",
-        "imageUrl": "https://guide.orangutany.com/images/species/hericium-erinaceus/lookalike-coralloides.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/hericium-coralloides/01-branching.jpg",
         "distinction": "Much more branched and coral-like."
       },
       {
         "name": "Tiered Tooth (Hericium cirrhatum)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/hericium-erinaceus/lookalike-cirrhatum.jpg",
+        "imageUrl": null,
         "distinction": "Grows in shelf-like or tiered layers rather than a single globular mass."
       }
     ]
@@ -1522,19 +1522,19 @@
       {
         "name": "Depressed Hedgehog (Hydnum umbilicatum)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/hydnum-repandum/lookalike-umbilicatum.jpg",
+        "imageUrl": null,
         "distinction": "Smaller and darker orange than H."
       },
       {
         "name": "Shingled Hedgehog (Sarcodon imbricatus)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/hydnum-repandum/lookalike-sarcodon.jpg",
+        "imageUrl": null,
         "distinction": "Much larger and darker, with coarse brown scales on the cap arranged like roof shingles."
       },
       {
         "name": "Golden Chanterelle (Cantharellus cibarius)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/hydnum-repandum/lookalike-chanterelle.jpg",
+        "imageUrl": null,
         "distinction": "Similar color but has ridges (false gills) running down the stem — NOT spines."
       }
     ]
@@ -1547,19 +1547,19 @@
       {
         "name": "Mealy Tooth (Hydnellum ferrugineum)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/hydnellum-peckii/lookalike-hydnellum-ferrugineum.jpg",
+        "imageUrl": null,
         "distinction": "Most similar species."
       },
       {
         "name": "Ridged Tooth (Hydnellum scrobiculatum)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/hydnellum-peckii/lookalike-hydnellum-scrobiculatum.jpg",
+        "imageUrl": null,
         "distinction": "Cap 2-6 cm, fibrillose to pitted-scaly, brown to reddish-brown with a distinctly zonate (ringed) margin."
       },
       {
         "name": "Shingled Hedgehog (Sarcodon imbricatus)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/hydnellum-peckii/lookalike-sarcodon-imbricatus.jpg",
+        "imageUrl": null,
         "distinction": "Much larger (cap up to 15 cm) with coarse, upturned brown scales on the cap surface."
       }
     ]
@@ -1591,19 +1591,19 @@
       {
         "name": "Golden Chanterelle (Cantharellus cibarius)",
         "slug": "cantharellus-cibarius",
-        "imageUrl": "https://guide.orangutany.com/images/species/hygrophoropsis-aurantiaca/lookalike-cibarius.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/cantharellus-cibarius/01-field.jpg",
         "distinction": "The prized original that the False Chanterelle imitates."
       },
       {
         "name": "Jack O'Lantern (Omphalotus olearius)",
         "slug": "omphalotus-olearius",
-        "imageUrl": "https://guide.orangutany.com/images/species/hygrophoropsis-aurantiaca/lookalike-olearius.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/omphalotus-olearius/01-cluster.jpg",
         "distinction": "TOXIC — causes severe vomiting and diarrhea."
       },
       {
         "name": "Pacific Chanterelle (Cantharellus formosus)",
         "slug": "cantharellus-formosus",
-        "imageUrl": "https://guide.orangutany.com/images/species/hygrophoropsis-aurantiaca/lookalike-formosus.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/cantharellus-formosus/01-classic.jpg",
         "distinction": "The Pacific Northwest's premier chanterelle."
       }
     ]
@@ -1616,19 +1616,19 @@
       {
         "name": "Sulphur Tuft (Hypholoma fasciculare)",
         "slug": "hypholoma-fasciculare",
-        "imageUrl": "https://guide.orangutany.com/images/species/hypholoma-lateritium/lookalike-fasciculare.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/hypholoma-fasciculare/01-field.jpg",
         "distinction": "The most common confusion species."
       },
       {
         "name": "Funeral Bell (Galerina marginata)",
         "slug": "galerina-marginata",
-        "imageUrl": "https://guide.orangutany.com/images/species/hypholoma-lateritium/lookalike-marginata.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/01-field.jpg",
         "distinction": "DEADLY — contains amatoxins that destroy the liver, the same toxins found in the Death Cap."
       },
       {
         "name": "Honey Fungus (Armillaria mellea)",
         "slug": "armillaria-mellea",
-        "imageUrl": "https://guide.orangutany.com/images/species/hypholoma-lateritium/lookalike-mellea.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/armillaria-mellea/01-field.jpg",
         "distinction": "Also grows in dense clusters on wood, but Honey Fungus has a prominent white ring on the stem, white spore print (not purplish-brown), and often has small dark scales on the cap center."
       }
     ]
@@ -1641,19 +1641,19 @@
       {
         "name": "Sheathed Woodtuft (Kuehneromyces mutabilis)",
         "slug": "kuehneromyces-mutabilis",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/kuehneromyces-mutabilis/01-field.jpg",
         "distinction": "An edible species that also grows in clusters on dead wood."
       },
       {
         "name": "Brick Cap (Hypholoma lateritium)",
         "slug": "hypholoma-lateritium",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/hypholoma-lateritium/02-cluster.jpg",
         "distinction": "A related species considered edible in some regions."
       },
       {
         "name": "Honey Fungus (Armillaria mellea)",
         "slug": "armillaria-mellea",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/armillaria-mellea/01-field.jpg",
         "distinction": "Also grows in clusters on wood, but has a white spore print, a prominent ring on the stem, and honey-brown coloring."
       }
     ]
@@ -1666,7 +1666,7 @@
       {
         "name": "Inocybe erubescens (Red-Staining Inocybe)",
         "slug": "inocybe-erubescens",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/inocybe-erubescens/01-mature-group.jpg",
         "distinction": "DEADLY POISONOUS — contains high levels of muscarine."
       },
       {
@@ -1678,7 +1678,7 @@
       {
         "name": "Liberty Cap (Psilocybe semilanceata)",
         "slug": "psilocybe-semilanceata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-semilanceata/01-single.jpg",
         "distinction": "Also psilocybin-containing but very different habitat (grasslands, not under trees)."
       }
     ]
@@ -1691,19 +1691,19 @@
       {
         "name": "St. George's Mushroom (Calocybe gambosa)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/inocybe-erubescens/lookalike-gambosa.jpg",
+        "imageUrl": null,
         "distinction": "The most dangerous confusion."
       },
       {
         "name": "White Fibrecap (Inocybe geophylla)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/inocybe-erubescens/lookalike-geophylla.jpg",
+        "imageUrl": null,
         "distinction": "Much smaller (cap 1–4 cm), pure white to lilac, silky smooth cap, and does NOT stain red."
       },
       {
         "name": "Torn Fibrecap (Inocybe rimosa)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/inocybe-erubescens/lookalike-rimosa.jpg",
+        "imageUrl": null,
         "distinction": "Cap is more distinctly radially cracked (rimose) and straw-yellow to ochre without reddish staining."
       }
     ]
@@ -1716,19 +1716,19 @@
       {
         "name": "Porcini (Boletus edulis)",
         "slug": "boletus-edulis",
-        "imageUrl": "https://guide.orangutany.com/images/species/imleria-badia/lookalike-edulis.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/boletus-edulis/01-classic.jpg",
         "distinction": "The mushroom everyone hopes they've found."
       },
       {
         "name": "Bitter Bolete (Tylopilus felleus)",
         "slug": "tylopilus-felleus",
-        "imageUrl": "https://guide.orangutany.com/images/species/imleria-badia/lookalike-felleus.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/tylopilus-felleus/01-full-specimen.jpg",
         "distinction": "The bolete that ruins dinners."
       },
       {
         "name": "Red-cracking Bolete (Xerocomellus chrysenteron)",
         "slug": "xerocomellus-chrysenteron",
-        "imageUrl": "https://guide.orangutany.com/images/species/imleria-badia/lookalike-chrysenteron.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/xerocomellus-chrysenteron/01-field.jpg",
         "distinction": "A common bolete whose cap cracks with age, revealing reddish flesh beneath the surface — bay bolete caps don't crack or show red."
       }
     ]
@@ -1741,7 +1741,7 @@
       {
         "name": "Birch Polypore (Fomitopsis betulina)",
         "slug": "fomitopsis-betulina",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/fomitopsis-betulina/01-bracket.jpg",
         "distinction": "Also grows on birch but looks completely different: a smooth, whitish to grayish bracket with a distinct kidney-shaped form."
       },
       {
@@ -1760,13 +1760,13 @@
       {
         "name": "Funeral Bell (Galerina marginata)",
         "slug": "galerina-marginata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/01-field.jpg",
         "distinction": "DEADLY."
       },
       {
         "name": "Sulphur Tuft (Hypholoma fasciculare)",
         "slug": "hypholoma-fasciculare",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/hypholoma-fasciculare/01-field.jpg",
         "distinction": "Bright sulfur-yellow to greenish-yellow cap and flesh (never brown/cinnamon)."
       },
       {
@@ -1785,19 +1785,19 @@
       {
         "name": "The Deceiver (Laccaria laccata)",
         "slug": "laccaria-laccata",
-        "imageUrl": "https://guide.orangutany.com/images/species/laccaria-amethystina/lookalike-laccata.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/laccaria-laccata/01-classic.jpg",
         "distinction": "The orange-brown cousin."
       },
       {
         "name": "Wood Blewit (Lepista nuda)",
         "slug": "clitocybe-nuda",
-        "imageUrl": "https://guide.orangutany.com/images/species/laccaria-amethystina/lookalike-nuda.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/clitocybe-nuda/02-detail.jpg",
         "distinction": "Much larger mushroom (cap 6–15 cm) with lilac-blue colors that can overlap with the amethyst deceiver's palette."
       },
       {
         "name": "Lilac Fibrecap (Inocybe geophylla var. lilacina)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/laccaria-amethystina/lookalike-lilacina.jpg",
+        "imageUrl": null,
         "distinction": "POISONOUS."
       }
     ]
@@ -1810,19 +1810,19 @@
       {
         "name": "Amethyst Deceiver (Laccaria amethystina)",
         "slug": "laccaria-amethystina",
-        "imageUrl": "https://guide.orangutany.com/images/species/laccaria-laccata/lookalike-amethystina.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/laccaria-amethystina/01-classic.jpg",
         "distinction": "The purple version of The Deceiver."
       },
       {
         "name": "Inocybe species",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/laccaria-laccata/lookalike-inocybe.jpg",
+        "imageUrl": null,
         "distinction": "Some small brown Inocybe species can superficially resemble dried-out Deceivers."
       },
       {
         "name": "Mycena species",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/laccaria-laccata/lookalike-mycena.jpg",
+        "imageUrl": null,
         "distinction": "Small Mycena mushrooms share woodland habitats but are generally smaller, more fragile, with very thin stems that snap easily (unlike the tough, fibrous Laccaria stem)."
       }
     ]
@@ -1841,7 +1841,7 @@
       {
         "name": "Lactarius torminosus (Woolly Milk Cap)",
         "slug": "lactarius-torminosus",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/lactarius-torminosus/01-woolly-cap.jpg",
         "distinction": "Has a pinkish-orange cap with a distinctly shaggy, woolly margin (hairy fringes on the cap edge)."
       },
       {
@@ -1860,19 +1860,19 @@
       {
         "name": "Lactarius chelidonium",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/lactarius-indigo/lookalike-chelidonium.jpg",
+        "imageUrl": null,
         "distinction": "Paler blue-gray cap, often with olive or brownish tones — lacks the deep saturated indigo of L."
       },
       {
         "name": "Charcoal Burner (Russula cyanoxantha)",
         "slug": "russula-cyanoxantha",
-        "imageUrl": "https://guide.orangutany.com/images/species/lactarius-indigo/lookalike-cyanoxantha.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/russula-cyanoxantha/01-field.jpg",
         "distinction": "Can have bluish-purple cap colors that superficially resemble L."
       },
       {
         "name": "Lactarius paradoxus",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/lactarius-indigo/lookalike-paradoxus.jpg",
+        "imageUrl": null,
         "distinction": "Blue-silver cap similar to an aged L."
       }
     ]
@@ -1885,19 +1885,19 @@
       {
         "name": "Saffron Milk Cap (Lactarius deliciosus)",
         "slug": "lactarius-deliciosus",
-        "imageUrl": "https://guide.orangutany.com/images/species/lactarius-torminosus/lookalike-deliciosus.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/lactarius-deliciosus/01-field.jpg",
         "distinction": "Orange rather than pink, and critically, exudes bright orange (not white) latex that stains green when exposed to air."
       },
       {
         "name": "Downy Milk Cap (Lactarius pubescens)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/lactarius-torminosus/lookalike-pubescens.jpg",
+        "imageUrl": null,
         "distinction": "Very similar to L."
       },
       {
         "name": "Blushing Milk Cap (Lactarius controversus)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/lactarius-torminosus/lookalike-controversus.jpg",
+        "imageUrl": null,
         "distinction": "Much larger (cap up to 25 cm), with a whitish cap that develops pink-red blotches."
       }
     ]
@@ -1910,19 +1910,19 @@
       {
         "name": "White-pored Chicken of the Woods (Laetiporus cincinnatus)",
         "slug": "laetiporus-cincinnatus",
-        "imageUrl": "https://guide.orangutany.com/images/species/laetiporus-sulphureus/lookalike-cincinnatus.jpg",
+        "imageUrl": null,
         "distinction": "Very closely related and also edible."
       },
       {
         "name": "Jack O'Lantern (Omphalotus olearius)",
         "slug": "omphalotus-olearius",
-        "imageUrl": "https://guide.orangutany.com/images/species/laetiporus-sulphureus/lookalike-jack-o-lantern.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/omphalotus-olearius/01-cluster.jpg",
         "distinction": "Orange and grows on wood, so beginners sometimes confuse them — but Jack O'Lanterns have true gills, a central stem, and a classic mushroom shape."
       },
       {
         "name": "Velvet-top Fungus (Phaeolus schweinitzii)",
         "slug": "phaeolus-schweinitzii",
-        "imageUrl": "https://guide.orangutany.com/images/species/laetiporus-sulphureus/lookalike-velvet-top.jpg",
+        "imageUrl": null,
         "distinction": "Another bracket fungus found on conifers."
       }
     ]
@@ -1985,19 +1985,19 @@
       {
         "name": "Train Wrecker (Neolentinus lepideus)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/lentinula-edodes/lookalike-neolentinus.jpg",
+        "imageUrl": null,
         "distinction": "Grows on conifer wood (shiitake sticks to hardwoods)."
       },
       {
         "name": "Honey Mushroom (Armillaria mellea)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/lentinula-edodes/lookalike-armillaria.jpg",
+        "imageUrl": null,
         "distinction": "Grows in dense clusters at the base of living or dead trees."
       },
       {
         "name": "Funeral Bell (Galerina marginata)",
         "slug": "galerina-marginata",
-        "imageUrl": "https://guide.orangutany.com/images/species/lentinula-edodes/lookalike-galerina.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/01-field.jpg",
         "distinction": "DEADLY — contains the same amatoxins as the Death Cap."
       }
     ]
@@ -2010,19 +2010,19 @@
       {
         "name": "Shaggy Parasol (Chlorophyllum rhacodes)",
         "slug": "chlorophyllum-rhacodes",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/chlorophyllum-rhacodes/01-growth-stages.jpg",
         "distinction": "Much larger (cap 10-20 cm), with coarser shaggy scales and flesh that turns orange-red when cut."
       },
       {
         "name": "Parasol Mushroom (Macrolepiota procera)",
         "slug": "macrolepiota-procera",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/macrolepiota-procera/01-field-habitat.jpg",
         "distinction": "Much larger (cap 15-30 cm), with a tall stem marked by a snakeskin pattern and a movable double ring."
       },
       {
         "name": "Stinking Dapperling (Lepiota cristata)",
         "slug": "lepiota-cristata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/lepiota-cristata/01-field.jpg",
         "distinction": "A small Lepiota with reddish-brown concentric scales and a strong, unpleasant rubber or chemical smell."
       }
     ]
@@ -2035,13 +2035,13 @@
       {
         "name": "Deadly Dapperling (Lepiota brunneoincarnata)",
         "slug": "lepiota-brunneoincarnata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/lepiota-brunneoincarnata/01-field.jpg",
         "distinction": "Also small with scaled cap, but scales are pinkish-brown to wine-brown rather than chestnut."
       },
       {
         "name": "Parasol Mushroom (Macrolepiota procera)",
         "slug": "macrolepiota-procera",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/macrolepiota-procera/01-field-habitat.jpg",
         "distinction": "Much larger (cap 10-30 cm) with a snakeskin-patterned stem and movable double ring."
       },
       {
@@ -2060,7 +2060,7 @@
       {
         "name": "Wood Blewit (Lepista nuda)",
         "slug": "clitocybe-nuda",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/clitocybe-nuda/02-detail.jpg",
         "distinction": "The most common confusion."
       },
       {
@@ -2091,13 +2091,13 @@
       {
         "name": "Stinking Dapperling (Lepiota cristata)",
         "slug": "lepiota-cristata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/lepiota-cristata/01-field.jpg",
         "distinction": "Much more dangerous (potentially deadly)."
       },
       {
         "name": "Bolbitius titubans (Yellow Fieldcap)",
         "slug": "bolbitius-titubans",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/bolbitius-titubans/01-hero.jpg",
         "distinction": "Also bright yellow, but found outdoors on grass, dung, or straw, not in houseplants."
       }
     ]
@@ -2110,19 +2110,19 @@
       {
         "name": "Common Earthball (Scleroderma citrinum)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/lycoperdon-perlatum/lookalike-scleroderma.jpg",
+        "imageUrl": null,
         "distinction": "This is the dangerous one."
       },
       {
         "name": "Pear-shaped Puffball (Apioperdon pyriforme)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/lycoperdon-perlatum/lookalike-pyriforme.jpg",
+        "imageUrl": null,
         "distinction": "Actually edible too, so less of a worry."
       },
       {
         "name": "Giant Puffball (Calvatia gigantea)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/lycoperdon-perlatum/lookalike-calvatia.jpg",
+        "imageUrl": null,
         "distinction": "Hard to confuse once mature — Giant Puffballs can reach soccer-ball size or larger."
       }
     ]
@@ -2135,19 +2135,19 @@
       {
         "name": "Lycoperdon perlatum (Gem-studded Puffball)",
         "slug": "lycoperdon-perlatum",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/lycoperdon-perlatum/01-cluster-gems.jpg",
         "distinction": "Also edible, also small."
       },
       {
         "name": "Immature Amanita (Death Cap or Destroying Angel egg)",
         "slug": "amanita-phalloides",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-phalloides/01-cap-top.jpg",
         "distinction": "DEADLY."
       },
       {
         "name": "Scleroderma citrinum (Common Earthball)",
         "slug": "scleroderma-citrinum",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/scleroderma-citrinum/01-field.jpg",
         "distinction": "Toxic."
       }
     ]
@@ -2160,19 +2160,19 @@
       {
         "name": "Shaggy Parasol (Chlorophyllum rhacodes)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/macrolepiota-procera/lookalike-rhacodes.jpg",
+        "imageUrl": null,
         "distinction": "Smaller overall and the flesh stains reddish-orange when cut or bruised — the true Parasol does not change color."
       },
       {
         "name": "Green-Spored Parasol (Chlorophyllum molybdites)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/macrolepiota-procera/lookalike-molybdites.jpg",
+        "imageUrl": null,
         "distinction": "The most commonly eaten poisonous mushroom in North America."
       },
       {
         "name": "Deadly Dapperling (Lepiota brunneoincarnata)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/macrolepiota-procera/lookalike-brunneoincarnata.jpg",
+        "imageUrl": null,
         "distinction": "Much smaller (cap under 7 cm) — this is a critical difference."
       }
     ]
@@ -2210,19 +2210,19 @@
       {
         "name": "Gyromitra esculenta (False Morel)",
         "slug": "gyromitra-esculenta",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/gyromitra-esculenta/01-brain-cap.jpg",
         "distinction": "Brain-like, wrinkled surface rather than a honeycomb pattern of pits and ridges."
       },
       {
         "name": "Verpa bohemica (Early Morel)",
         "slug": "verpa-bohemica",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/verpa-bohemica/01-field.jpg",
         "distinction": "Cap hangs from the top of the stem like a thimble, attached only at the apex."
       },
       {
         "name": "Morchella esculenta (Yellow Morel)",
         "slug": "morchella-esculenta",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/morchella-esculenta/01-solo.jpg",
         "distinction": "Lighter colored, with yellowish to tan pits and paler ridges."
       }
     ]
@@ -2235,19 +2235,19 @@
       {
         "name": "Early Morel (Verpa bohemica)",
         "slug": "verpa-bohemica",
-        "imageUrl": "https://guide.orangutany.com/images/species/morchella-esculenta/lookalike-verpa-bohemica.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/verpa-bohemica/01-field.jpg",
         "distinction": "The cap hangs free from the stem like a thimble sitting on a finger — attached only at the very top."
       },
       {
         "name": "False Morel (Gyromitra esculenta)",
         "slug": "gyromitra-esculenta",
-        "imageUrl": "https://guide.orangutany.com/images/species/morchella-esculenta/lookalike-gyromitra-esculenta.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/gyromitra-esculenta/01-brain-cap.jpg",
         "distinction": "Potentially deadly."
       },
       {
         "name": "Black Morel (Morchella elata)",
         "slug": "morchella-elata",
-        "imageUrl": "https://guide.orangutany.com/images/species/morchella-esculenta/lookalike-morchella-elata.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/morchella-elata/01-field.jpg",
         "distinction": "Actually a true morel and perfectly edible — just a different species."
       }
     ]
@@ -2279,19 +2279,19 @@
       {
         "name": "Bleeding Mycena (Mycena haematopus)",
         "slug": "mycena-haematopus",
-        "imageUrl": "https://guide.orangutany.com/images/species/mycena-galericulata/lookalike-haematopus.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/mycena-haematopus/01-cap-top.jpg",
         "distinction": "Similar size and habitat on decaying wood."
       },
       {
         "name": "Clustered Bonnet (Mycena inclinata)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/mycena-galericulata/lookalike-inclinata.jpg",
+        "imageUrl": null,
         "distinction": "Also grows in dense clusters on wood, especially oak."
       },
       {
         "name": "Grooved Bonnet (Mycena polygramma)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/mycena-galericulata/lookalike-polygramma.jpg",
+        "imageUrl": null,
         "distinction": "Can look very similar from above, but the stem is the giveaway: M."
       }
     ]
@@ -2310,7 +2310,7 @@
       {
         "name": "Mycena galericulata (Common Bonnet)",
         "slug": "mycena-galericulata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/mycena-galericulata/01-classic.jpg",
         "distinction": "Similar size and habitat on wood."
       },
       {
@@ -2329,19 +2329,19 @@
       {
         "name": "Chanterelle (Cantharellus cibarius)",
         "slug": "cantharellus-cibarius",
-        "imageUrl": "https://guide.orangutany.com/images/species/omphalotus-olearius/lookalike-chanterelle.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/cantharellus-cibarius/01-field.jpg",
         "distinction": "This is the mix-up that sends people to the ER every year."
       },
       {
         "name": "Honey Mushroom (Armillaria mellea)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/omphalotus-olearius/lookalike-armillaria.jpg",
+        "imageUrl": null,
         "distinction": "Also grows in clusters on wood, but Honey Mushrooms have a prominent white ring on the stem, lighter tan-to-brown caps (not bright orange), and white spore prints."
       },
       {
         "name": "False Chanterelle (Hygrophoropsis aurantiaca)",
         "slug": "hygrophoropsis-aurantiaca",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/hygrophoropsis-aurantiaca/01-classic.jpg",
         "distinction": "Smaller and thinner than the Jack O'Lantern, with a more brownish-orange cap that often has a suede-like texture."
       }
     ]
@@ -2349,12 +2349,12 @@
   "ophiocordyceps sinensis": {
     "slug": "ophiocordyceps-sinensis",
     "commonName": "Caterpillar Fungus",
-    "heroImage": "https://guide.orangutany.com/images/species/ophiocordyceps-sinensis/01-field.jpg",
+    "heroImage": "https://guide.orangutany.com/images/species/ophiocordyceps-sinensis/05-field.jpg",
     "lookAlikes": [
       {
         "name": "Cordyceps militaris",
         "slug": "cordyceps-militaris",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/cordyceps-militaris/05-field.jpg",
         "distinction": "Much more common and widespread, found at low elevations across the Northern Hemisphere."
       },
       {
@@ -2373,7 +2373,7 @@
       {
         "name": "Psilocybe cubensis (Golden Teacher)",
         "slug": "psilocybe-cubensis",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-cubensis/01-cap-top.jpg",
         "distinction": "Also psychoactive, same habitat on dung."
       },
       {
@@ -2423,7 +2423,7 @@
       {
         "name": "Phallus impudicus (Common Stinkhorn)",
         "slug": "phallus-impudicus",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/phallus-impudicus/01-field.jpg",
         "distinction": "Very similar in shape and ecology, but has a white volva (not pinkish-purple)."
       },
       {
@@ -2435,7 +2435,7 @@
       {
         "name": "Clathrus ruber (Lattice Stinkhorn)",
         "slug": "clathrus-ruber",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/clathrus-ruber/01-field.jpg",
         "distinction": "Also a stinkhorn with foul-smelling gleba, but forms a distinctive red lattice or cage structure rather than a phallic stalk."
       }
     ]
@@ -2473,13 +2473,13 @@
       {
         "name": "Common Earthball (Scleroderma citrinum)",
         "slug": "scleroderma-citrinum",
-        "imageUrl": "https://guide.orangutany.com/images/species/pisolithus-arhizus/lookalike-scleroderma.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/scleroderma-citrinum/01-field.jpg",
         "distinction": "Similar round shape and tough exterior, but Earthball has a smooth to warty yellowish surface and a solid, dark purple-black interior marbled with white veins."
       },
       {
         "name": "Giant Puffball (Calvatia gigantea)",
         "slug": "calvatia-gigantea",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/calvatia-gigantea/01-field.jpg",
         "distinction": "Much larger (up to 50 cm or more), smooth white exterior when young, and a uniform white interior that resembles marshmallow."
       },
       {
@@ -2498,19 +2498,19 @@
       {
         "name": "Angel Wings (Pleurocybella porrigens)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/pleurotus-ostreatus/lookalike-angel-wings.jpg",
+        "imageUrl": null,
         "distinction": "Thinner, more delicate, pure white, and grows exclusively on conifer wood (not hardwood)."
       },
       {
         "name": "Elm Oyster (Hypsizygus ulmarius)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/pleurotus-ostreatus/lookalike-elm-oyster.jpg",
+        "imageUrl": null,
         "distinction": "Grows on living or dead elm and box elder trees."
       },
       {
         "name": "Ghost Fungus (Omphalotus nidiformis)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/pleurotus-ostreatus/lookalike-ghost-fungus.jpg",
+        "imageUrl": null,
         "distinction": "Found in Australia and parts of Asia."
       }
     ]
@@ -2523,19 +2523,19 @@
       {
         "name": "Oyster Mushroom (Pleurotus ostreatus)",
         "slug": "pleurotus-ostreatus",
-        "imageUrl": "https://guide.orangutany.com/images/species/pleurotus-pulmonarius/lookalike-ostreatus.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/pleurotus-ostreatus/03-winter.jpg",
         "distinction": "The most common confusion."
       },
       {
         "name": "Angel Wings (Pleurocybella porrigens)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/pleurotus-pulmonarius/lookalike-porrigens.jpg",
+        "imageUrl": null,
         "distinction": "Thinner and more delicate than any Pleurotus, pure white, with a translucent quality."
       },
       {
         "name": "Crepidotus species",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/pleurotus-pulmonarius/lookalike-crepidotus.jpg",
+        "imageUrl": null,
         "distinction": "Small, fan-shaped, stemless mushrooms that grow on dead wood and can superficially resemble young oyster mushrooms."
       }
     ]
@@ -2579,7 +2579,7 @@
       {
         "name": "Ramaria botrytis (Cauliflower Coral)",
         "slug": "ramaria-botrytis",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/ramaria-botrytis/02-field.jpg",
         "distinction": "A large, much-branched coral fungus with white to pinkish branches and purple-pink tips."
       },
       {
@@ -2598,19 +2598,19 @@
       {
         "name": "Wavy Cap (Psilocybe cyanescens)",
         "slug": "psilocybe-cyanescens",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-cyanescens/01-field.jpg",
         "distinction": "The most similar species."
       },
       {
         "name": "Funeral Bell (Galerina marginata)",
         "slug": "galerina-marginata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/01-field.jpg",
         "distinction": "DEADLY."
       },
       {
         "name": "Blue-ringed Webcap (Psilocybe stuntzii)",
         "slug": "psilocybe-stuntzii",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-stuntzii/03-field.jpg",
         "distinction": "Another Pacific Northwest wood-chip Psilocybe."
       }
     ]
@@ -2623,13 +2623,13 @@
       {
         "name": "Psilocybe cyanescens (Wavy Cap)",
         "slug": "psilocybe-cyanescens",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-cyanescens/01-field.jpg",
         "distinction": "Also psychoactive, also on wood in the PNW."
       },
       {
         "name": "Galerina marginata (Funeral Bell)",
         "slug": "galerina-marginata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/01-field.jpg",
         "distinction": "DEADLY."
       },
       {
@@ -2648,19 +2648,19 @@
       {
         "name": "Teonanácatl (Psilocybe mexicana)",
         "slug": "psilocybe-mexicana",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-mexicana/01-field.jpg",
         "distinction": "Smaller (cap 1-3 cm vs 2-6 cm), grows in grassy meadows rather than bare disturbed earth."
       },
       {
         "name": "Golden Teacher (Psilocybe cubensis)",
         "slug": "psilocybe-cubensis",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-cubensis/01-cap-top.jpg",
         "distinction": "Larger, golden-brown mushroom that grows on dung in lowland tropical pastures, not on bare montane soil."
       },
       {
         "name": "Deadly Galerina (Galerina marginata)",
         "slug": "galerina-marginata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/01-field.jpg",
         "distinction": "DEADLY POISONOUS."
       }
     ]
@@ -2673,19 +2673,19 @@
       {
         "name": "Liberty Cap (Psilocybe semilanceata)",
         "slug": "psilocybe-semilanceata",
-        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-cubensis/lookalike-semilanceata.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-semilanceata/01-single.jpg",
         "distinction": "Also psychoactive, but much smaller and grows in temperate grasslands, not on dung."
       },
       {
         "name": "Blue Meanie (Panaeolus cyanescens)",
         "slug": "panaeolus-cyanescens",
-        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-cubensis/lookalike-cyanescens.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/panaeolus-cyanescens/01-cyanescens-1.jpg",
         "distinction": "Also psychoactive and also grows on dung."
       },
       {
         "name": "Funeral Bell (Galerina marginata)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-cubensis/lookalike-marginata.jpg",
+        "imageUrl": null,
         "distinction": "DEADLY."
       }
     ]
@@ -2698,19 +2698,19 @@
       {
         "name": "Galerina marginata (Funeral Bell)",
         "slug": "galerina-marginata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/01-field.jpg",
         "distinction": "DEADLY."
       },
       {
         "name": "Allen's Psilocybe (Psilocybe allenii)",
         "slug": "psilocybe-allenii",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-allenii/01-field.jpg",
         "distinction": "Also psychoactive, also on wood chips in the Pacific Northwest."
       },
       {
         "name": "Hypholoma fasciculare (Sulphur Tuft)",
         "slug": "hypholoma-fasciculare",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/hypholoma-fasciculare/01-field.jpg",
         "distinction": "Bitter and mildly toxic."
       }
     ]
@@ -2723,19 +2723,19 @@
       {
         "name": "Golden Teacher (Psilocybe cubensis)",
         "slug": "psilocybe-cubensis",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-cubensis/01-cap-top.jpg",
         "distinction": "Much larger (cap 2-8 cm), grows on dung in tropical lowlands, not high-altitude grasslands."
       },
       {
         "name": "Liberty Cap (Psilocybe semilanceata)",
         "slug": "psilocybe-semilanceata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-semilanceata/01-single.jpg",
         "distinction": "Similar small size and conical cap, but grows in cool temperate grasslands of Europe and North America, not tropical highlands."
       },
       {
         "name": "Deadly Galerina (Galerina marginata)",
         "slug": "galerina-marginata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/01-field.jpg",
         "distinction": "DEADLY POISONOUS."
       }
     ]
@@ -2748,7 +2748,7 @@
       {
         "name": "Protostropharia semiglobata (Dung Roundhead)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-semilanceata/lookalike-semiglobata.jpg",
+        "imageUrl": null,
         "distinction": "Grows directly on dung, not in grass."
       },
       {
@@ -2760,7 +2760,7 @@
       {
         "name": "Conocybe species (Cone Heads)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-semilanceata/lookalike-conocybe.jpg",
+        "imageUrl": null,
         "distinction": "Some Conocybe species are dangerously toxic and grow in similar grassland habitats."
       }
     ]
@@ -2773,19 +2773,19 @@
       {
         "name": "Deadly Galerina (Galerina marginata)",
         "slug": "galerina-marginata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/01-field.jpg",
         "distinction": "DEADLY POISONOUS — contains amatoxins."
       },
       {
         "name": "Wavy Cap (Psilocybe cyanescens)",
         "slug": "psilocybe-cyanescens",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-cyanescens/01-field.jpg",
         "distinction": "Also grows on wood chips in the Pacific Northwest."
       },
       {
         "name": "Azurescent Psilocybe (Psilocybe azurescens)",
         "slug": "psilocybe-azurescens",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-azurescens/01-field.jpg",
         "distinction": "Larger and more potent, with a caramel-colored cap and broadly convex shape."
       }
     ]
@@ -2798,19 +2798,19 @@
       {
         "name": "Teonanácatl (Psilocybe mexicana)",
         "slug": "psilocybe-mexicana",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-mexicana/01-field.jpg",
         "distinction": "Similar small size and also produces sclerotia, but grows at high elevations in Mexican cloud forests."
       },
       {
         "name": "Liberty Cap (Psilocybe semilanceata)",
         "slug": "psilocybe-semilanceata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/psilocybe-semilanceata/01-single.jpg",
         "distinction": "Similar size range but has a distinctly pointed, nipple-like cap with a gelatinous pellicle."
       },
       {
         "name": "Deadly Galerina (Galerina marginata)",
         "slug": "galerina-marginata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/01-field.jpg",
         "distinction": "DEADLY POISONOUS."
       }
     ]
@@ -2848,19 +2848,19 @@
       {
         "name": "Porcini / King Bolete (Boletus edulis)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/rubroboletus-satanas/lookalike-edulis.jpg",
+        "imageUrl": null,
         "distinction": "The prize catch that Satan's Bolete gets confused for."
       },
       {
         "name": "Le Gal's Bolete (Rubroboletus legaliae)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/rubroboletus-satanas/lookalike-legaliae.jpg",
+        "imageUrl": null,
         "distinction": "A close relative that's also toxic."
       },
       {
         "name": "Lurid Bolete (Suillellus luridus)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/rubroboletus-satanas/lookalike-luridus.jpg",
+        "imageUrl": null,
         "distinction": "Another blue-bruising bolete with reddish pores — but the cap is dark brown to olive-brown (not pale), and the stem reticulation is darker and coarser."
       }
     ]
@@ -2873,19 +2873,19 @@
       {
         "name": "Peppery Milkcap (Lactarius piperatus)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/russula-brevipes/lookalike-piperatus.jpg",
+        "imageUrl": null,
         "distinction": "Very similar in size, shape, and white coloration, and also has an acrid/peppery taste."
       },
       {
         "name": "Russula delica",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/russula-brevipes/lookalike-delica.jpg",
+        "imageUrl": null,
         "distinction": "Extremely similar white Russula, essentially the European counterpart to R."
       },
       {
         "name": "Green-spored Parasol (Chlorophyllum molybdites)",
         "slug": "chlorophyllum-molybdites",
-        "imageUrl": "https://guide.orangutany.com/images/species/russula-brevipes/lookalike-molybdites.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/chlorophyllum-molybdites/01-field.jpg",
         "distinction": "Both are large whitish mushrooms, but the similarities end there."
       }
     ]
@@ -2973,19 +2973,19 @@
       {
         "name": "Common Puffball (Lycoperdon perlatum)",
         "slug": "lycoperdon-perlatum",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/lycoperdon-perlatum/01-cluster-gems.jpg",
         "distinction": "The key confusion species."
       },
       {
         "name": "Giant Puffball (Calvatia gigantea)",
         "slug": "calvatia-gigantea",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/calvatia-gigantea/01-field.jpg",
         "distinction": "Much larger (often football-sized or bigger), with smooth white skin and pure white interior."
       },
       {
         "name": "Dyeball (Pisolithus arhizus)",
         "slug": "pisolithus-arhizus",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/pisolithus-arhizus/01-field.jpg",
         "distinction": "Similar round shape and tough exterior, but Dyeball is typically larger and more irregular, with an interior composed of small pea-sized compartments (peridioles) at different stages of maturity rather than the solid dark purple-black flesh of Earthball."
       }
     ]
@@ -3004,7 +3004,7 @@
       {
         "name": "Grifola frondosa (Hen of the Woods)",
         "slug": "grifola-frondosa",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/grifola-frondosa/05-fresh.jpg",
         "distinction": "Also a large, clustered fungus growing at the base of trees, but Hen of the Woods has distinct, fan-shaped, overlapping caps (each with pores underneath) rather than the wavy, ribbon-like lobes of Sparassis."
       }
     ]
@@ -3017,7 +3017,7 @@
       {
         "name": "Trametes versicolor (Turkey Tail)",
         "slug": "trametes-versicolor",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/trametes-versicolor/01-top-view.jpg",
         "distinction": "Very commonly confused."
       },
       {
@@ -3042,13 +3042,13 @@
       {
         "name": "Agaricus species (Field Mushrooms)",
         "slug": "agaricus-campestris",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/agaricus-campestris/05-field.jpg",
         "distinction": "Some Agaricus species have similar cap shapes and dark spore prints."
       },
       {
         "name": "Brick Cap (Hypholoma lateritium)",
         "slug": "hypholoma-lateritium",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/hypholoma-lateritium/02-cluster.jpg",
         "distinction": "Also reddish-capped and found on wood."
       },
       {
@@ -3079,7 +3079,7 @@
       {
         "name": "Boletus edulis (King Bolete)",
         "slug": "boletus-edulis",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/boletus-edulis/01-classic.jpg",
         "distinction": "Much more robust with a non-slimy cap, prominent white reticulation on the stem, and white pores when young."
       }
     ]
@@ -3117,19 +3117,19 @@
       {
         "name": "False Turkey Tail (Stereum ostrea)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/trametes-versicolor/lookalike-stereum-ostrea.jpg",
+        "imageUrl": null,
         "distinction": "The most common mix-up."
       },
       {
         "name": "Ochre Bracket (Trametes ochracea)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/trametes-versicolor/lookalike-trametes-ochracea.jpg",
+        "imageUrl": null,
         "distinction": "A close relative that does have pores underneath, making it harder to distinguish."
       },
       {
         "name": "Hairy Bracket (Trametes hirsuta)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/trametes-versicolor/lookalike-trametes-hirsuta.jpg",
+        "imageUrl": null,
         "distinction": "Another close relative with pores underneath."
       }
     ]
@@ -3142,19 +3142,19 @@
       {
         "name": "Cauliflower Mushroom (Sparassis crispa)",
         "slug": "sparassis-crispa",
-        "imageUrl": "https://guide.orangutany.com/images/species/tremella-fuciformis/lookalike-sparassis.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/sparassis-crispa/01-field.jpg",
         "distinction": "Much larger (often 20–40 cm across), opaque cream to pale tan, and found at the base of living or dead conifer trees — never on small branches."
       },
       {
         "name": "White Jelly Fungus (Ductifera pululahuana)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/tremella-fuciformis/lookalike-ductifera.jpg",
+        "imageUrl": null,
         "distinction": "A rare white jelly fungus that can superficially resemble Tremella fuciformis."
       },
       {
         "name": "Net-like Tremella (Tremella reticulata)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/tremella-fuciformis/lookalike-reticulata.jpg",
+        "imageUrl": null,
         "distinction": "White and gelatinous like T."
       }
     ]
@@ -3167,19 +3167,19 @@
       {
         "name": "Orange Jelly (Dacrymyces chrysospermus)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/tremella-mesenterica/lookalike-dacrymyces.jpg",
+        "imageUrl": null,
         "distinction": "Very similar in color and gelatinous texture, but Dacrymyces chrysospermus grows exclusively on dead conifer wood (pine, spruce, fir) — never hardwood."
       },
       {
         "name": "Yellow Stagshorn (Calocera viscosa)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/tremella-mesenterica/lookalike-calocera.jpg",
+        "imageUrl": null,
         "distinction": "Similar bright yellow color but completely different structure — Calocera viscosa forms firm, upright, antler-shaped or forked branches rather than a blobby, gelatinous mass."
       },
       {
         "name": "Naematelia aurantia",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/tremella-mesenterica/lookalike-naematelia.jpg",
+        "imageUrl": null,
         "distinction": "Formerly classified as Tremella aurantia, this species is extremely similar to T."
       }
     ]
@@ -3204,7 +3204,7 @@
       {
         "name": "Greencracked Brittlegill (Russula virescens)",
         "slug": "russula-virescens",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/russula-virescens/01-field.jpg",
         "distinction": "Has a green-cracked cap surface (like dried mud) and brittle white gills."
       }
     ]
@@ -3217,19 +3217,19 @@
       {
         "name": "Western Matsutake (Tricholoma murrillianum)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/tricholoma-matsutake/lookalike-murrillianum.jpg",
+        "imageUrl": null,
         "distinction": "The North American counterpart — often sold as 'matsutake' and nearly identical in appearance and aroma."
       },
       {
         "name": "Matsutake Look-alike (Tricholoma caligatum)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/tricholoma-matsutake/lookalike-caligatum.jpg",
+        "imageUrl": null,
         "distinction": "Mediterranean species found under pine and oak in Southern Europe and North Africa."
       },
       {
         "name": "Smith's Amanita (Amanita smithiana)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/tricholoma-matsutake/lookalike-smithiana.jpg",
+        "imageUrl": null,
         "distinction": "This is the dangerous one."
       }
     ]
@@ -3267,19 +3267,19 @@
       {
         "name": "White Truffle (Tuber magnatum)",
         "slug": "tuber-magnatum",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/tuber-magnatum/01-field.jpg",
         "distinction": "Much larger (up to 12 cm), smoother peridium, gleba more ochre-yellow with finer veins."
       },
       {
         "name": "Summer Truffle (Tuber aestivum)",
         "slug": "tuber-aestivum",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/tuber-aestivum/01-field.jpg",
         "distinction": "Larger, with prominent black pyramidal warts on the peridium (smooth on T."
       },
       {
         "name": "Périgord Black Truffle (Tuber melanosporum)",
         "slug": "tuber-melanosporum",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/tuber-melanosporum/01-field.jpg",
         "distinction": "Black exterior with fine polygonal warts, dark purple-black interior with white veins."
       }
     ]
@@ -3292,7 +3292,7 @@
       {
         "name": "Bianchetto Truffle (Tuber borchii)",
         "slug": "tuber-borchii",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/tuber-borchii/03-field.jpg",
         "distinction": "Much smaller (1-4 cm), with a stronger, almost chemical garlic odor that some find unpleasant."
       },
       {
@@ -3336,19 +3336,19 @@
       {
         "name": "Porcini (Boletus edulis)",
         "slug": "boletus-edulis",
-        "imageUrl": "https://guide.orangutany.com/images/species/tylopilus-felleus/lookalike-edulis.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/boletus-edulis/01-classic.jpg",
         "distinction": "The mushroom everyone wants."
       },
       {
         "name": "Pine Bolete (Boletus pinophilus)",
         "slug": "boletus-pinophilus",
-        "imageUrl": "https://guide.orangutany.com/images/species/tylopilus-felleus/lookalike-pinophilus.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/boletus-pinophilus/01-field.jpg",
         "distinction": "Darker, reddish-brown cap compared to the Bitter Bolete's paler tan."
       },
       {
         "name": "Summer Cep (Boletus reticulatus)",
         "slug": "boletus-reticulatus",
-        "imageUrl": "https://guide.orangutany.com/images/species/tylopilus-felleus/lookalike-reticulatus.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/boletus-reticulatus/01-field.jpg",
         "distinction": "Very pale, often cracked cap surface (looks 'crazed' like old pottery)."
       }
     ]
@@ -3361,19 +3361,19 @@
       {
         "name": "Morchella esculenta (Yellow Morel)",
         "slug": "morchella-esculenta",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/morchella-esculenta/01-solo.jpg",
         "distinction": "True morels have a honeycomb pattern of distinct pits and ridges, not wrinkled brain-like folds."
       },
       {
         "name": "Morchella elata (Black Morel)",
         "slug": "morchella-elata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/morchella-elata/01-field.jpg",
         "distinction": "Same key differences as yellow morels: cap attached along full length, clean honeycomb pitting, hollow stem."
       },
       {
         "name": "Gyromitra esculenta (False Morel)",
         "slug": "gyromitra-esculenta",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/gyromitra-esculenta/01-brain-cap.jpg",
         "distinction": "Much more irregular and brain-like cap, often reddish brown to dark brown."
       }
     ]
@@ -3386,13 +3386,13 @@
       {
         "name": "Death Cap (Amanita phalloides)",
         "slug": "amanita-phalloides",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-phalloides/01-cap-top.jpg",
         "distinction": "The most dangerous confusion."
       },
       {
         "name": "Destroying Angel (Amanita virosa)",
         "slug": "amanita-virosa",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/amanita-virosa/01-white-cap.jpg",
         "distinction": "Another deadly Amanita with a prominent volva."
       },
       {
@@ -3423,7 +3423,7 @@
       {
         "name": "Boletus edulis (Porcini)",
         "slug": "boletus-edulis",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/boletus-edulis/01-classic.jpg",
         "distinction": "Beginners sometimes confuse the two, but Boletus edulis is much larger and more robust, with a smooth (not cracking) brown cap, a thick stem with fine white reticulation (net pattern), and a white pore surface that does not bruise blue."
       }
     ]
@@ -3442,7 +3442,7 @@
       {
         "name": "Galerina marginata (Deadly Galerina)",
         "slug": "galerina-marginata",
-        "imageUrl": null,
+        "imageUrl": "https://guide.orangutany.com/images/species/galerina-marginata/01-field.jpg",
         "distinction": "A critical distinction."
       }
     ]
@@ -3455,19 +3455,19 @@
       {
         "name": "Dead Moll's Fingers (Xylaria longipes)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/xylaria-polymorpha/lookalike-longipes.jpg",
+        "imageUrl": null,
         "distinction": "Very similar but noticeably thinner and more elongated, with a longer stalk-like base."
       },
       {
         "name": "Cordyceps / Ophiocordyceps species",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/xylaria-polymorpha/lookalike-cordyceps.jpg",
+        "imageUrl": null,
         "distinction": "Some Cordyceps and Ophiocordyceps species produce dark, club-shaped fruiting bodies that superficially resemble Xylaria."
       },
       {
         "name": "Yellow Stagshorn (Calocera viscosa)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/xylaria-polymorpha/lookalike-calocera.jpg",
+        "imageUrl": null,
         "distinction": "Bright yellow to deep orange, with a rubbery jelly-like texture — nothing like the hard, black, carbonaceous surface of Xylaria."
       }
     ]

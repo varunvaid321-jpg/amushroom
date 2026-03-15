@@ -194,6 +194,7 @@ export function ProfilePanel({
                           src={la.imageUrl}
                           alt={la.name}
                           className="h-16 w-16 flex-shrink-0 rounded-md object-cover"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                         />
                       )}
                       <div className="flex-1 min-w-0">

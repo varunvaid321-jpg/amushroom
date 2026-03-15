@@ -18,6 +18,17 @@ cd "$GUIDE_DIR"
 
 npx tsx -e "
 import { allSpecies } from './data/species';
+import * as fs from 'fs';
+
+// Build slug -> hero image URL lookup
+const slugHero: Record<string, string> = {};
+allSpecies.forEach(s => {
+  const heroFile = s.images?.[0]?.filename;
+  if (heroFile) {
+    slugHero[s.slug] = 'https://guide.orangutany.com/images/species/' + s.slug + '/' + heroFile;
+  }
+});
+
 const map: Record<string, any> = {};
 allSpecies.forEach(s => {
   const heroFile = s.images?.[0]?.filename;
@@ -25,12 +36,25 @@ allSpecies.forEach(s => {
     slug: s.slug,
     commonName: s.commonName,
     heroImage: heroFile ? 'https://guide.orangutany.com/images/species/' + s.slug + '/' + heroFile : null,
-    lookAlikes: (s.lookAlikes || []).slice(0, 3).map(la => ({
-      name: la.name,
-      slug: la.slug || null,
-      imageUrl: la.image ? 'https://guide.orangutany.com/images/species/' + s.slug + '/' + la.image : null,
-      distinction: la.distinction ? la.distinction.split('.')[0] + '.' : null,
-    }))
+    lookAlikes: (s.lookAlikes || []).slice(0, 3).map(la => {
+      // Resolve look-alike image: dedicated file on disk > look-alike species hero > null
+      let imageUrl: string | null = null;
+      if (la.image) {
+        const filePath = 'public/images/species/' + s.slug + '/' + la.image;
+        if (fs.existsSync(filePath)) {
+          imageUrl = 'https://guide.orangutany.com/images/species/' + s.slug + '/' + la.image;
+        }
+      }
+      if (!imageUrl && la.slug && slugHero[la.slug]) {
+        imageUrl = slugHero[la.slug];
+      }
+      return {
+        name: la.name,
+        slug: la.slug || null,
+        imageUrl,
+        distinction: la.distinction ? la.distinction.split('.')[0] + '.' : null,
+      };
+    })
   };
 });
 process.stdout.write(JSON.stringify(map, null, 2));
