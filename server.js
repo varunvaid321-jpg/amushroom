@@ -1022,7 +1022,8 @@ async function handleAuthRegister(req, res) {
   trackAndGeo('signup', user.id, { email }, getClientIp(req), req.headers['user-agent'] || null);
   writeAuditLog({ eventType: 'signup', userId: user.id, userEmail: email, details: { method: 'email' }, ip: getClientIp(req) }).catch(() => {});
   sendWelcomeEmail(email, name).catch(() => {});
-  sendJson(req, res, 201, { user });
+  const { stripe_customer_id: _sc2, stripe_subscription_id: _ss2, ...safeRegUser } = user;
+  sendJson(req, res, 201, { user: safeRegUser });
 }
 
 async function handleAuthLogin(req, res) {
@@ -1075,7 +1076,9 @@ async function handleAuthLogin(req, res) {
 
   trackAndGeo('login', userRow.id, { email }, getClientIp(req), req.headers['user-agent'] || null);
   writeAuditLog({ eventType: 'login', userId: userRow.id, userEmail: email, details: { method: 'email' }, ip: getClientIp(req) }).catch(() => {});
-  sendJson(req, res, 200, { user: await getPublicUser(userRow.id) });
+  const loginUser = await getPublicUser(userRow.id);
+  const { stripe_customer_id: _sc, stripe_subscription_id: _ss, ...safeLoginUser } = loginUser;
+  sendJson(req, res, 200, { user: safeLoginUser });
 }
 
 async function handleAuthLogout(req, res) {
