@@ -157,14 +157,7 @@ export function ResultsDock({
     }
   };
 
-  // Determine grid layout based on match count
   const cardCount = Math.min(viableMatches.length, 3);
-  const gridClass =
-    cardCount === 1
-      ? "grid grid-cols-1 max-w-md mx-auto"
-      : cardCount === 2
-        ? "grid grid-cols-1 sm:grid-cols-2 gap-3"
-        : "grid grid-cols-1 sm:grid-cols-3 gap-3";
 
   return (
     <div className="space-y-4">
@@ -185,19 +178,15 @@ export function ResultsDock({
         </div>
       )}
 
-      {/* Cards — panel always expands directly below its own card */}
-      <div className={cardCount === 1 ? "max-w-md mx-auto space-y-3" : `grid grid-cols-1 ${cardCount === 2 ? "sm:grid-cols-2" : "sm:grid-cols-3"} gap-3`}>
+      {/* Cards — single column, panel expands directly below its card */}
+      <div className="max-w-lg mx-auto space-y-3">
         {viableMatches.slice(0, 3).map((m, i) => {
           const isExpanded = expandedSet.has(i);
           return (
-            <div key={i} className={isExpanded && cardCount > 1 ? "sm:col-span-full" : ""}>
-              <div className={isExpanded && cardCount > 1 ? `grid ${cardCount === 2 ? "sm:grid-cols-2" : "sm:grid-cols-3"} gap-3` : ""}>
-                <div className={isExpanded && cardCount > 1 ? `${i === 0 ? "sm:col-start-1" : i === 1 ? "sm:col-start-2" : "sm:col-start-3"}` : ""}>
-                  <MatchCard match={m} rank={i + 1} isExpanded={isExpanded} onToggle={() => {
-                    setExpandedSet(prev => { const next = new Set(prev); if (next.has(i)) next.delete(i); else next.add(i); return next; });
-                  }} />
-                </div>
-              </div>
+            <div key={i}>
+              <MatchCard match={m} rank={i + 1} isExpanded={isExpanded} onToggle={() => {
+                setExpandedSet(prev => { const next = new Set(prev); if (next.has(i)) next.delete(i); else next.add(i); return next; });
+              }} />
               {isExpanded && (
                 <div className="mt-2">
                   <ProfilePanel match={m} rank={cardCount > 1 ? i + 1 : undefined} />
