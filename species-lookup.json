@@ -263,7 +263,7 @@
       {
         "name": "Yellow Patches (Amanita flavoconia)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/amanita-muscaria/lookalike-flavoconia.jpg",
+        "imageUrl": null,
         "distinction": "Eastern North American species."
       }
     ]
@@ -600,7 +600,7 @@
       },
       {
         "name": "Purple-Spored Puffball (Calvatia cyathiformis)",
-        "slug": "calvatia-cyathiformis",
+        "slug": null,
         "imageUrl": null,
         "distinction": "A close relative that's also edible when young."
       }
@@ -1296,7 +1296,7 @@
     "lookAlikes": [
       {
         "name": "Artist's Conk (Ganoderma applanatum)",
-        "slug": "ganoderma-applanatum",
+        "slug": null,
         "imageUrl": null,
         "distinction": "Flatter, harder, and lacks the glossy lacquered surface of Reishi."
       },
