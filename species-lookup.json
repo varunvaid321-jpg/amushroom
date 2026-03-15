@@ -1517,24 +1517,24 @@
   "hydnellum peckii": {
     "slug": "hydnellum-peckii",
     "commonName": "Bleeding Tooth Fungus",
-    "heroImage": "https://guide.orangutany.com/images/species/hydnellum-peckii/01-field.jpg",
+    "heroImage": "https://guide.orangutany.com/images/species/hydnellum-peckii/03-field.jpg",
     "lookAlikes": [
       {
         "name": "Mealy Tooth (Hydnellum ferrugineum)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/hydnellum-peckii//images/species/hydnellum-peckii/lookalike-hydnellum-ferrugineum.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/hydnellum-peckii/lookalike-hydnellum-ferrugineum.jpg",
         "distinction": "Most similar species."
       },
       {
         "name": "Ridged Tooth (Hydnellum scrobiculatum)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/hydnellum-peckii//images/species/hydnellum-peckii/lookalike-hydnellum-scrobiculatum.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/hydnellum-peckii/lookalike-hydnellum-scrobiculatum.jpg",
         "distinction": "Cap 2-6 cm, fibrillose to pitted-scaly, brown to reddish-brown with a distinctly zonate (ringed) margin."
       },
       {
         "name": "Shingled Hedgehog (Sarcodon imbricatus)",
         "slug": null,
-        "imageUrl": "https://guide.orangutany.com/images/species/hydnellum-peckii//images/species/hydnellum-peckii/lookalike-sarcodon-imbricatus.jpg",
+        "imageUrl": "https://guide.orangutany.com/images/species/hydnellum-peckii/lookalike-sarcodon-imbricatus.jpg",
         "distinction": "Much larger (cap up to 15 cm) with coarse, upturned brown scales on the cap surface."
       }
     ]
@@ -3159,6 +3159,31 @@
       }
     ]
   },
+  "tuber borchii": {
+    "slug": "tuber-borchii",
+    "commonName": "Bianchetto Truffle",
+    "heroImage": "https://guide.orangutany.com/images/species/tuber-borchii/03-field.jpg",
+    "lookAlikes": [
+      {
+        "name": "White Truffle (Tuber magnatum)",
+        "slug": "tuber-magnatum",
+        "imageUrl": null,
+        "distinction": "Much larger (up to 12 cm), smoother peridium, gleba more ochre-yellow with finer veins."
+      },
+      {
+        "name": "Summer Truffle (Tuber aestivum)",
+        "slug": "tuber-aestivum",
+        "imageUrl": null,
+        "distinction": "Larger, with prominent black pyramidal warts on the peridium (smooth on T."
+      },
+      {
+        "name": "Périgord Black Truffle (Tuber melanosporum)",
+        "slug": "tuber-melanosporum",
+        "imageUrl": null,
+        "distinction": "Black exterior with fine polygonal warts, dark purple-black interior with white veins."
+      }
+    ]
+  },
   "tuber magnatum": {
     "slug": "tuber-magnatum",
     "commonName": "White Truffle",
@@ -3166,7 +3191,7 @@
     "lookAlikes": [
       {
         "name": "Bianchetto Truffle (Tuber borchii)",
-        "slug": null,
+        "slug": "tuber-borchii",
         "imageUrl": null,
         "distinction": "Much smaller (1-4 cm), with a stronger, almost chemical garlic odor that some find unpleasant."
       },
