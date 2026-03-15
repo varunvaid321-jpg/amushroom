@@ -2154,5 +2154,9 @@
   "gymnopilus viridans": {
     "commonName": "Green-Staining Gymnopilus",
     "story": "One of the rarest Gymnopilus species, known from only a handful of collections in the Pacific Northwest. It gets its name from the greenish stains that develop on its flesh when bruised \u2014 a reaction linked to its psilocybin content."
+  },
+  "tuber borchii": {
+    "commonName": "Bianchetto Truffle",
+    "story": "Called 'marzuolo' because it peaks in March, this is the fastest truffle to cultivate \u2014 producing in just 4 years, half the wait of a black truffle. It tolerates soil pH from 4.5 to 8.5, the widest range of any cultivated truffle, and over-ripe specimens famously smell like kitchen gas."
   }
 }
