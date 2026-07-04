@@ -17,6 +17,7 @@ import {
   type User,
 } from "@/lib/api";
 import { AuthModal } from "@/components/auth/auth-modal";
+import { trackSignupConversion } from "@/lib/gtag";
 
 interface AuthContextValue {
   user: User | null;
@@ -76,6 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(u);
       // New registrations are never admin
       setAdminFlag(false);
+      trackSignupConversion();
       return u;
     },
     [],

@@ -1393,7 +1393,7 @@ async function handleStripeCheckout(req, res) {
     mode: isLifetime ? 'payment' : 'subscription',
     customer: customerId,
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${APP_BASE_URL}/?upgraded=1`,
+    success_url: `${APP_BASE_URL}/?upgraded=1&plan=${encodeURIComponent(plan)}`,
     cancel_url: `${APP_BASE_URL}/`,
     metadata: { userId: String(auth.user.id), plan },
   };

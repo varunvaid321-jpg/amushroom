@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Hero } from "@/components/hero/hero";
 import { track } from "@/lib/track";
+import { trackPurchaseConversion } from "@/lib/gtag";
 import { PhotoSlots } from "@/components/upload/photo-slots";
 import { UploadPanel } from "@/components/upload/upload-panel";
 import { ResultsDock } from "@/components/results/results-dock";
@@ -30,6 +31,7 @@ export default function Home() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("upgraded") === "1") {
       setShowUpgradeBanner(true);
+      trackPurchaseConversion(params.get("plan"));
       window.history.replaceState({}, "", "/");
     }
   }, []);
