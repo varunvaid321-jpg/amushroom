@@ -1440,7 +1440,9 @@ test('security: .env.production is gitignored', () => {
   assert.ok(gitignore.includes('.env') || gitignore.includes('.env.production'), '.env.production must be gitignored');
 });
 
-test('security: .env.production exists with credentials', () => {
+test('security: .env.production exists with credentials', { skip: !!process.env.CI }, () => {
+  // Local-machine check only: the file is gitignored by design, so it can
+  // never exist in CI. Guards the local credentials backup, not the repo.
   const envPath = path.join(root, '.env.production');
   assert.ok(fs.existsSync(envPath), '.env.production must exist');
   const content = fs.readFileSync(envPath, 'utf8');
