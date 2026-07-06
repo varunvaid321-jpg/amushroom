@@ -1429,23 +1429,21 @@ async function handleCancelSubscription(req, res) {
   if (auth.user.tier !== 'pro') { jsonError(req, res, 400, 'Only monthly subscriptions can be cancelled.'); return; }
 
   try {
-    await stripe.subscriptions.cancel(auth.user.stripe_subscription_id);
-    try {
-      await downgradeUser(auth.user.id);
-    } catch (downgradeErr) {
-      // CRITICAL: Stripe sub is cancelled but DB still shows Pro — log for manual fix
-      console.error(`[cancel-subscription] CRITICAL: Stripe cancelled but downgradeUser failed for user ${auth.user.id}:`, downgradeErr.message);
-      writeAuditLog({ eventType: 'tier_change', userId: auth.user.id, userEmail: auth.user.email, details: { tier: 'pro', reason: 'cancel_downgrade_failed', error: downgradeErr.message }, ip: getClientIp(req) }).catch(() => {});
-      // The subscription.deleted webhook will eventually fix this
-      jsonError(req, res, 500, 'Your subscription was cancelled but there was an issue updating your account. It will be resolved automatically.');
-      return;
-    }
-    writeAuditLog({ eventType: 'tier_change', userId: auth.user.id, userEmail: auth.user.email, details: { tier: 'free', reason: 'user_cancelled' }, ip: getClientIp(req) }).catch(() => {});
-    console.log(`[stripe] User ${auth.user.id} cancelled subscription ${auth.user.stripe_subscription_id}`);
+    // Cancel at period end — the member keeps the Pro time they already paid
+    // for. The customer.subscription.deleted webhook performs the actual
+    // downgradeUser when the paid period expires (existing handler).
+    const sub = await stripe.subscriptions.update(auth.user.stripe_subscription_id, {
+      cancel_at_period_end: true,
+    });
+    const accessUntil = sub.current_period_end
+      ? new Date(sub.current_period_end * 1000).toISOString()
+      : null;
+    writeAuditLog({ eventType: 'tier_change', userId: auth.user.id, userEmail: auth.user.email, details: { tier: 'pro', reason: 'user_cancelled_at_period_end', accessUntil }, ip: getClientIp(req) }).catch(() => {});
+    console.log(`[stripe] User ${auth.user.id} cancelled subscription ${auth.user.stripe_subscription_id} at period end (access until ${accessUntil})`);
     if (auth.user.email) {
-      sendCancellationEmail(auth.user.email, auth.user.name).catch(() => {});
+      sendCancellationEmail(auth.user.email, auth.user.name, accessUntil).catch(() => {});
     }
-    sendJson(req, res, 200, { success: true, tier: 'free' });
+    sendJson(req, res, 200, { success: true, tier: 'pro', accessUntil });
   } catch (err) {
     console.error('[cancel-subscription] Error:', err.message);
     jsonError(req, res, 500, 'Failed to cancel subscription. Please try again.');

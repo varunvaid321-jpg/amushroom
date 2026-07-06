@@ -216,6 +216,6 @@ export async function createPortalSession(): Promise<{ url: string }> {
   return apiFetch("/api/stripe/portal-session");
 }
 
-export async function cancelSubscription(): Promise<{ success: boolean; tier: string }> {
+export async function cancelSubscription(): Promise<{ success: boolean; tier: string; accessUntil: string | null }> {
   return apiFetch("/api/stripe/cancel-subscription", { method: "POST" });
 }

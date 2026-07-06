@@ -219,17 +219,20 @@ async function sendAbuseAlertEmail(adminEmail, { userId, userEmail, ip, reason, 
   }
 }
 
-async function sendCancellationEmail(to, name) {
+async function sendCancellationEmail(to, name, accessUntil) {
   if (!resend) {
     console.warn('[email] RESEND_API_KEY not set — cancellation email skipped');
     return;
   }
 
   const greeting = name ? `Hi ${escapeHtml(name)},` : 'Hi there,';
+  const statusLine = accessUntil
+    ? `Your Orangutany Pro subscription has been cancelled. You'll keep full Pro access until <strong style="color:#f0e4cc;">${escapeHtml(new Date(accessUntil).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }))}</strong> — the time you've already paid for — and then move to the free plan.`
+    : 'Your Orangutany Pro subscription has been cancelled and your account has been switched back to the free plan.';
   const html = baseTemplate(`
     <h1 style="margin:0 0 20px;font-size:24px;font-weight:700;color:#f0e4cc;line-height:1.3;">Your Pro subscription has been cancelled</h1>
     <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#f0e4cc;">${greeting}</p>
-    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#f0e4cc;">Your Orangutany Pro subscription has been cancelled and your account has been switched back to the free plan.</p>
+    <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#f0e4cc;">${statusLine}</p>
     <p style="margin:0 0 20px;font-size:16px;line-height:1.7;color:#f0e4cc;">You can still use Orangutany with 5 free scans per day. If you ever want to come back to Pro, you can upgrade again anytime from your account.</p>
 
     <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
