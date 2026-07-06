@@ -98,7 +98,8 @@ export default function BillingPage() {
         <div className="rounded-xl border border-green-500/30 bg-green-500/5 p-5 mb-6">
           <p className="text-sm font-semibold text-green-400 mb-1">Subscription cancelled</p>
           <p className="text-xs text-muted-foreground">
-            Your Pro membership has been cancelled. You&apos;re now on the free plan with 5 daily scans.
+            Your Pro membership won&apos;t renew. You&apos;ll keep full Pro access until the end of
+            your current billing period, then move to the free plan with 5 daily scans.
             You can upgrade again anytime.
           </p>
         </div>
