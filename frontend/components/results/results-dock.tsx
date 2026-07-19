@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Loader2, Microscope, Lock, ArrowLeft, BookOpen, CheckCircle2 } from "lucide-react";
+import { Loader2, Microscope, Lock, ArrowLeft, BookOpen, CheckCircle2, Share2 } from "lucide-react";
 import type { Match, UploadGuidance } from "@/lib/api";
+import { shareMatchCard } from "@/lib/share-card";
 import { ProfilePanel } from "./profile-panel";
 import { MatchCard } from "./match-card";
 import { useAuth } from "@/hooks/use-auth";
@@ -21,6 +22,7 @@ interface ResultsDockProps {
   isLoggedIn?: boolean;
   uploadStory?: string | null;
   onSaveStory?: (story: string) => Promise<void>;
+  photoUrl?: string | null;
 }
 
 export function ResultsDock({
@@ -35,6 +37,7 @@ export function ResultsDock({
   isLoggedIn,
   uploadStory,
   onSaveStory,
+  photoUrl,
 }: ResultsDockProps) {
   const { openAuthModal, user } = useAuth();
   const { openUpgrade } = useUpgrade();
@@ -44,6 +47,7 @@ export function ResultsDock({
   const [storySaving, setStorySaving] = useState(false);
   const [storyDismissed, setStoryDismissed] = useState(false);
   const [expandedSet, setExpandedSet] = useState<Set<number>>(new Set());
+  const [shareState, setShareState] = useState<"idle" | "rendering" | "downloaded" | "error">("idle");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   if (state === "idle") {
@@ -159,6 +163,17 @@ export function ResultsDock({
 
   const cardCount = Math.min(viableMatches.length, 3);
 
+  const handleShare = async () => {
+    if (!photoUrl || shareState === "rendering") return;
+    setShareState("rendering");
+    try {
+      const outcome = await shareMatchCard(viableMatches[0], photoUrl);
+      setShareState(outcome === "downloaded" ? "downloaded" : "idle");
+    } catch {
+      setShareState("error");
+    }
+  };
+
   return (
     <div className="space-y-4">
       {isSavedScan && onBackToLibrary && (
@@ -196,6 +211,35 @@ export function ResultsDock({
           );
         })}
       </div>
+
+      {/* Share card — top match + user's photo composed into a branded PNG */}
+      {photoUrl && (
+        <div className="max-w-lg mx-auto space-y-2">
+          <Button
+            variant="outline"
+            onClick={handleShare}
+            disabled={shareState === "rendering"}
+            className="w-full border-primary/30 text-primary hover:bg-primary/10 hover:text-primary"
+          >
+            {shareState === "rendering" ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Share2 className="mr-2 h-4 w-4" />
+            )}
+            Share this find
+          </Button>
+          {shareState === "downloaded" && (
+            <p className="text-center text-xs text-muted-foreground">
+              Share card saved to your downloads.
+            </p>
+          )}
+          {shareState === "error" && (
+            <p className="text-center text-xs text-muted-foreground">
+              Couldn&apos;t create the share card. Please try again.
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Story prompt — shown after new high-confidence scans for logged-in users */}
       {showStoryPrompt && (

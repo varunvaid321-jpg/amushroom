@@ -145,6 +145,7 @@ export default function Home() {
                 isLoggedIn={!!user}
                 uploadStory={uploadStory}
                 onSaveStory={saveStory}
+                photoUrl={previews.find((p) => p) ?? null}
               />
             </div>
           </div>
