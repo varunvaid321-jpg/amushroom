@@ -21,6 +21,8 @@
     "test:e2e": "node --test tests/e2e.test.js",
     "test:ui": "node --test tests/ui.test.js",
     "test:all": "node --test tests/unit.test.js && node --test tests/sanity.test.js && node --test tests/e2e.test.js && node --test tests/ui.test.js",
+    "turtle:test": "node --test turtle/tests/*.test.js",
+    "turtle:check": "node --check turtle/lib/indicators.js && node --check turtle/lib/signals.js && node --check turtle/lib/sizing.js && node --check turtle/lib/risk.js && node --check turtle/lib/ranking.js",
     "ci": "npm run check && npm test"
   },
   "engines": {
