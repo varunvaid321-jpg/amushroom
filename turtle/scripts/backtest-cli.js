@@ -4,12 +4,14 @@
 /**
  * Run walk-forward validation and print the go/no-go gate.
  *
- * Reads cached IBKR history from turtle/data/cache/bars/. As with universe
- * resolution, fetching is the session's job and computation is this script's, so
- * a gate result can be reproduced months later from the same cached bars.
+ * With --fetch it downloads ~5 years of history for the universe through the
+ * provider layer and caches it; without, it runs against whatever is already
+ * cached. Separating the two means a gate result can be reproduced months later
+ * from exactly the bars that produced it.
  *
  * Usage:
- *   node turtle/scripts/backtest-cli.js
+ *   node turtle/scripts/backtest-cli.js --fetch     # download history, then run
+ *   node turtle/scripts/backtest-cli.js              # run against cached bars
  *   node turtle/scripts/backtest-cli.js --json
  */
 
@@ -17,7 +19,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { walkForward, evaluateGate, runBacktest } = require('../lib/backtest');
 const { projectPortfolio } = require('../lib/montecarlo');
-const { parseIbkrHistory } = require('../lib/integrity');
+const { parseIbkrHistory, exchangeParts } = require('../lib/integrity');
+const { fetchAll } = require('../lib/providers');
+const { mapWithConcurrency } = require('../lib/http');
+const { buildConsensus } = require('../lib/consensus');
+const { loadCandidates } = require('../lib/universe');
+const stability = require('../lib/stability');
 
 const ROOT = path.join(__dirname, '..');
 
@@ -36,11 +43,95 @@ const config = require('../config.json');
 const pct = (v) => `${(v * 100).toFixed(1)}%`;
 const num = (v) => (Number.isFinite(v) ? v.toFixed(2) : String(v));
 
+/**
+ * Download history for the whole universe and cache it.
+ *
+ * Bars are trimmed to sessions strictly BEFORE today's exchange date, so the
+ * newest bar is always a settled one. Without that, a fetch run during market
+ * hours would carry a still-forming bar into the backtest and every symbol
+ * would abstain on the session gate.
+ */
+async function fetchHistory(markets) {
+  const entries = loadCandidates(ROOT, { markets, fs, path });
+  const benchmark = {
+    symbol: config.regime.benchmarkSymbol,
+    sector: 'Benchmark',
+    currency: 'CAD',
+    isBenchmark: true,
+  };
+  const all = [benchmark, ...entries.filter((e) => e.symbol !== benchmark.symbol)];
+  const today = exchangeParts(new Date(), config.integrity.exchangeTimezone).date;
+
+  process.stderr.write(`Fetching ~5y history for ${all.length} symbols across ${markets.join(', ')}...\n`);
+  fs.mkdirSync(BARS_DIR, { recursive: true });
+
+  let written = 0;
+  let skipped = 0;
+
+  const results = await mapWithConcurrency(all, config.providers.concurrency, async (entry) => {
+    const fetched = await fetchAll(entry, {
+      config,
+      dataRoot: DATA_ROOT,
+      days: 1825,
+      timeoutMs: config.providers.timeoutMs,
+    });
+
+    const settled = fetched.sources.map((source) => ({
+      ...source,
+      bars: source.bars.filter(
+        (bar) => exchangeParts(new Date(bar.t), config.integrity.exchangeTimezone).date < today
+      ),
+    }));
+
+    const consensus = buildConsensus({
+      symbol: entry.symbol,
+      sources: settled,
+      config,
+      now: new Date(),
+    });
+    return { entry, consensus, failures: fetched.failures };
+  });
+
+  for (const result of results) {
+    if (!result || !result.entry) continue;
+    const { entry, consensus } = result;
+
+    if (!consensus.tradeable) {
+      skipped += 1;
+      const reason = consensus.checks.filter((c) => !c.passed).map((c) => c.detail).join('; ');
+      process.stderr.write(`  skip ${entry.symbol.padEnd(10)} ${reason}\n`);
+      continue;
+    }
+
+    // The benchmark is an index, not a tradeable name, so it bypasses the
+    // stability screen — but a universe name that fails it would only pollute
+    // the backtest with trades the live system would never take.
+    if (!entry.isBenchmark) {
+      const screen = stability.screen(entry.symbol, consensus.bars, config);
+      if (!screen.stable) {
+        skipped += 1;
+        process.stderr.write(`  skip ${entry.symbol.padEnd(10)} unstable: ${screen.failures[0]}\n`);
+        continue;
+      }
+    }
+
+    fs.writeFileSync(
+      path.join(BARS_DIR, `${entry.symbol.replace(/\./g, '_')}.json`),
+      JSON.stringify({ symbol: entry.symbol, currency: entry.currency, bars: consensus.bars })
+    );
+    written += 1;
+  }
+
+  process.stderr.write(`Cached ${written} symbols, skipped ${skipped}.\n\n`);
+  return written;
+}
+
+/** Accept either the normalised {bars:[...]} shape or a raw IBKR response. */
 function loadBars() {
   if (!fs.existsSync(BARS_DIR)) {
     process.stderr.write(
       `No cached bars at ${BARS_DIR}.\n` +
-        `Run /turtle --backtest to fetch history for the universe first.\n`
+        `Run "npm run turtle:backtest -- --fetch" to download history first.\n`
     );
     process.exit(1);
   }
@@ -50,7 +141,7 @@ function loadBars() {
     const symbol = path.basename(file, '.json').replace(/_/g, '.');
     const raw = JSON.parse(fs.readFileSync(path.join(BARS_DIR, file), 'utf8'));
     try {
-      barsBySymbol[symbol] = parseIbkrHistory(raw);
+      barsBySymbol[symbol] = Array.isArray(raw.bars) ? raw.bars : parseIbkrHistory(raw);
     } catch (error) {
       process.stderr.write(`Skipping ${symbol}: ${error.message}\n`);
     }
@@ -58,14 +149,40 @@ function loadBars() {
   return barsBySymbol;
 }
 
+/**
+ * Sector map for the concentration cap.
+ *
+ * Falls back to the candidate lists when no IBKR-resolved universe file exists,
+ * which is the normal case on a machine without a broker session. Returning an
+ * empty map would silently disable the sector cap and let the backtest take
+ * positions the live system would refuse — making the gate result meaningless.
+ */
 function loadSectors() {
-  if (!fs.existsSync(UNIVERSE)) return {};
-  const universe = JSON.parse(fs.readFileSync(UNIVERSE, 'utf8'));
-  return Object.fromEntries(universe.symbols.map((s) => [s.symbol, s.sector]));
+  const sectors = {};
+  for (const entry of loadCandidates(ROOT, { fs, path })) {
+    sectors[entry.symbol] = entry.sector;
+  }
+  if (fs.existsSync(UNIVERSE)) {
+    const universe = JSON.parse(fs.readFileSync(UNIVERSE, 'utf8'));
+    for (const s of universe.symbols) sectors[s.symbol] = s.sector;
+  }
+  return sectors;
 }
 
-function main() {
+async function main() {
   const asJson = process.argv.includes('--json');
+  const markets = (arg('markets') || 'CAD,USD').split(',').map((m) => m.trim().toUpperCase());
+
+  if (process.argv.includes('--fetch')) {
+    const written = await fetchHistory(markets);
+    if (written === 0) {
+      process.stderr.write(
+        'No symbols could be cached. Run "npm run turtle:doctor" to check data source availability.\n'
+      );
+      process.exit(1);
+    }
+  }
+
   const all = loadBars();
 
   const benchmarkSymbol = config.regime.benchmarkSymbol;
@@ -167,4 +284,9 @@ function main() {
   process.exitCode = gate.passed ? 0 : 1;
 }
 
-if (require.main === module) main();
+if (require.main === module) {
+  main().catch((error) => {
+    process.stderr.write(`backtest failed: ${error.stack}\n`);
+    process.exitCode = 1;
+  });
+}

@@ -131,7 +131,8 @@ Names that cannot be sized are rejected with a reason.
 npm run turtle              # daily brief
 npm run turtle:doctor       # what data sources work here
 npm run turtle:test         # 214 tests
-npm run turtle:backtest     # walk-forward gate (needs cached bars)
+npm run turtle:backtest -- --fetch   # download ~5y history, then run the gate
+npm run turtle:backtest              # re-run against cached bars
 npm run turtle:install      # install /turtle (the repo gitignores .claude)
 
 node turtle/scripts/turtle.js --full            # scan the whole universe
@@ -170,7 +171,9 @@ Trading state and raw market data stay local and gitignored.
 ## Before trading live
 
 1. `npm run turtle:doctor` — 2+ sources must be reachable per market you trade.
-2. `npm run turtle:backtest` — the gate must print **PASS**.
+2. `npm run turtle:backtest -- --fetch` — downloads ~5 years for the universe,
+   then runs walk-forward validation. The gate must print **PASS**. Re-running
+   without `--fetch` reuses the cached bars, so a gate result stays reproducible.
 3. Paper-run for ten sessions, recording recommendations without trading, to
    confirm the session gate behaves around holidays and that source
    disagreements surface in the wild.

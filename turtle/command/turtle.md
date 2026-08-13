@@ -17,7 +17,7 @@ here for you to decide, calculate, or interpret.
 | `--full` | `node turtle/scripts/turtle.js --full` |
 | `--markets CAD` / `--markets USD` | `node turtle/scripts/turtle.js --markets <value>` |
 | `--doctor` | `npm run turtle:doctor` |
-| `--backtest` | `npm run turtle:backtest` |
+| `--backtest` | `npm run turtle:backtest -- --fetch` |
 | `--replay <date>` | `node turtle/scripts/turtle.js --replay <date>` |
 
 Run it, then **print the output verbatim**.
@@ -76,7 +76,7 @@ the stop, and a wrong exit corrupts the R-multiple that forward estimates use.
 
 ```bash
 npm run turtle:doctor     # confirm 2+ data sources are reachable per market
-npm run turtle:backtest   # must print PASS before trading live
+npm run turtle:backtest -- --fetch   # downloads history, must print PASS
 ```
 
 If doctor reports insufficient sources for a market, say so plainly and stop.
