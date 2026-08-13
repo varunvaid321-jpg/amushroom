@@ -389,7 +389,10 @@ function verifySymbol({ symbol, sources, now, config }) {
         fail(
           'reconcile-exchange',
           rec.fatal
-            .map((d) => `${d.date} ${d.field}: ${d.primary} vs ${d.secondary} (${d.bps.toFixed(1)}bps)`)
+            .map(
+              (d) =>
+                `${d.date} ${d.field}: ${d.primary.toFixed(4)} vs ${d.secondary.toFixed(4)} (${d.bps.toFixed(1)}bps)`
+            )
             .join('; ')
         );
       } else if (rec.discrepancies.length > 0) {

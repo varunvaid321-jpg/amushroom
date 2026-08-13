@@ -25,6 +25,7 @@
     "turtle:check": "for f in turtle/lib/*.js turtle/scripts/*.js; do node --check \"$f\" || exit 1; done && echo 'turtle: syntax ok'",
     "turtle:backtest": "node turtle/scripts/backtest-cli.js",
     "turtle:universe": "node turtle/scripts/resolve-universe.js",
+    "turtle:install": "node turtle/scripts/install-command.js",
     "ci": "npm run check && npm test"
   },
   "engines": {

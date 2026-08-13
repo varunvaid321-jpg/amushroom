@@ -78,6 +78,24 @@ function main() {
   const full = runBacktest({ barsBySymbol, benchmarkBars, sectorBySymbol, config });
   const projection = projectPortfolio({ stats: full.stats, horizonDays: 60, config });
 
+  // The daily brief projects from this file. It records whether the gate passed
+  // so the brief can refuse to show a forward view derived from a failed gate.
+  fs.writeFileSync(
+    path.join(ROOT, 'data', 'backtest-latest.json'),
+    JSON.stringify(
+      {
+        ranAt: new Date().toISOString(),
+        gatePassed: gate.passed,
+        symbolCount: Object.keys(barsBySymbol).length,
+        stats: full.stats,
+        trades: full.trades,
+        folds: folds.map((f) => ({ fold: f.fold, fromDate: f.fromDate, toDate: f.toDate, stats: f.stats })),
+      },
+      null,
+      2
+    ) + '\n'
+  );
+
   if (asJson) {
     process.stdout.write(
       JSON.stringify({ gate, folds: folds.map((f) => ({ ...f, trades: undefined })), full: { stats: full.stats }, projection }, null, 2) + '\n'
