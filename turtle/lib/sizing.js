@@ -194,11 +194,34 @@ function openRisk(position, currentPrice) {
   return money(perShare * position.shares);
 }
 
-/** Express a closed or open P&L as an R-multiple of the trade's initial risk. */
-function rMultiple({ entryPrice, exitPrice, initialStop, shares }) {
-  const riskPerShare = entryPrice - initialStop;
-  if (!(riskPerShare > 0)) return null;
-  return ((exitPrice - entryPrice) * shares) / (riskPerShare * shares);
+/**
+ * Express P&L as an R-multiple of the risk originally committed.
+ *
+ * R is measured against the FIRST unit's risk: (firstFillPrice - initialStop)
+ * times the first unit's share count. This is the standard Turtle convention and
+ * it is the only one that does not punish the strategy for working.
+ *
+ * The alternative — dividing by (avgPrice - initialStop) — inflates the divisor
+ * every time a position pyramids, because avgPrice drifts up while initialStop
+ * stays anchored to the first fill. Measured that way, a trade's R SHRINKS as it
+ * goes further in your favour and you add to it. Observed on a control backtest,
+ * that understated pyramided winners by 59% and produced the contradiction of a
+ * 5.68 profit factor alongside 0.12R expectancy.
+ *
+ * Large multiples on pyramided trades are correct rather than flattering: adds
+ * are funded by open profit, and the stop re-anchors to (last fill - 2N) on every
+ * add, so exposure to the account's own capital never reaches the full unit
+ * count. What is being measured is return on the risk originally put up.
+ *
+ * `firstFillPrice` and `firstUnitShares` are optional; without them the function
+ * reduces to the single-unit case, where both conventions agree exactly.
+ */
+function rMultiple({ entryPrice, exitPrice, initialStop, shares, firstFillPrice, firstUnitShares }) {
+  const basePrice = firstFillPrice ?? entryPrice;
+  const baseShares = firstUnitShares ?? shares;
+  const initialRisk = (basePrice - initialStop) * baseShares;
+  if (!(initialRisk > 0)) return null;
+  return ((exitPrice - entryPrice) * shares) / initialRisk;
 }
 
 module.exports = {

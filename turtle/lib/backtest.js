@@ -99,6 +99,8 @@ function runBacktest({
       exitPrice: applyCosts(exitPrice, 'sell', config),
       initialStop: position.initialStop,
       shares: position.shares,
+      firstFillPrice: position.firstFillPrice,
+      firstUnitShares: position.firstUnitShares,
     });
 
     trades.push({
@@ -108,8 +110,7 @@ function runBacktest({
       entryDate: position.entryDate,
       exitDate: date,
       // avgPrice is the blended cost across all pyramid units; firstFillPrice is
-      // the original breakout entry. R is measured against the blended entry, so
-      // a pyramided position is scored as the single trade it actually was.
+      // the original breakout entry that R is measured against.
       entryPrice: position.avgPrice,
       firstFillPrice: position.firstFillPrice,
       exitPrice,
@@ -186,6 +187,7 @@ function runBacktest({
           lastFillPrice: fillPrice,
           costBasis: cost,
           firstFillPrice: fillPrice,
+          firstUnitShares: order.shares,
           initialStop,
           stop: initialStop,
           highestClose: fillPrice,
@@ -219,11 +221,12 @@ function runBacktest({
       position.highestClose = Math.max(position.highestClose, bar.c);
       priceBySymbol[position.symbol] = bar.c;
 
-      const riskPerShare = position.avgPrice - position.initialStop;
-      if (riskPerShare > 0) {
+      const initialRisk =
+        (position.firstFillPrice - position.initialStop) * position.firstUnitShares;
+      if (initialRisk > 0) {
         position.maxFavorableR = Math.max(
           position.maxFavorableR,
-          (position.highestClose - position.avgPrice) / riskPerShare
+          ((position.highestClose - position.avgPrice) * position.shares) / initialRisk
         );
       }
 

@@ -2,7 +2,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const { money } = require('./sizing');
+const { money, rMultiple } = require('./sizing');
 
 /**
  * Portfolio state: load, save, and reconcile against what the broker actually
@@ -148,6 +148,7 @@ function applyFill(state, fill) {
       shares: fill.shares,
       avgPrice: money(fill.price),
       firstFillPrice: money(fill.price),
+      firstUnitShares: fill.shares,
       lastFillPrice: money(fill.price),
       initialStop: money(fill.stop),
       stop: money(fill.stop),
@@ -179,7 +180,6 @@ function applyExit(state, { symbol, price, date, reason }) {
   }
   const position = state.positions[index];
   const proceeds = price * position.shares;
-  const riskPerShare = position.avgPrice - position.initialStop;
 
   const trade = {
     symbol,
@@ -194,7 +194,14 @@ function applyExit(state, { symbol, price, date, reason }) {
     units: position.units,
     initialStop: position.initialStop,
     pnl: money(proceeds - position.avgPrice * position.shares),
-    r: riskPerShare > 0 ? (price - position.avgPrice) / riskPerShare : null,
+    r: rMultiple({
+      entryPrice: position.avgPrice,
+      exitPrice: price,
+      initialStop: position.initialStop,
+      shares: position.shares,
+      firstFillPrice: position.firstFillPrice,
+      firstUnitShares: position.firstUnitShares,
+    }),
     exitReason: reason,
     entryEfficiencyRatio: position.entryEfficiencyRatio,
     entryAdx: position.entryAdx,

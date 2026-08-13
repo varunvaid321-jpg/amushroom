@@ -190,3 +190,55 @@ test('rMultiple expresses P&L in units of initial risk', () => {
     null // zero risk distance is undefined, not infinite
   );
 });
+
+test('rMultiple measures a pyramided trade against the FIRST unit risk', () => {
+  // Three units: first fill 100 (10 sh), blended average 101, 30 shares total.
+  // Initial risk is the first unit only: (100 - 96) x 10 = $40.
+  // P&L is (120 - 101) x 30 = $570, so R = 14.25.
+  const r = sizing.rMultiple({
+    entryPrice: 101,
+    exitPrice: 120,
+    initialStop: 96,
+    shares: 30,
+    firstFillPrice: 100,
+    firstUnitShares: 10,
+  });
+  assert.ok(Math.abs(r - 14.25) < 1e-9);
+});
+
+test('the blended-entry basis would shrink R as a trade goes further in profit', () => {
+  // Regression guard for the defect this convention replaced. Dividing by
+  // (avgPrice - initialStop) inflates the divisor on every pyramid add, so the
+  // same winning trade scores LOWER the more it is added to.
+  const blended = (120 - 101) / (101 - 96); // 3.8
+  const firstUnit = sizing.rMultiple({
+    entryPrice: 101,
+    exitPrice: 120,
+    initialStop: 96,
+    shares: 30,
+    firstFillPrice: 100,
+    firstUnitShares: 10,
+  });
+  assert.ok(
+    firstUnit > blended,
+    'a pyramided winner must not score below its single-unit equivalent'
+  );
+});
+
+test('both conventions agree exactly on a single-unit trade', () => {
+  const withHints = sizing.rMultiple({
+    entryPrice: 100,
+    exitPrice: 110,
+    initialStop: 96,
+    shares: 10,
+    firstFillPrice: 100,
+    firstUnitShares: 10,
+  });
+  const without = sizing.rMultiple({
+    entryPrice: 100,
+    exitPrice: 110,
+    initialStop: 96,
+    shares: 10,
+  });
+  assert.equal(withHints, without);
+});

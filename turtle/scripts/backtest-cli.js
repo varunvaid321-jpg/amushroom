@@ -20,7 +20,16 @@ const { projectPortfolio } = require('../lib/montecarlo');
 const { parseIbkrHistory } = require('../lib/integrity');
 
 const ROOT = path.join(__dirname, '..');
-const BARS_DIR = path.join(ROOT, 'data', 'cache', 'bars');
+
+function arg(name) {
+  const i = process.argv.indexOf(`--${name}`);
+  return i === -1 ? null : process.argv[i + 1];
+}
+
+// Overridable so a run can be pointed at an isolated data set without any risk
+// of it being mistaken for the real bar cache later.
+const DATA_ROOT = arg('data-root') || ROOT;
+const BARS_DIR = path.join(DATA_ROOT, 'data', 'cache', 'bars');
 const UNIVERSE = path.join(ROOT, 'universe', 'tsx-universe.json');
 const config = require('../config.json');
 
@@ -81,7 +90,7 @@ function main() {
   // The daily brief projects from this file. It records whether the gate passed
   // so the brief can refuse to show a forward view derived from a failed gate.
   fs.writeFileSync(
-    path.join(ROOT, 'data', 'backtest-latest.json'),
+    path.join(DATA_ROOT, 'data', 'backtest-latest.json'),
     JSON.stringify(
       {
         ranAt: new Date().toISOString(),
