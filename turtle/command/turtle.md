@@ -11,14 +11,17 @@ here for you to decide, calculate, or interpret.
 
 ## What to run
 
+The system lives at `{{TURTLE_DIR}}`. Every command below must run from there, so
+prefix each with `cd {{TURTLE_DIR}} && `.
+
 | Argument | Command |
 |---|---|
-| (none) | `npm run turtle` |
-| `--full` | `node turtle/scripts/turtle.js --full` |
-| `--markets CAD` / `--markets USD` | `node turtle/scripts/turtle.js --markets <value>` |
-| `--doctor` | `npm run turtle:doctor` |
-| `--backtest` | `npm run turtle:backtest -- --fetch` |
-| `--replay <date>` | `node turtle/scripts/turtle.js --replay <date>` |
+| (none) | `node scripts/turtle.js` |
+| `--full` | `node scripts/turtle.js --full` |
+| `--markets CAD` / `--markets USD` | `node scripts/turtle.js --markets <value>` |
+| `--doctor` | `node scripts/doctor.js` |
+| `--backtest` | `node scripts/backtest-cli.js --fetch` |
+| `--replay <date>` | `node scripts/turtle.js --replay <date>` |
 
 Run it, then **print the output verbatim**.
 
@@ -61,8 +64,8 @@ Wealthsimple GTC orders expire after 90 days.
 When the user pastes a Wealthsimple positions screenshot:
 
 1. Read it into `[{ symbol, shares, avgPrice }]` using the exact tickers shown.
-2. Run `node -e` against `reconcile()` in `turtle/lib/portfolio.js`, or write the
-   parsed array to a temp file and reconcile from there.
+2. Run `node -e` against `reconcile()` in `{{TURTLE_DIR}}/lib/portfolio.js`, or
+   write the parsed array to a temp file and reconcile from there.
 3. **Show the diff. Ask for confirmation. Never write state from an unconfirmed
    parse** — one misread share count corrupts sizing, heat, and every subsequent
    stop.
@@ -75,8 +78,9 @@ the stop, and a wrong exit corrupts the R-multiple that forward estimates use.
 ## First-time setup
 
 ```bash
-npm run turtle:doctor     # confirm 2+ data sources are reachable per market
-npm run turtle:backtest -- --fetch   # downloads history, must print PASS
+cd {{TURTLE_DIR}}
+node scripts/doctor.js              # confirm 2+ data sources per market
+node scripts/backtest-cli.js --fetch  # downloads history, must print PASS
 ```
 
 If doctor reports insufficient sources for a market, say so plainly and stop.
