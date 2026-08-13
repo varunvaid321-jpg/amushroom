@@ -21,11 +21,11 @@ const pad = (s, n) => String(s).padEnd(n);
 
 function renderHeader(d) {
   const lines = [];
-  const integrity =
-    d.sourcesAgreed >= 4
-      ? 'bars FINAL, 4 sources agreed'
-      : `bars FINAL, ${d.sourcesAgreed} source(s) verified`;
-  lines.push(`TURTLE — ${d.date} (TSX closed, ${integrity})`);
+  const scanned = d.scanned ? `${d.scanned} scanned, ` : '';
+  lines.push(
+    `TURTLE — ${d.date} (market closed, ${scanned}bars FINAL, ` +
+      `min ${d.sourcesAgreed} independent source(s) per symbol)`
+  );
 
   const regime = d.regime.riskOn
     ? `RISK-ON (${d.regime.benchmarkSymbol} ${pct(d.regime.distanceToSmaPct / 100)} above SMA200)`
@@ -46,14 +46,26 @@ function renderAction(action, i) {
     case 'BUY':
     case 'ADD': {
       const label = action.type === 'ADD' ? 'ADD ' : 'BUY ';
+      // Currency is stated on every price for a foreign name. On a CAD account
+      // buying a US listing, an unlabelled number is an execution error waiting
+      // to happen.
+      const cur = action.currency && action.currency !== 'CAD' ? ` ${action.currency}` : '';
       lines.push(
-        `${i}. ${label} ${action.symbol}   ${action.shares} sh @ max ${dollars(action.maxPrice)}   ` +
+        `${i}. ${label} ${action.symbol}   ${action.shares} sh @ max ${dollars(action.maxPrice)}${cur}   ` +
           `(System ${action.system}, ${action.system === 2 ? 55 : 20}-day breakout)`
       );
+      const costLine = cur
+        ? `   Cost up to ${dollars(action.notionalLocal)}${cur} = ${dollars(action.notional)} CAD`
+        : `   Cost up to ${dollars(action.notional)}`;
       lines.push(
-        `   Cost up to ${dollars(action.notional)}  ·  N=${dollars(action.n)}  ·  ` +
-          `Unit ${action.unit} of ${action.maxUnits}  ·  risk ${dollars(action.risk)} (${pct(action.riskPct)})`
+        `${costLine}  ·  N=${dollars(action.n)}${cur}  ·  ` +
+          `Unit ${action.unit} of ${action.maxUnits}  ·  risk ${dollars(action.risk)} CAD (${pct(action.riskPct)})`
       );
+      if (action.fxDragR > 0) {
+        lines.push(
+          `   FX round trip costs ${action.fxDragR.toFixed(2)}R — already charged against this trade's edge`
+        );
+      }
       lines.push(
         `   → Place GTC stop-limit: stop ${dollars(action.stop)} / limit ${dollars(action.limit)}   ← same day`
       );

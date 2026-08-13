@@ -7,6 +7,34 @@
     "allowFractional": false,
     "allowShort": false
   },
+  "providers": {
+    "enabled": ["yahoo", "stooq", "ibkr-cache"],
+    "minSourcesForTrade": 2,
+    "concurrency": 6,
+    "timeoutMs": 12000,
+    "historyDays": 400,
+    "ibkrMaxAgeHours": 36
+  },
+  "fx": {
+    "accountCurrency": "CAD",
+    "usdAccount": false,
+    "conversionCostPct": 0.015,
+    "maxDragShareOfEdge": 0.35,
+    "assumedExpectancyR": 0.3,
+    "rateMaxAgeHours": 24
+  },
+  "stability": {
+    "windowDays": 252,
+    "minListingDays": 400,
+    "minPrice": 5,
+    "maxAnnualisedVol": 0.6,
+    "gapThreshold": 0.05,
+    "maxGapFrequency": 0.02,
+    "maxSingleDayMove": 0.2,
+    "maxZeroVolumeSessions": 0,
+    "minMedianDollarVolume": 5000000,
+    "maxFlatRun": 3
+  },
   "risk": {
     "riskPerUnitPct": 0.0075,
     "maxUnitsPerName": 3,

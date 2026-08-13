@@ -184,9 +184,51 @@ function buildUniverse(resolutions, { verifiedAt }) {
   };
 }
 
+/**
+ * Load the tradeable universe from the candidate lists.
+ *
+ * Because the price providers address instruments by ticker, no broker contract
+ * resolution is needed to scan — the candidate lists ARE the universe. A ticker
+ * that has been acquired, renamed or delisted simply returns no data from any
+ * provider and drops out on its own, which is why a stale entry here is
+ * harmless rather than something to hand-maintain.
+ *
+ * `markets` selects which lists to include: 'CAD', 'USD', or both.
+ */
+function loadCandidates(root, { markets = ['CAD', 'USD'], fs = require('node:fs'), path = require('node:path') } = {}) {
+  const entries = [];
+  const files = [
+    { file: 'tsx-candidates.json', currency: 'CAD', market: 'TSX' },
+    { file: 'us-candidates.json', currency: 'USD', market: 'US' },
+  ];
+
+  for (const { file, currency, market } of files) {
+    if (!markets.includes(currency)) continue;
+    const full = path.join(root, 'universe', file);
+    if (!fs.existsSync(full)) continue;
+
+    const parsed = JSON.parse(fs.readFileSync(full, 'utf8'));
+    for (const candidate of parsed.candidates) {
+      entries.push({ ...candidate, currency, market });
+    }
+  }
+
+  // Ticker collisions across markets are real (T is TELUS in Canada and AT&T in
+  // the US). Key by market-qualified id so they never merge.
+  const seen = new Set();
+  return entries.filter((entry) => {
+    const key = `${entry.market}:${entry.symbol}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    entry.id = key;
+    return true;
+  });
+}
+
 module.exports = {
   EXCLUDED_DESCRIPTION_PATTERNS,
   selectTseRow,
   screenTradeable,
   buildUniverse,
+  loadCandidates,
 };

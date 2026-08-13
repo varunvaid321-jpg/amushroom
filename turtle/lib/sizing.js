@@ -34,18 +34,36 @@ function money(value) {
  * worst price we would accept), so a position can never breach the cap on a
  * bad fill.
  */
-function computeUnitSize({ equity, price, maxPrice, n, config, riskMultiplier = 1 }) {
+function computeUnitSize({
+  equity,
+  price,
+  maxPrice,
+  n,
+  config,
+  riskMultiplier = 1,
+  // Multiplier converting the instrument's local currency into the account
+  // currency. 1 for CAD names; the USD/CAD rate for US listings.
+  fxRate = 1,
+}) {
   const r = config.risk;
   const effectiveRiskPct = r.riskPerUnitPct * riskMultiplier;
   const riskBudget = equity * effectiveRiskPct;
   const stopDistance = r.stopMultipleN * n;
   const cap = maxPrice || price;
 
+  // Risk and notional caps are denominated in the ACCOUNT currency, while price
+  // and N are local. Converting the caps into local terms once keeps every
+  // comparison below in a single currency.
+  const riskBudgetLocal = riskBudget / fxRate;
+  const notionalCapAccount = equity * r.maxSingleNameNotionalPct;
+  const notionalCapLocal = notionalCapAccount / fxRate;
+
   const base = {
     equity,
     price,
     maxPrice: cap,
     n,
+    fxRate,
     riskBudget: money(riskBudget),
     stopDistance,
     effectiveRiskPct,
@@ -54,27 +72,30 @@ function computeUnitSize({ equity, price, maxPrice, n, config, riskMultiplier = 
   if (!(n > 0)) {
     return { ...base, feasible: false, shares: 0, reason: 'N (ATR) unavailable or zero' };
   }
+  if (!(fxRate > 0)) {
+    return { ...base, feasible: false, shares: 0, reason: 'no FX rate available for this currency' };
+  }
 
-  const sharesByRisk = Math.floor(riskBudget / stopDistance);
-  const notionalCap = equity * r.maxSingleNameNotionalPct;
-  const sharesByNotional = Math.floor(notionalCap / cap);
+  const sharesByRisk = Math.floor(riskBudgetLocal / stopDistance);
+  const sharesByNotional = Math.floor(notionalCapLocal / cap);
   const shares = Math.min(sharesByRisk, sharesByNotional);
 
   const result = {
     ...base,
     sharesByRisk,
     sharesByNotional,
-    notionalCap: money(notionalCap),
+    notionalCap: money(notionalCapAccount),
     shares,
-    notional: money(shares * cap),
-    actualRisk: money(shares * stopDistance),
+    notionalLocal: money(shares * cap),
+    notional: money(shares * cap * fxRate),
+    actualRisk: money(shares * stopDistance * fxRate),
     binding: sharesByRisk <= sharesByNotional ? 'risk' : 'notional',
   };
 
   if (shares < 1) {
     const reason = sharesByRisk < 1
-      ? `1 share risks $${money(stopDistance)} which exceeds the $${money(riskBudget)} per-unit budget`
-      : `1 share costs $${money(cap)} which exceeds the $${money(notionalCap)} single-name cap`;
+      ? `1 share risks $${money(stopDistance * fxRate)} which exceeds the $${money(riskBudget)} per-unit budget`
+      : `1 share costs $${money(cap * fxRate)} which exceeds the $${money(notionalCapAccount)} single-name cap`;
     return { ...result, feasible: false, reason };
   }
 
