@@ -1,0 +1,14 @@
+# Live trading state and raw market-data dumps stay local.
+#
+# data/portfolio.json and data/trades.json hold real positions and realised
+# P&L — personal financial records that do not belong in a git history.
+# data/cache and data/runs hold raw API responses and per-run audit records;
+# they are the local audit trail, kept on disk, not published.
+#
+# universe/tsx-universe.json IS committed: it is derived reference data with no
+# personal content, and pinning it means a backtest run months from now
+# resolves the same contracts as the run that produced the gate result.
+data/cache/
+data/runs/
+data/portfolio.json
+data/trades.json
